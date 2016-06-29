@@ -1,0 +1,33 @@
+export interface Isensor {
+    "sensorType": string;
+    "deploymentType": string;
+    "eventName": string;
+    "collectionCondition": string;
+    "housingType": string;
+    "sensorBrand": string;
+    "statusId": number;
+    "timeStamp": string;
+    "site_no": string;
+    "latitude": number;
+    "longitude": number;
+    "siteDescription": string;
+    "networkNames": string;
+    "stateName": string;
+    "countyName": string;
+    "siteWaterbody": string;
+    "siteHDatum": string;
+    "sitePriorityName": string;
+    "siteZone": string;
+    "siteHCollectMethod": string;
+    "sitePermHousing": string;
+    "siteNotes": string;
+    "instrument_id": number;
+    "sensor_type_id": number;
+    "deployment_type_id": number;
+    "location_description": string;
+    "serial_number": string;
+    "housing_serial_number": string;
+    "interval": number;
+    "site_id": number;
+    "vented":string;
+}
