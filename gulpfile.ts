@@ -54,7 +54,19 @@ gulp.task("libs", () => {
             'reflect-metadata/Reflect.js',
             'rxjs/**',
             'zone.js/dist/**',
-            '@angular/**'
+            '@angular/**', 
+            'bootstrap/dist/css/bootstrap.css',
+            'bootstrap/dist/js/bootstrap.js',
+
+            "mobile-angular-ui/dist/css/mobile-angular-ui-hover.css",
+            "mobile-angular-ui/dist/css/mobile-angular-ui-base.css",
+            "mobile-angular-ui/dist/css/mobile-angular-ui-desktop.css",
+            "mobile-angular-ui/dist/js/mobile-angular-ui.js",
+            "mobile-angular-ui/dist/js/mobile-angular-ui.gestures.js",
+            "mobile-angular-ui/dist/fonts/fontawesome-webfont.eot",
+            "mobile-angular-ui/dist/fonts/fontawesome-webfont.svg",
+            "mobile-angular-ui/dist/fonts/fontawesome-webfont.ttf",
+            "mobile-angular-ui/dist/fonts/fontawesome-webfont.woff"
         ], {cwd: "node_modules/**"}) /* Glob required here. */
         .pipe(gulp.dest("build/lib"));
 });
