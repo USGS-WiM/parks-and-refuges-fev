@@ -1,8 +1,9 @@
-import {Component} from '@angular/core'
+import {Component} from '@angular/core';
 
 @Component({
-    templateUrl: './sidebar/sidebar.component.html'
+    selector: 'fev-sidebar',
+    templateUrl: './app/sidebar/sidebar.component.html'
 })
 export class SidebarComponent {
-    
+  title: string = "Sidebar";
 }

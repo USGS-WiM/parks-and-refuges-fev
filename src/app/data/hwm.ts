@@ -13,7 +13,7 @@ export interface Ihwm {
     "approval_id": number;
     "marker_id": number;
     "height_above_gnd": number;
-    "hcollect_method_id": number
+    "hcollect_method_id": number;
     "hwm_notes": string;
     "hwm_environment": string;
     "flag_date": string;

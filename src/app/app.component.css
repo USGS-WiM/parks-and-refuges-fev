@@ -1,0 +1,60 @@
+/*
+    ===========================
+    ===========================
+         Navigation Bar
+    ===========================
+    ===========================
+*/
+
+.navbar-btn{
+    background-color: transparent;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 12pt;
+    margin: 18px auto;
+}
+.navbar-btn:hover{
+    font-size: 12pt;
+    background-color: transparent;
+    border: none;
+    color: rgba(255,255,255,0.8)
+}
+.navbar-btn:focus{
+    background-color: transparent;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    font-size: 12pt;
+}
+.navbar-btn:active{
+    color: rgba(255,255,255,1) !important;
+    background-color: transparent !important;
+    font-size: 12pt;
+    border: none;
+}
+
+.navbar-brand {
+    padding: 18px 20px 15px;
+}
+
+.navbar-app{
+    background-color: #2D3146;
+    min-height: 50px;
+}
+
+.navbar-brand{
+    padding-top: 18px;
+}
+
+.app-name{
+    position: relative;
+    top:-2px;
+    font-weight:300;
+}
+
+.navBarButton{
+    margin-top:12px;
+    margin-right:12px;
+}

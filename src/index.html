@@ -1,7 +1,16 @@
 <html>
 <head>
-    <title>Angular 2 TypeScript Gulp QuickStart</title>
+    <title>USGS Flood Event Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+     <!-- mobile-angular-ui css-->
+     <link href="lib/mobile-angular-ui/dist/css/mobile-angular-ui-hover.css" rel="stylesheet" />
+     <link href="lib/mobile-angular-ui/dist/css/mobile-angular-ui-base.css" rel="stylesheet" />
+     <link href="lib/mobile-angular-ui/dist/css/mobile-angular-ui-desktop.css" rel="stylesheet" />
+
+    <link href="app/app.component.css" rel="stylesheet" />
 
     <!-- 1. Load libraries -->
     <!-- Polyfill(s) for older browsers -->
@@ -10,6 +19,12 @@
     <script src="lib/zone.js/dist/zone.js"></script>
     <script src="lib/reflect-metadata/Reflect.js"></script>
     <script src="lib/systemjs/dist/system.src.js"></script>
+
+    <!--<script src="lib/bootstrap/dist/js/bootstrap.js"></script>-->
+
+    <!-- mobile-angular-ui js-->
+    <script src="lib/mobile-angular-ui/dist/js/mobile-angular-ui.js"></script>
+    <script src="lib/mobile-angular-ui/dist/js/mobile-angular-ui.gestures.js"></script>
 
     <!-- 2. Configure SystemJS -->
     <script src="systemjs.config.js"></script>
@@ -22,7 +37,7 @@
 
 <!-- 3. Display the application -->
 <body>
-<app>Loading...</app>
+<fev-app>Loading...</fev-app>
 </body>
 
 </html>
