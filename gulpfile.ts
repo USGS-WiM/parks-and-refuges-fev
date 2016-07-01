@@ -66,7 +66,11 @@ gulp.task("libs", () => {
             "mobile-angular-ui/dist/fonts/fontawesome-webfont.eot",
             "mobile-angular-ui/dist/fonts/fontawesome-webfont.svg",
             "mobile-angular-ui/dist/fonts/fontawesome-webfont.ttf",
-            "mobile-angular-ui/dist/fonts/fontawesome-webfont.woff"
+            "mobile-angular-ui/dist/fonts/fontawesome-webfont.woff",
+
+            "leaflet/dist/images/**.png",
+            "leaflet/dist/leaflet-src.js",
+            "leaflet/dist/leaflet.css"
         ], {cwd: "node_modules/**"}) /* Glob required here. */
         .pipe(gulp.dest("build/lib"));
 });

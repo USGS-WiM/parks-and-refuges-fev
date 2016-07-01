@@ -8,7 +8,7 @@ import {MapComponent} from './map/map.component';
 @Component({
     selector: "fev-app",
     templateUrl: "./app/app.component.html",
-    directives: [NavbarComponent, SidebarComponent]
+    directives: [NavbarComponent, SidebarComponent, MapComponent]
 })
 export class AppComponent implements OnInit {
     appTitle: string = "Flood Event Viewer";
