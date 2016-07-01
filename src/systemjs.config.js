@@ -4,16 +4,18 @@
     var map = {
         'app': 'app', // 'dist',
         'rxjs': 'lib/rxjs',
-        '@angular': 'lib/@angular'
+        '@angular': 'lib/@angular',
+        'leaflet': 'lib/leaflet'
     };
 
     // packages tells the System loader how to load when no filename and/or no extension
     var packages = {
         'app': {main: 'main.js', defaultExtension: 'js'},
-        'rxjs': {defaultExtension: 'js'}
+        'rxjs': {defaultExtension: 'js'},
+        'leaflet' : {main: 'leaflet-src.js', defaultExtension: 'js'}
     };
 
-    var packageNames = [
+    var ngPackageNames = [
         '@angular/common',
         '@angular/compiler',
         '@angular/core',
@@ -27,7 +29,7 @@
     ];
 
     // add package entries for angular packages in the form '@angular/common': { main: 'index.js', defaultExtension: 'js' }
-    packageNames.forEach(function (pkgName) {
+    ngPackageNames.forEach(function (pkgName) {
         packages[pkgName] = {main: 'index.js', defaultExtension: 'js'};
     });
 
