@@ -1,3 +1,8 @@
+body {
+    margin:0;
+    padding:0;
+}
+
 /*
     ===========================
     ===========================
@@ -68,6 +73,298 @@
 */
 
  #map {
-     height: 800px;
-     width: 100%;
+    position:absolute;
+    top:70px;
+    bottom:0;
+    height: 500px;
+    width:100%;
  }
+
+
+
+/*
+    ===========================
+    ===========================
+         Top menu
+    ===========================
+    ===========================
+*/
+
+#top-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #1d1d2b;
+  z-index: 9;
+}
+
+#top-menu > div:not(.logo) {
+  float: left;
+}
+
+#top-menu .logo {
+  float: right;
+}
+
+#top-menu .logo > div {
+  float: left;
+}
+
+#top-menu .title {
+  border-right: 1px solid #191924;
+  min-width: 270px;
+  cursor: pointer;
+}
+
+#top-menu .title h2 {
+  font-size: 22px;
+  padding: 22px 10px;
+  font-weight: 500;
+  color: #fff;
+  margin: 0;
+}
+
+#top-menu .top-menu-container {
+  margin-left: 13px;
+}
+
+#top-menu .top-menu-container ul {
+  overflow: hidden;
+  margin: 0;
+}
+
+#top-menu .top-menu-container li {
+  float: left;
+}
+
+#top-menu .top-menu-container li a {
+  text-decoration: none;
+  display: inline-block;
+  padding: 24px 15px;
+  font-size: 18px;
+  font-weight: 300;
+  color: #fff;
+}
+
+#top-menu .top-menu-container li a:hover {
+  color: #cd151e;
+}
+
+#top-menu .logo {
+  margin: 3px 25px 11px 0;
+}
+
+#top-menu .logo img {
+  height: 50px;
+}
+
+#mobile-main-menu {
+  display: none;
+  cursor: pointer;
+}
+
+#mobile-main-menu {
+  padding: 24px 15px;
+}
+
+#mobile-main-menu img {
+  height: 16px;
+}
+
+#top-menu #top-menu-link {
+  -webkit-transition: max-height .5s ease;
+  -moz-transition: max-height .5s ease;
+  -ms-transition: max-height .5s ease;
+  -o-transition: max-height .5s ease;
+  transition: max-height .5s ease;
+  overflow: hidden;
+}
+
+#top-menu #top-menu-link.active {
+  max-height: 500px;
+}
+
+/************* END TOP MENU **************/
+
+
+
+ /*
+    ===========================
+    ===========================
+         Main Menu
+    ===========================
+    ===========================
+*/
+
+
+#main-menu {
+  width: 270px;
+  height: calc(100% - 66px);
+  float: left;
+  background-color: #20202f;
+  margin-top: 65px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  -webkit-transition: left .5s ease;
+  -moz-transition: left .5s ease;
+  -ms-transition: left .5s ease;
+  -o-transition: left .5s ease;
+  transition: left .5s ease;
+}
+
+#main-menu.active {
+  left: 0;
+}
+
+#main-menu > div {
+  border-top: 1px solid #191924;
+}
+
+#main-menu .menu-search {
+  position: relative;
+  padding: 10px;
+}
+
+#main-menu .menu-search input {
+  border: 1px solid #babfc4;
+  font-size: 14px;
+  color: #a4a4b0;
+  padding: 8px 10px 8px 30px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+#main-menu .menu-search:before {
+  content: "";
+  background: url("../images/search-doc.png") no-repeat 50% 50%;
+  background-size: contain;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 19px;
+  left: 17px;
+}
+
+#main-menu .menu-search input:focus,
+#main-menu .menu-search input:active {
+  outline: 0;
+}
+
+#main-menu .main-menu-container {
+  overflow-y: auto;
+  height: calc(100% - 56px);
+}
+
+#main-menu .section .item h4 {
+  position: relative;
+}
+
+#main-menu .section .item h4 .arrow {
+  display: block;
+  width: 11px;
+  height: 12px;
+  background: url("../images/repa-down.png") no-repeat bottom left;
+  background-size: contain !important;
+  position: absolute;
+  top: calc(50% - 6px);
+  right: 0;
+}
+
+#main-menu .section .item.active h4 .arrow {
+  background: url("../images/repa-up.png") no-repeat top left;
+}
+
+#main-menu .menu-content {
+  padding: 0 15px 0 10px;
+}
+
+#main-menu .section h3 {
+  font-size: 16px;
+  font-weight: 300;
+  color: #a4a4b0;
+  text-transform: uppercase;
+  margin: 15px 0;
+  cursor: pointer;
+
+  -webkit-transition: all .2s ease-out;
+  -moz-transition: all .2s ease-out;
+  -o-transition: all .2s ease-out;
+  transition: all .2s ease-out;
+}
+
+#main-menu .section h3:hover,
+#main-menu .section.active h3 {
+  color: #fff;
+}
+
+#main-menu .section .item {
+  margin-bottom: 13px;
+  margin-left: 15px;
+  display: none;
+}
+
+#main-menu .section:first-child .item {
+  display: none !important;
+}
+
+#main-menu .section.active .item {
+  display: block;
+}
+
+#main-menu .section h4 {
+  color: #a4a4b0;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 300;
+  -webkit-transition: all .2s ease-out;
+  -moz-transition: all .2s ease-out;
+  -o-transition: all .2s ease-out;
+  transition: all .2s ease-out;
+}
+
+#main-menu .section h4:hover {
+  color: #fff;
+}
+
+#main-menu .section .item h4 .arrow {
+  width: 8px;
+  height: 9px;
+  top: calc(50% - 5px);
+}
+
+#main-menu .section ul {
+  display: none;
+}
+
+#main-menu .section .item.active ul {
+  display: block;
+  margin: 5px 0 -5px;
+  padding: 0 0 0 5px;
+  background: url("../images/border-dot.png") repeat-y 5px 0;
+}
+
+#main-menu .section .item li {
+  color: #a4a4b0;
+  font-size: 14px;
+  padding: 0 0 0 12px;
+  margin: 14px 0;
+  /*font-family: 'Source Code Pro';*/
+  border-left: 1px solid transparent;
+  list-style: none;
+}
+
+#main-menu .section .item li.active,
+#main-menu .section .item li:hover {
+  color: #cd151e;
+  border-left: 1px solid #cd151e;
+}
+
+#main-menu .section .item li:not(.active):hover {
+  cursor: pointer;
+}
+
+/************* END MAIN MENU **************/

@@ -1,4 +1,6 @@
 import {Component} from '@angular/core';
+import {OnInit} from '@angular/core';
+import {AfterViewInit} from '@angular/core';
 
 import {MapService} from './map.service';
 
@@ -7,14 +9,14 @@ import {MapService} from './map.service';
     templateUrl: './app/map/map.component.html',
     providers: [MapService]
 })
-export class MapComponent {
+export class MapComponent implements OnInit, AfterViewInit {
      private mapService: MapService;
 
      constructor(mapService: MapService) {
         this.mapService = mapService;
     }
 
-    ngOnInit() {
+    ngOnInit () {
         var map = new L.Map('map', {
           zoomControl: false,
           center: new L.LatLng(40.731253, -73.996139),
@@ -29,6 +31,12 @@ export class MapComponent {
         L.control.scale().addTo(map);
 
         this.mapService.map = map;
+
+        setTimeout(() => { (<any>(this.mapService.map)).invalidateSize(); }, 3000);
+
+
+    }
+    ngAfterViewInit() {
     }
 
 
