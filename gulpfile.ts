@@ -57,16 +57,12 @@ gulp.task("libs", () => {
             '@angular/**', 
             'bootstrap/dist/css/bootstrap.css',
             'bootstrap/dist/js/bootstrap.js',
+            'bootstrap/dist/fonts/**',
 
-            "mobile-angular-ui/dist/css/mobile-angular-ui-hover.css",
-            "mobile-angular-ui/dist/css/mobile-angular-ui-base.css",
-            "mobile-angular-ui/dist/css/mobile-angular-ui-desktop.css",
-            "mobile-angular-ui/dist/js/mobile-angular-ui.js",
-            "mobile-angular-ui/dist/js/mobile-angular-ui.gestures.js",
-            "mobile-angular-ui/dist/fonts/fontawesome-webfont.eot",
-            "mobile-angular-ui/dist/fonts/fontawesome-webfont.svg",
-            "mobile-angular-ui/dist/fonts/fontawesome-webfont.ttf",
-            "mobile-angular-ui/dist/fonts/fontawesome-webfont.woff",
+            'ng2-bootstrap/bundles/ng2-bootstrap.js',
+            'ng2-bootstrap/bundles',
+
+            'jquery/dist/jquery.js',
 
             "leaflet/dist/images/**.png",
             "leaflet/dist/leaflet-src.js",
