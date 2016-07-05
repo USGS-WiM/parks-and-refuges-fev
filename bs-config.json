@@ -1,5 +1,6 @@
 {
   "port": 8000,
+  "browser": "google chrome",
   "files": [
     "build/**/*.{html,htm,css,js}"
   ],
