@@ -70,6 +70,25 @@
   z-index: 10;
 }
 
+.app-name-mobile{
+    position: relative;
+    top:-2px;
+    font-weight:300;
+}
+
+.app-name-mobile {
+  display: none;
+  position: relative;
+  width: 100%;
+  line-height: 70px;
+  padding: 0 10px;
+  font-size: 23px;
+  color: #ffffff;
+  margin: 0;
+  z-index: 10;
+
+}
+
 
 /*
     ===========================
@@ -634,6 +653,21 @@ body {
   #main-menu {
     height: calc(100% - 55px);
   }
+
+}
+
+
+
+@media (max-width: 767px) {
+
+  .app-name {
+    display: none;
+  }
+
+  .app-name-mobile {
+    display: inline;
+  }
+
 }
 
 pre {

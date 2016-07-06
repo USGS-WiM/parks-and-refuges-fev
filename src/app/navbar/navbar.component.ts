@@ -7,6 +7,7 @@ import {DOCUMENT} from '@angular/platform-browser';
 })
 export class NavbarComponent {
    appTitle: string = "Flood Event Viewer";
+   appTitleMobile: string = "FEV";
 
    public isShown:boolean = false;
 

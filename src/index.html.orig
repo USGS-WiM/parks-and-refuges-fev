@@ -5,15 +5,16 @@
 
     <link href="lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
 
-    
      <!-- leaflet css -->
+<<<<<<< HEAD
      <link rel="stylesheet" href="lib/leaflet/dist/leaflet.css">
+=======
+     <link href="lib/leaflet/dist/leaflet.css" rel="stylesheet" />
+     <!-- leaflet images (revisit this) -->
+     <link href="lib/leaflet/dist/images">
+>>>>>>> d12398ffb0f10e5cb0a41c60e83092edc8b1d557
 
-     <!-- wim styles css -->
-     <link rel="stylesheet" href="lib/wim-styles/css/wim.css">
-
-     <!-- local app css -->
-    <link  rel="stylesheet" href="app/app.component.css"/>
+    <link href="app/app.component.css" rel="stylesheet" />
 
     <!-- 1. Load libraries -->
     <!-- Polyfill(s) for older browsers -->
@@ -32,8 +33,6 @@
     <script src="lib/leaflet/dist/leaflet-src.js"></script>
     <!-- ng2-bootstrap js -->
     <script src="lib/ng2-bootstrap/bundles/ng2-bootstrap.js"></script>
-
-    <script src="lib/ng2-bootstrap/components/button.js"></script>
 
     <!-- 2. Configure SystemJS -->
     <script src="systemjs.config.js"></script>
