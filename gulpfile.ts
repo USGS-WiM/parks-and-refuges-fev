@@ -59,7 +59,7 @@ gulp.task("libs", () => {
             'bootstrap/dist/js/bootstrap.js',
             'bootstrap/dist/fonts/**',
 
-            'ng2-bootstrap/bundles/ng2-bootstrap.js',
+            // 'ng2-bootstrap/bundles/ng2-bootstrap.js',
             'ng2-bootstrap/components/**/**.js',
 
             'jquery/dist/jquery.js',
