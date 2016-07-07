@@ -5,7 +5,7 @@
         'app': 'app', // 'dist',
         'rxjs': 'lib/rxjs',
         '@angular': 'lib/@angular',
-        'leaflet': 'lib/leaflet',
+        'leaflet': 'lib/leaflet/dist',
         'ng2-bootstrap' : 'lib/ng2-bootstrap'
     };
 
