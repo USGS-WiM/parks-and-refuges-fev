@@ -63,7 +63,6 @@ gulp.task("libs", () => {
             "leaflet/dist/leaflet-src.js",
             "leaflet/dist/leaflet.css",
             "wim-styles/core/css/wim.css"
-            ""
         ], {cwd: "node_modules/**"}) /* Glob required here. */
         .pipe(gulp.dest("build/lib"));
 });
