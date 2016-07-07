@@ -1,4 +1,5 @@
 <div id="top-menu">
+  <button id="aboutButton" class="btn-default navbar-btn pull-right navBarButton" (click)="modalOpen()"><i class="glyphicon glyphicon-info-sign"></i><span class="hidden-xs">&nbsp;&nbsp;About</span></button>
   <div class="title">
     <a class='navbar-brand' href="http://www.usgs.gov"><img src="app/images/usgs-logo.png"></a>
         <span class="app-name"> {{appTitle}}</span> <span class="app-name-mobile"> {{appTitleMobile}}</span> 
@@ -7,3 +8,27 @@
     <span class="glyphicon glyphicon-menu-hamburger" ></span>
   </div>
 </div>
+
+<modal #modal>
+    <modal-header [show-close]="true">
+        <h4 class="modal-title">About</h4>
+    </modal-header>
+    <modal-body>
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Application Information</a></li>
+        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Data Disclaimer</a></li>
+        <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Project Information</a></li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">Application Information goes here</div>
+        <div role="tabpanel" class="tab-pane" id="profile">Data Disclaimer goes here</div>
+        <div role="tabpanel" class="tab-pane" id="messages">Project Information goes here</div>
+      </div>
+    </modal-body>
+    <modal-footer>
+      <button (click)="modalClose()" class="btn-wim-default"><i class="fa fa-close"></i><span >&nbsp;&nbsp;Close</span></button>
+    </modal-footer>
+</modal>

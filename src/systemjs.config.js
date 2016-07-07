@@ -6,7 +6,7 @@
         'rxjs': 'lib/rxjs',
         '@angular': 'lib/@angular',
         'leaflet': 'lib/leaflet',
-        'ng2-bootstrap' : 'lib/ng2-bootstrap'
+        'ng2-bs3-modal': 'lib/ng2-bs3-modal'
     };
 
     // packages tells the System loader how to load when no filename and/or no extension
@@ -14,7 +14,7 @@
         'app': {main: 'main.js', defaultExtension: 'js'},
         'rxjs': {defaultExtension: 'js'},
         'leaflet' : {main: 'leaflet-src.js', defaultExtension: 'js'},
-        'ng2-bootstrap' : {main:'ng2-bootstrap.js', defaultExtension: 'js' }
+        'ng2-bs3-modal' : {main:'ng2-bs3-modal.js', defaultExtension: 'js' }
     };
 
     var ngPackageNames = [
