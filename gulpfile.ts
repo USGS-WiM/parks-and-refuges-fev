@@ -58,10 +58,13 @@ gulp.task("libs", () => {
             'bootstrap/dist/css/bootstrap.css',
             'bootstrap/dist/js/bootstrap.js',
             'bootstrap/dist/fonts/**',
+            'ng2-bs3-modal/**/**.js',
             'jquery/dist/jquery.js',
+
             "leaflet/dist/images/**.png",
             "leaflet/dist/leaflet-src.js",
             "leaflet/dist/leaflet.css",
+
             "wim-styles/core/css/wim.css"
         ], {cwd: "node_modules/**"}) /* Glob required here. */
         .pipe(gulp.dest("build/lib"));
