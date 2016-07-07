@@ -675,4 +675,10 @@ pre {
   word-break: normal;
 }
 
+
+.on-map {
+    position: absolute;
+    z-index: 100;
+}
+
 /************** All other stuff *********/

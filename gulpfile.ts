@@ -60,6 +60,7 @@ gulp.task("libs", () => {
             'bootstrap/dist/fonts/**',
             'ng2-bs3-modal/**/**.js',
             'jquery/dist/jquery.js',
+
             "leaflet/dist/images/**.png",
             "leaflet/dist/leaflet-src.js",
             "leaflet/dist/leaflet.css",
