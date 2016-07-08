@@ -1,0 +1,17 @@
+input {
+    margin: 20px 0 0 20px !important;
+    width: 300px;
+    height: 35px;
+    border: 2px solid rgba(77, 156, 237, 0.7);
+    font-size: 16px;
+    font: rgb(142, 142, 142);
+    background-color: rgba(252,252,252,0.95);
+}
+
+#goto {
+    margin: 20px 0 0 330px;
+    width: 35px;
+    height: 35px;
+    text-align: center;
+}
+

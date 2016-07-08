@@ -1,4 +1,4 @@
-System.register(['@angular/core', './map.service'], function(exports_1, context_1) {
+System.register(['@angular/core', './map.service', './geocode.service', './geosearch.component'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['@angular/core', './map.service'], function(exports_1, context_
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, map_service_1;
+    var core_1, map_service_1, geocode_service_1, geosearch_component_1;
     var MapComponent;
     return {
         setters:[
@@ -19,16 +19,20 @@ System.register(['@angular/core', './map.service'], function(exports_1, context_
             },
             function (map_service_1_1) {
                 map_service_1 = map_service_1_1;
+            },
+            function (geocode_service_1_1) {
+                geocode_service_1 = geocode_service_1_1;
+            },
+            function (geosearch_component_1_1) {
+                geosearch_component_1 = geosearch_component_1_1;
             }],
         execute: function() {
             MapComponent = (function () {
-                function MapComponent(mapService) {
+                function MapComponent(mapService, geocoder) {
                     this.mapService = mapService;
+                    this.geocoder = geocoder;
                 }
                 MapComponent.prototype.ngOnInit = function () {
-                    console.log('ngOnInit');
-                };
-                MapComponent.prototype.ngAfterViewInit = function () {
                     var map = new L.Map('map', {
                         zoomControl: false,
                         center: new L.LatLng(40.731253, -73.996139),
@@ -42,13 +46,15 @@ System.register(['@angular/core', './map.service'], function(exports_1, context_
                     L.control.scale().addTo(map);
                     this.mapService.map = map;
                 };
+                MapComponent.prototype.ngAfterViewInit = function () { };
                 MapComponent = __decorate([
                     core_1.Component({
                         selector: 'fev-map',
                         templateUrl: './app/map/map.component.html',
-                        providers: [map_service_1.MapService]
+                        directives: [geosearch_component_1.GeosearchComponent],
+                        providers: [map_service_1.MapService, geocode_service_1.GeocodingService]
                     }), 
-                    __metadata('design:paramtypes', [map_service_1.MapService])
+                    __metadata('design:paramtypes', [map_service_1.MapService, geocode_service_1.GeocodingService])
                 ], MapComponent);
                 return MapComponent;
             }());
