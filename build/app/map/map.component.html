@@ -1,1 +1,14 @@
-<div id="map" class="angular-leaflet-map"></div>
+<div id="map" class="angular-leaflet-map">
+    <geosearch></geosearch>
+    
+    <div class="on-map latLngScale">
+    <span class="hover-content"> <b>Map scale </b></span>
+    1:<span id="scale">{{mapScale}}</span> <br>
+    <span class="hover-content"><b>Latitude</b></span>
+    <span id="latitude">{{cursorLat}}</span> |
+    <span class="hover-content"> <b>Longitude</b></span>
+    <span id="longitude">{{cursorLng}}</span>
+    <span id="mapCenterLabel" *ngIf="mouseInuse" class="hover-content"> (center)</span>
+    </div>
+
+</div>
