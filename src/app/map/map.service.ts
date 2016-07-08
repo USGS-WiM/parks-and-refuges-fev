@@ -5,7 +5,6 @@ import {Map, TileLayer} from 'leaflet';
 export class MapService {
     map: Map;
     baseMaps: any;
-
     constructor() {
         this.baseMaps = {
             OpenStreetMap: new L.TileLayer("http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
