@@ -1,18 +1,15 @@
 import {Component, OnInit} from "@angular/core";
 import {MapService} from './map.service';
-import {MapComponent} from './map.component';
-import {Map} from 'leaflet';
 
 @Component({
     selector: "lat-lng-scale",
     templateUrl: "./app/map/latLngScale.component.html",
     styleUrls: ['./app/map/latLngScale.component.css'],
-    providers: [MapService, Map]
+    providers: [MapService]
 })
 export class LatLngScaleComponent implements OnInit {
     private mapService: MapService;
-    private map: Map;
-    private mapComponent: MapComponent;
+    public mapScale: string;
     //public mapScale: string = this.mapComponent.mapScale;
 
     constructor(mapService: MapService) {
@@ -45,8 +42,22 @@ export class LatLngScaleComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.map = this.mapService.map;
+        //this.map = this.mapService.map;
         // var zoomLevel = this.map.getZoom();
         // this.mapScale = this.scaleLookup(zoomLevel);
-        console.log('Map scale registered as ' + this.mapScale);
+
+        this.mapService.map.on('zoomend', () => {
+            this.mapScale = this.scaleLookup(this.mapService.zoomLevel);
+            //this.zoomLevel = map.getZoom();
+            //this.mapService.mapScale = this.scaleLookup(this.zoomLevel);
+            console.log('Map scale registered as ' + this.mapScale, this.mapService.zoomLevel);
+        });
+
+        // this.mapService.map.on('mousemove', (cursorPosition) => {
+        //     this.touchScreen = false;
+        //     this.cursorLat = cursorPosition.latlng.lat.toFixed(3);
+        //     this.cursorLng = cursorPosition.latlng.lng.toFixed(3);
+        // });
+
     }
+}

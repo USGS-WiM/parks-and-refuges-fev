@@ -3,8 +3,11 @@ import {Map, TileLayer} from 'leaflet';
 
 @Injectable()
 export class MapService {
-    map: Map;
-    baseMaps: any;
+    public map: Map;
+    public baseMaps: any;
+    public get zoomLevel(): number {
+        return this.map.getZoom();
+    }
     constructor() {
         this.baseMaps = {
             OpenStreetMap: new L.TileLayer("http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
