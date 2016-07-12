@@ -29,6 +29,13 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                         })
                     };
                 }
+                Object.defineProperty(MapService.prototype, "zoomLevel", {
+                    get: function () {
+                        return this.map.getZoom();
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 MapService.prototype.disableMouseEvent = function (tag) {
                     var html = L.DomUtil.get(tag);
                     L.DomEvent.disableClickPropagation(html);

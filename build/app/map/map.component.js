@@ -39,6 +39,7 @@ System.register(['@angular/core', './map.service', './geocode.service', './geose
                     this.touchScreen = true;
                     this.mapService = mapService;
                     this.geocoder = geocoder;
+                    //var zoomLevel = mapService.map.getZoom;
                 }
                 MapComponent.prototype.ngOnInit = function () {
                     var _this = this;
@@ -53,14 +54,15 @@ System.register(['@angular/core', './map.service', './geocode.service', './geose
                     L.control.zoom({ position: 'topright' }).addTo(map);
                     L.control.layers(this.mapService.baseMaps).addTo(map);
                     this.mapService.map = map;
-                    this.zoomLevel = map.getZoom();
-                    this.mapScale = this.scaleLookup(this.zoomLevel);
-                    console.log('Map scale registered as ' + this.mapScale);
+                    //2 lines below sets the initial map scale string (and logs to console)
+                    this.mapScale = this.scaleLookup(this.mapService.zoomLevel);
+                    console.log('Initial Map scale registered as ' + this.mapScale, this.mapService.zoomLevel);
+                    //resets map scale on leaflet zoom end event
                     map.on('zoomend', function () {
-                        _this.zoomLevel = map.getZoom();
-                        _this.mapScale = _this.scaleLookup(_this.zoomLevel);
-                        console.log('Map scale registered as ' + _this.mapScale);
+                        _this.mapScale = _this.scaleLookup(_this.mapService.zoomLevel);
+                        console.log('Map scale registered as ' + _this.mapScale, _this.mapService.zoomLevel);
                     });
+                    //updates lat/lng as cursor moves
                     map.on('mousemove', function (cursorPosition) {
                         _this.touchScreen = false;
                         _this.cursorLat = cursorPosition.latlng.lat.toFixed(3);

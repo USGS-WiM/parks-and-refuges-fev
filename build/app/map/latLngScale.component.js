@@ -1,4 +1,4 @@
-System.register(["@angular/core", './map.service', 'leaflet'], function(exports_1, context_1) {
+System.register(["@angular/core", './map.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", './map.service', 'leaflet'], function(exports_
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, map_service_1, leaflet_1;
+    var core_1, map_service_1;
     var LatLngScaleComponent;
     return {
         setters:[
@@ -19,9 +19,6 @@ System.register(["@angular/core", './map.service', 'leaflet'], function(exports_
             },
             function (map_service_1_1) {
                 map_service_1 = map_service_1_1;
-            },
-            function (leaflet_1_1) {
-                leaflet_1 = leaflet_1_1;
             }],
         execute: function() {
             LatLngScaleComponent = (function () {
@@ -54,17 +51,28 @@ System.register(["@angular/core", './map.service', 'leaflet'], function(exports_
                     }
                 };
                 LatLngScaleComponent.prototype.ngOnInit = function () {
-                    this.map = this.mapService.map;
+                    //this.map = this.mapService.map;
                     // var zoomLevel = this.map.getZoom();
                     // this.mapScale = this.scaleLookup(zoomLevel);
-                    console.log('Map scale registered as ' + this.mapScale);
+                    var _this = this;
+                    this.mapService.map.on('zoomend', function () {
+                        _this.mapScale = _this.scaleLookup(_this.mapService.zoomLevel);
+                        //this.zoomLevel = map.getZoom();
+                        //this.mapService.mapScale = this.scaleLookup(this.zoomLevel);
+                        console.log('Map scale registered as ' + _this.mapScale, _this.mapService.zoomLevel);
+                    });
+                    // this.mapService.map.on('mousemove', (cursorPosition) => {
+                    //     this.touchScreen = false;
+                    //     this.cursorLat = cursorPosition.latlng.lat.toFixed(3);
+                    //     this.cursorLng = cursorPosition.latlng.lng.toFixed(3);
+                    // });
                 };
                 LatLngScaleComponent = __decorate([
                     core_1.Component({
                         selector: "lat-lng-scale",
                         templateUrl: "./app/map/latLngScale.component.html",
                         styleUrls: ['./app/map/latLngScale.component.css'],
-                        providers: [map_service_1.MapService, leaflet_1.Map]
+                        providers: [map_service_1.MapService]
                     }), 
                     __metadata('design:paramtypes', [map_service_1.MapService])
                 ], LatLngScaleComponent);

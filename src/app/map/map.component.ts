@@ -24,6 +24,7 @@ export class MapComponent {
      constructor(mapService: MapService,  geocoder: GeocodingService) {
         this.mapService = mapService;
         this.geocoder = geocoder;
+        //var zoomLevel = mapService.map.getZoom;
     }
 
     ngOnInit() {
@@ -41,16 +42,17 @@ export class MapComponent {
 
         this.mapService.map = map;
 
-        this.zoomLevel = map.getZoom();
-        this.mapScale = this.scaleLookup(this.zoomLevel);
-        console.log('Map scale registered as ' + this.mapScale);
+        //2 lines below sets the initial map scale string (and logs to console)
+        this.mapScale = this.scaleLookup(this.mapService.zoomLevel);
+        console.log('Initial Map scale registered as ' + this.mapScale, this.mapService.zoomLevel);
 
+        //resets map scale on leaflet zoom end event
         map.on('zoomend', () => {
-            this.zoomLevel = map.getZoom();
-            this.mapScale = this.scaleLookup(this.zoomLevel);
-            console.log('Map scale registered as ' + this.mapScale);
+            this.mapScale = this.scaleLookup(this.mapService.zoomLevel);
+            console.log('Map scale registered as ' + this.mapScale, this.mapService.zoomLevel);
         });
 
+        //updates lat/lng as cursor moves
         map.on('mousemove', (cursorPosition) => {
             this.touchScreen = false;
             this.cursorLat = cursorPosition.latlng.lat.toFixed(3);
