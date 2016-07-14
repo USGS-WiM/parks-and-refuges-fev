@@ -29,13 +29,22 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                         })
                     };
                 }
-                Object.defineProperty(MapService.prototype, "zoomLevel", {
-                    get: function () {
-                        return this.map.getZoom();
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
+                // load a web map and return respons
+                MapService.prototype.createMap = function (domId) {
+                    console.log('in map service createMap function');
+                    this.map = new L.Map(domId, {
+                        zoomControl: false,
+                        center: new L.LatLng(40.731253, -73.996139),
+                        zoom: 12,
+                        minZoom: 4,
+                        maxZoom: 19,
+                        layers: [this.baseMaps.OpenStreetMap]
+                    });
+                    L.control.zoom({ position: 'topright' }).addTo(this.map);
+                    L.control.layers(this.baseMaps).addTo(this.map);
+                    return this.map;
+                };
+                ;
                 MapService.prototype.disableMouseEvent = function (tag) {
                     var html = L.DomUtil.get(tag);
                     L.DomEvent.disableClickPropagation(html);

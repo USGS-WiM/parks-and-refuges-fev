@@ -5,9 +5,7 @@ import {Map, TileLayer} from 'leaflet';
 export class MapService {
     public map: Map;
     public baseMaps: any;
-    public get zoomLevel(): number {
-        return this.map.getZoom();
-    }
+
     constructor() {
         this.baseMaps = {
             OpenStreetMap: new L.TileLayer("http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
@@ -18,6 +16,22 @@ export class MapService {
             })
         };
     }
+
+    // load a web map and return respons
+    createMap(domId: any) {
+        console.log('in map service createMap function');
+        this.map = new L.Map(domId, {
+          zoomControl: false,
+          center: new L.LatLng(40.731253, -73.996139),
+          zoom: 12,
+          minZoom: 4,
+          maxZoom: 19,
+          layers: [this.baseMaps.OpenStreetMap]
+        });
+        L.control.zoom({ position: 'topright' }).addTo(this.map);
+        L.control.layers(this.baseMaps).addTo(this.map);
+        return this.map;
+    };
 
     disableMouseEvent(tag: string) {
         var html = L.DomUtil.get(tag);
