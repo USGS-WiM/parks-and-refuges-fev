@@ -29,7 +29,7 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                         })
                     };
                 }
-                // load a web map and return respons
+                // load a web map and return response
                 MapService.prototype.createMap = function (domId) {
                     console.log('in map service createMap function');
                     this.map = new L.Map(domId, {

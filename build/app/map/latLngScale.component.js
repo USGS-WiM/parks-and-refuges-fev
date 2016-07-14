@@ -20,6 +20,7 @@ System.register(["@angular/core"], function(exports_1, context_1) {
         execute: function() {
             LatLngScaleComponent = (function () {
                 //public mapScale: string = this.mapComponent.mapScale;
+                //TODO: get the touchsreen ng if thing going again for the 'center' label
                 function LatLngScaleComponent() {
                     this.cursorLat = 0;
                     this.cursorLng = 0;
