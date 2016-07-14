@@ -14,6 +14,7 @@ import { HTTP_PROVIDERS } from '@angular/http';
 })
 export class AppComponent implements OnInit {
     appTitle: string = "Flood Event Viewer";
+
     ngOnInit() {
         console.log("Application component initialized ...");
     }

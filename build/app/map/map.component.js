@@ -31,38 +31,78 @@ System.register(['@angular/core', './map.service', './geocode.service', './geose
             }],
         execute: function() {
             MapComponent = (function () {
-                function MapComponent(elRef, _mapService) {
-                    this.elRef = elRef;
-                    this._mapService = _mapService;
-                    this.mapLoaded = new core_1.EventEmitter();
+                function MapComponent(mapService, geocoder) {
+                    this.zoomLevel = 0;
+                    this.mapScale = "";
+                    this.cursorLat = 0;
+                    this.cursorLng = 0;
+                    this.touchScreen = true;
+                    this.mapService = mapService;
+                    this.geocoder = geocoder;
+                    //var zoomLevel = mapService.map.getZoom;
                 }
                 MapComponent.prototype.ngOnInit = function () {
-                    // create the map
-                    this.map = this._mapService.createMap(this.elRef.nativeElement.firstChild);
-                    this._mapService.mapLoaded$.subscribe(function (state) {
-                        console.log('map has been loaded: ', state);
+                    var _this = this;
+                    var map = new L.Map('map', {
+                        zoomControl: false,
+                        center: new L.LatLng(40.731253, -73.996139),
+                        zoom: 12,
+                        minZoom: 4,
+                        maxZoom: 19,
+                        layers: [this.mapService.baseMaps.OpenStreetMap]
                     });
-                    this._mapService.zoomLevel$.subscribe(function (level) {
-                        console.log('heard from map service zoom level subscription: ', level);
+                    L.control.zoom({ position: 'topright' }).addTo(map);
+                    L.control.layers(this.mapService.baseMaps).addTo(map);
+                    this.mapService.map = map;
+                    //2 lines below sets the initial map scale string (and logs to console)
+                    this.mapScale = this.scaleLookup(this.mapService.zoomLevel);
+                    console.log('Initial Map scale registered as ' + this.mapScale, this.mapService.zoomLevel);
+                    //resets map scale on leaflet zoom end event
+                    map.on('zoomend', function () {
+                        _this.mapScale = _this.scaleLookup(_this.mapService.zoomLevel);
+                        console.log('Map scale registered as ' + _this.mapScale, _this.mapService.zoomLevel);
+                    });
+                    //updates lat/lng as cursor moves
+                    map.on('mousemove', function (cursorPosition) {
+                        _this.touchScreen = false;
+                        _this.cursorLat = cursorPosition.latlng.lat.toFixed(3);
+                        _this.cursorLng = cursorPosition.latlng.lng.toFixed(3);
                     });
                 };
-                MapComponent.prototype.ngOnChanges = function (changes) {
-                    console.log(changes);
+                MapComponent.prototype.scaleLookup = function (mapZoom) {
+                    switch (mapZoom) {
+                        case 19: return '1,128';
+                        case 18: return '2,256';
+                        case 17: return '4,513';
+                        case 16: return '9,027';
+                        case 15: return '18,055';
+                        case 14: return '36,111';
+                        case 13: return '72,223';
+                        case 12: return '144,447';
+                        case 11: return '288,895';
+                        case 10: return '577,790';
+                        case 9: return '1,155,581';
+                        case 8: return '2,311,162';
+                        case 7: return '4,622,324';
+                        case 6: return '9,244,649';
+                        case 5: return '18,489,298';
+                        case 4: return '36,978,596';
+                        case 3: return '73,957,193';
+                        case 2: return '147,914,387';
+                        case 1: return '295,828,775';
+                        case 0: return '591,657,550';
+                    }
                 };
-                __decorate([
-                    core_1.Output(), 
-                    __metadata('design:type', Object)
-                ], MapComponent.prototype, "mapLoaded", void 0);
+                MapComponent.prototype.ngAfterViewInit = function () { };
                 MapComponent = __decorate([
                     core_1.Component({
                         selector: 'fev-map',
                         templateUrl: './app/map/map.component.html',
                         styleUrls: ['./app/map/map.component.css'],
                         directives: [geosearch_component_1.GeosearchComponent, latLngScale_component_1.LatLngScaleComponent],
-                        providers: [map_service_1.MapService, geocode_service_1.GeocodingService],
-                        inputs: ['options']
+                        providers: [map_service_1.MapService, geocode_service_1.GeocodingService]
                     }), 
-                    __metadata('design:paramtypes', [core_1.ElementRef, map_service_1.MapService])
+                    __metadata('design:paramtypes', [map_service_1.MapService, geocode_service_1.GeocodingService])
                 ], MapComponent);
                 return MapComponent;
             }());
