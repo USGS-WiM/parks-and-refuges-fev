@@ -1,21 +1,38 @@
 import {Component, OnInit} from "@angular/core";
-import {MapService} from './map.service';
 
 @Component({
     selector: "lat-lng-scale",
     templateUrl: "./app/map/latLngScale.component.html",
-    styleUrls: ['./app/map/latLngScale.component.css'],
-    providers: [MapService]
+    styleUrls: ['./app/map/latLngScale.component.css']
 })
 export class LatLngScaleComponent implements OnInit {
-    private mapService: MapService;
+    public mapZoom: number;
     public mapScale: string;
+    public cursorLat: number = 0;
+    public cursorLng: number= 0;
+    public touchScreen: Boolean = true;
     //public mapScale: string = this.mapComponent.mapScale;
 
-    constructor(mapService: MapService) {
-        this.mapService = mapService;
-    }
+    constructor() {}
 
+   setListeners(map:any) {
+        console.log('in set listeners');
+
+        //initialize map scales
+        this.mapScale = this.scaleLookup(map.getZoom());
+        console.log('Initial Map scale registered as ' + this.mapScale, map.getZoom());
+
+        map.on('zoomend', () => {
+            this.mapZoom = map.getZoom();
+            this.mapScale = this.scaleLookup(this.mapZoom);
+        });
+
+        map.on('mousemove', (cursorPosition) => {
+            this.touchScreen = false;
+            this.cursorLat = cursorPosition.latlng.lat.toFixed(3);
+            this.cursorLng = cursorPosition.latlng.lng.toFixed(3);
+        });
+    }
     scaleLookup(mapZoom: number) {
         switch (mapZoom) {
             case 19: return '1,128';
@@ -42,22 +59,5 @@ export class LatLngScaleComponent implements OnInit {
     }
 
     ngOnInit() {
-        //this.map = this.mapService.map;
-        // var zoomLevel = this.map.getZoom();
-        // this.mapScale = this.scaleLookup(zoomLevel);
-
-        this.mapService.map.on('zoomend', () => {
-            this.mapScale = this.scaleLookup(this.mapService.zoomLevel);
-            //this.zoomLevel = map.getZoom();
-            //this.mapService.mapScale = this.scaleLookup(this.zoomLevel);
-            console.log('Map scale registered as ' + this.mapScale, this.mapService.zoomLevel);
-        });
-
-        // this.mapService.map.on('mousemove', (cursorPosition) => {
-        //     this.touchScreen = false;
-        //     this.cursorLat = cursorPosition.latlng.lat.toFixed(3);
-        //     this.cursorLng = cursorPosition.latlng.lng.toFixed(3);
-        // });
-
     }
 }

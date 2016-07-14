@@ -1,4 +1,4 @@
-System.register(["@angular/core", './map.service'], function(exports_1, context_1) {
+System.register(["@angular/core"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,22 +10,37 @@ System.register(["@angular/core", './map.service'], function(exports_1, context_
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, map_service_1;
+    var core_1;
     var LatLngScaleComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (map_service_1_1) {
-                map_service_1 = map_service_1_1;
             }],
         execute: function() {
             LatLngScaleComponent = (function () {
                 //public mapScale: string = this.mapComponent.mapScale;
-                function LatLngScaleComponent(mapService) {
-                    this.mapService = mapService;
+                function LatLngScaleComponent() {
+                    this.cursorLat = 0;
+                    this.cursorLng = 0;
+                    this.touchScreen = true;
                 }
+                LatLngScaleComponent.prototype.setListeners = function (map) {
+                    var _this = this;
+                    console.log('in set listeners');
+                    //initialize map scales
+                    this.mapScale = this.scaleLookup(map.getZoom());
+                    console.log('Initial Map scale registered as ' + this.mapScale, map.getZoom());
+                    map.on('zoomend', function () {
+                        _this.mapZoom = map.getZoom();
+                        _this.mapScale = _this.scaleLookup(_this.mapZoom);
+                    });
+                    map.on('mousemove', function (cursorPosition) {
+                        _this.touchScreen = false;
+                        _this.cursorLat = cursorPosition.latlng.lat.toFixed(3);
+                        _this.cursorLng = cursorPosition.latlng.lng.toFixed(3);
+                    });
+                };
                 LatLngScaleComponent.prototype.scaleLookup = function (mapZoom) {
                     switch (mapZoom) {
                         case 19: return '1,128';
@@ -51,30 +66,14 @@ System.register(["@angular/core", './map.service'], function(exports_1, context_
                     }
                 };
                 LatLngScaleComponent.prototype.ngOnInit = function () {
-                    //this.map = this.mapService.map;
-                    // var zoomLevel = this.map.getZoom();
-                    // this.mapScale = this.scaleLookup(zoomLevel);
-                    var _this = this;
-                    this.mapService.map.on('zoomend', function () {
-                        _this.mapScale = _this.scaleLookup(_this.mapService.zoomLevel);
-                        //this.zoomLevel = map.getZoom();
-                        //this.mapService.mapScale = this.scaleLookup(this.zoomLevel);
-                        console.log('Map scale registered as ' + _this.mapScale, _this.mapService.zoomLevel);
-                    });
-                    // this.mapService.map.on('mousemove', (cursorPosition) => {
-                    //     this.touchScreen = false;
-                    //     this.cursorLat = cursorPosition.latlng.lat.toFixed(3);
-                    //     this.cursorLng = cursorPosition.latlng.lng.toFixed(3);
-                    // });
                 };
                 LatLngScaleComponent = __decorate([
                     core_1.Component({
                         selector: "lat-lng-scale",
                         templateUrl: "./app/map/latLngScale.component.html",
-                        styleUrls: ['./app/map/latLngScale.component.css'],
-                        providers: [map_service_1.MapService]
+                        styleUrls: ['./app/map/latLngScale.component.css']
                     }), 
-                    __metadata('design:paramtypes', [map_service_1.MapService])
+                    __metadata('design:paramtypes', [])
                 ], LatLngScaleComponent);
                 return LatLngScaleComponent;
             }());
