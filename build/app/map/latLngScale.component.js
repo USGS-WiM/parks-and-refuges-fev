@@ -1,4 +1,4 @@
-System.register(["@angular/core", './map.service'], function(exports_1, context_1) {
+System.register(['@angular/core', './map.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -22,8 +22,9 @@ System.register(["@angular/core", './map.service'], function(exports_1, context_
             }],
         execute: function() {
             LatLngScaleComponent = (function () {
-                //public mapScale: string = this.mapComponent.mapScale;
                 function LatLngScaleComponent(mapService) {
+                    console.log('in latlngscale component constructor');
+                    this.mapScale = '5';
                     this.mapService = mapService;
                 }
                 LatLngScaleComponent.prototype.scaleLookup = function (mapZoom) {
@@ -51,21 +52,15 @@ System.register(["@angular/core", './map.service'], function(exports_1, context_
                     }
                 };
                 LatLngScaleComponent.prototype.ngOnInit = function () {
-                    //this.map = this.mapService.map;
-                    // var zoomLevel = this.map.getZoom();
-                    // this.mapScale = this.scaleLookup(zoomLevel);
-                    var _this = this;
-                    this.mapService.map.on('zoomend', function () {
-                        _this.mapScale = _this.scaleLookup(_this.mapService.zoomLevel);
-                        //this.zoomLevel = map.getZoom();
-                        //this.mapService.mapScale = this.scaleLookup(this.zoomLevel);
-                        console.log('Map scale registered as ' + _this.mapScale, _this.mapService.zoomLevel);
-                    });
-                    // this.mapService.map.on('mousemove', (cursorPosition) => {
-                    //     this.touchScreen = false;
-                    //     this.cursorLat = cursorPosition.latlng.lat.toFixed(3);
-                    //     this.cursorLng = cursorPosition.latlng.lng.toFixed(3);
+                    // this.mapService.mapLoaded$.subscribe((state) => {
+                    //     console.log('map has been loaded: ', state);
                     // });
+                    // this.mapService.zoomLevel$.subscribe((level) => {
+                    //     console.log('heard from map service zoom level subscription: ', level);
+                    // });
+                };
+                LatLngScaleComponent.prototype.ngAfterViewInit = function () {
+                    //console.log('is the map loaded: ', this.mapLoaded);
                 };
                 LatLngScaleComponent = __decorate([
                     core_1.Component({
