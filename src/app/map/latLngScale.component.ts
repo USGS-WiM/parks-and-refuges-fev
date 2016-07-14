@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit} from '@angular/core';
+import {Component, OnInit} from "@angular/core";
 import {MapService} from './map.service';
 
 @Component({
@@ -8,13 +8,11 @@ import {MapService} from './map.service';
     providers: [MapService]
 })
 export class LatLngScaleComponent implements OnInit {
-    public mapService: MapService;
-    public mapZoom: number;
+    private mapService: MapService;
     public mapScale: string;
+    //public mapScale: string = this.mapComponent.mapScale;
 
     constructor(mapService: MapService) {
-        console.log('in latlngscale component constructor');
-        this.mapScale = '5';
         this.mapService = mapService;
     }
 
@@ -44,16 +42,22 @@ export class LatLngScaleComponent implements OnInit {
     }
 
     ngOnInit() {
-        // this.mapService.mapLoaded$.subscribe((state) => {
-        //     console.log('map has been loaded: ', state);
+        //this.map = this.mapService.map;
+        // var zoomLevel = this.map.getZoom();
+        // this.mapScale = this.scaleLookup(zoomLevel);
+
+        this.mapService.map.on('zoomend', () => {
+            this.mapScale = this.scaleLookup(this.mapService.zoomLevel);
+            //this.zoomLevel = map.getZoom();
+            //this.mapService.mapScale = this.scaleLookup(this.zoomLevel);
+            console.log('Map scale registered as ' + this.mapScale, this.mapService.zoomLevel);
+        });
+
+        // this.mapService.map.on('mousemove', (cursorPosition) => {
+        //     this.touchScreen = false;
+        //     this.cursorLat = cursorPosition.latlng.lat.toFixed(3);
+        //     this.cursorLng = cursorPosition.latlng.lng.toFixed(3);
         // });
 
-        // this.mapService.zoomLevel$.subscribe((level) => {
-        //     console.log('heard from map service zoom level subscription: ', level);
-        // });
-    }
-
-    ngAfterViewInit() {
-        //console.log('is the map loaded: ', this.mapLoaded);
     }
 }
