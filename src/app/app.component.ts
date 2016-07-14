@@ -14,29 +14,22 @@ import { HTTP_PROVIDERS } from '@angular/http';
     providers: [HTTP_PROVIDERS]
 })
 export class AppComponent implements OnInit {
-    appTitle: string = "Flood Event Viewer";
     // references to child components
     @ViewChild(NavbarComponent) navbarComponent:NavbarComponent;
     @ViewChild(SidebarComponent) sidebarComponent:SidebarComponent;
     @ViewChild(MapComponent) mapComponent:MapComponent;
     @ViewChild(LatLngScaleComponent) latLngScaleComponent:LatLngScaleComponent;
 
-    // once the map loads
+    //once the map loads
     onMapLoad(response) {
         console.log('appcomponent : map has been loaded');
+        //let const 'map' be our instance of the leaflet map
         const map = response;
-
-        // Start up lnglng component listeners
+        // Start up latlng component listeners the component can work with the map
         this.latLngScaleComponent.setListeners(map);
 
-        // // initialize the leged dijit with map and layer infos
-        // this.legendComponent.init(map, response.layerInfos);
-        // // set the selected basemap
-        // this.basemapSelect.selectedBasemap = response.basemapName;
-        // // bind the map title
-        // this.title = response.itemInfo.item.title;
-        // //bind the legendlayer
-        // this.LayerComponent.init(response);
+        //for later reference - this file based off this: 
+        //https://github.com/tomwayson/angular2-esri-example/blob/master/app/app.component.ts
     }
     ngOnInit() {
         console.log("Application component initialized ...");

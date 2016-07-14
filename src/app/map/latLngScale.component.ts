@@ -13,6 +13,8 @@ export class LatLngScaleComponent implements OnInit {
     public touchScreen: Boolean = true;
     //public mapScale: string = this.mapComponent.mapScale;
 
+    //TODO: get the touchsreen ng if thing going again for the 'center' label
+
     constructor() {}
 
    setListeners(map:any) {

@@ -17,7 +17,7 @@ export class MapService {
         };
     }
 
-    // load a web map and return respons
+    // load a web map and return response
     createMap(domId: any) {
         console.log('in map service createMap function');
         this.map = new L.Map(domId, {

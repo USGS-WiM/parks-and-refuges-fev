@@ -35,22 +35,16 @@ System.register(["@angular/core", './navbar/navbar.component', './sidebar/sideba
         execute: function() {
             AppComponent = (function () {
                 function AppComponent() {
-                    this.appTitle = "Flood Event Viewer";
                 }
-                // once the map loads
+                //once the map loads
                 AppComponent.prototype.onMapLoad = function (response) {
                     console.log('appcomponent : map has been loaded');
+                    //let const 'map' be our instance of the leaflet map
                     var map = response;
-                    // Start up lnglng component listeners
+                    // Start up latlng component listeners the component can work with the map
                     this.latLngScaleComponent.setListeners(map);
-                    // // initialize the leged dijit with map and layer infos
-                    // this.legendComponent.init(map, response.layerInfos);
-                    // // set the selected basemap
-                    // this.basemapSelect.selectedBasemap = response.basemapName;
-                    // // bind the map title
-                    // this.title = response.itemInfo.item.title;
-                    // //bind the legendlayer
-                    // this.LayerComponent.init(response);
+                    //for later reference - this file based off this: 
+                    //https://github.com/tomwayson/angular2-esri-example/blob/master/app/app.component.ts
                 };
                 AppComponent.prototype.ngOnInit = function () {
                     console.log("Application component initialized ...");
