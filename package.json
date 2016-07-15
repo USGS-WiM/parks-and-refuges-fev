@@ -4,14 +4,12 @@
   "author": "USGS-WiM",
   "description": "USGS Flood Event Viewer (FEV) for STN database",
   "scripts": {
-    "clean": "gulp clean",
-    "compile": "gulp compile",
-    "build": "gulp build",
-    "start": "concurrent --kill-others \"gulp watch\" \"lite-server\"",
+    "test": "tsc",
+    "webpack:w": "webpack --watch",
     "lite": "lite-server",
+    "start": "concurrently \"npm run webpack:w\" \"npm run lite\" ",
     "postinstall": "typings install",
-    "tsc": "tsc",
-    "tsc:w": "tsc -w",
+    "webpack": "webpack",
     "typings": "typings"
   },
   "repository": {
@@ -46,15 +44,17 @@
     "zone.js": "^0.6.12"
   },
   "devDependencies": {
+    "clean-webpack-plugin": "^0.1.9",
     "concurrently": "^2.0.0",
-    "del": "^2.2.0",
-    "gulp": "^3.9.1",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-tslint": "^4.3.3",
-    "gulp-typescript": "^2.12.0",
+    "copy-webpack-plugin": "^3.0.1",
+    "core-js": "^2.4.0",
+    "css-loader": "^0.23.1",
+    "file-loader": "^0.9.0",
     "lite-server": "^2.2.0",
-    "tslint": "^3.5.0",
+    "style-loader": "^0.13.1",
+    "ts-loader": "^0.8.2",
     "typescript": "^1.8.10",
-    "typings": "^1.0.4"
+    "typings": "^1.0.4",
+    "webpack": "^1.13.1"
   }
 }
