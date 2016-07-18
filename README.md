@@ -29,8 +29,6 @@ Install dependencies:
 
 Build the project:
 
-> npm start OR npm run server
+> npm start 
 
-> npm start
-
-The application should be displayed in the browser.
+*For now: open a browser and go to http://localhost:3000.  The application should be displayed in the browser.
