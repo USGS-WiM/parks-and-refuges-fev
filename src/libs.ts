@@ -1,0 +1,23 @@
+//load css
+import '../node_modules/bootstrap/dist/css/bootstrap.css';
+import '../node_modules/leaflet/dist/leaflet.css';
+import '../node_modules/wim-styles/core/css/wim.css';
+import '../src/app/app.component.css';
+
+//load deps
+//import '../node_modules/reflect-metadata/Reflect.js';
+//import '../node_modules/bootstrap/dist/js/bootstrap.js';
+//import '../node_modules/leaflet/dist/leaflet-src.js';
+import 'jquery';
+import "bootstrap";
+import "leaflet";
+import "core-js";
+import "rxjs";
+import '@angular/core';
+import "@angular/compiler";
+import "@angular/http";
+import "@angular/platform-browser";
+import "@angular/platform-browser-dynamic";
+import "@angular/router";
+import "@angular/router-deprecated";
+import "@angular/upgrade";

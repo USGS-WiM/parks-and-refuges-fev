@@ -29,9 +29,7 @@ Install dependencies:
 
 Build the project:
 
-> npm run clean & npm run build
-
-`build` directory should be created during the build
+> npm start OR npm run server
 
 > npm start
 
