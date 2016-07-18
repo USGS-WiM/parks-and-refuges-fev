@@ -4,13 +4,12 @@
   "author": "USGS-WiM",
   "description": "USGS Flood Event Viewer (FEV) for STN database",
   "scripts": {
-    "test": "tsc",
-    "webpack:w": "webpack --watch",
-    "lite": "lite-server",
-    "start": "concurrently \"npm run webpack:w\" \"npm run lite\" ",
-    "postinstall": "typings install",
-    "webpack": "webpack",
-    "typings": "typings"
+    "typings-install": "typings install",
+    "postinstall": "npm run typings-install",
+    "build": "webpack --inline --colors --progress --display-error-details --display-cached",
+    "watch": "npm run build -- --watch",
+    "server": "webpack-dev-server --inline --colors --progress --display-error-details --display-cached --port 3000  --content-base src",
+    "start": "npm run server"
   },
   "repository": {
     "type": "git",
@@ -39,22 +38,23 @@
     "ng2-bs3-modal": "^0.6.1",
     "reflect-metadata": "^0.1.3",
     "rxjs": "5.0.0-beta.6",
-    "systemjs": "0.19.27",
     "wim-styles": "git://github.com/USGS-WiM/wim-styles.git",
     "zone.js": "^0.6.12"
   },
   "devDependencies": {
+    "angular2-template-loader": "^0.4.0",
+    "awesome-typescript-loader": "^1.1.1",
     "clean-webpack-plugin": "^0.1.9",
-    "concurrently": "^2.0.0",
     "copy-webpack-plugin": "^3.0.1",
-    "core-js": "^2.4.0",
     "css-loader": "^0.23.1",
     "file-loader": "^0.9.0",
-    "lite-server": "^2.2.0",
+    "raw-loader": "^0.5.1",
     "style-loader": "^0.13.1",
-    "ts-loader": "^0.8.2",
-    "typescript": "^1.8.10",
-    "typings": "^1.0.4",
-    "webpack": "^1.13.1"
+    "to-string-loader": "^1.1.4",
+    "typescript": "~1.8.9",
+    "typings": "~1.0.3",
+    "webpack": "^1.12.9",
+    "webpack-dev-server": "^1.14.0",
+    "webpack-merge": "^0.8.4"
   }
 }
