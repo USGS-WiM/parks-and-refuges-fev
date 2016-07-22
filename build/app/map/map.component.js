@@ -40,6 +40,10 @@ System.register(['@angular/core', './map.service', './geocode.service', './geose
                     this.map = this.mapService.createMap(this.elRef.nativeElement.firstChild);
                     this.mapLoaded.next(this.map);
                 };
+                MapComponent.prototype.fitBounds = function (bounds) {
+                    this.map.fitBounds(bounds.value);
+                    console.log("made it to navbar component with bounds: " + bounds.value);
+                };
                 __decorate([
                     core_1.Output(), 
                     __metadata('design:type', Object)

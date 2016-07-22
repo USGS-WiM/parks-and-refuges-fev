@@ -26,14 +26,15 @@ System.register(['@angular/core', './geocode.service', './map.service'], functio
         execute: function() {
             GeosearchComponent = (function () {
                 function GeosearchComponent(geocoder, mapService) {
+                    this.locationFound = new core_1.EventEmitter();
                     this.address = '';
                     this.geocoder = geocoder;
                     this.mapService = mapService;
                 }
                 GeosearchComponent.prototype.ngOnInit = function () {
-                    // this.mapService.disableMouseEvent('goto');
-                    // this.mapService.disableMouseEvent('place-input');
-                    this.map = this.mapService.map;
+                    this.mapService.disableMouseEvent('goto');
+                    this.mapService.disableMouseEvent('place-input');
+                    //this.map = this.mapService.map;
                 };
                 GeosearchComponent.prototype.goto = function () {
                     var _this = this;
@@ -42,10 +43,18 @@ System.register(['@angular/core', './geocode.service', './map.service'], functio
                     }
                     this.geocoder.geocode(this.address)
                         .subscribe(function (location) {
-                        _this.map.fitBounds(location.viewBounds);
+                        //map.fitBounds(location.viewBounds);
+                        //emit event to say location is found, then send the location info out and allow map to do the zooming
                         _this.address = location.address;
+                        _this.locationFound.emit({
+                            value: location.viewBounds
+                        });
                     }, function (error) { return console.error(error); });
                 };
+                __decorate([
+                    core_1.Output(), 
+                    __metadata('design:type', Object)
+                ], GeosearchComponent.prototype, "locationFound", void 0);
                 GeosearchComponent = __decorate([
                     core_1.Component({
                         selector: 'geosearch',
