@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, Output, EventEmitter} from '@angular/core';
 import {GeocodingService} from './geocode.service';
 import {MapService} from './map.service';
 import {Location} from './location.class';
@@ -16,6 +16,7 @@ export class GeosearchComponent {
     private geocoder: GeocodingService;
     private map: Map;
     private mapService: MapService;
+    @Output() locationFound = new EventEmitter();
 
     constructor(geocoder: GeocodingService, mapService: MapService) {
         this.address = '';
@@ -24,9 +25,9 @@ export class GeosearchComponent {
     }
 
     ngOnInit() {
-        // this.mapService.disableMouseEvent('goto');
-        // this.mapService.disableMouseEvent('place-input');
-        this.map = this.mapService.map;
+        this.mapService.disableMouseEvent('goto');
+        this.mapService.disableMouseEvent('place-input');
+        //this.map = this.mapService.map;
     }
 
     goto() {
@@ -34,8 +35,12 @@ export class GeosearchComponent {
 
         this.geocoder.geocode(this.address)
         .subscribe(location => {
-            this.map.fitBounds(location.viewBounds);
+            //map.fitBounds(location.viewBounds);
+            //emit event to say location is found, then send the location info out and allow map to do the zooming
             this.address = location.address;
+            this.locationFound.emit({
+                value: location.viewBounds
+            });
         }, error => console.error(error));
     }
 }

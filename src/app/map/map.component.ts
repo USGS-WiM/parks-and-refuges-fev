@@ -28,4 +28,8 @@ export class MapComponent {
        this.map = this.mapService.createMap(this.elRef.nativeElement.firstChild);
        this.mapLoaded.next(this.map);
     }
+    fitBounds(bounds) {
+        this.map.fitBounds(bounds.value);
+        console.log("made it to navbar component with bounds: " + bounds.value);
+    }
 }

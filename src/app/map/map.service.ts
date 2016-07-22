@@ -28,7 +28,7 @@ export class MapService {
           maxZoom: 19,
           layers: [this.baseMaps.OpenStreetMap]
         });
-        L.control.zoom({ position: 'topright' }).addTo(this.map);
+        L.control.zoom({ position: 'topleft' }).addTo(this.map);
         L.control.layers(this.baseMaps).addTo(this.map);
         return this.map;
     };
