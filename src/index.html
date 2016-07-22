@@ -2,41 +2,11 @@
 <head>
     <title>USGS Flood Event Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- bootstrap css-->
-    <link href="lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
-    <!-- leaflet css -->
-    <link rel="stylesheet" href="lib/leaflet/dist/leaflet.css">
-    <!-- wim styles css -->
-    <link rel="stylesheet" href="lib/wim-styles/core/css/wim.css">
-    <!-- local app css -->
-    <link  rel="stylesheet" href="app/app.component.css"/>
-
-    <!-- JS libraries -->
-    <!-- Polyfill(s) for older browsers -->
-    <script src="lib/es6-shim/es6-shim.min.js"></script>
-    <script src="lib/zone.js/dist/zone.js"></script>
-    <script src="lib/reflect-metadata/Reflect.js"></script>
-    <script src="lib/systemjs/dist/system.src.js"></script>
-    <!-- jQuery js -->
-    <script src="lib/jquery/dist/jquery.js"></script>
-    <!-- bootstrap js -->
-    <script src="lib/bootstrap/dist/js/bootstrap.js"></script>
-    <!-- leaflet js -->
-    <script src="lib/leaflet/dist/leaflet-src.js"></script>
-   
-    <!-- Configure SystemJS -->
-    <script src="systemjs.config.js"></script>
-    <script>
-        System.import('app')
-                .then(null, console.error.bind(console));
-    </script>
-
+    <script src="/polyfills.bundle.js"></script>
+    <script src="/vendor.bundle.js"></script>
+    <script src="/main.bundle.js"></script>
 </head>
-
-<!-- Display the application -->
 <body>
 <fev-app>Loading...</fev-app>
 </body>
-
 </html>
