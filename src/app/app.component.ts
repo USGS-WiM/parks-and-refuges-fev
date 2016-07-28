@@ -27,6 +27,7 @@ export class AppComponent implements OnInit {
         const map = response;
         // Start up latlng component listeners the component can work with the map
         this.latLngScaleComponent.setListeners(map);
+        this.navbarComponent.setListeners(map);
 
         //for later reference - this file based off this: 
         //https://github.com/tomwayson/angular2-esri-example/blob/master/app/app.component.ts

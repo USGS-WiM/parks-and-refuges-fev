@@ -3,6 +3,8 @@ import {MapService} from './map.service';
 import {GeocodingService} from './geocode.service';
 import {GeosearchComponent} from './geosearch.component';
 
+import {Subscription} from 'rxjs/Subscription';
+
 @Component({
     selector: 'fev-map',
     templateUrl: './app/map/map.component.html',
@@ -18,6 +20,9 @@ export class MapComponent {
     map: any;
     options: Object;
 
+    bounds: any;
+    subscription: Subscription;
+
     constructor(private elRef:ElementRef, mapService: MapService,  geocoder: GeocodingService) {
         this.mapService = mapService;
         this.geocoder = geocoder;
@@ -27,9 +32,15 @@ export class MapComponent {
         // create the map
        this.map = this.mapService.createMap(this.elRef.nativeElement.firstChild);
        this.mapLoaded.next(this.map);
+
+       this.subscription = this.mapService.geosearchBounds$.subscribe(
+          //do the fitbounds operation here 
+          newBounds => this.map.fitBounds(newBounds)
+       );
     }
-    fitBounds(bounds) {
-        this.map.fitBounds(bounds.value);
-        console.log("made it to navbar component with bounds: " + bounds.value);
-    }
+
+    // fitBounds(bounds) {
+    //     this.map.fitBounds(bounds.value);
+    //     console.log("made it to map component with bounds: " + bounds.value);
+    // }
 }

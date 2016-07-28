@@ -252,6 +252,37 @@ body {
   border-top: 1px solid #191924;
 }
 
+#main-menu .menu-search {
+  position: relative;
+  padding: 10px;
+}
+
+#main-menu .menu-search input {
+  border: 1px solid #babfc4;
+  font-size: 14px;
+  color: #a4a4b0;
+  padding: 8px 10px 8px 30px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+#main-menu .menu-search:before {
+  content: "";
+  background: url("../images/search-doc.png") no-repeat 50% 50%;
+  background-size: contain;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 19px;
+  left: 17px;
+}
+
+#main-menu .menu-search input:focus,
+#main-menu .menu-search input:active {
+  outline: 0;
+}
+
 #main-menu .main-menu-container {
   overflow-y: auto;
   height: calc(100% - 56px);
@@ -259,6 +290,21 @@ body {
 
 #main-menu .section .item h4 {
   position: relative;
+}
+
+#main-menu .section .item h4 .arrow {
+  display: block;
+  width: 11px;
+  height: 12px;
+  background: url("../images/repa-down.png") no-repeat bottom left;
+  background-size: contain !important;
+  position: absolute;
+  top: calc(50% - 6px);
+  right: 0;
+}
+
+#main-menu .section .item.active h4 .arrow {
+  background: url("../images/repa-up.png") no-repeat top left;
 }
 
 #main-menu .menu-content {
@@ -321,6 +367,13 @@ body {
 
 #main-menu .section ul {
   display: none;
+}
+
+#main-menu .section .item.active ul {
+  display: block;
+  margin: 5px 0 -5px;
+  padding: 0 0 0 5px;
+  background: url("../images/border-dot.png") repeat-y 5px 0;
 }
 
 #main-menu .section .item li {
@@ -431,6 +484,75 @@ body {
 #content .list-container ol {
   list-style: decimal;
   margin-left: 18px;
+}
+
+#content .accordion {
+  position: relative;
+}
+
+#content .accordion:not(:first-child) {
+  height: 90vh;
+  border-top: 1px dashed #babfc4;
+  padding: 30px 35px 0;
+  margin-top: 30px;
+}
+
+#content .accordion:first-child {
+  padding: 0 35px;
+  margin-top: 30px;
+}
+
+#content .accordion .accordion-header {
+  color: #55555c;
+  cursor: pointer;
+}
+
+#content .accordion .accordion-header h4 {
+  font-family: 'Source Code Pro';
+  font-size: 16px;
+}
+
+#content .accordion .accordion-body {
+  display: none;
+  margin-top: 10px;
+}
+
+#content .accordion.active .accordion-body {
+  display: block;
+}
+
+#content .accordion.notEmpty:before {
+  content: '';
+  background-image: url('../images/anactive.svg');
+  background-size: 8px 13px;
+  width: 8px;
+  height: 13px;
+  position: absolute;
+  top: 32px;
+  left: 15px;
+}
+
+#content .accordion.notEmpty:first-child:before {
+  top: 2px;
+}
+
+#content .accordion.active:before {
+  content: '';
+  background-image: url('../images/active.svg');
+  background-size: 12px 9px;
+  width: 12px;
+  height: 9px;
+  top: 36px;
+}
+
+#content .accordion.active:after {
+  content: '';
+  width: 1px;
+  height: calc(100% - 55px);
+  position: absolute;
+  bottom: 0;
+  left: 20.5px;
+  background-color: #20202f;
 }
 
 #content .item > h4 {
