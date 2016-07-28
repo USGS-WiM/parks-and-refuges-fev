@@ -29,7 +29,7 @@ export class MapService {
         this.map = new L.Map(domId, {
           zoomControl: false,
           center: new L.LatLng(40.731253, -73.996139),
-          zoom: 12,
+          zoom: this.getURLParameter('zoomLevel') || 12,
           minZoom: 4,
           maxZoom: 19,
           layers: [this.baseMaps.OpenStreetMap]
@@ -38,6 +38,10 @@ export class MapService {
         L.control.layers(this.baseMaps).addTo(this.map);
         return this.map;
     };
+
+    getURLParameter(name) {
+        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+    }
 
     // service command
     changeBounds(newBounds: any) {
