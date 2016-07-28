@@ -1,10 +1,16 @@
 import {Injectable} from '@angular/core';
 import {Map, TileLayer} from 'leaflet';
 
+import {ReplaySubject} from 'rxjs/ReplaySubject';
+
 @Injectable()
 export class MapService {
     public map: Map;
     public baseMaps: any;
+
+    //Observable bounds source
+    private _geosearchBoundsSource = new ReplaySubject<any>();
+    geosearchBounds$ = this._geosearchBoundsSource.asObservable();
 
     constructor() {
         this.baseMaps = {
@@ -28,10 +34,15 @@ export class MapService {
           maxZoom: 19,
           layers: [this.baseMaps.OpenStreetMap]
         });
-        L.control.zoom({ position: 'topleft' }).addTo(this.map);
+        L.control.zoom({ position: 'topright' }).addTo(this.map);
         L.control.layers(this.baseMaps).addTo(this.map);
         return this.map;
     };
+
+    // service command
+    changeBounds(newBounds: any) {
+        this._geosearchBoundsSource.next(newBounds);
+    }
 
     disableMouseEvent(tag: string) {
         var html = L.DomUtil.get(tag);

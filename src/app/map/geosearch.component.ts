@@ -27,7 +27,6 @@ export class GeosearchComponent {
     ngOnInit() {
         this.mapService.disableMouseEvent('goto');
         this.mapService.disableMouseEvent('place-input');
-        //this.map = this.mapService.map;
     }
 
     goto() {
@@ -35,12 +34,9 @@ export class GeosearchComponent {
 
         this.geocoder.geocode(this.address)
         .subscribe(location => {
-            //map.fitBounds(location.viewBounds);
-            //emit event to say location is found, then send the location info out and allow map to do the zooming
             this.address = location.address;
-            this.locationFound.emit({
-                value: location.viewBounds
-            });
+            var newBounds = location.viewBounds;
+            this.mapService.changeBounds(newBounds);
         }, error => console.error(error));
     }
 }

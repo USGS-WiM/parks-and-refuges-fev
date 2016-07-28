@@ -18,7 +18,7 @@ export class LatLngScaleComponent implements OnInit {
     constructor() {}
 
    setListeners(map:any) {
-        console.log('in set listeners');
+        console.log('in latlngscalecompoenent set listeners');
 
         //initialize map scales
         this.mapScale = this.scaleLookup(map.getZoom());
