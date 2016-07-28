@@ -2,7 +2,6 @@ import {Component, ElementRef, OnInit, Output, EventEmitter} from '@angular/core
 import {MapService} from './map.service';
 import {GeocodingService} from './geocode.service';
 import {GeosearchComponent} from './geosearch.component';
-
 import {Subscription} from 'rxjs/Subscription';
 
 @Component({
@@ -38,9 +37,4 @@ export class MapComponent {
           newBounds => this.map.fitBounds(newBounds)
        );
     }
-
-    // fitBounds(bounds) {
-    //     this.map.fitBounds(bounds.value);
-    //     console.log("made it to map component with bounds: " + bounds.value);
-    // }
 }

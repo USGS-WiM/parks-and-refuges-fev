@@ -1,11 +1,9 @@
 import {Component, ViewChild, OnInit} from "@angular/core";
-
 import {NavbarComponent} from './navbar/navbar.component';
 import {SidebarComponent} from './sidebar/sidebar.component';
 import {MapComponent} from './map/map.component';
 import {LatLngScaleComponent} from './map/latLngScale.component';
 import { HTTP_PROVIDERS } from '@angular/http';
-
 
 @Component({
     selector: "fev-app",
@@ -32,6 +30,7 @@ export class AppComponent implements OnInit {
         //for later reference - this file based off this: 
         //https://github.com/tomwayson/angular2-esri-example/blob/master/app/app.component.ts
     }
+
     ngOnInit() {
         console.log("Application component initialized ...");
     }
