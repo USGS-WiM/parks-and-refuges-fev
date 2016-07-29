@@ -6,7 +6,7 @@ $( document ).ready(function() {
 	'use strict';
 	/* create map */
 	var map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
-	var layer = L.esri.basemapLayer('NationalGeographic').addTo(map);
+	var layer = L.esri.basemapLayer('Gray').addTo(map);
 	var layerLabels;
 
 	$('#mapDiv').height($('body').height());
@@ -315,13 +315,13 @@ $( document ).ready(function() {
 	  	switch (baseMap) {
 		    case 'Streets': baseMap = 'Streets'; break;
 		    case 'Satellite': baseMap = 'Imagery'; break;
-		    case 'Hybrid': baseMap = 'n/a'; break;
-		    case 'Topo': baseMap = 'n/a'; break;
+		    //case 'Hybrid': baseMap = 'ImageryLabels'; break;
+		    case 'Topo': baseMap = 'Topographic'; break;
 		    case 'Terrain': baseMap = 'ShadedRelief'; break;
 		    case 'Gray': baseMap = 'Gray'; break;
-		    case 'OSM': baseMap = 'n/a'; break;
+		    // case 'OSM': baseMap = 'n/a'; break;
 		    case 'NatGeo': baseMap = 'NationalGeographic'; break;
-		    case 'NatlMap': baseMap = 'n/a'; break;
+		    // case 'NatlMap': baseMap = 'n/a'; break;
 		}
 
 		setBasemap(baseMap);

@@ -346,3 +346,7 @@ input[type="checkbox"], input[type="radio"] {
 .zoomClose {
     color: white;
 }
+
+.filterItems{
+    float:left;
+}
