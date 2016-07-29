@@ -1,38 +1,8 @@
 # FEV
-v2 of the Flood Event Viewer (FEV), built in AngularJS
+Version 2 of the Flood Event Viewer (FEV)
 
-Prerequisites
--------------
+run `npm install` to get dependencies after first cloning
 
-- nodejs
-- gulp and gulp-cli
-- typings
-- typescrit
-- ts-node
+`gulp watch` to run in browser with watch for debugging
 
-Running
--------
-
-Clone the repository:
-
-> git clone https://github.com/USGS-WiM/FEV.git
-
-Navigate to `FEV` directory:
-
-> cd fev
-
-Install dependencies:
-
-> npm install
-
-`node_modules` and `typings` directories should be created during the install.
-
-Build the project:
-
-> npm run clean & npm run build
-
-`build` directory should be created during the build
-
-> npm start
-
-The application should be displayed in the browser.
+`gulp build` to build project
