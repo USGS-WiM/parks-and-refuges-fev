@@ -1,42 +1,268 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <title>USGS Flood Event Viewer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Flood Event Viewer</title>
 
-    <!-- bootstrap css-->
-    <link href="lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
-    <!-- leaflet css -->
-    <link rel="stylesheet" href="lib/leaflet/dist/leaflet.css">
-    <!-- wim styles css -->
-    <link rel="stylesheet" href="lib/wim-styles/core/css/wim.css">
-    <!-- local app css -->
-    <link  rel="stylesheet" href="app/app.component.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- JS libraries -->
-    <!-- Polyfill(s) for older browsers -->
-    <script src="lib/es6-shim/es6-shim.min.js"></script>
-    <script src="lib/zone.js/dist/zone.js"></script>
-    <script src="lib/reflect-metadata/Reflect.js"></script>
-    <script src="lib/systemjs/dist/system.src.js"></script>
-    <!-- jQuery js -->
-    <script src="lib/jquery/dist/jquery.js"></script>
-    <!-- bootstrap js -->
-    <script src="lib/bootstrap/dist/js/bootstrap.js"></script>
-    <!-- leaflet js -->
-    <script src="lib/leaflet/dist/leaflet-src.js"></script>
-   
-    <!-- Configure SystemJS -->
-    <script src="systemjs.config.js"></script>
-    <script>
-        System.import('app')
-                .then(null, console.error.bind(console));
-    </script>
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.min.css">
+
+    
+    <link rel="stylesheet" href="bower_components/bootstrap-sidebar/dist/css/sidebar.css">
+    
+    <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css">
+    <link rel="stylesheet" href="bower_components/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css">
+    
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- CSS for the mapping components -->
+    
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+    <link rel="stylesheet" href="styles/base.css">
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- build:js scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery.nicescroll/dist/jquery.nicescroll.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/bootstrap-sidebar/dist/js/sidebar.js"></script>
+
+    
+
+    <script src="bower_components/leaflet/dist/leaflet.js"></script>
+    <script src="bower_components/esri-leaflet/dist/esri-leaflet.js"></script>
+    <script src="bower_components/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.js"></script>
+    
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    
+
+    <!-- build:js scripts/combined.js -->
+    <script src="scripts/utilities.js"></script>
+    <script src="scripts/layers.js"></script>
+    <script src="scripts/core.js"></script>
+    <!-- endbuild -->
 
 </head>
-
-<!-- Display the application -->
 <body>
-<fev-app>Loading...</fev-app>
-</body>
 
+<div id="navbar" class="navbar navbar-static navbar-default navbar-fixed-top navbar-dark">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle toggle-left hidden-md hidden-lg" data-toggle="sidebar" data-target=".sidebar-left">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://usgs.gov">
+                <img alt="USGS logo" height="38px" src="images/USGS_ID_white.png">
+                <span class='hidden-xs' style='font-size:20px;display:inline-block;'>&nbsp;&nbsp;Flood Event Viewer</span>
+            </a>
+        </div>
+
+        <button id="geosearchNav" type="button" class="btn btn-primary navbar-btn pull-right">
+            <span class="glyphicon glyphicon-search"></span>
+            <span id="geosearchButtonText"> Geosearch</span>
+        </button>
+
+        <button id="aboutNav" class="btn btn-default navbar-btn pull-right">
+            <i class="fa fa-question-circle"></i><span class="hidden-xs">&nbsp;&nbsp;About</span>
+        </button>
+
+        <!-- legend buttton for navbar. to be removed if we like the in-map legend toggle -->
+        <!--<button id="legendButtonNavBar" type="button" class="btn btn-primary navbar-btn pull-right" style="margin-right: 1em;"><span class="glyphicon glyphicon-list"></span> Legend</button>-->
+        <!-- toggle for a right sidebar (currently not in use) -->
+        <!--<button type="button" class="navbar-toggle toggle-right" data-toggle="sidebar" data-target=".sidebar-right">-->
+        <!--<span class="icon-bar"></span>-->
+        <!--<span class="icon-bar"></span>-->
+        <!--<span class="icon-bar"></span>-->
+        <!--</button>-->
+    </div>
+</div>
+
+
+<div class="modal fade overflow-y-hidden" id="geosearchModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <h4 class="modal-title">Geosearch</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div id="geosearch"><div id="sapi_searchTextBoxDiv"></div></div>
+                </div>
+                <form id="geosearch-form" class="form-inline">
+                    <div class="checkbox">
+                        <label>
+                            <input id="chkExtent" type="checkbox"> Search in Map Only
+                        </label>
+                    </div>
+                    <button id="btnGeosearch" type="button" class="btn btn-success btn-fixed" data-dismiss="modal"> Go </button>
+                    <button id="btnDismiss" type="submit" class="btn btn-default btn-fixed" data-dismiss="modal">Dismiss</button>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div id="aboutModal" class="modal fade"  tabindex="-1" role="dialog" >
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;">&times;</button>
+                <h4 class="modal-title">Flood Event Viewer</h4>
+            </div>
+            <div id="aboutModalBody" class="modal-body">
+                <ul class="nav nav-tabs" id="aboutModalTabs">
+                    <li role="presentation"><a id="aboutTab" href="#aboutTabPane" data-toggle="tab"><i class="fa fa-question-circle"></i>&nbsp;About the application</a></li>
+                    <li role="presentation" class="active"><a id="disclaimerTab" href="#disclaimerTabPane" data-toggle="tab"><i class="fa fa-exclamation-circle"></i>&nbsp;Disclaimer</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane" id="aboutTabPane"></br>
+                        <p style="color:black; font-size: larger">App Info is below. This could be a subtitle space.</p>
+                        <p>Application info goes here. Use HTML, and your imagination.</p>
+                    </div>
+                    <div role="tabpanel" class="tab-pane active" id="disclaimerTabPane"></br>
+                        <h3>Data Limitations</h3>
+                        <p>Data are provisional and are subject to revision until thoroughly reviewed and approved.</p>
+                        <p>Data disclaimer continues here</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <p style="color:black; margin-left:35px;text-align:left">
+                    For more information about the Flood Event Viewer please contact <a href="http://wim.usgs.gov/" target="_blank"><img src="images/wimvectorxs.png" id="wim_logo"></a>
+                </p>
+                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Begin page content -->
+<div class="container-fluid keepit100">
+    <div class="row keepit100">
+        <!--<div id="sidebar" class="col-xs-7 col-sm-3 col-md-3 sidebar sidebar-left sidebar-animate sidebar-md-show no-col-padding">-->
+        <div id="sidebar" class="col-xs-11 col-sm-10 col-md-3 col-lg-2 sidebar sidebar-left sidebar-animate sidebar-md-show no-col-padding">
+            <div class="panel panel-default wim-sidebar-panel">
+                <div class="panel-heading" id="basemapsHeader">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse"  href="#basemapsPanel" aria-expanded="false" aria-controls="basemapsPanel">
+                            Basemaps
+                        </a>
+                    </h4>
+                </div>
+                <div id="basemapsPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="basemapsHeader">
+                    <div class="panel-body collapse in">
+                        <button id="btnStreets" class="btn btn-default basemapBtn equalize"><img class="basemapThumb" alt="" src="images/streets.jpg"><br class="basemapThumb">Streets</button>
+                        <button id="btnSatellite" class="btn btn-default basemapBtn equalize" ><img class="basemapThumb" alt="" src="images/satellite.jpg"><br class="basemapThumb">Satellite</button>
+                        <button id="btnHybrid" class="btn btn-default basemapBtn equalize"><img class="basemapThumb" alt="" src="images/imagery_labels.jpg"><br class="basemapThumb">Hybrid</button>
+                        <button id="btnTopo" class="btn btn-default basemapBtn equalize"><img class="basemapThumb" alt="" src="images/topo.jpg"><br class="basemapThumb">Topo</button>
+                        <button id="btnTerrain" class="btn btn-default basemapBtn equalize"><img class="basemapThumb" alt="" src="images/terrain.jpg"><br class="basemapThumb">Terrain</button>
+                        <button id="btnGray" class="btn btn-default basemapBtn equalize" ><img class="basemapThumb" alt="" src="images/gray.jpg"><br class="basemapThumb">Gray</button>
+                        <button id="btnOSM" class="btn btn-default basemapBtn equalize"><img class="basemapThumb" alt="" src="images/osm.jpg"><br class="basemapThumb">OSM</button>
+                        <button id="btnNatGeo" class="btn btn-default basemapBtn equalize"><img class="basemapThumb" alt="" src="images/natgeo.jpg"><br class="basemapThumb">NatGeo</button>
+                        <button id="btnNatlMap" class="btn btn-default basemapBtn equalize"><img class="basemapThumb" alt="" src="images/national_map.jpg"><br class="basemapThumb">Nat'l Map</button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="panel panel-default wim-sidebar-panel">
+                <div class="panel-heading" id="layersPanelHeader">
+                    <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" href="#layersPanel" aria-expanded="true" aria-controls="layersPanel">
+                            Map Layers
+                        </a>
+                    </h4>
+                </div>
+                <div id="layersPanel" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="layersPanelHeader">
+                    <div id="toggle" style="padding: 2px 2px;"></div>
+                </div>
+            </div>
+            <div class="panel panel-default wim-sidebar-panel">
+                <div class="panel-heading" id="filtersHeader">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse"  href="#filtersPanel" aria-expanded="false" aria-controls="filtersPanel">
+                            Filters
+                        </a>
+                    </h4>
+                </div>
+                <div id="filtersPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="filtersHeader">
+                    <div class="panel-body collapse in">
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default wim-sidebar-panel">
+                <div class="panel-heading" id="downloadHeader">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse"  href="#downloadPanel" aria-expanded="false" aria-controls="downloadPanel">
+                            Download Data
+                        </a>
+                    </h4>
+                </div>
+                <div id="downloadPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="downloadHeader">
+                    <div class="panel-body collapse in">
+                    </div>
+                </div>
+            </div>
+
+            <!-- # closing div tag for accordion style panels -->
+            <!--</div>-->
+            <div class="identification pull-right">powered by  <a href="http://wim.usgs.gov/" target="_blank">WiM</a></div>
+        </div>
+        <div id="mapContainer" class="col-md-9 col-lg-10 col-md-offset-3 col-lg-offset-2 no-col-padding keepit100">
+            <!-- legend, associated with legend buttons. to be removed if we stick with the in-map legend toggle -->
+            <!--<div id="legend" class="legend" style="display: none" >-->
+            <!--<button id="legendClose" type="button" class="close" data-dismiss="legend" aria-label="Close" aria-hidden="true">x</button>-->
+            <!--<h4><b>Explanation</b></h4>-->
+            <!--<div id="legendDiv"></div>-->
+            <!--</div>-->
+
+            <div id="mapDiv">
+                <div id="legendElement" class="panel panel-default legendClass">
+                    <div id="legendHeading" class=" legendHeading" role="tab">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" style="text-decoration: none"  href="#legendCollapse" aria-expanded="true" aria-controls="collapseOne">
+                                <span class="glyphicon glyphicon-list"></span>
+                                Legend
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="legendCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                        <div id="legendDiv" class="panel-body"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="homeButton"></div>
+            <div id="locateButton"></div>
+
+            <div id="latLngScale" class="latLngScale">
+                <span class="hover-content"> <b>Map scale </b></span>
+                1:<span id="scale"></span> <br>
+                <span class="hover-content"><b>Latitude</b></span>
+                <span id="latitude">y</span> |
+                <span class="hover-content"> <b>Longitude</b></span>
+                <span id="longitude">x</span>
+                <span id="mapCenterLabel"  class="hover-content"> (center)</span>
+            </div>
+
+        </div>
+        <div class="col-xs-7 col-sm-3 col-md-3 sidebar sidebar-right sidebar-animate"></div>
+    </div>
+</div>
+</body>
 </html>
