@@ -2,17 +2,15 @@
   "name": "flood-event-viewer",
   "version": "0.0.1",
   "dependencies": {
-  	 "jquery": "^2.1.3",
-     "fontawesome": "^4.3.0",
-     "jquery.nicescroll": "inuyaksa/jquery.nicescroll#~3.6.0",
-  	 "bootstrap": "latest",
-	  "wim-mapper-styles": "https://github.com/USGS-WiM/WiM-Mapper-Styles.git",
-	   "bootstrap-sidebar" : "^0.2.0"
-  	 ,
-    	 "leaflet": "^0.7.3",
-  	   "esri-leaflet": "^1.0.0-rc.6",
-       "leaflet-groupedlayercontrol":"latest"
-  	 
-	   
+    "jquery": "^2.1.3",
+    "fontawesome": "^4.3.0",
+    "jquery.nicescroll": "inuyaksa/jquery.nicescroll#~3.6.0",
+    "bootstrap": "latest",
+    "wim-mapper-styles": "https://github.com/USGS-WiM/WiM-Mapper-Styles.git",
+    "bootstrap-sidebar": "^0.2.0",
+    "leaflet": "^0.7.3",
+    "esri-leaflet": "^1.0.0-rc.6",
+    "leaflet-groupedlayercontrol": "latest",
+    "select2": "^4.0.3"
   }
 }

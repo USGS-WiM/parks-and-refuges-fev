@@ -13,6 +13,30 @@ $( document ).ready(function() {
 	map.invalidateSize();
 	/* create map */
 
+	/* sets up data type radio buttons to hide/show the respective forms*/
+	$('.dataTypeRadio').each(function(){
+		//for the clicked radio
+		$(this).on('click', function() {
+			var radioId = $(this).attr('id');
+			var formToShow = $('#' + radioId + 'Form');
+			formToShow.show();
+			$('.hiddenForm').not(formToShow).hide();
+		});
+	});
+	$('.check').on('click', function(){
+		$(this).find('span').toggle();
+	});
+	// $('#peakDatePicker').datepicker({
+	// 	format: 'mm/dd/yyyy',
+	// 	autoclose: true,
+	// 	endDate: "today",
+	// 	startView: 1,
+	// 	startView: 1,
+	// 	todayBtn: true,
+	// 	multidate: false,
+	// 	clearBtn: true
+	// });
+
 	function showGeosearchModal() {
 		$('#geosearchModal').modal('show');
 	}
@@ -25,6 +49,53 @@ $( document ).ready(function() {
 	$('#aboutNav').click(function(){
 		showAboutModal();
 	});
+
+	function showFiltersModal () {
+		$('#filtersModal').modal('show');
+	}
+	$('#btnFilters').click(function(){
+		showFiltersModal();
+	});
+
+	/*begin instantiation of select forms as select2 types*/
+
+	$('#evtTypeSelect').select2({
+		placeholder: "All Types"
+	});
+	$('#evtSelect').select2({
+		placeholder: "All Events"
+	});
+
+	$('#stateSelect').select2({
+		placeholder: "All Events"
+	});
+	$('#countySelect').select2({
+		placeholder: "All Events"
+	});
+
+	$('#sensorTypeSelect').select2({
+		placeholder: "All Types"
+	});
+	$('#sensorStatusSelect').select2({
+		placeholder: "All Statuses"
+	});
+	$('#collectionConditionSelect').select2({
+		placeholder: "All Condtions"
+	});
+	$('#deployTypeSelect').select2({
+		placeholder: "All Deploy Types"
+	});
+
+
+	$('#hwmTypeSelect').select2({
+		placeholder: "All Types"
+	});
+	$('#hwmQualitySelect').select2({
+		placeholder: "All Qualities"
+	});
+
+
+	/*end instantiation of select forms as select2 types*/
 
 	//getLocation();
 

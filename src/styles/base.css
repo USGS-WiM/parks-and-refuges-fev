@@ -597,7 +597,7 @@ input[type=range]:focus::-ms-fill-upper {
   font-size: 9pt;
   letter-spacing: 1px;
   left: 15px;
-  /*bottom: 15px;*/
+  bottom: 15px;
 }
 .esriAttribution {
   background-color: rgba(255, 255, 255, 0.7);
@@ -615,7 +615,7 @@ input[type=range]:focus::-ms-fill-upper {
   box-shadow: 0 3px 6px rgba(30, 39, 50, 0.2), 0 3px 6px rgba(30, 39, 50, 0.2);
   margin-top: 5px;
   right: 10px;
-  /*top: 56px;*/
+  top: 56px;
 }
 @media (max-width: 990px) {
   #legendElement {
