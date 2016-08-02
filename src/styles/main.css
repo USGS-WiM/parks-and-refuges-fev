@@ -78,12 +78,47 @@ body {
 }
 
 /*basemapBtn elements manually set to width of widest - temp solution until dynamic solution is implemented */
-.basemapBtn {
+.basemapBtn, .filtersBtn {
     width: 86px;
     margin-bottom: 2px;
     padding:2px;
 }
 
+#sidebar .filtersBtn {
+    border: none;
+    outline: none;
+    border-radius: 0;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-sizing: border-box;
+    padding: 5px;
+    display: block;
+    width: 100%;
+    text-align: left;
+    color: #6F758E;
+    margin: 0 auto;
+    border-left: 4px solid transparent;
+}
+#sidebar .filtersBtn img {
+    height: 25px;
+    vertical-align: middle;
+    display: inline-block;
+    margin: 0 15px 0 0;
+    border-radius: 0;
+    border: none;
+}
+#sidebar .filtersBtn br {
+    display: none;
+}
+#sidebar .filtersBtn:hover {
+    border-color: #333;
+    background-color: rgba(236, 238, 243, 0.5);
+}
+#sidebar .filtersBtn:focus {
+    background-color: #ECEEF3;
+    border-color: #4574CC;
+}
 
 .esriSimpleSliderTL {
     top: 5px;
