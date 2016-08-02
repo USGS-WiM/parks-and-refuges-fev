@@ -47,6 +47,7 @@
     <script src="scripts/utilities.js"></script>
     <script src="scripts/layers.js"></script>
     <script src="scripts/core.js"></script>
+    <script src="scripts/populate.js"></script>
     <!-- endbuild -->
 
 </head>
@@ -199,7 +200,7 @@
                             <div class="form-group" id="stateForm">
                                 <label for="stateSelect" class="col-sm-2 control-label filterForms">State</label>
                                 <div class="col-sm-10 filterForms">
-                                    <select id="stateSelect" style="width: 100%" multiple></select>
+                                    <select id="stateSelect" style="width: 100%" multiple="multiple"></select>
                                 </div>
                             </div>
                             <div class="form-group" id="countyForm">
@@ -388,132 +389,46 @@
                 </div>
                 <div id="filtersPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="filtersHeader">
                     <div class="panel-body collapse in">
-                        <!--<h3>Current Filters</h3>-->
-                        <!--<br>-->
-                        <!--<label>Event Type:</label>-->
-                        <!--<br>-->
-                        <!--<label>Event Name:</label>-->
-                        <!--<br>-->
-                        <!--<label>Event Status:</label>-->
-                        <!--<br>-->
-                        <!--<label>State:</label>-->
-                        <!--<br>-->
-                        <!--<label>County:</label>-->
-                        <!--<br>-->
-                        <!--<br>-->
-
-                        <!--<div class="panel panel-default">-->
-                            <!--<div class="panel-heading">-->
-                                <!--<h3 class="panel-title">Event Options</h3>-->
-                            <!--</div>-->
-                            <!--<div class="panel-body">-->
-                                <!--<ul class="list-group">-->
-                                <!--<li class="list-group-item col-lg-12 filterItems">Event Type:</li>-->
-                                <!--<li class="list-group-item col-lg-12 filterItems">Event Name:</li>-->
-                                <!--<li class="list-group-item col-lg-12 filterItems">Event Status:</li>-->
-                                <!--</ul>-->
-                            <!--</div>-->
-                        <!--</div>-->
-
-                        <!--<div class="panel panel-default">-->
-                            <!--<div class="panel-heading">-->
-                                <!--<h3 class="panel-title">Location Options</h3>-->
-                            <!--</div>-->
-                            <!--<div class="panel-body">-->
-                                <!--<ul class="list-group">-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">State:</li>-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">County:</li>-->
-                                <!--</ul>-->
-                            <!--</div>-->
-                        <!--</div>-->
-
-                        <!--<div class="panel panel-default">-->
-                            <!--<div class="panel-heading">-->
-                                <!--<h3 class="panel-title">Sensors</h3>-->
-                            <!--</div>-->
-                            <!--<div class="panel-body">-->
-                                <!--<ul class="list-group">-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">Sensor Type:</li>-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">Status:</li>-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">Collection Condition:</li>-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">Deployment Type:</li>-->
-                                <!--</ul>-->
-                            <!--</div>-->
-                        <!--</div>-->
-
-                        <!--<div class="panel panel-default">-->
-                            <!--<div class="panel-heading">-->
-                                <!--<h3 class="panel-title">High-Water Marks</h3>-->
-                            <!--</div>-->
-                            <!--<div class="panel-body">-->
-                                <!--<ul class="list-group">-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">HWM Type:</li>-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">Quality:</li>-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">Environment:</li>-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">Survey Completed:</li>-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">Stillwater Location:</li>-->
-                                <!--</ul>-->
-                            <!--</div>-->
-                        <!--</div>-->
-
-                        <!--<div class="panel panel-default">-->
-                            <!--<div class="panel-heading">-->
-                                <!--<h3 class="panel-title">Peaks</h3>-->
-                            <!--</div>-->
-                            <!--<div class="panel-body">-->
-                                <!--<ul class="list-group">-->
-                                    <!--<li class="list-group-item col-lg-12 filterItems">Start Date:  End Date:</li>-->
-                                <!--</ul>-->
-                            <!--</div>-->
-                        <!--</div>-->
-
-                        <!------------------------------------------------------------------------------------------>
 
                         <label for="eventGroup">Event Options</label>
                         <ul class="list-group" id="eventGroup">
-                            <li class="list-group-item col-lg-12 filterItems">Event Type</li>
-                            <li class="list-group-item col-lg-12 filterItems">Event Name:</li>
-                            <li class="list-group-item col-lg-12 filterItems">Event Status:</li>
+                            <li class="list-group-item col-lg-12 filterItems">Event Type: <span id="eventTypeDisplay"></span></li>
+                            <li class="list-group-item col-lg-12 filterItems">Event Name: <span id="eventNameDisplay"></span></li>
+                            <li class="list-group-item col-lg-12 filterItems">Event Status: <span id="eventStatusDisplay"></span></li>
                         </ul>
 
 
                         <label for="locationGroup">Location Options</label>
                         <ul class="list-group" id="locationGroup">
-                            <li class="list-group-item col-lg-12 filterItems">State:</li>
-                            <li class="list-group-item col-lg-12 filterItems">County:</li>
+                            <li class="list-group-item col-lg-12 filterItems">State: <span id="stateDisplay"></span> </li>
+                            <li class="list-group-item col-lg-12 filterItems">County: <span id="countyDisplay"></span> </li>
                         </ul>
 
 
                         <label for="sensorsGroup">Sensors</label>
                         <ul class="list-group" id="sensorsGroup">
-                            <li class="list-group-item col-lg-12 filterItems">Sensor Type:</li>
-                            <li class="list-group-item col-lg-12 filterItems">Status:</li>
-                            <li class="list-group-item col-lg-12 filterItems">Collection Condition:</li>
-                            <li class="list-group-item col-lg-12 filterItems">Deployment Type:</li>
+                            <li class="list-group-item col-lg-12 filterItems">Sensor Type: <span id="sensorTypeDisplay"></span></li>
+                            <li class="list-group-item col-lg-12 filterItems">Status: <span id="sensorStatusDisplay"></span> </li>
+                            <li class="list-group-item col-lg-12 filterItems">Collection Condition: <span id="collectConditionDisplay"></span></li>
+                            <li class="list-group-item col-lg-12 filterItems">Deployment Type: <span id="deployTypeDisplay"></span> </li>
                         </ul>
 
 
                         <label for="hwmGroup">High-Water Marks</label>
                         <ul class="list-group" id="hwmGroup">
-                            <li class="list-group-item col-lg-12 filterItems">HWM Type:</li>
-                            <li class="list-group-item col-lg-12 filterItems">Quality:</li>
-                            <li class="list-group-item col-lg-12 filterItems">Environment:</li>
-                            <li class="list-group-item col-lg-12 filterItems">Survey Completed:</li>
-                            <li class="list-group-item col-lg-12 filterItems">Stillwater Location:</li>
+                            <li class="list-group-item col-lg-12 filterItems">HWM Type: <span id="hwmTypeDisplay"></span> </li>
+                            <li class="list-group-item col-lg-12 filterItems">Quality: <span id="hwmQualityDisplay"></span></li>
+                            <li class="list-group-item col-lg-12 filterItems">Environment: <span id="hwmEnvDisplay"></span></li>
+                            <li class="list-group-item col-lg-12 filterItems">Survey Completed: <span id="hwmSurveyCompDisplay"></span> </li>
+                            <li class="list-group-item col-lg-12 filterItems">Stillwater Location: <span id="hwmStillWaterDisplay"></span></li>
                         </ul>
 
 
                         <label for="peaksGroup">Peaks</label>
                         <ul class="list-group" id="peaksGroup">
-                            <li class="list-group-item col-lg-12 filterItems">Start Date:  End Date:</li>
+                            <li class="list-group-item col-lg-12 filterItems">Start Date: <span id="peakStartDisplay"></span> End Date: <span id="peakEndDisplay"></span></li>
                         </ul>
-
-
                         <!------------------------------------------------------------------------------------------>
-
-
-
-
                         <button id="btnFilters" class="btn btn-default equalize filtersBtn">Change Filters</button>
                     </div>
                 </div>
