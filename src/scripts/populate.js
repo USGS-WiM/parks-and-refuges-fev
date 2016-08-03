@@ -120,6 +120,11 @@ $( document ).ready(function() {
         placeholder: "All Counties"
     });
 
+    $('#countySelect').on("select2:select select2:unselect", function (selection) {
+       //will need special treatment for display string creation
+    });
+
+
     // Register sensor type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.sensorTypes array
     $('#sensorTypeSelect').select2({
@@ -153,6 +158,23 @@ $( document ).ready(function() {
             console.log("Error processing the JSON. The error is:" + error);
         }
     });
+    $('#sensorTypeSelect').on("select2:select select2:unselect", function (evt) {
+        var currentSelection = $(this).val();
+        //UPDATE DISPLAY VALUES
+        var combinedArray = [];
+        var displayArray;
+        for (var i=0; i < currentSelection.length; i++) {
+            displayArray = fev.data.sensorTypes.filter(function (obj) {
+                return obj.sensor_type_id == currentSelection[i];
+            });
+            combinedArray.push(displayArray[0].sensor);
+        };
+        var displayString = combinedArray.join();
+        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
+        console.log("Selected sensor type(s) are: " + displayString);
+        $('#sensorTypeDisplay').html(displayString);
+    });
+
 
     // Register sensor status select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.sensorStatusTypes array
@@ -174,6 +196,22 @@ $( document ).ready(function() {
             console.log("Error processing the JSON. The error is:" + error);
         }
     });
+    $('#sensorStatusSelect').on("select2:select select2:unselect", function (evt) {
+        var currentSelection = $(this).val();
+        //UPDATE DISPLAY VALUES
+        var combinedArray = [];
+        var displayArray;
+        for (var i=0; i < currentSelection.length; i++) {
+            displayArray = fev.data.sensorStatusTypes.filter(function (obj) {
+                return obj.status_type_id == currentSelection[i];
+            });
+            combinedArray.push(displayArray[0].status);
+        };
+        var displayString = combinedArray.join();
+        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
+        console.log("Selected sensor status(s) are: " + displayString);
+        $('#sensorStatusDisplay').html(displayString);
+    });
 
     // Register collection condition select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.collectionConditions array
@@ -187,13 +225,29 @@ $( document ).ready(function() {
         headers: {'Accept': '*/*'},
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
-                $('#collectionConditionSelect').append("<option value='" + data[i].ID + "'>" + data[i].condition + "</option>");
+                $('#collectionConditionSelect').append("<option value='" + data[i].id + "'>" + data[i].condition + "</option>");
                 fev.data.collectionConditions.push(data[i]);
             }
         },
         error: function (error) {
             console.log("Error processing the JSON. The error is:" + error);
         }
+    });
+    $('#collectionConditionSelect').on("select2:select select2:unselect", function (evt) {
+        var currentSelection = $(this).val();
+        //UPDATE DISPLAY VALUES
+        var combinedArray = [];
+        var displayArray;
+        for (var i=0; i < currentSelection.length; i++) {
+            displayArray = fev.data.collectionConditions.filter(function (obj) {
+                return obj.id == currentSelection[i];
+            });
+            combinedArray.push(displayArray[0].condition);
+        };
+        var displayString = combinedArray.join();
+        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
+        console.log("Selected collect condition(s) are: " + displayString);
+        $('#collectConditionDisplay').html(displayString);
     });
 
     // Register deploy type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
@@ -215,6 +269,22 @@ $( document ).ready(function() {
         error: function (error) {
             console.log("Error processing the JSON. The error is:" + error);
         }
+    });
+    $('#deployTypeSelect').on("select2:select select2:unselect", function (evt) {
+        var currentSelection = $(this).val();
+        //UPDATE DISPLAY VALUES
+        var combinedArray = [];
+        var displayArray;
+        for (var i=0; i < currentSelection.length; i++) {
+            displayArray = fev.data.deploymentTypes.filter(function (obj) {
+                return obj.deployment_type_id == currentSelection[i];
+            });
+            combinedArray.push(displayArray[0].method);
+        };
+        var displayString = combinedArray.join();
+        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
+        console.log("Selected sdeploy type(s) are: " + displayString);
+        $('#deployTypeDisplay').html(displayString);
     });
 
     // Register HWM type type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
@@ -301,6 +371,7 @@ $( document ).ready(function() {
                 //$("#evtSelect").select2("val", "");
                 for (var x = 0; x < currentEvents.length; x++) {
                     $('#evtSelect').append("<option value='" + currentEvents[x].event_id + "'>" + currentEvents[x].event_name + "</option>");
+                    //build string here with event type names??
                 }
             } else {
                 $('#evtSelect').html("");
@@ -309,8 +380,19 @@ $( document ).ready(function() {
                 }
             }
         }
-        $('#eventTypeDisplay').html(currentSelection);
-        //currentSelection is an array of values. need function that matches name with each of those values, using fev.data.eventTypes
+        //UPDATE DISPLAY VALUES
+        var combinedArray = [];
+        var displayArray;
+        for (var i=0; i < currentSelection.length; i++) {
+            displayArray = fev.data.eventTypes.filter(function (obj) {
+                return obj.event_type_id == currentSelection[i];
+            });
+            combinedArray.push(displayArray[0].type);
+        };
+        var displayString = combinedArray.join();
+        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
+        console.log("Selected event type(s) are: " + displayString);
+        $('#eventTypeDisplay').html(displayString);
 
     });
     $('#evtSelect').on("change", function (selection){
@@ -403,8 +485,45 @@ $( document ).ready(function() {
             var countyOption = currentCounties[key];
             $('#countySelect').append("<option value='" + countyOption + "'>" + countyOption + "</option>");
         };
-        $('#stateDisplay').html(currentSelection);
+
+        //UPDATE DISPLAY VALUES
+        var combinedArray = [];
+        var displayArray;
+        for (var i=0; i < currentSelection.length; i++) {
+            displayArray = fev.data.states.filter(function (obj) {
+                return obj.state_abbrev == currentSelection[i];
+            });
+            combinedArray.push(displayArray[0].state_name);
+        };
+        var displayString = combinedArray.join();
+        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
+        console.log("Selected states(s) are: " + displayString);
+        $('#stateDisplay').html(displayString);
     });
     //end onChange function for state form
+
+    function getDisplayString (form, lookupArr, valArr) {
+        ///loop thru valArr to get each individual value, use it as input for filter function.
+        // filter will return an array each time it runs, need to combine those
+        //then grab out the name values and convert to string
+        var combinedArray = [];
+        var displayArray;
+        for (var i=0; i < valArr.length; i++) {
+            displayArray = lookupArr.filter(function (obj) {
+                return obj.event_type_id == valArr[i];
+            });
+            //gets array with display name on each iteration
+            //'type' is the display property for event type. need to generalize
+            switch (form) {
+                case "eventType":
+                    combinedArray.push(displayArray[0].type);
+                    break;
+                case "state":
+                    combinedArray.push(displayArray[0].state_name);
+            }
+
+        };
+        return combinedArray.join();
+    }
 
 });
