@@ -161,7 +161,7 @@ body {
 .latLngScale {
     position:absolute;
     padding:4px;
-    bottom:56px;
+    bottom:56px !important;
     left: 20px;
     /*width:250px*/
     /*height:320px;*/

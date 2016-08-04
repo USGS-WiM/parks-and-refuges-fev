@@ -283,7 +283,7 @@ $( document ).ready(function() {
         };
         var displayString = combinedArray.join();
         //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        console.log("Selected sdeploy type(s) are: " + displayString);
+        console.log("Selected deploy type(s) are: " + displayString);
         $('#deployTypeDisplay').html(displayString);
     });
 
@@ -308,6 +308,23 @@ $( document ).ready(function() {
             console.log("Error processing the JSON. The error is:" + error);
         }
     });
+    $('#hwmTypeSelect').on("select2:select select2:unselect", function (evt) {
+        var currentSelection = $(this).val();
+        //UPDATE DISPLAY VALUES
+        var combinedArray = [];
+        var displayArray;
+        for (var i=0; i < currentSelection.length; i++) {
+            displayArray = fev.data.hwmTypes.filter(function (obj) {
+                return obj.hwm_type_id == currentSelection[i];
+            });
+            combinedArray.push(displayArray[0].hwm_type);
+        };
+        var displayString = combinedArray.join();
+        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
+        console.log("Selected hwm type(s) are: " + displayString);
+        $('#hwmTypeDisplay').html(displayString);
+    });
+
 
     // Register HWM quality select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.hwmQualities array
@@ -329,6 +346,22 @@ $( document ).ready(function() {
         error: function (error) {
             console.log("Error processing the JSON. The error is:" + error);
         }
+    });
+    $('#hwmQualitySelect').on("select2:select select2:unselect", function (evt) {
+        var currentSelection = $(this).val();
+        //UPDATE DISPLAY VALUES
+        var combinedArray = [];
+        var displayArray;
+        for (var i=0; i < currentSelection.length; i++) {
+            displayArray = fev.data.hwmQualities.filter(function (obj) {
+                return obj.hwm_quality_id == currentSelection[i];
+            });
+            combinedArray.push(displayArray[0].hwm_quality);
+        };
+        var displayString = combinedArray.join();
+        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
+        console.log("Selected hwm type(s) are: " + displayString);
+        $('#hwmQualityDisplay').html(displayString);
     });
 
 
