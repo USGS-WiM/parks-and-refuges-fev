@@ -87,6 +87,11 @@ $( document ).ready(function() {
 		showFiltersModal();
 	});
 
+	$('#btnFilter').on('click', function() {
+		buildQueryStrings();
+	});
+
+
 	// var populateCountiesArray =  function  () {
 	// 	for (var i=0; i<fev.data.states.length; i++) {
 	// 		$.ajax({
