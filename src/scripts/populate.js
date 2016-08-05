@@ -68,7 +68,6 @@ $( document ).ready(function() {
         }
     });
 
-
     // Register states select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.states array
     $('#stateSelect').select2({
@@ -97,7 +96,6 @@ $( document ).ready(function() {
         }
     });
 
-
     //county select is a special case - populated values depend on states selected. see other logic TBD
     $('#countySelect').select2({
         placeholder: "All Counties"
@@ -107,7 +105,6 @@ $( document ).ready(function() {
        //will need special treatment for display string creation
        console.log("Selected counties are: "+ $("#countySelect").val() );
     });
-
 
     // Register sensor type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.sensorTypes array
@@ -136,24 +133,6 @@ $( document ).ready(function() {
         }
     });
 
-    // $('#sensorTypeSelect').on("select2:select select2:unselect", function (evt) {
-    //     var currentSelection = $(this).val();
-    //     //UPDATE DISPLAY VALUES
-    //     var combinedArray = [];
-    //     var displayArray;
-    //     for (var i=0; i < currentSelection.length; i++) {
-    //         displayArray = fev.data.sensorTypes.filter(function (obj) {
-    //             return obj.sensor_type_id == currentSelection[i];
-    //         });
-    //         combinedArray.push(displayArray[0].sensor);
-    //     };
-    //     var displayString = combinedArray.join();
-    //     //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-    //     console.log("Selected sensor type(s) are: " + displayString);
-    //     $('#sensorTypeDisplay').html(displayString);
-    // });
-
-
     // Register sensor status select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.sensorStatusTypes array
     $('#sensorStatusSelect').select2({
@@ -180,24 +159,6 @@ $( document ).ready(function() {
             }
         }
     });
-
-
-    // $('#sensorStatusSelect').on("select2:select select2:unselect", function (evt) {
-    //     var currentSelection = $(this).val();
-    //     //UPDATE DISPLAY VALUES
-    //     var combinedArray = [];
-    //     var displayArray;
-    //     for (var i=0; i < currentSelection.length; i++) {
-    //         displayArray = fev.data.sensorStatusTypes.filter(function (obj) {
-    //             return obj.status_type_id == currentSelection[i];
-    //         });
-    //         combinedArray.push(displayArray[0].status);
-    //     };
-    //     var displayString = combinedArray.join();
-    //     //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-    //     console.log("Selected sensor status(s) are: " + displayString);
-    //     $('#sensorStatusDisplay').html(displayString);
-    // });
 
     // Register collection condition select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.collectionConditions array
@@ -226,23 +187,6 @@ $( document ).ready(function() {
         }
     });
 
-    // $('#collectionConditionSelect').on("select2:select select2:unselect", function (evt) {
-    //     var currentSelection = $(this).val();
-    //     //UPDATE DISPLAY VALUES
-    //     var combinedArray = [];
-    //     var displayArray;
-    //     for (var i=0; i < currentSelection.length; i++) {
-    //         displayArray = fev.data.collectionConditions.filter(function (obj) {
-    //             return obj.id == currentSelection[i];
-    //         });
-    //         combinedArray.push(displayArray[0].condition);
-    //     };
-    //     var displayString = combinedArray.join();
-    //     //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-    //     console.log("Selected collect condition(s) are: " + displayString);
-    //     $('#collectConditionDisplay').html(displayString);
-    // });
-
     // Register deploy type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.deploymentTypes array
     $('#deployTypeSelect').select2({
@@ -269,23 +213,6 @@ $( document ).ready(function() {
             }
         }
     });
-
-    // $('#deployTypeSelect').on("select2:select select2:unselect", function (evt) {
-    //     var currentSelection = $(this).val();
-    //     //UPDATE DISPLAY VALUES
-    //     var combinedArray = [];
-    //     var displayArray;
-    //     for (var i=0; i < currentSelection.length; i++) {
-    //         displayArray = fev.data.deploymentTypes.filter(function (obj) {
-    //             return obj.deployment_type_id == currentSelection[i];
-    //         });
-    //         combinedArray.push(displayArray[0].method);
-    //     };
-    //     var displayString = combinedArray.join();
-    //     //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-    //     console.log("Selected deploy type(s) are: " + displayString);
-    //     $('#deployTypeDisplay').html(displayString);
-    // });
 
     // Register HWM type type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.hwmTypes array
@@ -314,24 +241,6 @@ $( document ).ready(function() {
         }
     });
 
-    // $('#hwmTypeSelect').on("select2:select select2:unselect", function (evt) {
-    //     var currentSelection = $(this).val();
-    //     //UPDATE DISPLAY VALUES
-    //     var combinedArray = [];
-    //     var displayArray;
-    //     for (var i=0; i < currentSelection.length; i++) {
-    //         displayArray = fev.data.hwmTypes.filter(function (obj) {
-    //             return obj.hwm_type_id == currentSelection[i];
-    //         });
-    //         combinedArray.push(displayArray[0].hwm_type);
-    //     };
-    //     var displayString = combinedArray.join();
-    //     //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-    //     console.log("Selected hwm type(s) are: " + displayString);
-    //     $('#hwmTypeDisplay').html(displayString);
-    // });
-
-
     // Register HWM quality select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.hwmQualities array
     $('#hwmQualitySelect').select2({
@@ -358,24 +267,6 @@ $( document ).ready(function() {
             }
         }
     });
-
-    // $('#hwmQualitySelect').on("select2:select select2:unselect", function (evt) {
-    //     var currentSelection = $(this).val();
-    //     //UPDATE DISPLAY VALUES
-    //     var combinedArray = [];
-    //     var displayArray;
-    //     for (var i=0; i < currentSelection.length; i++) {
-    //         displayArray = fev.data.hwmQualities.filter(function (obj) {
-    //             return obj.hwm_quality_id == currentSelection[i];
-    //         });
-    //         combinedArray.push(displayArray[0].hwm_quality);
-    //     };
-    //     var displayString = combinedArray.join();
-    //     //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-    //     console.log("Selected hwm type(s) are: " + displayString);
-    //     $('#hwmQualityDisplay').html(displayString);
-    // });
-
 
     var populateCountiesArray =  function  () {
         for (var i=0; i<fev.data.states.length; i++) {
@@ -425,21 +316,8 @@ $( document ).ready(function() {
                 }
             }
         }
-        // //UPDATE DISPLAY VALUES
-        // var combinedArray = [];
-        // var displayArray;
-        // for (var i=0; i < currentSelection.length; i++) {
-        //     displayArray = fev.data.eventTypes.filter(function (obj) {
-        //         return obj.event_type_id == currentSelection[i];
-        //     });
-        //     combinedArray.push(displayArray[0].type);
-        // };
-        // var displayString = combinedArray.join();
-        // //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        // console.log("Selected event type(s) are: " + displayString);
-        // $('#eventTypeDisplay').html(displayString);
-
     });
+
     $('#evtSelect').on("change", function (selection){
         //check to see if there is any value selected
         var currentSelection = $(this).val();
@@ -530,20 +408,6 @@ $( document ).ready(function() {
             var countyOption = currentCounties[key];
             $('#countySelect').append("<option value='" + countyOption + "'>" + countyOption + "</option>");
         };
-
-        // //UPDATE DISPLAY VALUES
-        // var combinedArray = [];
-        // var displayArray;
-        // for (var i=0; i < currentSelection.length; i++) {
-        //     displayArray = fev.data.states.filter(function (obj) {
-        //         return obj.state_abbrev == currentSelection[i];
-        //     });
-        //     combinedArray.push(displayArray[0].state_name);
-        // };
-        // var displayString = combinedArray.join();
-        // //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        // console.log("Selected states(s) are: " + displayString);
-        // $('#stateDisplay').html(displayString);
     });
     //end onChange function for state form
 
@@ -570,5 +434,4 @@ $( document ).ready(function() {
         };
         return combinedArray.join();
     }
-
 });
