@@ -1,3 +1,4 @@
+var stnServicesURL = "http://stn.wim.usgs.gov/STNServices";
 var fev = fev || {
 		data: {
 			events: [],
@@ -11,31 +12,33 @@ var fev = fev || {
 			hwmTypes: [],
 			hwmQualities : []
 		},
-		globals: {
-			csvQueryURL : "",
-			jsonQueryURL : "",
-			xmlQueryURL : "",
-			jsonSensorsURLRoot : "",
-			xmlSensorsURLRoot: "",
-			csvSensorsURLRoot : "",
-			sensorsQueryString : "",
-			jsonHWMsURLRoot : "",
-			xmlHWMsURLRoot : "",
-			csvHWMsURLRoot : "",
-			hwmsQueryString : "",
-			xmlPeaksURLRoot : "",
-			jsonPeaksURLRoot : "",
-			csvPeaksURLRoot : "",
-			peaksQueryString : ""
+		urls: {
+			jsonSensorsURLRoot : stnServicesURL + "/Instruments.json",
+			xmlSensorsURLRoot: stnServicesURL + "/Instruments.xml",
+			csvSensorsURLRoot : stnServicesURL + "/Instruments.csv",
+			jsonHWMsURLRoot : stnServicesURL + "/HWMs/FilteredHWMs.json",
+			xmlHWMsURLRoot : stnServicesURL + "/HWMs/FilteredHWMs.xml",
+			csvHWMsURLRoot : stnServicesURL + "/HWMs/FilteredHWMs.csv",
+			xmlPeaksURLRoot : stnServicesURL + "/PeakSummaries/FilteredPeaks.xml",
+			jsonPeaksURLRoot : stnServicesURL + "/PeakSummaries/FilteredPeaks.json",
+			csvPeaksURLRoot : stnServicesURL + "/PeakSummaries/FilteredPeaks.csv",	
+			baroGeoJSONViewURL: "http://stntest.wim.usgs.gov/STNServices2/SensorViews.geojson?ViewType=baro_view&",
+			metGeoJSONViewURL: "http://stntest.wim.usgs.gov/STNServices2/SensorViews.geojson?ViewType=met_view&",
+			rdgGeoJSONViewURL: "http://stntest.wim.usgs.gov/STNServices2/SensorViews.geojson?ViewType=rdg_view&",
+			stormTideGeoJSONViewURL: "http://stntest.wim.usgs.gov/STNServices2/SensorViews.geojson?ViewType=stormtide_view&",
+			waveHeightGeoJSONViewURL: "http://stntest.wim.usgs.gov/STNServices2/SensorViews.geojson?ViewType=waveheight_view&"
+		},
+		queryStrings: {
 		}
 };
+var map;
 
 //main document ready function
 $( document ).ready(function() {
 	//for jshint
 	'use strict';
 	/* create map */
-	var map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
+	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
 	var layer = L.esri.basemapLayer('Gray').addTo(map);
 	var layerLabels;
 
