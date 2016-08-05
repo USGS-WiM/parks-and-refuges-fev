@@ -8,41 +8,30 @@ $( document ).ready(function() {
     // Register Event type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.eventTypes array
     $('#evtTypeSelect').select2({
-        placeholder: "All Types"
-    });
-    $.ajax({
-        dataType: 'json',
-        type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/eventtypes.json',
-        headers: {'Accept': '*/*'},
-        success: function (data) {
-            data.sort(function (a, b) {
-                var typeA = a.TYPE;
-                var typeB = b.TYPE;
-                if (typeA < typeB) {
-                    return -1
-                }
-                if (typeA > typeB) {
-                    return 1
-                }
-                else {
-                    return 0
-                }
-            });
-            for (var i = 0; i < data.length; i++) {
-                $('#evtTypeSelect').append("<option value='" + data[i].event_type_id + "'>" + data[i].type + "</option>");
-                //data[i].id = data[i].event_type_id;
-                fev.data.eventTypes.push(data[i]);
+        placeholder: "All Types",
+        ajax: {
+            dataType: 'json',
+            type: 'GET',
+            url: 'http://stn.wim.usgs.gov/STNServices/eventtypes.json',
+            headers: {'Accept': '*/*'},
+            cache: false,
+            processResults: function (data) {
+
+                for (var i = 0; i < data.length; i++) { fev.data.eventTypes.push(data[i]); }
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            id: item.event_type_id,
+                            text: item.type,
+                        };
+                    })
+                };
+            },
+            error: function (error) {
+                console.log("Error processing the JSON. The error is:" + error);
             }
-        },
-        error: function (error) {
-            console.log("Error processing the JSON. The error is:" + error);
         }
     });
-    // $('#evtTypeSelect').on("select2:select select2:unselect", function (evt) {
-    //     var currentSelection = $(this).val();
-    //     $('#eventTypeDisplay').html(currentSelection);
-    // });
 
     // Register Event select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.events array
@@ -82,36 +71,28 @@ $( document ).ready(function() {
     // Register states select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.states array
     $('#stateSelect').select2({
-        placeholder: "All Events"
-    });
-    $.ajax({
-        dataType: 'json',
-        type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/Sites/States.json',
-        headers: {'Accept': '*/*'},
-        success: function (data) {
-            data.sort(function (a, b) {
-                var stateA = a.state_name;
-                var stateB = b.state_name;
-                if (stateA < stateB) {
-                    return -1
-                }
-                if (stateA > stateB) {
-                    return 1
-                }
-                else {
-                    return 0
-                }
-            });
-            for (var i = 0; i < data.length; i++) {
-                $('#stateSelect').append("<option value='" + data[i].state_abbrev + "'>" + data[i].state_name + "</option>");
-                data[i].id = data[i];
-                fev.data.states.push(data[i]);
+        placeholder: "All States",
+        ajax : {
+            dataType: 'json',
+            type: 'GET',
+            url: 'http://stn.wim.usgs.gov/STNServices/Sites/States.json',
+            headers: {'Accept': '*/*'},
+            processResults: function (data) {
+
+                for (var i = 0; i < data.length; i++) { fev.data.states.push(data[i]); }
+                populateCountiesArray();
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            id: item.state_abbrev,
+                            text: item.state_name,
+                        };
+                    })
+                };
+            },
+            error: function (error) {
+                console.log("Error processing the JSON. The error is:" + error);
             }
-            populateCountiesArray();
-        },
-        error: function (error) {
-            console.log("Error processing the JSON. The error is:" + error);
         }
     });
 
@@ -122,248 +103,170 @@ $( document ).ready(function() {
 
     $('#countySelect').on("select2:select select2:unselect", function (selection) {
        //will need special treatment for display string creation
+       console.log("Selected counties are: "+ $("#countySelect").val() );
     });
-
 
     // Register sensor type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.sensorTypes array
     $('#sensorTypeSelect').select2({
-        placeholder: "All Types"
-    });
-    $.ajax({
-        dataType: 'json',
-        type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/sensortypes.json',
-        headers: {'Accept': '*/*'},
-        success: function (data) {
-            data.sort(function (a, b) {
-                var typeA = a.TYPE;
-                var typeB = b.TYPE;
-                if (typeA < typeB) {
-                    return -1
-                }
-                if (typeA > typeB) {
-                    return 1
-                }
-                else {
-                    return 0
-                }
-            });
-            for (var i = 0; i < data.length; i++) {
-                $('#sensorTypeSelect').append("<option value='" + data[i].sensor_type_id + "'>" + data[i].sensor + "</option>");
-                fev.data.sensorTypes.push(data[i]);
+        placeholder: "All Types",
+        ajax : {
+            dataType: 'json',
+            type: 'GET',
+            url: 'http://stn.wim.usgs.gov/STNServices/sensortypes.json',
+            headers: {'Accept': '*/*'},
+            processResults: function (data) {
+
+                for (var i = 0; i < data.length; i++) { fev.data.sensorTypes.push(data[i]); }
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            id: item.sensor_type_id,
+                            text: item.sensor,
+                        };
+                    })
+                };
+            },
+            error: function (error) {
+                console.log("Error processing the JSON. The error is:" + error);
             }
-        },
-        error: function (error) {
-            console.log("Error processing the JSON. The error is:" + error);
         }
     });
-    $('#sensorTypeSelect').on("select2:select select2:unselect", function (evt) {
-        var currentSelection = $(this).val();
-        //UPDATE DISPLAY VALUES
-        var combinedArray = [];
-        var displayArray;
-        for (var i=0; i < currentSelection.length; i++) {
-            displayArray = fev.data.sensorTypes.filter(function (obj) {
-                return obj.sensor_type_id == currentSelection[i];
-            });
-            combinedArray.push(displayArray[0].sensor);
-        };
-        var displayString = combinedArray.join();
-        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        console.log("Selected sensor type(s) are: " + displayString);
-        $('#sensorTypeDisplay').html(displayString);
-    });
-
 
     // Register sensor status select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.sensorStatusTypes array
     $('#sensorStatusSelect').select2({
-        placeholder: "All Statuses"
-    });
-    $.ajax({
-        dataType: 'json',
-        type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/statustypes.json',
-        headers: {'Accept': '*/*'},
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                $('#sensorStatusSelect').append("<option value='" + data[i].status_type_id + "'>" + data[i].status + "</option>");
-                fev.data.sensorStatusTypes.push(data[i]);
+        placeholder: "All Statuses",
+        ajax : {
+            dataType: 'json',
+            type: 'GET',
+            url: 'http://stn.wim.usgs.gov/STNServices/statustypes.json',
+            headers: {'Accept': '*/*'},
+            processResults: function (data) {
+
+                for (var i = 0; i < data.length; i++) { fev.data.sensorStatusTypes.push(data[i]); }
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            id: item.status_type_id,
+                            text: item.status,
+                        };
+                    })
+                };
+            },
+            error: function (error) {
+                console.log("Error processing the JSON. The error is:" + error);
             }
-        },
-        error: function (error) {
-            console.log("Error processing the JSON. The error is:" + error);
         }
-    });
-    $('#sensorStatusSelect').on("select2:select select2:unselect", function (evt) {
-        var currentSelection = $(this).val();
-        //UPDATE DISPLAY VALUES
-        var combinedArray = [];
-        var displayArray;
-        for (var i=0; i < currentSelection.length; i++) {
-            displayArray = fev.data.sensorStatusTypes.filter(function (obj) {
-                return obj.status_type_id == currentSelection[i];
-            });
-            combinedArray.push(displayArray[0].status);
-        };
-        var displayString = combinedArray.join();
-        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        console.log("Selected sensor status(s) are: " + displayString);
-        $('#sensorStatusDisplay').html(displayString);
     });
 
     // Register collection condition select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.collectionConditions array
     $('#collectionConditionSelect').select2({
-        placeholder: "All Conditions"
-    });
-    $.ajax({
-        dataType: 'json',
-        type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/InstrCollectConditions.json',
-        headers: {'Accept': '*/*'},
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                $('#collectionConditionSelect').append("<option value='" + data[i].id + "'>" + data[i].condition + "</option>");
-                fev.data.collectionConditions.push(data[i]);
+        placeholder: "All Conditions",
+        ajax : {
+            dataType: 'json',
+            type: 'GET',
+            url: 'http://stn.wim.usgs.gov/STNServices/InstrCollectConditions.json',
+            headers: {'Accept': '*/*'},
+            processResults: function (data) {
+
+                for (var i = 0; i < data.length; i++) { fev.data.collectionConditions.push(data[i]); }
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            id: item.id,
+                            text: item.condition,
+                        };
+                    })
+                };
+            },
+            error: function (error) {
+                console.log("Error processing the JSON. The error is:" + error);
             }
-        },
-        error: function (error) {
-            console.log("Error processing the JSON. The error is:" + error);
         }
-    });
-    $('#collectionConditionSelect').on("select2:select select2:unselect", function (evt) {
-        var currentSelection = $(this).val();
-        //UPDATE DISPLAY VALUES
-        var combinedArray = [];
-        var displayArray;
-        for (var i=0; i < currentSelection.length; i++) {
-            displayArray = fev.data.collectionConditions.filter(function (obj) {
-                return obj.id == currentSelection[i];
-            });
-            combinedArray.push(displayArray[0].condition);
-        };
-        var displayString = combinedArray.join();
-        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        console.log("Selected collect condition(s) are: " + displayString);
-        $('#collectConditionDisplay').html(displayString);
     });
 
     // Register deploy type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.deploymentTypes array
     $('#deployTypeSelect').select2({
-        placeholder: "All Deploy Types"
-    });
-    $.ajax({
-        dataType: 'json',
-        type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/deploymenttypes.json',
-        headers: {'Accept': '*/*'},
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                $('#deployTypeSelect').append("<option value='" + data[i].deployment_type_id + "'>" + data[i].method + "</option>");
-                fev.data.deploymentTypes.push(data[i]);
+        placeholder: "All Deploy Types",
+        ajax : {
+            dataType: 'json',
+            type: 'GET',
+            url: 'http://stn.wim.usgs.gov/STNServices/deploymenttypes.json',
+            headers: {'Accept': '*/*'},
+            processResults: function (data) {
+
+                for (var i = 0; i < data.length; i++) { fev.data.deploymentTypes.push(data[i]); }
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            id: item.deployment_type_id,
+                            text: item.method,
+                        };
+                    })
+                };
+            },
+            error: function (error) {
+                console.log("Error processing the JSON. The error is:" + error);
             }
-        },
-        error: function (error) {
-            console.log("Error processing the JSON. The error is:" + error);
         }
-    });
-    $('#deployTypeSelect').on("select2:select select2:unselect", function (evt) {
-        var currentSelection = $(this).val();
-        //UPDATE DISPLAY VALUES
-        var combinedArray = [];
-        var displayArray;
-        for (var i=0; i < currentSelection.length; i++) {
-            displayArray = fev.data.deploymentTypes.filter(function (obj) {
-                return obj.deployment_type_id == currentSelection[i];
-            });
-            combinedArray.push(displayArray[0].method);
-        };
-        var displayString = combinedArray.join();
-        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        console.log("Selected deploy type(s) are: " + displayString);
-        $('#deployTypeDisplay').html(displayString);
     });
 
     // Register HWM type type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.hwmTypes array
     $('#hwmTypeSelect').select2({
-        placeholder: "All Types"
-    });
-    $.ajax({
-        dataType: 'json',
-        type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/hwmtypes.json',
-        headers: {'Accept': '*/*'},
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                $('#hwmTypeSelect').append("<option value='" + data[i].hwm_type_id + "'>" + data[i].hwm_type + "</option>");
-                data[i].id = data[i].hwm_type_id;
-                fev.data.hwmTypes.push(data[i]);
+        placeholder: "All Types",
+        ajax : {
+            dataType: 'json',
+            type: 'GET',
+            url: 'http://stn.wim.usgs.gov/STNServices/hwmtypes.json',
+            headers: {'Accept': '*/*'},
+            processResults: function (data) {
+
+                for (var i = 0; i < data.length; i++) { fev.data.hwmTypes.push(data[i]); }
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            id: item.hwm_type_id,
+                            text: item.hwm_type,
+                        };
+                    })
+                };
+            },
+            error: function (error) {
+                console.log("Error processing the JSON. The error is:" + error);
             }
-        },
-        error: function (error) {
-            console.log("Error processing the JSON. The error is:" + error);
         }
     });
-    $('#hwmTypeSelect').on("select2:select select2:unselect", function (evt) {
-        var currentSelection = $(this).val();
-        //UPDATE DISPLAY VALUES
-        var combinedArray = [];
-        var displayArray;
-        for (var i=0; i < currentSelection.length; i++) {
-            displayArray = fev.data.hwmTypes.filter(function (obj) {
-                return obj.hwm_type_id == currentSelection[i];
-            });
-            combinedArray.push(displayArray[0].hwm_type);
-        };
-        var displayString = combinedArray.join();
-        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        console.log("Selected hwm type(s) are: " + displayString);
-        $('#hwmTypeDisplay').html(displayString);
-    });
-
 
     // Register HWM quality select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.hwmQualities array
     $('#hwmQualitySelect').select2({
-        placeholder: "All Qualities"
-    });
-    $.ajax({
-        dataType: 'json',
-        type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/hwmqualities.json',
-        headers: {'Accept': '*/*'},
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                $('#hwmQualitySelect').append("<option value='" + data[i].hwm_quality_id + "'>" + data[i].hwm_quality + "</option>");
-                data[i].id = data[i].hwm_quality_id;
-                fev.data.hwmQualities.push(data[i]);
+        placeholder: "All Qualities",
+        ajax : {
+            dataType: 'json',
+            type: 'GET',
+            url: 'http://stn.wim.usgs.gov/STNServices/hwmqualities.json',
+            headers: {'Accept': '*/*'},
+            processResults: function (data) {
+
+                for (var i = 0; i < data.length; i++) { fev.data.hwmQualities.push(data[i]); }
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            id: item.hwm_quality_id,
+                            text: item.hwm_quality,
+                        };
+                    })
+                };
+            },
+            error: function (error) {
+                console.log("Error processing the JSON. The error is:" + error);
             }
-        },
-        error: function (error) {
-            console.log("Error processing the JSON. The error is:" + error);
         }
     });
-    $('#hwmQualitySelect').on("select2:select select2:unselect", function (evt) {
-        var currentSelection = $(this).val();
-        //UPDATE DISPLAY VALUES
-        var combinedArray = [];
-        var displayArray;
-        for (var i=0; i < currentSelection.length; i++) {
-            displayArray = fev.data.hwmQualities.filter(function (obj) {
-                return obj.hwm_quality_id == currentSelection[i];
-            });
-            combinedArray.push(displayArray[0].hwm_quality);
-        };
-        var displayString = combinedArray.join();
-        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        console.log("Selected hwm type(s) are: " + displayString);
-        $('#hwmQualityDisplay').html(displayString);
-    });
-
 
     var populateCountiesArray =  function  () {
         for (var i=0; i<fev.data.states.length; i++) {
@@ -413,21 +316,8 @@ $( document ).ready(function() {
                 }
             }
         }
-        //UPDATE DISPLAY VALUES
-        var combinedArray = [];
-        var displayArray;
-        for (var i=0; i < currentSelection.length; i++) {
-            displayArray = fev.data.eventTypes.filter(function (obj) {
-                return obj.event_type_id == currentSelection[i];
-            });
-            combinedArray.push(displayArray[0].type);
-        };
-        var displayString = combinedArray.join();
-        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        console.log("Selected event type(s) are: " + displayString);
-        $('#eventTypeDisplay').html(displayString);
-
     });
+
     $('#evtSelect').on("change", function (selection){
         //check to see if there is any value selected
         var currentSelection = $(this).val();
@@ -518,20 +408,6 @@ $( document ).ready(function() {
             var countyOption = currentCounties[key];
             $('#countySelect').append("<option value='" + countyOption + "'>" + countyOption + "</option>");
         };
-
-        //UPDATE DISPLAY VALUES
-        var combinedArray = [];
-        var displayArray;
-        for (var i=0; i < currentSelection.length; i++) {
-            displayArray = fev.data.states.filter(function (obj) {
-                return obj.state_abbrev == currentSelection[i];
-            });
-            combinedArray.push(displayArray[0].state_name);
-        };
-        var displayString = combinedArray.join();
-        //var displayString = getDisplayString('eventType', fev.data.eventTypes, currentSelection);
-        console.log("Selected states(s) are: " + displayString);
-        $('#stateDisplay').html(displayString);
     });
     //end onChange function for state form
 
@@ -558,5 +434,4 @@ $( document ).ready(function() {
         };
         return combinedArray.join();
     }
-
 });
