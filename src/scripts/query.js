@@ -3,6 +3,7 @@
  */
     ///function to grab all values from the inputs, form into arrays, and build query strings
 
+
 var buildQueryStrings =  function  () {
 
         //event type
@@ -10,18 +11,13 @@ var buildQueryStrings =  function  () {
         if ($('#evtTypeSelect').val() !== null){
             var evtTypeSelectionsArray = $('#evtTypeSelect').val();
             eventTypeSelections = evtTypeSelectionsArray.toString();
-
-            //update span
             $('#eventTypeDisplay').html($('#evtTypeSelect').select2('data').map(function(elem){ return elem.text;}).join(', '));
         }
         //event
         var eventSelections = "";
         if ($('#evtSelect').val() !== null){
             var eventSelectionsArray = $('#evtSelect').val();
-            console.log(eventSelectionsArray);
             eventSelections = eventSelectionsArray.toString();
-            
-            //update span
             $('#eventNameDisplay').html($('#evtSelect').select2('data').map(function(elem){ return elem.text;}).join(', '));
     
         }
@@ -98,15 +94,48 @@ var buildQueryStrings =  function  () {
                 $('#deployTypeDisplay').html($('#deployTypeSelect').select2('data')[0].text);
             }
 
-            // stnDataPortal.globals.xmlSensorsURLRoot = "http://stn.wim.usgs.gov/STNServices/Instruments";
-            // stnDataPortal.globals.jsonSensorsURLRoot = "http://stn.wim.usgs.gov/STNServices/Instruments.json";
-            // stnDataPortal.globals.csvSensorsURLRoot = "http://stn.wim.usgs.gov/STNServices/Instruments.csv";
-            // stnDataPortal.globals.sensorsQueryString = "?Event=" + eventSelections + "&EventType=" + eventTypeSelections + "&EventStatus=" + eventStatusSelection + "&States=" + stateSelections + "&County=" + countySelections + "&CurrentStatus=" + sensorStatusSelections + "&CollectionCondition=" + collectConditionSelections + "&DeploymentType=" + deploymentTypeSelections;
-            // //var resultIsEmpty = false;
+            fev.queryStrings.sensorsQueryString = "?Event=" + eventSelections + "&EventType=" + eventTypeSelections + "&EventStatus=" + eventStatusSelection + "&States=" + stateSelections + "&County=" + countySelections + "&SensorType=" + sensorTypeSelections + "&CurrentStatus=" + sensorStatusSelections + "&CollectionCondition=" + collectConditionSelections + "&DeploymentType=" + deploymentTypeSelections;
+            //var resultIsEmpty = false;
 
-            // stnDataPortal.globals.csvQueryURL = stnDataPortal.globals.csvSensorsURLRoot + stnDataPortal.globals.sensorsQueryString;
-            // stnDataPortal.globals.jsonQueryURL = stnDataPortal.globals.jsonSensorsURLRoot + stnDataPortal.globals.sensorsQueryString;
-            // stnDataPortal.globals.xmlQueryURL = stnDataPortal.globals.xmlSensorsURLRoot + stnDataPortal.globals.sensorsQueryString;
+            fev.urls.csvSensorsQueryURL = fev.urls.csvSensorsURLRoot + fev.queryStrings.sensorsQueryString;
+            fev.urls.jsonSensorsQueryURL = fev.urls.jsonSensorsURLRoot + fev.queryStrings.sensorsQueryString;
+            fev.urls.xmlSensorsQueryURL = fev.urls.xmlSensorsURLRoot + fev.queryStrings.sensorsQueryString;
+
+            //add download buttons
+            $('#sensorDownloadButtons').append('<a href="' + fev.urls.csvSensorsQueryURL +'" class="btn btn-info" role="button">Download Sensors CSV</a>');
+            $('#sensorDownloadButtons').append('<a href="' + fev.urls.jsonSensorsQueryURL +'" class="btn btn-info" role="button">Download Sensors JSON</a>');
+            $('#sensorDownloadButtons').append('<a href="' + fev.urls.xmlSensorsQueryURL +'" class="btn btn-info" role="button">Download Sensors XML</a>');
+
+            var baroSensors = new L.geoJson().addTo(map);
+            var metSensors = new L.geoJson().addTo(map);
+            var rdgSensors = new L.geoJson().addTo(map);
+            var waveHeightSensors = new L.geoJson().addTo(map);
+
+            var stormTideGeoJSON = $.ajax({
+                dataType: "json",
+                url: fev.urls.stormTideGeoJSONViewURL + fev.queryStrings.sensorsQueryString,
+                success: function(data) {
+                    $(data.features).each(function(key, data) {
+                        var stormTideSensors = new L.geoJson(data, {
+                            pointToLayer: function (feature, latlng) {
+                                return L.circleMarker(latlng, {
+                                    radius: 4,
+                                    fillColor: "#FF0000",
+                                    color: "#000",
+                                    weight: 1,
+                                    opacity: 1,
+                                    fillOpacity: 0.8
+                                });
+                            }
+                        }).addTo(map);
+                    });
+                }
+            }).error(function() {});
+
+
+            
+
+
 
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,15 +195,17 @@ var buildQueryStrings =  function  () {
             }
             var hwmStillwaterStatusSelections = hwmStillwaterStatusSelectionArray.toString();
 
-            // stnDataPortal.globals.xmlHWMsURLRoot = "http://stn.wim.usgs.gov/STNServices/HWMs/FilteredHWMs";
-            // stnDataPortal.globals.jsonHWMsURLRoot = "http://stn.wim.usgs.gov/STNServices/HWMs/FilteredHWMs.json";
-            // stnDataPortal.globals.csvHWMsURLRoot = "http://stn.wim.usgs.gov/STNServices/HWMs/FilteredHWMs.csv";
-            // stnDataPortal.globals.hwmsQueryString = "?Event=" + eventSelections + "&EventType=" + eventTypeSelections + "&EventStatus=" + eventStatusSelection + "&States=" + stateSelections + "&County=" + countySelections + "&HWMType=" + hwmTypeSelections + "&HWMQuality=" + hwmQualitySelections + "&HWMEnvironment=" + hwmEnvSelections + "&SurveyComplete=" + hwmSurveyStatusSelections + "&StillWater=" + hwmStillwaterStatusSelections;
-            // //var resultIsEmpty = false;
+            fev.queryStrings.hwmsQueryString = "?Event=" + eventSelections + "&EventType=" + eventTypeSelections + "&EventStatus=" + eventStatusSelection + "&States=" + stateSelections + "&County=" + countySelections + "&HWMType=" + hwmTypeSelections + "&HWMQuality=" + hwmQualitySelections + "&HWMEnvironment=" + hwmEnvSelections + "&SurveyComplete=" + hwmSurveyStatusSelections + "&StillWater=" + hwmStillwaterStatusSelections;
+            //var resultIsEmpty = false;
 
-            // stnDataPortal.globals.csvQueryURL = stnDataPortal.globals.csvHWMsURLRoot + stnDataPortal.globals.hwmsQueryString;
-            // stnDataPortal.globals.jsonQueryURL = stnDataPortal.globals.jsonHWMsURLRoot + stnDataPortal.globals.hwmsQueryString;
-            // stnDataPortal.globals.xmlQueryURL = stnDataPortal.globals.xmlHWMsURLRoot + stnDataPortal.globals.hwmsQueryString;
+            fev.urls.csvHWMsQueryURL = fev.urls.csvHWMsURLRoot + fev.queryStrings.hwmsQueryString ;
+            fev.urls.jsonHWMsQueryURL = fev.urls.jsonHWMsURLRoot + fev.queryStrings.hwmsQueryString ;
+            fev.urls.xmlHWMsQueryURL = fev.urls.xmlHWMsURLRoot + fev.queryStrings.hwmsQueryString ;
+
+            //add download buttons
+            $('#hwmDownloadButtons').append('<a href="' + fev.urls.csvHWMsQueryURL +'" class="btn btn-info" role="button">Download HWM CSV</a>');
+            $('#hwmDownloadButtons').append('<a href="' + fev.urls.jsonHWMsQueryURL +'" class="btn btn-info" role="button">Download HWM JSON</a>');
+            $('#hwmDownloadButtons').append('<a href="' + fev.urls.xmlHWMsQueryURL +'" class="btn btn-info" role="button">Download HWM XML</a>');
 
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,16 +220,17 @@ var buildQueryStrings =  function  () {
                 peakEndDate = $("#peakEndDate")[0].value;
             }
 
-            // stnDataPortal.globals.xmlPeaksURLRoot = "http://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks";
-            // stnDataPortal.globals.jsonPeaksURLRoot = "http://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.json";
-            // stnDataPortal.globals.csvPeaksURLRoot = "http://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.csv";
-            // stnDataPortal.globals.peaksQueryString = "?Event=" + eventSelections + "&EventType=" + eventTypeSelections + "&EventStatus=" + eventStatusSelection + "&States=" + stateSelections + "&County=" + countySelections + "&StartDate="  + peakStartDate + "&EndDate=" + peakEndDate;
-            // //var resultIsEmpty = false;
+            fev.queryStrings.peaksQueryString = "?Event=" + eventSelections + "&EventType=" + eventTypeSelections + "&EventStatus=" + eventStatusSelection + "&States=" + stateSelections + "&County=" + countySelections + "&StartDate="  + peakStartDate + "&EndDate=" + peakEndDate;
+            //var resultIsEmpty = false;
 
-            // stnDataPortal.globals.csvQueryURL = stnDataPortal.globals.csvPeaksURLRoot + stnDataPortal.globals.peaksQueryString;
-            // stnDataPortal.globals.jsonQueryURL = stnDataPortal.globals.jsonPeaksURLRoot + stnDataPortal.globals.peaksQueryString;
-            // stnDataPortal.globals.xmlQueryURL = stnDataPortal.globals.xmlPeaksURLRoot + stnDataPortal.globals.peaksQueryString;
+            fev.urls.csvPeaksQueryURL = fev.urls.csvPeaksURLRoot + fev.queryStrings.peaksQueryString;
+            fev.urls.jsonPeaksQueryURL = fev.urls.jsonPeaksURLRoot + fev.queryStrings.peaksQueryString;
+            fev.urls.xmlPeaksQueryURL = fev.urls.xmlPeaksURLRoot + fev.queryStrings.peaksQueryString;
 
+            //add download buttons
+            $('#peaksDownloadButtons').append('<a href="' + fev.urls.csvPeaksQueryURL +'" class="btn btn-info" role="button">Download HWM CSV</a>');
+            $('#peaksDownloadButtons').append('<a href="' + fev.urls.jsonPeaksQueryURL +'" class="btn btn-info" role="button">Download HWM JSON</a>');
+            $('#peaksDownloadButtons').append('<a href="' + fev.urls.xmlPeaksQueryURL +'" class="btn btn-info" role="button">Download HWM XML</a>');
         }
     };
 
