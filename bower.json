@@ -9,7 +9,7 @@
     "wim-mapper-styles": "https://github.com/USGS-WiM/WiM-Mapper-Styles.git",
     "bootstrap-sidebar": "^0.2.0",
     "leaflet": "^0.7.3",
-    "esri-leaflet": "^1.0.0-rc.6",
+    "esri-leaflet": "^1.0.4",
     "leaflet-groupedlayercontrol": "latest",
     "select2": "^4.0.3"
   }
