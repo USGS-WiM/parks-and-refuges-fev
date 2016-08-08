@@ -1,8 +1,8 @@
 # FEV
 Version 2 of the Flood Event Viewer (FEV)
 
-run `npm install` to get dependencies after first cloning
+run `npm install` AND `bower install` to get dependencies after first cloning
 
 `gulp watch` to run in browser with watch for debugging
 
-`gulp build` to build project
+`gulp` to build project
