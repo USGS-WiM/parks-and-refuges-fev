@@ -36,14 +36,15 @@ var fev = fev || {
 };
 var map;
 var layerGroup;
+var oms;
 var markerCoords = [];
-var baroMarkerIcon = L.divIcon({className: 'baroMarker'});
-var metMarkerIcon = L.divIcon({className: 'metMarker'});
-var rdgMarkerIcon = L.divIcon({className: 'rdgMarker'});
-var stormTideMarkerIcon = L.divIcon({className: 'stormTideMarker'});
-var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker'});
-var hwmMarkerIcon = L.divIcon({className: 'hwmMarker'});
-var peaksMarkerIcon = L.divIcon({className: 'hwmMarker'});
+var baroMarkerIcon = L.divIcon({className: 'baroMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
+var metMarkerIcon = L.divIcon({className: 'metMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
+var rdgMarkerIcon = L.divIcon({className: 'rdgMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
+var stormTideMarkerIcon = L.divIcon({className: 'stormTideMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
+var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
+var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
+var peaksMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 
 //ajax retrieval function
 function displayGeoJSON(url, markerIcon) {
@@ -58,11 +59,18 @@ function displayGeoJSON(url, markerIcon) {
 					//markerCoords.push(latlng);
 					return L.marker(latlng, {icon: markerIcon});
 				},
-				onEachFeature: function (feature, layer) {
-					layer.bindPopup('<b>Site Number: </b>' + feature.properties.site_no);
+				onEachFeature: function (feature, latlng) {
+					//add marker to overlapping marker spidifier
+					oms.addMarker(latlng);
+					var popupContent = '';
+					$.each(feature.properties, function( index, value ) {
+						if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+					});
+					latlng.bindPopup(popupContent);
 				}
 			});
 			layerGroup.addLayer(geoJSONlayer);
+			
 		}
 	}).error(function() {console.error('There was an error retrieving GeoJSON data')});
 }
@@ -71,21 +79,27 @@ function displayGeoJSON(url, markerIcon) {
 $( document ).ready(function() {
 	//for jshint
 	'use strict';
+
 	/* create map */
 	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
 	var layer = L.esri.basemapLayer('Gray').addTo(map);
 	var layerLabels;
+	//create marker cluster group
 	layerGroup = L.markerClusterGroup({
 		//options here
-			disableClusteringAtZoom: 10
+			disableClusteringAtZoom: 10,
+			spiderfyOnMaxZoom: false,
+			zoomToBoundsOnClick: true
 		}).addTo(map);
 
-	$('#mapDiv').height($('body').height());
-	//map.invalidateSize();
+	//overlapping marker spidifier
+	oms = new OverlappingMarkerSpiderfier(map, {
+		keepSpiderfied: true
+	});
 	/* create map */
 
 	//initially full GeoJSON display loop
-	$.each([ 'baro','met','rdg','stormTide','waveHeight', 'hwm'], function( index, value ) {
+	$.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, value ) {
 		displayGeoJSON(fev.urls[value + 'GeoJSONViewURL'], window[value + 'MarkerIcon']);
 	});
 

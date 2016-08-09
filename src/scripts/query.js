@@ -8,6 +8,7 @@ var buildQueryStrings =  function  () {
 
         //clear any layers from the layer group
         layerGroup.clearLayers();
+        oms.clearMarkers()
 
         //clear marker coordinate array
         markerCoords = [];
