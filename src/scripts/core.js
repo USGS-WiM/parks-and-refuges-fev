@@ -103,6 +103,17 @@ $( document ).ready(function() {
 		displayGeoJSON(fev.urls[value + 'GeoJSONViewURL'], window[value + 'MarkerIcon']);
 	});
 
+	//populate initial unfiltered download URLs
+	$('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsURLRoot);
+	$('#sensorDownloadButtonJSON').attr('href', fev.urls.jsonSensorsURLRoot); 
+	$('#sensorDownloadButtonXML').attr('href', fev.urls.xmlSensorsURLRoot);
+	$('#hwmDownloadButtonCSV').attr('href', fev.urls.csvHWMsURLRoot);
+	$('#hwmDownloadButtonJSON').attr('href', fev.urls.jsonHWMsURLRoot); 
+	$('#hwmDownloadButtonXML').attr('href', fev.urls.xmlHWMsURLRoot);
+	$('#peaksDownloadButtonCSV').attr('href', fev.urls.csvPeaksURLRoot);
+	$('#peaksDownloadButtonJSON').attr('href', fev.urls.jsonPeaksURLRoot); 
+	$('#peaksDownloadButtonXML').attr('href', fev.urls.xmlPeaksURLRoot);
+
 	/* sets up data type radio buttons to hide/show the respective forms*/
 	$('.dataTypeRadio').each(function(){
 		//for the clicked radio
