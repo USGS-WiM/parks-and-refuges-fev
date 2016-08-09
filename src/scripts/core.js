@@ -75,14 +75,17 @@ $( document ).ready(function() {
 	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
 	var layer = L.esri.basemapLayer('Gray').addTo(map);
 	var layerLabels;
-	layerGroup = L.layerGroup().addTo(map);
+	layerGroup = L.markerClusterGroup({
+		//options here
+			disableClusteringAtZoom: 10
+		}).addTo(map);
 
 	$('#mapDiv').height($('body').height());
 	//map.invalidateSize();
 	/* create map */
 
 	//initially full GeoJSON display loop
-	$.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, value ) {
+	$.each([ 'baro','met','rdg','stormTide','waveHeight', 'hwm'], function( index, value ) {
 		displayGeoJSON(fev.urls[value + 'GeoJSONViewURL'], window[value + 'MarkerIcon']);
 	});
 
