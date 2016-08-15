@@ -17,5 +17,10 @@
   "strict": false,
   "trailing": true,
   "smarttabs": true,
-  "white": true
+  "white": true,
+    "globals": {
+        "$": false,
+		"L": false,
+		"fev": false
+    }
 }

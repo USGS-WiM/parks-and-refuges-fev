@@ -12,6 +12,109 @@ body {
     background-color:#474747;
 }
 
+/*
+    ===========================
+    ===========================
+     USGS Search API overrides
+    ===========================
+    ===========================
+*/
+
+.search-bar {
+    margin:0px;
+    padding-left:0px;
+}
+
+#sapi-searchTextBox {
+    font-family: 'Open Sans', sans-serif !important;
+    width: 100% !important;
+    height: 35px !important;
+    padding: 6px 12px !important; 
+    margin-left: 0px !important;
+    border-radius: 2px !important;
+    border: 2px solid rgba(45, 49, 70, 0.23) !important;
+}
+
+.sapi .ui-autocomplete {
+    font-family: 'Open Sans', sans-serif !important;
+    border-radius: 4px !important;
+}
+
+.sapi-autocomplete-title {
+    font-family: 'Open Sans', sans-serif !important;
+    background-color : #2D3146 !important
+}
+
+.sapi-autocomplete-tip {
+    font-family: 'Open Sans', sans-serif !important;
+}
+
+.sapi-autocomplete-category {
+    font-family: 'Open Sans', sans-serif !important;
+    background-color : #0071BC !important
+}
+
+.sapi-autocomplete-item {
+    font-family: 'Open Sans', sans-serif !important;
+    font-weight: 200 !important;
+}
+
+.sapi-autocomplete-item {
+    font-family: 'Open Sans', sans-serif !important;
+    font-weight: 200 !important;
+}
+
+.sapi-autocomplete-itemAnnotation {
+    font-family: 'Open Sans', sans-serif !important;
+    font-weight: bold !important;
+}
+
+/*
+    ===========================
+    ===========================
+     USGS Search API overrides
+    ===========================
+    ===========================
+*/
+
+.metMarker:before
+{
+    font-size: 20px;
+    content: "●";
+    color: #FF00FF;
+}
+
+.stormTideMarker:before
+{
+    font-size: 30px;
+    content: "●";
+    color: red;
+}
+
+.rdgMarker:before {
+    font-size: 30px;
+    content: "▲";
+    color: green;
+}
+
+.waveHeightMarker:before {
+    font-size: 30px;
+    content: "■";
+    color: purple;
+}
+
+.baroMarker:before {
+    font-size: 30px;
+    content: "♦";
+    color: yellow;
+}
+
+.hwmMarker:before {
+    font-size: 20px;
+    content: "♦";
+    color: #8B4513;
+}
+
 #aboutNav {
     /*background-color: #474747;*/
 
@@ -230,6 +333,16 @@ body {
     box-shadow: 0 1px 5px rgba(0,0,0,0.65);
     /*min-width: 150px;*/
     border-radius: 4px;
+    text-align: left;
+    line-height: 26px;
+}
+
+.legendClass i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
 }
 
 .legendHeading {

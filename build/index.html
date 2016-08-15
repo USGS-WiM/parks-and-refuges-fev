@@ -3,7 +3,7 @@
 <head>
     <title>Flood Event Viewer</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <link rel="stylesheet" href="styles/vendor.css">
 
@@ -11,8 +11,6 @@
 
     <!-- CSS for the mapping components -->
     <link rel="stylesheet" href="styles/main.css">
-
-
 
     <link rel="shortcut icon" href="/favicon.ico">
 
@@ -69,17 +67,19 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <div id="geosearch"><div id="sapi_searchTextBoxDiv"></div></div>
+                    <div class="input-group">
+                        <div id="sapi_searchTextBoxDiv">Loading Search Bar...</div>
+                        <span class="input-group-btn">
+                        <button id="searchSubmit" class="btn btn-success" type="button">Go!</button>
+                        </span>
+                    </div><!-- /input-group -->
                 </div>
                 <form id="geosearch-form" class="form-inline">
-                    <div class="checkbox">
-                        <label>
-                            <input id="chkExtent" type="checkbox"> Search in Map Only
-                        </label>
-                    </div>
-                    <button id="btnGeosearch" type="button" class="btn btn-success btn-fixed" data-dismiss="modal"> Go </button>
-                    <button id="btnDismiss" type="submit" class="btn btn-default btn-fixed" data-dismiss="modal">Dismiss</button>
+                    <input id="chkExtent" type="checkbox"> Search in Map Only<br>
                 </form>
+            </div>
+            <div class="modal-footer">
+                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -346,12 +346,12 @@
             <div class="panel panel-default wim-sidebar-panel">
                 <div class="panel-heading" id="layersPanelHeader">
                     <h4 class="panel-title">
-                        <a class="collapsed" data-toggle="collapse" href="#layersPanel" aria-expanded="true" aria-controls="layersPanel">
+                        <a data-toggle="collapse" href="#layersPanel" aria-expanded="false" aria-controls="layersPanel">
                             Map Layers
                         </a>
                     </h4>
                 </div>
-                <div id="layersPanel" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="layersPanelHeader">
+                <div id="layersPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="layersPanelHeader">
                     <div id="toggle" style="padding: 2px 2px;"></div>
                 </div>
             </div>
@@ -364,6 +364,9 @@
                     </h4>
                 </div>
                 <div id="filtersPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="filtersHeader">
+                    <!------------------------------------------------------------------------------------------>
+                    <button id="btnFilters" class="btn btn-default equalize filtersBtn">Change Filters</button>
+
                     <div class="panel-body collapse in">
 
                         <label for="eventGroup">Event Options</label>
@@ -404,8 +407,6 @@
                         <ul class="list-group" id="peaksGroup">
                             <li class="list-group-item col-lg-12 filterItems">Start Date: <span id="peakStartDisplay"></span> End Date: <span id="peakEndDisplay"></span></li>
                         </ul>
-                        <!------------------------------------------------------------------------------------------>
-                        <button id="btnFilters" class="btn btn-default equalize filtersBtn">Change Filters</button>
                     </div>
                 </div>
             </div>
@@ -420,6 +421,42 @@
                 </div>
                 <div id="downloadPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="downloadHeader">
                     <div class="panel-body collapse in">
+                        <div id="sensorDownloadButtons">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <span data-bind="label" value="Sensor">Download Sensor Data</span>&nbsp;<span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a id="sensorDownloadButtonCSV" href="#" value="CSV">CSV</a></li>
+                                        <li><a id="sensorDownloadButtonJSON" href="#" value="JSON">JSON</a></li>
+                                        <li><a id="sensorDownloadButtonXML" href="#" value="XML">XML</a></li>
+                                    </ul>
+                                </div>
+                        </div>
+                        <div id="hwmrDownloadButtons">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <span data-bind="label" value="HWM">Download HWM Data</span>&nbsp;<span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a id="hwmDownloadButtonCSV" href="#" value="CSV">CSV</a></li>
+                                        <li><a id="hwmDownloadButtonJSON" href="#" value="JSON">JSON</a></li>
+                                        <li><a id="hwmDownloadButtonXML" href="#" value="XML">XML</a></li>
+                                    </ul>
+                                </div>
+                        </div>
+                        <div id="peaksDownloadButtons">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <span data-bind="label" value="Peaks">Download Peaks Data</span>&nbsp;<span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a id="peaksDownloadButtonCSV" href="#" value="CSV">CSV</a></li>
+                                        <li><a id="peaksDownloadButtonJSON" href="#" value="JSON">JSON</a></li>
+                                        <li><a id="peaksDownloadButtonXML" href="#" value="XML">XML</a></li>
+                                    </ul>
+                                </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -447,7 +484,17 @@
                         </h4>
                     </div>
                     <div id="legendCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                        <div id="legendDiv" class="panel-body"></div>
+                        <div id="legendDiv" class="panel-body">
+                            <b>Sensors</b></br>
+                            <i class="rdgMarker"></i><span>Rapid Deployment Streamgage</span></br>
+                            <i class="waveHeightMarker"></i><span>Wave Height Sensor</span></br>
+                            <i class="baroMarker"></i><span>Barometric Pressure Sensor</span></br>
+                            <i class="metMarker"></i><span>Meteorological Sensor</span></br>
+                            <i class="stormTideMarker"></i><span>Storm Tide Sensor - Deployed</span></br>
+                            <i class="stormTideMarker"></i><span>Storm Tide Sensor - Retrieved</span></br>
+                            <b>Observed Data</b></br>
+                            <i class="hwmMarker"></i><span>High-Water Marks</span>
+                        </div>
                     </div>
                 </div>
             </div>
