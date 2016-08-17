@@ -38,6 +38,7 @@ var map;
 var layerGroup;
 var oms;
 var markerCoords = [];
+
 var baroMarkerIcon = L.divIcon({className: 'baroMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 var metMarkerIcon = L.divIcon({className: 'metMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 var rdgMarkerIcon = L.divIcon({className: 'rdgMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
@@ -46,34 +47,21 @@ var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker', iconAnchor:
 var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 var peaksMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 
-//ajax retrieval function
-function displayGeoJSON(url, markerIcon) {
-	$.ajax({
-		dataType: 'json',
-		url: url,
-		success: function(data) {
-			if (!data || data.length === 0) {return;}
-			console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
-			var geoJSONlayer = L.geoJson(data, {
-				pointToLayer: function (feature, latlng) {
-					//markerCoords.push(latlng);
-					return L.marker(latlng, {icon: markerIcon});
-				},
-				onEachFeature: function (feature, latlng) {
-					//add marker to overlapping marker spidifier
-					oms.addMarker(latlng);
-					var popupContent = '';
-					$.each(feature.properties, function( index, value ) {
-						if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-					});
-					latlng.bindPopup(popupContent);
-				}
-			});
-			layerGroup.addLayer(geoJSONlayer);
-			
-		}
-	}).error(function() {console.error('There was an error retrieving GeoJSON data')});
-}
+// Create a normal Marker Cluster Group
+var markerClusterGroup = L.markerClusterGroup({
+	//options here
+	disableClusteringAtZoom: 8,
+	spiderfyOnMaxZoom: false,
+	zoomToBoundsOnClick: true
+});
+
+//create subgroups
+var	baro = L.featureGroup.subGroup(markerClusterGroup);
+var stormTide = L.featureGroup.subGroup(markerClusterGroup);
+var	met = L.featureGroup.subGroup(markerClusterGroup);
+var rdg = L.featureGroup.subGroup(markerClusterGroup);
+var	waveHeight = L.featureGroup.subGroup(markerClusterGroup);
+
 
 //main document ready function
 $( document ).ready(function() {
@@ -84,13 +72,100 @@ $( document ).ready(function() {
 	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
 	var layer = L.esri.basemapLayer('Gray').addTo(map);
 	var layerLabels;
-	//create marker cluster group
-	layerGroup = L.markerClusterGroup({
-		//options here
-			disableClusteringAtZoom: 10,
-			spiderfyOnMaxZoom: false,
-			zoomToBoundsOnClick: true
-		}).addTo(map);
+	//////////////////////////////////////////////////////////////
+
+	markerClusterGroup.addTo(map);
+
+	baro.addTo(map);
+	stormTide.addTo(map);
+	met.addTo(map);
+	rdg.addTo(map);
+	waveHeight.addTo(map);
+
+	var overlays = {
+		"Barometric Pressure Sensor": baro,
+		"Meteorological Sensor": met,
+		"Rapid Deployment Gage" :rdg,
+		"StormTideSensor" : stormTide,
+		"Wave Height Sensor" : waveHeight
+	};
+	L.control.layers(null, overlays).addTo(map);
+///////////////////////////////////////////////////////////////////////////////////////
+
+
+	//ajax retrieval function
+	function displayGeoJSON(type, url, markerIcon) {
+		//var currentMarker = window[type + "Marker"]
+
+		var currentSubGroup = eval(type);
+		var currentMarker = L.geoJson(false, {
+			pointToLayer: function(feature, latlng) {
+				var marker = L.marker(latlng, {
+					icon: markerIcon
+				});
+				marker.bindPopup("<strong>" + feature.properties.NAME + "</strong><br/>" + feature.properties.STREETNUM + " " + feature.properties.STREET + ", " + feature.properties.CITY + "<br/>" + "<a target = _blank href=" +
+				 	feature.properties.URL + ">" + feature.properties.URLDISPLAY + "</a>");
+				return marker;
+			},
+			onEachFeature: function (feature, latlng) {
+				//add marker to overlapping marker spidifier
+				oms.addMarker(latlng);
+				var popupContent = '';
+				$.each(feature.properties, function( index, value ) {
+					if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+				});
+				latlng.bindPopup(popupContent);
+			}
+		});
+
+		$.getJSON(url, function(data) {
+			console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+			currentMarker.addData(data);
+			currentMarker.eachLayer(function(layer) {
+				layer.addTo(currentSubGroup);
+			});
+		});
+
+
+		// $.ajax({
+		// 	dataType: 'json',
+		// 	url: url,
+		// 	success: function(data) {
+		// 		if (!data || data.length === 0) {return;}
+		// 		console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+		// 		var geoJSONlayer = L.geoJson(data, {
+		// 			pointToLayer: function (feature, latlng) {
+		// 				//markerCoords.push(latlng);
+		// 				return L.marker(latlng, {icon: markerIcon});
+		// 			},
+		// 			onEachFeature: function (feature, latlng) {
+		// 				//add marker to overlapping marker spidifier
+		// 				oms.addMarker(latlng);
+		// 				var popupContent = '';
+		// 				$.each(feature.properties, function( index, value ) {
+		// 					if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+		// 				});
+		// 				latlng.bindPopup(popupContent);
+		// 			}
+		// 		});
+		// 		//adds the type group to the geoJSON layer by converting the type string to a var of the same name
+		// 		geoJSONlayer.addTo((window[type]));
+		// 		//geoJSONLayer is a extension of FeatureGroup	//window.type is a featuregroup.subgroup
+        //
+		// 		//control.addOverlay((window[type]), type);
+        //
+		// 		//layerGroup.addLayer(geoJSONlayer);
+		// 		//geoJSONlayer.pointToLayer()
+        //
+		// 		///new group to add to...
+		// 		//markerClusterGroup.addLayer(geoJSONlayer);
+        //
+        //
+		// 	}
+		// }).error(function() {console.error('There was an error retrieving GeoJSON data')});
+	}
+
+
 
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
@@ -99,8 +174,8 @@ $( document ).ready(function() {
 	/* create map */
 
 	//initially full GeoJSON display loop
-	$.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, value ) {
-		displayGeoJSON(fev.urls[value + 'GeoJSONViewURL'], window[value + 'MarkerIcon']);
+	$.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, type ) {
+		displayGeoJSON(type, fev.urls[type + 'GeoJSONViewURL'], window[type + 'MarkerIcon']);
 	});
 
 	//populate initial unfiltered download URLs

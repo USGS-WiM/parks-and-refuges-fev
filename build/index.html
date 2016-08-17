@@ -75,7 +75,7 @@
                     </div><!-- /input-group -->
                 </div>
                 <form id="geosearch-form" class="form-inline">
-                    <input id="chkExtent" type="checkbox"> Search in Map Only<br>
+                    <input id="chkExtent" type="checkbox">  Search within current map extent only<br>
                 </form>
             </div>
             <div class="modal-footer">
@@ -484,16 +484,46 @@
                         </h4>
                     </div>
                     <div id="legendCollapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                        <div id="legendDiv" class="panel-body">
+                        <div id="legendDiv" class="panel-body legend-panel-body">
+                            <!-- collapsing panel style toggle/swatch elements -->
+                            <!--<div class="panel panel-default legend-item-panel">-->
+                                <!--<div class="panel-heading" role="tab" id="rdgSwatchHeading">-->
+                                    <!--<h4 class="panel-title">-->
+                                        <!--<input type="checkbox" aria-label="..."><a role="button" data-toggle="collapse" href="#rdgSwatchDiv" aria-expanded="true" aria-controls="collapseOne">-->
+                                        <!--&nbsp;Rapid Deployment Streamgage&nbsp;-->
+                                        <!--</a>-->
+                                    <!--</h4>-->
+                                <!--</div>-->
+                                <!--<div id="rdgSwatchDiv" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="rdgSwatchHeading">-->
+                                    <!--<div class="panel-body">-->
+                                        <!--<i class="rdgMarker"></i><span>Rapid Deployment Streamgage</span></br>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                            <!--<div class="panel panel-default legend-item-panel">-->
+                                <!--<div class="panel-heading" role="tab" id="waveHeightSwatchHeading">-->
+                                    <!--<h4 class="panel-title">-->
+                                        <!--<input type="checkbox" aria-label="..."><a role="button" data-toggle="collapse" href="#waveHeightSwatchDiv" aria-expanded="true" aria-controls="collapseOne">-->
+                                        <!--&nbsp;Wave Height Sensor&nbsp;-->
+                                    <!--</a>-->
+                                    <!--</h4>-->
+                                <!--</div>-->
+                                <!--<div id="waveHeightSwatchDiv" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="waveHeightSwatchHeading">-->
+                                    <!--<div class="panel-body">-->
+                                        <!--<i class="waveHeightMarker"></i><span>Wave Height Sensor</span></br>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!-- end collapsing panel style toggle/swatch elements -->
                             <b>Sensors</b></br>
-                            <i class="rdgMarker"></i><span>Rapid Deployment Streamgage</span></br>
-                            <i class="waveHeightMarker"></i><span>Wave Height Sensor</span></br>
-                            <i class="baroMarker"></i><span>Barometric Pressure Sensor</span></br>
-                            <i class="metMarker"></i><span>Meteorological Sensor</span></br>
-                            <i class="stormTideMarker"></i><span>Storm Tide Sensor - Deployed</span></br>
-                            <i class="stormTideMarker"></i><span>Storm Tide Sensor - Retrieved</span></br>
+                            <input type="checkbox" aria-label="..."><i class="rdgMarker"></i><span>Rapid Deployment Streamgage</span></br>
+                            <input type="checkbox" aria-label="..."><i class="waveHeightMarker"></i><span>Wave Height Sensor</span></br>
+                            <input type="checkbox" aria-label="..."><i class="baroMarker"></i><span>Barometric Pressure Sensor</span></br>
+                            <input type="checkbox" aria-label="..."><i class="metMarker"></i><span>Meteorological Sensor</span></br>
+                            <input type="checkbox" aria-label="..."><i class="stormTideMarker"></i><span>Storm Tide Sensor</span></br>
                             <b>Observed Data</b></br>
-                            <i class="hwmMarker"></i><span>High-Water Marks</span>
+                            <input type="checkbox" aria-label="..."><i class="hwmMarker"></i><span>High-Water Marks</span>
                         </div>
                     </div>
                 </div>
