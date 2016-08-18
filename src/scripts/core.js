@@ -62,6 +62,8 @@ var	met = L.featureGroup.subGroup(markerClusterGroup);
 var rdg = L.featureGroup.subGroup(markerClusterGroup);
 var	waveHeight = L.featureGroup.subGroup(markerClusterGroup);
 
+var hwm = L.featureGroup.subGroup(markerClusterGroup);
+
 
 //main document ready function
 $( document ).ready(function() {
@@ -81,20 +83,32 @@ $( document ).ready(function() {
 	met.addTo(map);
 	rdg.addTo(map);
 	waveHeight.addTo(map);
+	hwm.addTo(map);
 
-	var overlays = {
-		"Barometric Pressure Sensor": baro,
-		"Meteorological Sensor": met,
-		"Rapid Deployment Gage" :rdg,
-		"StormTideSensor" : stormTide,
-		"Wave Height Sensor" : waveHeight
+	var sensorOverlays = {
+		"<i class='baroMarker'></i>&nbsp;Barometric Pressure Sensor": baro,
+		"<i class='metMarker'></i>&nbsp;Meteorological Sensor": met,
+		"<i class='rdgMarker'></i>&nbsp;Rapid Deployment Gage" :rdg,
+		"<i class='stormTideMarker'></i>&nbsp;Storm Tide Sensor" : stormTide,
+		"<i class='waveHeightMarker'></i>&nbsp;Wave Height Sensor" : waveHeight
 	};
-	L.control.layers(null, overlays).addTo(map);
+	var sensorsToggle = L.control.layers(null, sensorOverlays, {collapsed: false});
+	sensorsToggle.addTo(map);
+	sensorsToggle._container.remove();
+	document.getElementById('sensorsToggleDiv').appendChild(sensorsToggle.onAdd(map));
+
+	var observedOverlay = {
+		"<i class='hwmMarker'></i>&nbsp;High Water Marks": hwm
+	};
+	var observedToggle = L.control.layers(null, observedOverlay, {collapsed: false});
+	observedToggle.addTo(map);
+	observedToggle._container.remove();
+	document.getElementById('observedToggleDiv').appendChild(observedToggle.onAdd(map));
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
-
 	//ajax retrieval function
-	function displayGeoJSON(type, url, markerIcon) {
+	function displaySensorGeoJSON(type, url, markerIcon) {
 		//var currentMarker = window[type + "Marker"]
 
 		var currentSubGroup = eval(type);
@@ -103,8 +117,6 @@ $( document ).ready(function() {
 				var marker = L.marker(latlng, {
 					icon: markerIcon
 				});
-				marker.bindPopup("<strong>" + feature.properties.NAME + "</strong><br/>" + feature.properties.STREETNUM + " " + feature.properties.STREET + ", " + feature.properties.CITY + "<br/>" + "<a target = _blank href=" +
-				 	feature.properties.URL + ">" + feature.properties.URLDISPLAY + "</a>");
 				return marker;
 			},
 			onEachFeature: function (feature, latlng) {
@@ -165,6 +177,36 @@ $( document ).ready(function() {
 		// }).error(function() {console.error('There was an error retrieving GeoJSON data')});
 	}
 
+	function displayHWMGeoJSON(url, markerIcon) {
+
+		var currentMarker = L.geoJson(false, {
+			pointToLayer: function(feature, latlng) {
+				var marker = L.marker(latlng, {
+					icon: markerIcon
+				});
+				return marker;
+			},
+			onEachFeature: function (feature, latlng) {
+				//add marker to overlapping marker spidifier
+				oms.addMarker(latlng);
+				var popupContent = '';
+				$.each(feature.properties, function( index, value ) {
+					if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+				});
+				latlng.bindPopup(popupContent);
+			}
+		});
+
+		$.getJSON(url, function(data) {
+			console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+			currentMarker.addData(data);
+			currentMarker.eachLayer(function(layer) {
+				layer.addTo(hwm);
+			});
+		});
+
+	}
+
 
 
 	//overlapping marker spidifier
@@ -175,7 +217,12 @@ $( document ).ready(function() {
 
 	//initially full GeoJSON display loop
 	$.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, type ) {
-		displayGeoJSON(type, fev.urls[type + 'GeoJSONViewURL'], window[type + 'MarkerIcon']);
+		displaySensorGeoJSON(type, fev.urls[type + 'GeoJSONViewURL'], window[type + 'MarkerIcon']);
+	});
+
+	//initially display full HWM data
+	$.each([ 'hwm'], function( index, type ) {
+		displayHWMGeoJSON(fev.urls[type + 'GeoJSONViewURL'], window[type + 'MarkerIcon']);
 	});
 
 	//populate initial unfiltered download URLs
