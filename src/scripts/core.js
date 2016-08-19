@@ -47,22 +47,37 @@ var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker', iconAnchor:
 var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 var peaksMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 
-// Create a normal Marker Cluster Group
-var markerClusterGroup = L.markerClusterGroup({
+// Marker Cluster Group for sensors
+var sensorMCG = L.markerClusterGroup({
 	//options here
 	disableClusteringAtZoom: 8,
 	spiderfyOnMaxZoom: false,
 	zoomToBoundsOnClick: true
 });
+//sensor subgroups for sensor marker cluster group
+var	baro = L.featureGroup.subGroup(sensorMCG);
+var stormTide = L.featureGroup.subGroup(sensorMCG);
+var	met = L.featureGroup.subGroup(sensorMCG);
+var rdg = L.featureGroup.subGroup(sensorMCG);
+var	waveHeight = L.featureGroup.subGroup(sensorMCG);
 
-//create subgroups
-var	baro = L.featureGroup.subGroup(markerClusterGroup);
-var stormTide = L.featureGroup.subGroup(markerClusterGroup);
-var	met = L.featureGroup.subGroup(markerClusterGroup);
-var rdg = L.featureGroup.subGroup(markerClusterGroup);
-var	waveHeight = L.featureGroup.subGroup(markerClusterGroup);
-
-var hwm = L.featureGroup.subGroup(markerClusterGroup);
+// Marker Cluster Group for HWMs
+var hwmMCG = L.markerClusterGroup({
+	//options here
+	disableClusteringAtZoom: 8,
+	spiderfyOnMaxZoom: false,
+	zoomToBoundsOnClick: true,
+	iconCreateFunction: function (cluster) {
+		// var markers = cluster.getAllChildMarkers();
+		// var n = 0;
+		// for (var i = 0; i < markers.length; i++) {
+		// 	n += markers[i].number;
+		// }
+		//return L.divIcon({ html: n, className: 'hwmClusterMarker', iconSize: L.point(40, 40) });
+		return L.divIcon({ html: '<div style="display: inline-block"><span style="display: inline-block" class="hwmClusterText">' + cluster.getChildCount() + '</span></div>',  className: 'hwmClusterMarker' });
+	}
+});
+var hwm = L.featureGroup.subGroup(hwmMCG);
 
 
 //main document ready function
@@ -76,13 +91,14 @@ $( document ).ready(function() {
 	var layerLabels;
 	//////////////////////////////////////////////////////////////
 
-	markerClusterGroup.addTo(map);
-
+	sensorMCG.addTo(map);
 	baro.addTo(map);
 	stormTide.addTo(map);
 	met.addTo(map);
 	rdg.addTo(map);
 	waveHeight.addTo(map);
+
+	hwmMCG.addTo(map);
 	hwm.addTo(map);
 
 	var sensorOverlays = {
