@@ -1,17 +1,94 @@
 /**
  * Created by bdraper on 8/4/2016.
  */
-    ///function to grab all values from the inputs, form into arrays, and build query strings
+///function to grab all values from the inputs, form into arrays, and build query strings
+
+//$( document ).ready(function() {
+
+    //ajax retrieval function
+    function displaySensorGeoJSON(type, url, markerIcon) {
+
+        var currentSubGroup = eval(type);
+        currentSubGroup.clearLayers();
+        var currentMarker = L.geoJson(false, {
+            pointToLayer: function(feature, latlng) {
+                markerCoords.push(latlng);
+                var marker = L.marker(latlng, {
+                    icon: markerIcon
+                });
+                return marker;
+            },
+            onEachFeature: function (feature, latlng) {
+                //add marker to overlapping marker spidifier
+                //oms.addMarker(latlng);
+                var popupContent = '';
+                $.each(feature.properties, function( index, value ) {
+                    if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+                });
+                latlng.bindPopup(popupContent);
+            }
+        });
+
+        $.getJSON(url, function(data) {
+            if (data.features.length > 0) {
+                console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+                currentMarker.addData(data);
+                currentMarker.eachLayer(function(layer) {
+                    layer.addTo(currentSubGroup);
+                });
+            }
+
+        });
 
 
-var buildQueryStrings =  function  () {
+    }
 
-        //clear any layers from the layer group
-        layerGroup.clearLayers();
-        oms.clearMarkers()
+    function displayHWMGeoJSON(url, markerIcon) {
+        hwm.clearLayers();
+        var currentMarker = L.geoJson(false, {
+            pointToLayer: function(feature, latlng) {
+                markerCoords.push(latlng);
+                var marker = L.marker(latlng, {
+                    icon: markerIcon
+                });
+                return marker;
+            },
+            onEachFeature: function (feature, latlng) {
+                //add marker to overlapping marker spidifier
+                //oms.addMarker(latlng);
+                var popupContent = '';
+                $.each(feature.properties, function( index, value ) {
+                    if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+                });
+                latlng.bindPopup(popupContent);
+            }
+        });
 
-        //clear marker coordinate array
-        markerCoords = [];
+        $.getJSON(url, function(data) {
+            if (data.features.length > 0) {
+                console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+                currentMarker.addData(data);
+                currentMarker.eachLayer(function(layer) {
+                    layer.addTo(hwm);
+                });
+            }
+
+        });
+
+    }
+
+
+    function filterMapData() {
+
+        ///eventSelect_welcomeModal: display the event name both in display area and large event indicator; set the eventSelections value
+        var eventSelections = '';
+        if ($('#evtSelect_welcomeModal').val() !== null){
+            var eventSelectionsArray = $('#evtSelect_welcomeModal').val();
+            eventSelections = eventSelectionsArray.toString();
+            $('#eventNameDisplay').html($('#evtSelect_welcomeModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
+            $('#largeEventNameDisplay').html($('#evtSelect_welcomeModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
+
+        }
 
         //event type
         var eventTypeSelections = '';
@@ -21,12 +98,13 @@ var buildQueryStrings =  function  () {
             $('#eventTypeDisplay').html($('#evtTypeSelect').select2('data').map(function(elem){ return elem.text;}).join(', '));
         }
         //event
-        var eventSelections = '';
-        if ($('#evtSelect').val() !== null){
-            var eventSelectionsArray = $('#evtSelect').val();
+        //eventSelections = '';
+        if ($('#evtSelect_filterModal').val() !== null){
+            var eventSelectionsArray = $('#evtSelect_filterModal').val();
             eventSelections = eventSelectionsArray.toString();
-            $('#eventNameDisplay').html($('#evtSelect').select2('data').map(function(elem){ return elem.text;}).join(', '));
-    
+            $('#eventNameDisplay').html($('#evtSelect_filterModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
+            $('#largeEventNameDisplay').html($('#evtSelect_filterModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
+
         }
         //event status
         var eventStatusSelectionArray = [];
@@ -46,7 +124,7 @@ var buildQueryStrings =  function  () {
         }
         if ( !($('#active')[0].checked) && !($('#complete')[0].checked)) {
             eventStatusSelectionArray.push(0);
-             $('#eventStatusDisplay').html('');
+            $('#eventStatusDisplay').html('');
         }
 
         var eventStatusSelection =  eventStatusSelectionArray.toString();
@@ -68,7 +146,7 @@ var buildQueryStrings =  function  () {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //SENSORS
-        if ($('#sensorRad')[0].checked){
+        //if ($('#sensorRad')[0].checked){
             //sensor type
             var sensorTypeSelections = '';
             if ($('#sensorTypeSelect').val() !== null ){
@@ -109,12 +187,14 @@ var buildQueryStrings =  function  () {
 
             //add download buttons
             $('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsQueryURL);
-            $('#sensorDownloadButtonJSON').attr('href', fev.urls.jsonSensorsQueryURL); 
+            $('#sensorDownloadButtonJSON').attr('href', fev.urls.jsonSensorsQueryURL);
             $('#sensorDownloadButtonXML').attr('href', fev.urls.xmlSensorsQueryURL);
-            
+
+            //return fev.queryStrings.sensorsQueryString;
+
             //get geoJSON
-            $.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, value ) {
-                displayGeoJSON(fev.urls[value + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window[value + 'MarkerIcon']);
+            $.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, type ) {
+                displaySensorGeoJSON(type, fev.urls[type + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window[type + 'MarkerIcon']);
             });
 
             //hack to zoom to sites after all ajax calls finish
@@ -123,12 +203,11 @@ var buildQueryStrings =  function  () {
                 if (markerCoords.length > 0) { map.fitBounds(markerCoords); }
             });
 
-        }
-
+        //}
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         //HWMs
-        if ($('#hwmRad')[0].checked) {
-            console.log('in HWM Radio listener function');
+        //if ($('#hwmRad')[0].checked) {
+            //console.log('in HWM Radio listener function');
 
             //HWM types
             var hwmTypeSelections = '';
@@ -193,16 +272,17 @@ var buildQueryStrings =  function  () {
 
             //add download buttons
             $('#hwmDownloadButtonCSV').attr('href', fev.urls.csvHWMsQueryURL);
-            $('#hwmDownloadButtonJSON').attr('href', fev.urls.jsonHWMsQueryURL); 
+            $('#hwmDownloadButtonJSON').attr('href', fev.urls.jsonHWMsQueryURL);
             $('#hwmDownloadButtonXML').attr('href', fev.urls.xmlHWMsQueryURL);
-            
-            //get geoJSON
-            displayGeoJSON(fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
 
-        }
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //get geoJSON
+            //displayGeoJSON(fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
+
+            displayHWMGeoJSON(fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
+
+        //}
         //PEAKS
-        if ($('#peakRad')[0].checked) {
+        //if ($('#peakRad')[0].checked) {
             var peakStartDate;
             if ($('#peakStartDate').value !== ''){
                 peakStartDate = $('#peakStartDate')[0].value;
@@ -221,10 +301,27 @@ var buildQueryStrings =  function  () {
 
             //add download buttons
             $('#peaksDownloadButtonCSV').attr('href', fev.urls.csvPeaksQueryURL);
-            $('#peaksDownloadButtonJSON').attr('href', fev.urls.jsonPeaksQueryURL); 
+            $('#peaksDownloadButtonJSON').attr('href', fev.urls.jsonPeaksQueryURL);
             $('#peaksDownloadButtonXML').attr('href', fev.urls.xmlPeaksQueryURL);
 
             //get geoJSON
-            displayGeoJSON(fev.urls.peaksGeoJSONViewURL + fev.queryStrings.peaksQueryString, peaksMarkerIcon);
-        }
-    };
+            //displayGeoJSON(fev.urls.peaksGeoJSONViewURL + fev.queryStrings.peaksQueryString, peaksMarkerIcon);
+        //}
+
+
+        // switch (layer) {
+        //     case 'sensors':
+        //         break;
+        //     case 'hwms':
+        //         break;
+        //     case 'peaks':
+        //
+        // } //end switch statement for layer type
+
+        //clear any layers from the layer group
+        //layerGroup.clearLayers();
+        //oms.clearMarkers()
+        //return [fev.queryStrings.sensorsQueryString, fev.queryStrings.hwmsQueryString, fev.queryStrings.peaksQueryString];
+    }; //end filterMapData function
+
+//}); //end document ready function wrapper

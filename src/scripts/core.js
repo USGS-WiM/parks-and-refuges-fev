@@ -55,52 +55,73 @@ var sensorMCG = L.markerClusterGroup({
 	zoomToBoundsOnClick: true
 });
 //sensor subgroups for sensor marker cluster group
-var	baro = L.featureGroup.subGroup(sensorMCG);
-var stormTide = L.featureGroup.subGroup(sensorMCG);
-var	met = L.featureGroup.subGroup(sensorMCG);
-var rdg = L.featureGroup.subGroup(sensorMCG);
-var	waveHeight = L.featureGroup.subGroup(sensorMCG);
+var	baro = L.layerGroup();
+var stormTide = L.layerGroup();
+var	met = L.layerGroup();
+var rdg = L.layerGroup();
+var	waveHeight = L.layerGroup();
+
+var hwm = L.layerGroup();
+
+
+// var	baro = L.featureGroup.subGroup(sensorMCG);
+// var stormTide = L.featureGroup.subGroup(sensorMCG);
+// var	met = L.featureGroup.subGroup(sensorMCG);
+// var rdg = L.featureGroup.subGroup(sensorMCG);
+// var	waveHeight = L.featureGroup.subGroup(sensorMCG);
 
 // Marker Cluster Group for HWMs
-var hwmMCG = L.markerClusterGroup({
-	//options here
-	disableClusteringAtZoom: 8,
-	spiderfyOnMaxZoom: false,
-	zoomToBoundsOnClick: true,
-	iconCreateFunction: function (cluster) {
-		// var markers = cluster.getAllChildMarkers();
-		// var n = 0;
-		// for (var i = 0; i < markers.length; i++) {
-		// 	n += markers[i].number;
-		// }
-		//return L.divIcon({ html: n, className: 'hwmClusterMarker', iconSize: L.point(40, 40) });
-		return L.divIcon({ html: '<div style="display: inline-block"><span style="display: inline-block" class="hwmClusterText">' + cluster.getChildCount() + '</span></div>',  className: 'hwmClusterMarker' });
-	}
-});
-var hwm = L.featureGroup.subGroup(hwmMCG);
-
+// var hwmMCG = L.markerClusterGroup({
+// 	//options here
+// 	disableClusteringAtZoom: 8,
+// 	spiderfyOnMaxZoom: false,
+// 	zoomToBoundsOnClick: true,
+// 	//create custom icon for HWM clusters
+// 	iconCreateFunction: function (cluster) {
+// 		return L.divIcon({ html: '<div style="display: inline-block"><span style="display: inline-block" class="hwmClusterText">' + cluster.getChildCount() + '</span></div>',  className: 'hwmClusterMarker' });
+// 	}
+// });
+// var hwm = L.featureGroup.subGroup(hwmMCG);
 
 //main document ready function
 $( document ).ready(function() {
 	//for jshint
 	'use strict';
 
+	$('#welcomeModal').modal('show');
+
+	$('#btnSubmitEvent').click(function(){
+		$('#welcomeModal').modal('hide');
+
+		filterMapData();
+
+		//var sensorsQueryString = generateQueryString('sensors');
+		//console.log(sensorsQueryString);
+
+
+		// var hwmsUrl = getQueryUrl(hwms)
+		// var peaksUrl = getQueryUrl(peaks)
+
+	});
+
 	/* create map */
 	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
 	var layer = L.esri.basemapLayer('Gray').addTo(map);
 	var layerLabels;
-	//////////////////////////////////////////////////////////////
-
-	sensorMCG.addTo(map);
+	//add sensor markercluster group to the map
+	//sensorMCG.addTo(map);
+	//add sensor subgroups to the map
 	baro.addTo(map);
 	stormTide.addTo(map);
 	met.addTo(map);
 	rdg.addTo(map);
 	waveHeight.addTo(map);
-
-	hwmMCG.addTo(map);
+	//add hwm markercluster group to the map
+	//hwmMCG.addTo(map);
+	// add hwm subgroup to the map
 	hwm.addTo(map);
 
+	//define sensor layers 'overlays' (leaflet term)
 	var sensorOverlays = {
 		"<i class='baroMarker'></i>&nbsp;Barometric Pressure Sensor": baro,
 		"<i class='metMarker'></i>&nbsp;Meteorological Sensor": met,
@@ -108,121 +129,21 @@ $( document ).ready(function() {
 		"<i class='stormTideMarker'></i>&nbsp;Storm Tide Sensor" : stormTide,
 		"<i class='waveHeightMarker'></i>&nbsp;Wave Height Sensor" : waveHeight
 	};
+	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
 	var sensorsToggle = L.control.layers(null, sensorOverlays, {collapsed: false});
 	sensorsToggle.addTo(map);
 	sensorsToggle._container.remove();
 	document.getElementById('sensorsToggleDiv').appendChild(sensorsToggle.onAdd(map));
 
+	// define observed layers 'overlays' (leaflet term)
 	var observedOverlay = {
 		"<i class='hwmMarker'></i>&nbsp;High Water Marks": hwm
 	};
+	// set up toggle for the observed layers and place within legend div, overriding default behavior
 	var observedToggle = L.control.layers(null, observedOverlay, {collapsed: false});
 	observedToggle.addTo(map);
 	observedToggle._container.remove();
 	document.getElementById('observedToggleDiv').appendChild(observedToggle.onAdd(map));
-
-///////////////////////////////////////////////////////////////////////////////////////
-
-	//ajax retrieval function
-	function displaySensorGeoJSON(type, url, markerIcon) {
-		//var currentMarker = window[type + "Marker"]
-
-		var currentSubGroup = eval(type);
-		var currentMarker = L.geoJson(false, {
-			pointToLayer: function(feature, latlng) {
-				var marker = L.marker(latlng, {
-					icon: markerIcon
-				});
-				return marker;
-			},
-			onEachFeature: function (feature, latlng) {
-				//add marker to overlapping marker spidifier
-				oms.addMarker(latlng);
-				var popupContent = '';
-				$.each(feature.properties, function( index, value ) {
-					if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-				});
-				latlng.bindPopup(popupContent);
-			}
-		});
-
-		$.getJSON(url, function(data) {
-			console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
-			currentMarker.addData(data);
-			currentMarker.eachLayer(function(layer) {
-				layer.addTo(currentSubGroup);
-			});
-		});
-
-
-		// $.ajax({
-		// 	dataType: 'json',
-		// 	url: url,
-		// 	success: function(data) {
-		// 		if (!data || data.length === 0) {return;}
-		// 		console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
-		// 		var geoJSONlayer = L.geoJson(data, {
-		// 			pointToLayer: function (feature, latlng) {
-		// 				//markerCoords.push(latlng);
-		// 				return L.marker(latlng, {icon: markerIcon});
-		// 			},
-		// 			onEachFeature: function (feature, latlng) {
-		// 				//add marker to overlapping marker spidifier
-		// 				oms.addMarker(latlng);
-		// 				var popupContent = '';
-		// 				$.each(feature.properties, function( index, value ) {
-		// 					if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-		// 				});
-		// 				latlng.bindPopup(popupContent);
-		// 			}
-		// 		});
-		// 		//adds the type group to the geoJSON layer by converting the type string to a var of the same name
-		// 		geoJSONlayer.addTo((window[type]));
-		// 		//geoJSONLayer is a extension of FeatureGroup	//window.type is a featuregroup.subgroup
-        //
-		// 		//control.addOverlay((window[type]), type);
-        //
-		// 		//layerGroup.addLayer(geoJSONlayer);
-		// 		//geoJSONlayer.pointToLayer()
-        //
-		// 		///new group to add to...
-		// 		//markerClusterGroup.addLayer(geoJSONlayer);
-        //
-        //
-		// 	}
-		// }).error(function() {console.error('There was an error retrieving GeoJSON data')});
-	}
-
-	function displayHWMGeoJSON(url, markerIcon) {
-
-		var currentMarker = L.geoJson(false, {
-			pointToLayer: function(feature, latlng) {
-				var marker = L.marker(latlng, {
-					icon: markerIcon
-				});
-				return marker;
-			},
-			onEachFeature: function (feature, latlng) {
-				//add marker to overlapping marker spidifier
-				oms.addMarker(latlng);
-				var popupContent = '';
-				$.each(feature.properties, function( index, value ) {
-					if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-				});
-				latlng.bindPopup(popupContent);
-			}
-		});
-
-		$.getJSON(url, function(data) {
-			console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
-			currentMarker.addData(data);
-			currentMarker.eachLayer(function(layer) {
-				layer.addTo(hwm);
-			});
-		});
-
-	}
-
 
 
 	//overlapping marker spidifier
@@ -231,15 +152,15 @@ $( document ).ready(function() {
 	});
 	/* create map */
 
-	//initially full GeoJSON display loop
-	$.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, type ) {
-		displaySensorGeoJSON(type, fev.urls[type + 'GeoJSONViewURL'], window[type + 'MarkerIcon']);
-	});
-
-	//initially display full HWM data
-	$.each([ 'hwm'], function( index, type ) {
-		displayHWMGeoJSON(fev.urls[type + 'GeoJSONViewURL'], window[type + 'MarkerIcon']);
-	});
+	//initially display full unfiltered GeoJSON data (loop of all the types, calls the display function)
+	// $.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, type ) {
+	// 	displaySensorGeoJSON(type, fev.urls[type + 'GeoJSONViewURL'], window[type + 'MarkerIcon']);
+	// });
+    //
+	// //initially display full HWM data
+	// $.each([ 'hwm'], function( index, type ) {
+	// 	displayHWMGeoJSON(fev.urls[type + 'GeoJSONViewURL'], window[type + 'MarkerIcon']);
+	// });
 
 	//populate initial unfiltered download URLs
 	$('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsURLRoot);
@@ -292,12 +213,12 @@ $( document ).ready(function() {
 	function showFiltersModal () {
 		$('#filtersModal').modal('show');
 	}
-	$('#btnFilters').click(function(){
+	$('#btnChangeFilters').click(function(){
 		showFiltersModal();
 	});
 
-	$('#btnFilter').on('click', function() {
-		buildQueryStrings();
+	$('#btnSubmitFilters').on('click', function() {
+		filterMapData();
 	});
 
 	/* basemap controller */

@@ -42,8 +42,10 @@ $( document ).ready(function() {
 
     // Register Event select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.events array
-    $('#evtSelect').select2({
-        placeholder: 'All Events'
+    $('.evtSelect').select2({
+        placeholder: 'Select event',
+        allowClear: true,
+        maximumSelectionLength: 1
     });
     $.ajax({
         dataType: 'json',
@@ -65,7 +67,7 @@ $( document ).ready(function() {
                 }
             });
             for (var i = 0; i < data.length; i++) {
-                $('#evtSelect').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
+                $('.evtSelect').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
                 data[i].id = data[i].event_id;
                 fev.data.events.push(data[i]);
             }
@@ -285,7 +287,7 @@ $( document ).ready(function() {
 
 
     //begin onChange functions for Event form (these tie the event type and event forms together)
-    $('#evtTypeSelect').on('select2:select select2:unselect', function (selection) {
+    $('.evtTypeSelect').on('select2:select select2:unselect', function (selection) {
         var currentSelection = $(this).val();
         if (currentSelection !== null) {
 
@@ -297,22 +299,22 @@ $( document ).ready(function() {
                 var currentEvents = fev.data.events.filter(function (element) {
                     return selectedEvtTypeIds.indexOf(element.event_type_id) > -1;
                 });
-                $('#evtSelect').html('');
-                //$('#evtSelect').select2('val', '');
+                $('.evtSelect').html('');
+                //$('.evtSelect').select2('val', '');
                 for (var x = 0; x < currentEvents.length; x++) {
-                    $('#evtSelect').append('<option value="' + currentEvents[x].event_id + '">' + currentEvents[x].event_name + '</option>');
+                    $('.evtSelect').append('<option value="' + currentEvents[x].event_id + '">' + currentEvents[x].event_name + '</option>');
                     //build string here with event type names??
                 }
             } else {
-                $('#evtSelect').html('');
+                $('.evtSelect').html('');
                 for (var i = 0; i < fev.data.events.length; i++) {
-                    $('#evtSelect').append('<option value="' + fev.data.events[i].event_id + '">' + fev.data.events[i].event_name + '</option>');
+                    $('.evtSelect').append('<option value="' + fev.data.events[i].event_id + '">' + fev.data.events[i].event_name + '</option>');
                 }
             }
         }
     });
 
-    $('#evtSelect').on('change', function (selection){
+    $('.evtSelect').on('change', function (selection){
         //check to see if there is any value selected
         var currentSelection = $(this).val();
         if (!(currentSelection.length > 0)) {
