@@ -110,35 +110,42 @@ body {
 }
 
 .hwmMarker:before {
-    font-size: 20px;
+     font-size: 30px;
+     content: "♦";
+     color: #8B4513;
+ }
+
+.peaksMarker:before {
+    font-size: 30px;
     content: "♦";
-    color: #8B4513;
+    color: darkblue;
 }
 
-.hwmClusterMarker div {
-    display: inline-block !important;
-    box-sizing: content-box;
-    width: 30px;
-    height: 30px;
-    margin: 3px 0 0 30px;
-    border: none;
-    font: normal 100%/normal Arial, Helvetica, sans-serif;
-    color: rgba(255,255,255,1);
-    -o-text-overflow: clip;
-    text-overflow: clip;
-    background: rgba(139, 69, 19, 0.8);
-    -webkit-transform: rotateZ(-45deg);
-    transform: rotateZ(-45deg);
-    -webkit-transform-origin: 0 100% 0;
-    transform-origin: 0 100% 0;
-}
+/*removed when markerclustering removed */
+/*.hwmClusterMarker div {*/
+    /*display: inline-block !important;*/
+    /*box-sizing: content-box;*/
+    /*width: 30px;*/
+    /*height: 30px;*/
+    /*margin: 3px 0 0 30px;*/
+    /*border: none;*/
+    /*font: normal 100%/normal Arial, Helvetica, sans-serif;*/
+    /*color: rgba(255,255,255,1);*/
+    /*-o-text-overflow: clip;*/
+    /*text-overflow: clip;*/
+    /*background: rgba(139, 69, 19, 0.8);*/
+    /*-webkit-transform: rotateZ(-45deg);*/
+    /*transform: rotateZ(-45deg);*/
+    /*-webkit-transform-origin: 0 100% 0;*/
+    /*transform-origin: 0 100% 0;*/
+/*}*/
 
-.hwmClusterText div span {
-    color: white;
-    -webkit-transform: rotate(90deg);
-    transform: rotate(90deg);
-    display:inline-block;
-}
+/*.hwmClusterText div span {*/
+    /*color: white;*/
+    /*-webkit-transform: rotate(90deg);*/
+    /*transform: rotate(90deg);*/
+    /*display:inline-block;*/
+/*}*/
 
 #aboutNav {
     /*background-color: #474747;*/
