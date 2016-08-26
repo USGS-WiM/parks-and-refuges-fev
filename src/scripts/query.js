@@ -77,6 +77,40 @@
 
     }
 
+    function displayPeaksGeoJSON(url, markerIcon) {
+        peaks.clearLayers();
+        var currentMarker = L.geoJson(false, {
+            pointToLayer: function(feature, latlng) {
+                markerCoords.push(latlng);
+                var marker = L.marker(latlng, {
+                    icon: markerIcon
+                });
+                return marker;
+            },
+            onEachFeature: function (feature, latlng) {
+                //add marker to overlapping marker spidifier
+                //oms.addMarker(latlng);
+                var popupContent = '';
+                $.each(feature.properties, function( index, value ) {
+                    if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+                });
+                latlng.bindPopup(popupContent);
+            }
+        });
+
+        $.getJSON(url, function(data) {
+            if (data.features.length > 0) {
+                console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+                currentMarker.addData(data);
+                currentMarker.eachLayer(function(layer) {
+                    layer.addTo(peaks);
+                });
+            }
+
+        });
+
+    }
+
 
     function filterMapData(event, isUrlParam) {
 
@@ -312,23 +346,10 @@
             $('#peaksDownloadButtonXML').attr('href', fev.urls.xmlPeaksQueryURL);
 
             //get geoJSON
-            //displayGeoJSON(fev.urls.peaksGeoJSONViewURL + fev.queryStrings.peaksQueryString, peaksMarkerIcon);
+            displayPeaksGeoJSON(fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peaksMarkerIcon);
         //}
 
 
-        // switch (layer) {
-        //     case 'sensors':
-        //         break;
-        //     case 'hwms':
-        //         break;
-        //     case 'peaks':
-        //
-        // } //end switch statement for layer type
-
-        //clear any layers from the layer group
-        //layerGroup.clearLayers();
-        //oms.clearMarkers()
-        //return [fev.queryStrings.sensorsQueryString, fev.queryStrings.hwmsQueryString, fev.queryStrings.peaksQueryString];
     }; //end filterMapData function
 
 //}); //end document ready function wrapper

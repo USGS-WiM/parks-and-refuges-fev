@@ -17,19 +17,23 @@ var fev = fev || {
 			jsonSensorsURLRoot : stnServicesURL + '/Instruments.json',
 			xmlSensorsURLRoot: stnServicesURL + '/Instruments.xml',
 			csvSensorsURLRoot : stnServicesURL + '/Instruments.csv',
+
 			jsonHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.json',
 			xmlHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.xml',
 			csvHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.csv',
+			hwmFilteredGeoJSONViewURL: stnServicesURL + '/HWMs/FilteredHWMs.geojson',
+			hwmGeoJSONViewURL: stnServicesURL + '/hwms.geojson',
+
 			xmlPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.xml',
 			jsonPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.json',
-			csvPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.csv',	
+			csvPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.csv',
+			peaksFilteredGeoJSONViewURL: stnServicesURL + '/PeakSummaries/FilteredPeaks.geojson',
+
 			baroGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=baro_view&',
 			metGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=met_view&',
 			rdgGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=rdg_view&',
 			stormTideGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=stormtide_view&',
-			waveHeightGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=waveheight_view&',
-			hwmFilteredGeoJSONViewURL: stnServicesURL + '/HWMs/FilteredHWMs.geojson',
-			hwmGeoJSONViewURL: stnServicesURL + '/hwms.geojson'
+			waveHeightGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=waveheight_view&'
 		},
 		queryStrings: {
 		}
@@ -44,7 +48,7 @@ var rdgMarkerIcon = L.divIcon({className: 'rdgMarker', iconAnchor: [8, 24], popu
 var stormTideMarkerIcon = L.divIcon({className: 'stormTideMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
-var peaksMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
+var peaksMarkerIcon = L.divIcon({className: 'peaksMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 
 //sensor subgroups for sensor marker cluster group
 var	baro = L.layerGroup();
@@ -53,6 +57,7 @@ var	met = L.layerGroup();
 var rdg = L.layerGroup();
 var	waveHeight = L.layerGroup();
 var hwm = L.layerGroup();
+var peaks = L.layerGroup();
 
 /////markercluster code, can remove eventually
 // Marker Cluster Group for sensors
@@ -88,9 +93,6 @@ $( document ).ready(function() {
 	//for jshint
 	'use strict';
 
-	//set options for welcome modal - disallow user from bypassing
-	$('#welcomeModal').modal({backdrop: 'static', keyboard: false});
-
 	//submit event button
 	$('#btnSubmitEvent').click(function(){
 		//check if an event has been selected
@@ -124,7 +126,8 @@ $( document ).ready(function() {
 			});
 
 	} else {
-		$('#welcomeModal').modal('show');
+		//show modal and set options - disallow user from bypassing
+		$('#welcomeModal').modal({backdrop: 'static', keyboard: false});
 	}
 	//var url = document.location.href;
 	//var root = location.protocol + '//' + location.host;
@@ -167,7 +170,8 @@ $( document ).ready(function() {
 
 	// define observed layers 'overlays' (leaflet term)
 	var observedOverlay = {
-		"<i class='hwmMarker'></i>&nbsp;High Water Marks": hwm
+		"<i class='hwmMarker'></i>&nbsp;High Water Marks": hwm,
+		"<i class='peaksMarker'></i>&nbsp;Peaks": peaks
 	};
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
 	var observedToggle = L.control.layers(null, observedOverlay, {collapsed: false});

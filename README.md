@@ -11,5 +11,5 @@ run `npm install` AND `bower install` to get dependencies after first cloning
 
 ##App Features
 
-To go directly to an event view on load, append `#{event name}` to the URL. Example: `stn.wim.usgs.gov/FEV#Sandy` If arriving without event in URL, user will be directed to choose an event first before proceeding.
+To go directly to an event view on load, append `#{event name}` to the URL. Example: `stn.wim.usgs.gov/FEV#Sandy`.  If arriving without event in URL, user will be directed, via modal, to choose an event first before proceeding.
 
