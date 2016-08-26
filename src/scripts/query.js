@@ -78,10 +78,16 @@
     }
 
 
-    function filterMapData() {
+    function filterMapData(event, isUrlParam) {
+
+        markerCoords = [];
+        var eventSelections = '';
+
+        if (isUrlParam) {
+            eventSelections = event;
+        }
 
         ///eventSelect_welcomeModal: display the event name both in display area and large event indicator; set the eventSelections value
-        var eventSelections = '';
         if ($('#evtSelect_welcomeModal').val() !== null){
             var eventSelectionsArray = $('#evtSelect_welcomeModal').val();
             eventSelections = eventSelectionsArray.toString();
@@ -89,6 +95,7 @@
             $('#largeEventNameDisplay').html($('#evtSelect_welcomeModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
 
         }
+
 
         //event type
         var eventTypeSelections = '';

@@ -35,9 +35,8 @@ var fev = fev || {
 		}
 };
 var map;
-var layerGroup;
-var oms;
 var markerCoords = [];
+var oms;
 
 var baroMarkerIcon = L.divIcon({className: 'baroMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 var metMarkerIcon = L.divIcon({className: 'metMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
@@ -47,23 +46,22 @@ var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker', iconAnchor:
 var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 var peaksMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
 
-// Marker Cluster Group for sensors
-var sensorMCG = L.markerClusterGroup({
-	//options here
-	disableClusteringAtZoom: 8,
-	spiderfyOnMaxZoom: false,
-	zoomToBoundsOnClick: true
-});
 //sensor subgroups for sensor marker cluster group
 var	baro = L.layerGroup();
 var stormTide = L.layerGroup();
 var	met = L.layerGroup();
 var rdg = L.layerGroup();
 var	waveHeight = L.layerGroup();
-
 var hwm = L.layerGroup();
 
-
+/////markercluster code, can remove eventually
+// Marker Cluster Group for sensors
+// var sensorMCG = L.markerClusterGroup({
+// 	//options here
+// 	disableClusteringAtZoom: 8,
+// 	spiderfyOnMaxZoom: false,
+// 	zoomToBoundsOnClick: true
+// });
 // var	baro = L.featureGroup.subGroup(sensorMCG);
 // var stormTide = L.featureGroup.subGroup(sensorMCG);
 // var	met = L.featureGroup.subGroup(sensorMCG);
@@ -83,26 +81,58 @@ var hwm = L.layerGroup();
 // });
 // var hwm = L.featureGroup.subGroup(hwmMCG);
 
+///end markercluster code//////////////////////////////////////////////////////////////
+
 //main document ready function
 $( document ).ready(function() {
 	//for jshint
 	'use strict';
 
-	$('#welcomeModal').modal('show');
+	//set options for welcome modal - disallow user from bypassing
+	$('#welcomeModal').modal({backdrop: 'static', keyboard: false});
 
+	//submit event button
 	$('#btnSubmitEvent').click(function(){
-		$('#welcomeModal').modal('hide');
-
-		filterMapData();
-
-		//var sensorsQueryString = generateQueryString('sensors');
-		//console.log(sensorsQueryString);
-
-
-		// var hwmsUrl = getQueryUrl(hwms)
-		// var peaksUrl = getQueryUrl(peaks)
-
+		//check if an event has been selected
+		if ($('#evtSelect_welcomeModal').val() !== null) {
+			//if event selected, hide welcome modal and begin filter process
+			$('#welcomeModal').modal('hide');
+			var eventValue = $('#evtSelect_welcomeModal').val();
+			$('#evtSelect_filterModal').val([eventValue]).trigger("change");
+			filterMapData();
+		} else {
+			//if no event selected, warn user with alert
+			alert("Please choose an event to proceed.")
+		}
 	});
+
+	//url parameter parsing logic
+	if (window.location.hash){
+		//user has arrived with an event name after the hash on the URL
+		//grab the hash value, remove the '#', leaving the event name parameter
+		var eventParam = window.location.hash.substring(1);
+		//do a service request to match the event name param to an event id for filtering purposes
+		$.getJSON( 'https://stn.wim.usgs.gov/STNServices/events/' + eventParam + '.json', {} )
+			.done(function( data ) {
+				eventParam = data.event_id;
+				//call filter function, passing the event parameter string and 'true' for the 'isUrlParam' boolean argument
+				filterMapData(eventParam, true);
+				setEventIndicators(data.event_name, data.event_id);
+			})
+			.fail(function() {
+				console.log( "Request Failed. Most likely invalid event name." );
+			});
+
+	} else {
+		$('#welcomeModal').modal('show');
+	}
+	//var url = document.location.href;
+	//var root = location.protocol + '//' + location.host;
+
+	function setEventIndicators (eventName, eventID) {
+		$('#eventNameDisplay').html(eventName);
+		$('#largeEventNameDisplay').html(eventName);
+	}
 
 	/* create map */
 	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
@@ -145,22 +175,10 @@ $( document ).ready(function() {
 	observedToggle._container.remove();
 	document.getElementById('observedToggleDiv').appendChild(observedToggle.onAdd(map));
 
-
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
 		keepSpiderfied: true
 	});
-	/* create map */
-
-	//initially display full unfiltered GeoJSON data (loop of all the types, calls the display function)
-	// $.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, type ) {
-	// 	displaySensorGeoJSON(type, fev.urls[type + 'GeoJSONViewURL'], window[type + 'MarkerIcon']);
-	// });
-    //
-	// //initially display full HWM data
-	// $.each([ 'hwm'], function( index, type ) {
-	// 	displayHWMGeoJSON(fev.urls[type + 'GeoJSONViewURL'], window[type + 'MarkerIcon']);
-	// });
 
 	//populate initial unfiltered download URLs
 	$('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsURLRoot);
@@ -424,7 +442,5 @@ $( document ).ready(function() {
 			case 0: return '591,657,550';
 		}
 	}
-
-	//end latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
-
+	//end latLngScale utility logic/////////
 });
