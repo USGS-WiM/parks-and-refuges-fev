@@ -1,5 +1,8 @@
 var stnServicesURL = 'http://stn.wim.usgs.gov/STNServices';
 var stnServicesTestURL = 'http://stntest.wim.usgs.gov/STNServices2';
+var sensorPageURLRoot = "http://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
+var hwmPageURLRoot = "http://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
+
 var fev = fev || {
 		data: {
 			events: [],
@@ -42,13 +45,13 @@ var map;
 var markerCoords = [];
 var oms;
 
-var baroMarkerIcon = L.divIcon({className: 'baroMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
-var metMarkerIcon = L.divIcon({className: 'metMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
-var rdgMarkerIcon = L.divIcon({className: 'rdgMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
-var stormTideMarkerIcon = L.divIcon({className: 'stormTideMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
-var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
-var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
-var peaksMarkerIcon = L.divIcon({className: 'peaksMarker', iconAnchor: [8, 24], popupAnchor: [0, -10]});
+var baroMarkerIcon = L.divIcon({className: 'baroMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
+var metMarkerIcon = L.divIcon({className: 'metMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
+var rdgMarkerIcon = L.divIcon({className: 'rdgMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
+var stormTideMarkerIcon = L.divIcon({className: 'stormTideMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
+var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
+var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
+var peaksMarkerIcon = L.divIcon({className: 'peaksMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
 
 //sensor subgroups for sensor marker cluster group
 var	baro = L.layerGroup();
@@ -242,6 +245,8 @@ $( document ).ready(function() {
 	$('#btnSubmitFilters').on('click', function() {
 		filterMapData();
 	});
+
+
 
 	/* basemap controller */
 	function setBasemap(basemap) {

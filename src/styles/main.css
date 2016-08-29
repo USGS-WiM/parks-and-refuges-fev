@@ -581,3 +581,8 @@ input[type="checkbox"], input[type="radio"] {
     top: 0px !important;
 }
 
+.popup-title {
+    font-size: larger;
+    font-weight: bold;
+    text-align: left;
+}
