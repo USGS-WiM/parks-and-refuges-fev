@@ -21,10 +21,22 @@
             onEachFeature: function (feature, latlng) {
                 //add marker to overlapping marker spidifier
                 //oms.addMarker(latlng);
-                var popupContent = '';
-                $.each(feature.properties, function( index, value ) {
-                    if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-                });
+                //var popupContent = '';
+                var currentEvent = $('#largeEventNameDisplay').html();
+                var popupContent =
+                    '<table class="table table-hover">'+
+                        '<caption class="popup-title">' + getLayerName(type) + ' for ' + currentEvent + '</caption>' +
+                        '<tr><td><strong>STN Site Name: </strong></td><td><span id="siteName">'+ feature.properties.site_name+'</span></td></tr>'+
+                        '<tr><td><strong>Status: </strong></td><td><span id="status">'+ feature.properties.status+'</span></td></tr>'+
+                        '<tr><td><strong>City: </strong></td><td><span id="city">'+ (feature.properties.city == ''|| feature.properties.city == null || feature.properties.city == undefined ? '<i>No city recorded</i>' : feature.properties.city ) + '</span></td></tr>'+
+                        '<tr><td><strong>County: </strong></td><td><span id="county">' + feature.properties.county +'</span></td></tr>'+
+                        '<tr><td><strong>State: </strong></td><td><span id="state">'+feature.properties.state+'</span></td></tr>'+
+                        '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">'+feature.properties.latitude_dd.toFixed(4)+', ' + feature.properties.longitude_dd.toFixed(4)+'</span></td></tr>'+
+                        '<tr><td><strong>Full data link: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + feature.properties.site_id + '&Sensor=' + feature.properties.instrument_id+ '\>Sensor data page</a></b></span></td></tr>'+
+                    '</table>';
+                // $.each(feature.properties, function( index, value ) {
+                //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+                // });
                 latlng.bindPopup(popupContent);
             }
         });
@@ -56,11 +68,34 @@
             onEachFeature: function (feature, latlng) {
                 //add marker to overlapping marker spidifier
                 //oms.addMarker(latlng);
-                var popupContent = '';
-                $.each(feature.properties, function( index, value ) {
-                    if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-                });
+                // var popupContent = '';
+                var currentEvent = $('#largeEventNameDisplay').html();
+                var popupContent =
+                '<table class="table table-hover">'+
+                    '<caption class="popup-title">' + getLayerName('hwm') + ' for ' + currentEvent + '</caption>' +
+                    '<tr><td><strong>STN Site No.: </strong></td><td><span id="hwmSiteNo">'+ feature.properties.site_no+ '</span></td></tr>'+
+                    '<tr><td><strong>Elevation(ft): </strong></td><td><span id="hwmElev">'+ feature.properties.elev_ft + '</span></td></tr>'+
+                    '<tr><td><strong>Datum: </strong></td><td><span id="hwmWaterbody">'+ feature.properties.verticalDatumName + '</span></td></tr>'+
+                    '<tr><td><strong>Height Above Ground: </strong></td><td><span id="hwmHtAboveGnd">'+ (feature.properties.height_above_gnd !== undefined ? feature.properties.height_above_gnd : '<i>No value recorded</i>')+ '</span></td></tr>'+
+                    '<tr><td><strong>Approval status: </strong></td><td><span id="hwmStatus">'+ (feature.properties.approval_id == undefined || feature.properties.approval_id == 0 ? 'Provisional  <button type="button" class="btn btn-sm data-disclaim"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></button>' : 'Approved')+ '</span></td></tr>'+
+                    '<tr><td><strong>Type: </strong></td><td><span id="hwmType"></span>'+ feature.properties.hwmTypeName + '</td></tr>'+
+                    '<tr><td><strong>Marker: </strong></td><td><span id="hwmMarker">'+ feature.properties.markerName+ '</span></td></tr>'+
+                    '<tr><td><strong>Quality: </strong></td><td><span id="hwmQuality">'+ feature.properties.hwmQualityName+ '</span></td></tr>'+
+                    '<tr><td><strong>Waterbody: </strong></td><td><span id="hwmWaterbody">'+ feature.properties.waterbody + '</span></td></tr>'+
+                    '<tr><td><strong>County: </strong></td><td><span id="hwmCounty">'+ feature.properties.countyName + '</span></td></tr>'+
+                    '<tr><td><strong>State: </strong></td><td><span id="hwmState">'+ feature.properties.stateName + '</span></td></tr>'+
+                    '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">'+feature.properties.latitude_dd.toFixed(4)+', ' + feature.properties.longitude_dd.toFixed(4)+'</span></td></tr>'+
+                    '<tr><td><strong>Description: </strong></td><td><span id="hwmDescription">'+ feature.properties.hwm_locationdescription + '</span></td></tr>'+
+                '<tr><td><strong>Full data link: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + hwmPageURLRoot + feature.properties.site_id + '&HWM=' + feature.properties.hwm_id+ '\>HWM data page</a></b></span></td></tr>'+
+
+                '</table>';
+                // $.each(feature.properties, function( index, value ) {
+                //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+                // });
                 latlng.bindPopup(popupContent);
+                $('.data-disclaim').on('click', function() {
+                    $('#aboutModal').modal('show');
+                });
             }
         });
 
@@ -110,6 +145,19 @@
         });
 
     }
+
+    function getLayerName(type) {
+        switch(type) {
+            case "baro": return "Barometric Pressure Sensor";
+            case "stormTide": return "Storm Tide Sensor";
+            case "met" : return "Meteorlogical Sensor";
+            case "rdg" : return "Rapid Deployment Gage";
+            case "hwm": return  "High Water Mark";
+            case "peaks": return  "Peak Summary";
+        }
+    }
+
+
 
 
     function filterMapData(event, isUrlParam) {
