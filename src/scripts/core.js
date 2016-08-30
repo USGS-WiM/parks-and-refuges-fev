@@ -138,6 +138,9 @@ $( document ).ready(function() {
 	function setEventIndicators (eventName, eventID) {
 		$('#eventNameDisplay').html(eventName);
 		$('#largeEventNameDisplay').html(eventName);
+		//TODO: determine why this is not working, though its same code and input as in the btnSubmitEvent function above
+		var eventValue = [eventID.toString()];
+		$('#evtSelect_filterModal').val([eventValue]).trigger("change");
 	}
 
 	/* create map */
@@ -147,15 +150,16 @@ $( document ).ready(function() {
 	//add sensor markercluster group to the map
 	//sensorMCG.addTo(map);
 	//add sensor subgroups to the map
-	baro.addTo(map);
-	stormTide.addTo(map);
-	met.addTo(map);
-	rdg.addTo(map);
-	waveHeight.addTo(map);
+	//baro.addTo(map);
+	//stormTide.addTo(map);
+	//met.addTo(map);
+	//rdg.addTo(map);
+	//waveHeight.addTo(map);
 	//add hwm markercluster group to the map
 	//hwmMCG.addTo(map);
 	// add hwm subgroup to the map
 	hwm.addTo(map);
+	//peaks.addTo(map);
 
 	//define sensor layers 'overlays' (leaflet term)
 	var sensorOverlays = {
@@ -174,7 +178,7 @@ $( document ).ready(function() {
 	// define observed layers 'overlays' (leaflet term)
 	var observedOverlay = {
 		"<i class='hwmMarker'></i>&nbsp;High Water Marks": hwm,
-		"<i class='peaksMarker'></i>&nbsp;Peaks": peaks
+		"<i class='peaksMarker'></i>&nbsp;Peak Summaries": peaks
 	};
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
 	var observedToggle = L.control.layers(null, observedOverlay, {collapsed: false});
