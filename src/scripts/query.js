@@ -20,11 +20,11 @@
             },
             onEachFeature: function (feature, latlng) {
                 //add marker to overlapping marker spidifier
-                //oms.addMarker(latlng);
+                oms.addMarker(latlng);
                 //var popupContent = '';
                 var currentEvent = $('#largeEventNameDisplay').html();
                 var popupContent =
-                    '<table class="table table-hover">'+
+                    '<table class="table table-hover table-striped table-condensed">'+
                         '<caption class="popup-title">' + getLayerName(type) + ' for ' + currentEvent + '</caption>' +
                         '<tr><td><strong>STN Site Name: </strong></td><td><span id="siteName">'+ feature.properties.site_name+'</span></td></tr>'+
                         '<tr><td><strong>Status: </strong></td><td><span id="status">'+ feature.properties.status+'</span></td></tr>'+
@@ -42,6 +42,10 @@
         });
 
         $.getJSON(url, function(data) {
+            if (data.length == 0) {
+                console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
+                return
+            }
             if (data.features.length > 0) {
                 console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
                 currentMarker.addData(data);
@@ -67,11 +71,11 @@
             },
             onEachFeature: function (feature, latlng) {
                 //add marker to overlapping marker spidifier
-                //oms.addMarker(latlng);
+                oms.addMarker(latlng);
                 // var popupContent = '';
                 var currentEvent = $('#largeEventNameDisplay').html();
                 var popupContent =
-                '<table class="table table-hover">'+
+                '<table class="table table-hover table-striped table-condensed">'+
                     '<caption class="popup-title">' + getLayerName('hwm') + ' for ' + currentEvent + '</caption>' +
                     '<tr><td><strong>STN Site No.: </strong></td><td><span id="hwmSiteNo">'+ feature.properties.site_no+ '</span></td></tr>'+
                     '<tr><td><strong>Elevation(ft): </strong></td><td><span id="hwmElev">'+ feature.properties.elev_ft + '</span></td></tr>'+
@@ -86,8 +90,7 @@
                     '<tr><td><strong>State: </strong></td><td><span id="hwmState">'+ feature.properties.stateName + '</span></td></tr>'+
                     '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">'+feature.properties.latitude_dd.toFixed(4)+', ' + feature.properties.longitude_dd.toFixed(4)+'</span></td></tr>'+
                     '<tr><td><strong>Description: </strong></td><td><span id="hwmDescription">'+ feature.properties.hwm_locationdescription + '</span></td></tr>'+
-                '<tr><td><strong>Full data link: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + hwmPageURLRoot + feature.properties.site_id + '&HWM=' + feature.properties.hwm_id+ '\>HWM data page</a></b></span></td></tr>'+
-
+                    '<tr><td><strong>Full data link: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + hwmPageURLRoot + feature.properties.site_id + '&HWM=' + feature.properties.hwm_id+ '\>HWM data page</a></b></span></td></tr>'+
                 '</table>';
                 // $.each(feature.properties, function( index, value ) {
                 //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
@@ -100,6 +103,10 @@
         });
 
         $.getJSON(url, function(data) {
+            if (data.length == 0) {
+                console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
+                return
+            }
             if (data.features.length > 0) {
                 console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
                 currentMarker.addData(data);
@@ -124,16 +131,28 @@
             },
             onEachFeature: function (feature, latlng) {
                 //add marker to overlapping marker spidifier
-                //oms.addMarker(latlng);
-                var popupContent = '';
-                $.each(feature.properties, function( index, value ) {
-                    if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-                });
+                oms.addMarker(latlng);
+                //var popupContent = '';
+                var currentEvent = $('#largeEventNameDisplay').html();
+                var popupContent =
+                    '<table class="table table-condensed table-striped table-hover">' +
+                    '<caption class="popup-title">' + getLayerName('peaks') + ' for ' + currentEvent + '</caption>' +
+                        '<tr><th>Peak Stage (ft)</th><th>Datum</th><th>Peak Date & Time (UTC)</th></tr>'+
+                        '<tr><td>' + feature.properties.peak_stage + '</td><td>' + feature.properties.vdatum + '</td><td>' + feature.properties.peak_date + '</td></tr>'+
+                    '</table>';
+
+                // $.each(feature.properties, function( index, value ) {
+                //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+                // });
                 latlng.bindPopup(popupContent);
             }
         });
 
         $.getJSON(url, function(data) {
+            if (data.length == 0) {
+                console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
+                return
+            }
             if (data.features.length > 0) {
                 console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
                 currentMarker.addData(data);
@@ -157,9 +176,6 @@
         }
     }
 
-
-
-
     function filterMapData(event, isUrlParam) {
 
         markerCoords = [];
@@ -177,7 +193,6 @@
             $('#largeEventNameDisplay').html($('#evtSelect_welcomeModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
 
         }
-
 
         //event type
         var eventTypeSelections = '';
@@ -287,8 +302,8 @@
             });
 
             //hack to zoom to sites after all ajax calls finish
+            //TODO: build some logic that wait until whole markerCoords object is built, then zoom. currently this causes two separate zoom events to trigger
             $( document ).ajaxComplete(function() {
-                //console.log('in ajaxComplete function');
                 if (markerCoords.length > 0) { map.fitBounds(markerCoords); }
             });
 
