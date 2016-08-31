@@ -61,6 +61,7 @@ var rdg = L.layerGroup();
 var	waveHeight = L.layerGroup();
 var hwm = L.layerGroup();
 var peaks = L.layerGroup();
+var USGSrtGages = L.featureGroup();
 
 /////markercluster code, can remove eventually
 // Marker Cluster Group for sensors
@@ -160,6 +161,8 @@ $( document ).ready(function() {
 	// add hwm subgroup to the map
 	hwm.addTo(map);
 	//peaks.addTo(map);
+	//add USGS rt gages to the map
+	USGSrtGages.addTo(map);
 
 	//define sensor layers 'overlays' (leaflet term)
 	var sensorOverlays = {
@@ -249,8 +252,6 @@ $( document ).ready(function() {
 	$('#btnSubmitFilters').on('click', function() {
 		filterMapData();
 	});
-
-
 
 	/* basemap controller */
 	function setBasemap(basemap) {
@@ -392,6 +393,15 @@ $( document ).ready(function() {
         $('#legend').hide();
     });
     /* legend control */
+
+	
+    map.on('moveend', function(e) {
+        USGSrtGages.clearLayers();
+        if (map.hasLayer(USGSrtGages) && map.getZoom() >= 10) {
+            var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+            queryNWISrtGages(bbox);
+        }
+    });
 
     //begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
 
