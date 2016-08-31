@@ -417,6 +417,7 @@
 
             displayHWMGeoJSON(fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
 
+
         //}
         //PEAKS
         //if ($('#peakRad')[0].checked) {
@@ -447,5 +448,44 @@
 
 
     }; //end filterMapData function
+
+    function queryNWISrtGages(bbox) {
+
+        //NWIS query options from http://waterservices.usgs.gov/rest/IV-Test-Tool.html
+        var parameterCodeList = '00060,00065';
+        var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
+        var siteStatus = 'active';
+
+        var url = 'http://waterservices.usgs.gov/nwis/iv/?format=json&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
+        $.getJSON(url, function(data) {
+            console.log(data.value.timeSeries.length + ' usgs gages found.');
+
+            $.each(data.value.timeSeries, function( index, site ) {
+                
+                var siteID = site.name.split(':')[1];
+
+                //check to see if we have this site already
+                if (USGSrtGages.hasLayer(window[siteID])) {
+                    //just add to the popup with other variable
+                    var existingPopupContent = window[siteID]._popup.getContent();
+                    console.log(siteID,site)
+                    if (site.values[0].value[0]) {
+                        var value = '<b>' + site.variable.variableName + ':&nbsp;</b>' + site.values[0].value[0].value + '</br><b>Time:</b>&nbsp;' + site.values[0].value[0].dateTime;
+                        window[siteID]._popup.setContent(existingPopupContent + value);
+                    }
+                }
+
+                //otherwise add new site
+                else {
+                    if (site.values[0].value[0]) {
+                        var value = '<b>' + site.variable.variableName + ':&nbsp;</b>' + site.values[0].value[0].value + '</br><b>Time:</b>&nbsp;' + site.values[0].value[0].dateTime;
+                        window[siteID] = L.marker([site.sourceInfo.geoLocation.geogLocation.latitude, site.sourceInfo.geoLocation.geogLocation.longitude]).bindPopup('<b>' + site.sourceInfo.siteName + '</b><br>' + siteID + '</br>' + value + '</br>');
+                        //add point to featureGroup
+                        USGSrtGages.addLayer(window[siteID]);
+                    }
+                }
+            });
+        });
+    }
 
 //}); //end document ready function wrapper
