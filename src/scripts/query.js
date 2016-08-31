@@ -37,7 +37,26 @@
                 // $.each(feature.properties, function( index, value ) {
                 //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
                 // });
-                latlng.bindPopup(popupContent);
+                ////logic to retrieve and display Rapid Deploy gage graph
+                if (type == 'rdg') {
+                    var usgsSiteID;
+
+                    $.getJSON(stnServicesURL + "/Sites/" + feature.properties.site_id + ".json", function(data) {
+                        if (data.usgs_sid !== "") {
+                            usgsSiteID = data.usgs_sid;
+                            var rdgGraphContent =
+                                '<div id="rdgChartDiv"><label for="rdgChartDiv">Water level elevation (ft)</label><img width="350" src="http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=' + usgsSiteID + '&parm_cd=62620&begin_date=2016-01-21&end_date=2016-01-28" alt="rapid deploy gage graph"></div>';
+                            latlng.bindPopup(popupContent + rdgGraphContent, {minWidth: 350})
+                        } else {
+                            var rdgGraphContent =
+                                '<div id="rdgChartDiv"><label for="rdgChartDiv">Missing USGS Site ID. Unable to display RDG Real-time graph.</label></div>';
+                            latlng.bindPopup(popupContent + rdgGraphContent);
+                        }
+                    });
+                } else {
+                    latlng.bindPopup(popupContent);
+                }
+
             }
         });
 
@@ -176,6 +195,18 @@
         }
     }
 
+    ///this function sets the current event's start and end dates as global vars. may be better as a function called on demand when date compare needed for NWIS graph setup
+    function populateEventDates (eventID) {
+        for (var i = 0; i < fev.data.events.length; i++) {
+            if (fev.data.events[i].event_id == eventID) {
+                fev.vars.currentEventStartDate_str = fev.data.events[i].event_start_date;
+                console.log("Selected event START date is " + fev.vars.currentEventStartDate_str);
+                fev.vars.currentEventEndDate_str = fev.data.events[i].event_end_date;
+                console.log("Selected event END date is " + fev.vars.currentEventEndDate_str);
+            }
+        }
+    }
+
     function filterMapData(event, isUrlParam) {
 
         markerCoords = [];
@@ -191,6 +222,7 @@
             eventSelections = eventSelectionsArray.toString();
             $('#eventNameDisplay').html($('#evtSelect_welcomeModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
             $('#largeEventNameDisplay').html($('#evtSelect_welcomeModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
+            populateEventDates(eventSelections);
 
         }
 
@@ -208,6 +240,7 @@
             eventSelections = eventSelectionsArray.toString();
             $('#eventNameDisplay').html($('#evtSelect_filterModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
             $('#largeEventNameDisplay').html($('#evtSelect_filterModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
+            populateEventDates(eventSelections);
 
         }
         //event status
