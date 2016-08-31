@@ -135,7 +135,14 @@
                     <div role="tabpanel" class="tab-pane active" id="disclaimerTabPane"></br>
                         <h3>Data Limitations</h3>
                         <p>Data are provisional and are subject to revision until thoroughly reviewed and approved.</p>
-                        <p>Data disclaimer continues here</p>
+
+                        <p>Real-time data relayed by satellite or other telemetry are automatically screened to not display improbable values until they can be verified.</p>
+
+                        <p>Provisional data may be inaccurate due to instrument malfunctions or physical changes at the measurement site. Subsequent review based on field inspections and measurements may result in significant revisions to the data.</p>
+
+                        <p>The data are being provided to meet the need for timely best science and are released on the condition that neither the USGS nor the U.S. Government may be held liable for any damages resulting from authorized or unauthorized use of the information. Data users are cautioned to consider carefully the provisional nature of the information before using it for decisions that concern personal or public safety or the conduct of business that involves substantial monetary or operational consequences.</p>
+
+                        <p>Information concerning the accuracy and appropriate uses of these data or concerning other hydrologic data may be obtained from the USGS.</p>
                     </div>
 
                 </div>
@@ -170,7 +177,7 @@
                             <div class="form-group" id="evtTypeForm">
                                 <label for="evtTypeSelect" class="col-sm-2 control-label filterForms">Event Type</label>
                                 <div class="col-sm-10 filterForms">
-                                    <select id="evtTypeSelect" style="width: 100%" multiple></select>
+                                    <select id="evtTypeSelect" style="width: 100%" multiple class="clearable"></select>
                                 </div>
                             </div>
                             <div class="form-group" id="evtNameForm_filterModal">
@@ -202,13 +209,13 @@
                             <div class="form-group" id="stateForm">
                                 <label for="stateSelect" class="col-sm-2 control-label filterForms">State</label>
                                 <div class="col-sm-10 filterForms">
-                                    <select id="stateSelect" style="width: 100%" multiple="multiple"></select>
+                                    <select id="stateSelect" style="width: 100%" multiple="multiple" class="clearable"></select>
                                 </div>
                             </div>
                             <div class="form-group" id="countyForm">
                                 <label for="countySelect" class="col-sm-2 control-label filterForms">County</label>
                                 <div class="col-sm-10 filterForms">
-                                    <select id="countySelect" style="width: 90%; float:right" multiple>
+                                    <select id="countySelect" style="width: 90%; float:right" multiple class="clearable">
                                         <option value=null>Please select state(s) first </option>
                                     </select>
                                 </div>
@@ -242,25 +249,25 @@
                             <div class="form-group" id="sensorTypeForm">
                                 <label for="sensorTypeSelect" class="col-sm-3 control-label filterForms">Sensor Type</label>
                                 <div class="col-sm-9 filterForms">
-                                    <select id="sensorTypeSelect" style="width: 100%" multiple></select>
+                                    <select id="sensorTypeSelect" style="width: 100%" multiple class="clearable"></select>
                                 </div>
                             </div>
                             <div class="form-group" id="statusForm">
                                 <label for="sensorStatusSelect" class="col-sm-3 control-label filterForms">Status</label>
                                 <div class="col-sm-9 filterForms">
-                                    <select id="sensorStatusSelect" style="width: 100%" multiple></select>
+                                    <select id="sensorStatusSelect" style="width: 100%" multiple class="clearable"></select>
                                 </div>
                             </div>
                             <div class="form-group" id="collectionConditionForm">
                                 <label for="collectionConditionSelect" class="col-sm-3 control-label filterForms">Collection Condition</label>
                                 <div class="col-sm-9 filterForms">
-                                    <select id="collectionConditionSelect" style="width: 100%" multiple></select>
+                                    <select id="collectionConditionSelect" style="width: 100%" multiple class="clearable"></select>
                                 </div>
                             </div>
                             <div class="form-group" id="deployTypeForm">
                                 <label for="deployTypeSelect"  class="col-sm-3 control-label filterForms">Deployment Type</label>
                                 <div class="col-sm-9 filterForms">
-                                    <select id="deployTypeSelect" style="width: 100%" multiple></select>
+                                    <select id="deployTypeSelect" style="width: 100%" multiple class="clearable"></select>
                                 </div>
                             </div>
                         </form>
@@ -268,13 +275,13 @@
                             <div class="form-group" id="hwmTypeForm">
                                 <label for="hwmTypeSelect" class="col-sm-3 control-label filterForms">HWM Type</label>
                                 <div class="col-sm-9 filterForms">
-                                    <select id="hwmTypeSelect" style="width: 100%" multiple></select>
+                                    <select id="hwmTypeSelect" style="width: 100%" multiple class="clearable"></select>
                                 </div>
                             </div>
                             <div class="form-group" id="hwmQualityForm">
                                 <label for="hwmQualitySelect" class="col-sm-3 control-label filterForms">Quality</label>
                                 <div class="col-sm-9 filterForms">
-                                    <select id="hwmQualitySelect" style="width: 100%" multiple></select>
+                                    <select id="hwmQualitySelect" style="width: 100%" multiple class="clearable"></select>
                                 </div>
                             </div>
                             <div class="form-group" id="envForm">
@@ -334,7 +341,8 @@
                 <!-- end filter panels -->
             </div>
             <div class="modal-footer">
-                <button id="btnSubmitFilters" class=" btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Filter</button>
+                <button id="btnClearFilters" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Clear Filters</button>
+                <button id="btnSubmitFilters" class="btn btn-primary btn-lg" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Filter</button>
                 <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
             </div>
 

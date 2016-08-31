@@ -39,6 +39,10 @@ var fev = fev || {
 			waveHeightGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=waveheight_view&'
 		},
 		queryStrings: {
+		},
+		vars : {
+			currentEventStartDate_str : "",
+			currentEventEndDate_str : ""
 		}
 };
 var map;
@@ -106,6 +110,7 @@ $( document ).ready(function() {
 			var eventValue = $('#evtSelect_welcomeModal').val();
 			$('#evtSelect_filterModal').val([eventValue]).trigger("change");
 			filterMapData();
+			populateEventDates(eventValue);
 		} else {
 			//if no event selected, warn user with alert
 			alert("Please choose an event to proceed.")
@@ -124,6 +129,7 @@ $( document ).ready(function() {
 				//call filter function, passing the event parameter string and 'true' for the 'isUrlParam' boolean argument
 				filterMapData(eventParam, true);
 				setEventIndicators(data.event_name, data.event_id);
+				populateEventDates(eventParam);
 			})
 			.fail(function() {
 				console.log( "Request Failed. Most likely invalid event name." );
@@ -143,6 +149,8 @@ $( document ).ready(function() {
 		var eventValue = [eventID.toString()];
 		$('#evtSelect_filterModal').val([eventValue]).trigger("change");
 	}
+
+
 
 	/* create map */
 	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
@@ -251,6 +259,7 @@ $( document ).ready(function() {
 
 	$('#btnSubmitFilters').on('click', function() {
 		filterMapData();
+		$('#filtersModal').modal('hide');
 	});
 
 	/* basemap controller */

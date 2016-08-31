@@ -5,6 +5,10 @@
 
 $( document ).ready(function() {
 
+    $('#btnClearFilters').click(function(){
+        $('.clearable').val('').trigger('change');
+    });
+
     // Register Event type select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.eventTypes array
     $('#evtTypeSelect').select2({
@@ -44,7 +48,7 @@ $( document ).ready(function() {
     //stores values in fev.data.events array
     $('.evtSelect').select2({
         placeholder: 'Select event',
-        allowClear: true,
+        allowClear: false,
         maximumSelectionLength: 1
     });
     $.ajax({
