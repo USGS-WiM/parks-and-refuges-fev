@@ -476,7 +476,10 @@ $( document ).ready(function() {
 				},
 				series: [{
 					showInLegend: false, 
-					data: graphData
+					data: graphData,
+					tooltip: {
+						pointFormat: "Gage height: {point.y} feet"
+					}
 				}]
 			});
 		});
