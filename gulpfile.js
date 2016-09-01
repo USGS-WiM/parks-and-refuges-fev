@@ -11,12 +11,10 @@ var wiredep = require('wiredep').stream;
 var $ = require('gulp-load-plugins')();
 
 //copy leaflet images
-
-    gulp.task('leaflet', function() {
-        return gulp.src('src/bower_components/leaflet/dist/images/*.*')
-            .pipe(gulp.dest('src/images'));
-    });
-
+gulp.task('leaflet', function() {
+    return gulp.src('src/bower_components/leaflet/dist/images/*.*')
+        .pipe(gulp.dest('build/images'));
+});
 
 //less compilation
 gulp.task('less', function () {
@@ -87,7 +85,7 @@ gulp.task('clean', function (cb) {
 });
 
 // Build
-gulp.task('build', ['html', 'images', 'less']);
+gulp.task('build', ['html', 'images', 'leaflet', 'less']);
 
 // Default task
 //make sure download-esri-api (if needed) is run just after clean, but before build
