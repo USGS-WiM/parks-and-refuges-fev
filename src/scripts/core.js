@@ -109,8 +109,9 @@ $( document ).ready(function() {
 			$('#welcomeModal').modal('hide');
 			var eventValue = $('#evtSelect_welcomeModal').val();
 			$('#evtSelect_filterModal').val([eventValue]).trigger("change");
-			filterMapData();
 			populateEventDates(eventValue);
+			filterMapData();
+			
 		} else {
 			//if no event selected, warn user with alert
 			alert("Please choose an event to proceed.")
@@ -125,11 +126,17 @@ $( document ).ready(function() {
 		//do a service request to match the event name param to an event id for filtering purposes
 		$.getJSON( 'https://stn.wim.usgs.gov/STNServices/events/' + eventParam + '.json', {} )
 			.done(function( data ) {
-				eventParam = data.event_id;
+				eventParam = data.event_id.toString();
+				//populateEventDates(eventParam.toString());
+				//set date strings, cutting off time portion and storing date only.
+				fev.vars.currentEventStartDate_str = data.event_start_date.substr(0,10);
+				console.log("Selected event is " + data.event_name + ". START date is " + fev.vars.currentEventStartDate_str);
+				fev.vars.currentEventEndDate_str = data.event_end_date.substr(0,10);
+				console.log("Selected event is " + data.event_name + ". END date is " + fev.vars.currentEventEndDate_str);
 				//call filter function, passing the event parameter string and 'true' for the 'isUrlParam' boolean argument
 				filterMapData(eventParam, true);
 				setEventIndicators(data.event_name, data.event_id);
-				populateEventDates(eventParam);
+
 			})
 			.fail(function() {
 				console.log( "Request Failed. Most likely invalid event name." );
