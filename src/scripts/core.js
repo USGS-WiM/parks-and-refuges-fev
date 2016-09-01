@@ -163,6 +163,9 @@ $( document ).ready(function() {
 	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
 	var layer = L.esri.basemapLayer('Gray').addTo(map);
 	var layerLabels;
+
+	L.Icon.Default.imagePath = './images';
+
 	//add sensor markercluster group to the map
 	//sensorMCG.addTo(map);
 	//add sensor subgroups to the map
