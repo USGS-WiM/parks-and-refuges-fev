@@ -419,6 +419,66 @@ $( document ).ready(function() {
         }
     });
 
+	USGSrtGages.on('click', function(e) { 
+		var popupContent = '';
+		$.each(e.layer.data.parameters, function( index, parameter ) {
+			popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + parameter.Time + '</td></tr>'
+		})
+
+		//if there is some data, show the div
+		$('#graphContainer').show();
+
+		e.layer.bindPopup('<h4>' + e.layer.data.siteName + '</h4><h5>' + e.layer.data.siteCode[0].value + '</h5><table class="table table-condensed"><thead><tr><th>Parameter</th><th>Value</th><th>Timestamp</th></tr></thead><tbody>' + popupContent + '</tbody></table><div id="graphContainer" style="width:100%; height:200px;display:none;"></div>',{autoPan:false}).openPopup();
+
+		//date range example '&startDT=2016-08-28&endDT=2016-09-01'
+		var timeQueryRange = '&startDT=2016-08-28&endDT=2016-09-01'
+		var timeQuery = '&period=P7D'
+		
+		$.getJSON('http://waterservices.usgs.gov/nwis/iv/?format=json&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQuery, function(data) {
+			console.log('graphdata: ',data)
+
+			if (data.value.timeSeries[0].values[0].value.length <= 0) return;
+
+			//if there is some data, show the div
+			$('#graphContainer').show();
+
+			//transpose array
+			var graphData = [];
+			$.map( data.value.timeSeries[0].values[0].value, function( val, i ) {
+				graphData.push([Date.parse(val.dateTime),parseFloat(val.value)])
+			});
+			Highcharts.setOptions({global: { useUTC: false } });
+			$('#graphContainer').highcharts({
+				chart: {
+					type: 'line'
+				},
+				title: {
+					text: e.layer.data.siteCode[0].agencyCode + ' ' + e.layer.data.siteCode[0].value + ' ' + e.layer.data.siteName
+				},
+				credits: {
+					enabled: false
+				},
+				xAxis: {
+					type: "datetime",
+					labels: {
+						formatter: function () {
+							return Highcharts.dateFormat('%b %d %Y', this.value);
+						},
+						//rotation: 90,
+						align: 'center'
+					}
+				},
+				yAxis: {
+					title: { text: 'Gage Height, feet' }
+				},
+				series: [{
+					showInLegend: false, 
+					data: graphData
+				}]
+			});
+		});
+	})
+
     //begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
 
 	//displays map scale on map load
