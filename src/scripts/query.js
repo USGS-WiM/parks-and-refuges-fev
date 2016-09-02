@@ -5,9 +5,12 @@
 
 //$( document ).ready(function() {
 
+    var layerCount = 0;
+
     //ajax retrieval function
     function displaySensorGeoJSON(type, url, markerIcon) {
-
+        //increment layerCount
+        layerCount++;
         var currentSubGroup = eval(type);
         currentSubGroup.clearLayers();
         var currentMarker = L.geoJson(false, {
@@ -72,6 +75,7 @@
         });
 
         $.getJSON(url, function(data) {
+            checkLayerCount(layerCount);
             if (data.length == 0) {
                 console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
                 return
@@ -90,6 +94,8 @@
     }
 
     function displayHWMGeoJSON(url, markerIcon) {
+        //increment layerCount
+        layerCount++;
         hwm.clearLayers();
         var currentMarker = L.geoJson(false, {
             pointToLayer: function(feature, latlng) {
@@ -133,6 +139,7 @@
         });
 
         $.getJSON(url, function(data) {
+            checkLayerCount(layerCount);
             if (data.length == 0) {
                 console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
                 return
@@ -150,6 +157,8 @@
     }
 
     function displayPeaksGeoJSON(url, markerIcon) {
+        //increment layerCount
+        layerCount++;
         peaks.clearLayers();
         var currentMarker = L.geoJson(false, {
             pointToLayer: function(feature, latlng) {
@@ -179,6 +188,7 @@
         });
 
         $.getJSON(url, function(data) {
+            checkLayerCount(layerCount);
             if (data.length == 0) {
                 console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
                 return
@@ -199,7 +209,8 @@
         switch(type) {
             case "baro": return "Barometric Pressure Sensor";
             case "stormTide": return "Storm Tide Sensor";
-            case "met" : return "Meteorlogical Sensor";
+            case "met" : return "Meteorological Sensor";
+            case 'waveHeight': return "Wave Height Sensor";
             case "rdg" : return "Rapid Deployment Gage";
             case "hwm": return  "High Water Mark";
             case "peaks": return  "Peak Summary";
@@ -220,8 +231,15 @@
         }
     }
 
+    function checkLayerCount (layerCount) {
+        if (layerCount == 7 ) {
+            if (markerCoords.length > 0) { map.fitBounds(markerCoords); }
+        }
+    }
+
     function filterMapData(event, isUrlParam) {
 
+        layerCount = 0;
         markerCoords = [];
         var eventSelections = '';
 
@@ -349,9 +367,9 @@
 
             //hack to zoom to sites after all ajax calls finish
             //TODO: build some logic that wait until whole markerCoords object is built, then zoom. currently this causes two separate zoom events to trigger
-            $( document ).ajaxComplete(function() {
-                if (markerCoords.length > 0) { map.fitBounds(markerCoords); }
-            });
+            // $( document ).ajaxComplete(function() {
+            //     if (markerCoords.length > 0) { map.fitBounds(markerCoords); }
+            // });
 
         //}
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -460,10 +478,9 @@
 
         //}
 
+    } //end filterMapData function
 
-    }; //end filterMapData function
-
-		function queryNWISrtGages(bbox) {
+    function queryNWISrtGages(bbox) {
 
 			var NWISmarkers = {};
 
@@ -483,7 +500,7 @@
 					//check to see if we have this site already 
 					if (NWISmarkers[siteID]) {
 						if (site.values[0].value[0]) {
-							NWISmarkers[siteID].data.parameters[site.variable.variableName] = {}
+							NWISmarkers[siteID].data.parameters[site.variable.variableName] = {};
 							NWISmarkers[siteID].data.parameters[site.variable.variableName]['Time'] = site.values[0].value[0].dateTime;
 							NWISmarkers[siteID].data.parameters[site.variable.variableName]['Value'] = site.values[0].value[0].value;
 						}
@@ -492,10 +509,10 @@
 					//otherwise add new site
 					else {
 						if (site.values[0].value[0]) {
-							NWISmarkers[siteID] = L.marker([site.sourceInfo.geoLocation.geogLocation.latitude, site.sourceInfo.geoLocation.geogLocation.longitude])
-							NWISmarkers[siteID].data = {siteName:site.sourceInfo.siteName,siteCode:site.sourceInfo.siteCode}
-							NWISmarkers[siteID].data.parameters = {}
-							NWISmarkers[siteID].data.parameters[site.variable.variableName] = {}
+							NWISmarkers[siteID] = L.marker([site.sourceInfo.geoLocation.geogLocation.latitude, site.sourceInfo.geoLocation.geogLocation.longitude], {icon: nwisMarkerIcon});
+							NWISmarkers[siteID].data = {siteName:site.sourceInfo.siteName,siteCode:site.sourceInfo.siteCode};
+							NWISmarkers[siteID].data.parameters = {};
+							NWISmarkers[siteID].data.parameters[site.variable.variableName] = {};
 							NWISmarkers[siteID].data.parameters[site.variable.variableName]['Time'] = site.values[0].value[0].dateTime;
 							NWISmarkers[siteID].data.parameters[site.variable.variableName]['Value'] = site.values[0].value[0].value;
 							//add point to featureGroup
