@@ -121,6 +121,13 @@ body {
     color: darkblue;
 }
 
+.nwisMarker:before {
+    font-size: 25px;
+    content: "▲";
+    color: black;
+}
+
+
 /*removed when markerclustering removed */
 /*.hwmClusterMarker div {*/
     /*display: inline-block !important;*/

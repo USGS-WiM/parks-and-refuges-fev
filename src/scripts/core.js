@@ -57,6 +57,7 @@ var stormTideMarkerIcon = L.divIcon({className: 'stormTideMarker', iconAnchor: [
 var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
 var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
 var peaksMarkerIcon = L.divIcon({className: 'peaksMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
+var nwisMarkerIcon  = L.divIcon({className: 'nwisMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
 
 //sensor subgroups for sensor marker cluster group
 var	baro = L.layerGroup();
@@ -415,31 +416,60 @@ $( document ).ready(function() {
     });
     /* legend control */
 
-	
-    map.on('moveend', function(e) {
-        USGSrtGages.clearLayers();
-        if (map.hasLayer(USGSrtGages) && map.getZoom() >= 10) {
-            var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
-            queryNWISrtGages(bbox);
-        }
-    });
 
-	USGSrtGages.on('click', function(e) { 
+    // map.on('moveend', function(e) {
+    //     USGSrtGages.clearLayers();
+    //     if (map.hasLayer(USGSrtGages) && map.getZoom() >= 10) {
+    //         var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+    //         queryNWISrtGages(bbox);
+    //     }
+    // });
+
+	///fix to prevent re-rendering nwis on pan - but something is wrong with it
+	map.on('load moveend', function(e) {
+		var foundPopup;
+		$.each(USGSrtGages.getLayers(), function( index, marker ) {
+			var popup = marker.getPopup();
+			if (popup) {
+				foundPopup = popup._isOpen;
+			}
+		})
+
+		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 7 && !foundPopup) {
+			USGSrtGages.clearLayers();
+			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+			queryNWISrtGages(bbox);
+		}
+	});
+
+	USGSrtGages.on('click', function(e) {
 		var popupContent = '';
 		$.each(e.layer.data.parameters, function( index, parameter ) {
-			popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + parameter.Time + '</td></tr>'
-		})
+			//create table, converting timestamp to friendly format using moment.js library
+			popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + moment(parameter.Time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>'
+		});
 
 		//if there is some data, show the div
 		$('#graphContainer').show();
 
-		e.layer.bindPopup('<h4>' + e.layer.data.siteName + '</h4><h5>' + e.layer.data.siteCode[0].value + '</h5><table class="table table-condensed"><thead><tr><th>Parameter</th><th>Value</th><th>Timestamp</th></tr></thead><tbody>' + popupContent + '</tbody></table><div id="graphContainer" style="width:100%; height:200px;display:none;"></div>',{autoPan:false}).openPopup();
+		e.layer.bindPopup('<b>' + e.layer.data.siteName + '</br>USGS Site ID: ' + e.layer.data.siteCode[0].value + '</b><table class="table table-condensed"><thead><tr><th>Parameter</th><th>Value</th><th>Timestamp</th></tr></thead><tbody>' + popupContent + '</tbody></table><div id="graphContainer" style="width:100%; height:200px;display:none;"></div>',{autoPan:false}).openPopup();
+
+		var timeQueryRange = '';
+		if (fev.vars.currentEventActive == true) {
+			//use moment.js lib to get current system date string, properly formatted
+			fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+		}
+		if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
+			timeQueryRange = '&period=P7D'
+		} else {
+			timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
+		}
 
 		//date range example '&startDT=2016-08-28&endDT=2016-09-01'
-		var timeQueryRange = '&startDT=2016-08-28&endDT=2016-09-01'
-		var timeQuery = '&period=P7D'
-		
-		$.getJSON('http://waterservices.usgs.gov/nwis/iv/?format=json&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQuery, function(data) {
+		//var timeQueryRange = '&startDT=2016-08-28&endDT=2016-09-01';
+		//var periodLast7 = '&period=P7D';
+
+		$.getJSON('http://waterservices.usgs.gov/nwis/iv/?format=json&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQueryRange, function(data) {
 			console.log('graphdata: ',data)
 
 			if (data.value.timeSeries[0].values[0].value.length <= 0) return;
@@ -458,7 +488,8 @@ $( document ).ready(function() {
 					type: 'line'
 				},
 				title: {
-					text: e.layer.data.siteCode[0].agencyCode + ' ' + e.layer.data.siteCode[0].value + ' ' + e.layer.data.siteName
+					//text: e.layer.data.siteCode[0].agencyCode + ' ' + e.layer.data.siteCode[0].value + ' ' + e.layer.data.siteName
+					text: null
 				},
 				credits: {
 					enabled: false
@@ -477,7 +508,7 @@ $( document ).ready(function() {
 					title: { text: 'Gage Height, feet' }
 				},
 				series: [{
-					showInLegend: false, 
+					showInLegend: false,
 					data: graphData,
 					tooltip: {
 						pointFormat: "Gage height: {point.y} feet"
