@@ -42,7 +42,8 @@ var fev = fev || {
 		},
 		vars : {
 			currentEventStartDate_str : "",
-			currentEventEndDate_str : ""
+			currentEventEndDate_str : "",
+			currentEventActive : false
 		}
 };
 var map;
@@ -127,12 +128,13 @@ $( document ).ready(function() {
 		$.getJSON( 'https://stn.wim.usgs.gov/STNServices/events/' + eventParam + '.json', {} )
 			.done(function( data ) {
 				eventParam = data.event_id.toString();
-				//populateEventDates(eventParam.toString());
-				//set date strings, cutting off time portion and storing date only.
-				fev.vars.currentEventStartDate_str = data.event_start_date.substr(0,10);
-				console.log("Selected event is " + data.event_name + ". START date is " + fev.vars.currentEventStartDate_str);
-				fev.vars.currentEventEndDate_str = data.event_end_date.substr(0,10);
-				console.log("Selected event is " + data.event_name + ". END date is " + fev.vars.currentEventEndDate_str);
+				//set currentEventActive boolean var based on event_status_id value
+				data.event_status_id == 1 ? fev.vars.currentEventActive = true :   fev.vars.currentEventActive = false;
+				//set event date string vars, cutting off time portion and storing date only; check for undefined because services do not return the property if it has no value
+				fev.vars.currentEventStartDate_str = (data.event_start_date == undefined ? '' : data.event_start_date.substr(0,10));
+				fev.vars.currentEventEndDate_str = (data.event_end_date == undefined ? '' : data.event_end_date.substr(0,10));
+				console.log("Selected event is " + data.event_name + ". START date is " + fev.vars.currentEventStartDate_str + " and END date is " + fev.vars.currentEventEndDate_str + ". Event is active = " + fev.vars.currentEventActive)
+
 				//call filter function, passing the event parameter string and 'true' for the 'isUrlParam' boolean argument
 				filterMapData(eventParam, true);
 				setEventIndicators(data.event_name, data.event_id);
