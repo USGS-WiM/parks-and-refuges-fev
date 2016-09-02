@@ -44,12 +44,23 @@
                     $.getJSON(stnServicesURL + "/Sites/" + feature.properties.site_id + ".json", function(data) {
                         if (data.usgs_sid !== "") {
                             usgsSiteID = data.usgs_sid;
-                            var rdgGraphContent =
-                                '<div id="rdgChartDiv"><label for="rdgChartDiv">Water level elevation (ft)</label><img width="350" src="http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=' + usgsSiteID + '&parm_cd=62620&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str + '" alt="rapid deploy gage graph"></div>';
-                            latlng.bindPopup(popupContent + rdgGraphContent, {minWidth: 350})
+                            if (fev.vars.currentEventActive == true) {
+                                //use moment.js lib to get current system date string, properly formatted
+                                fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+                                console.log("Selected event is active, so end date is today, " + fev.vars.currentEventEndDate_str)
+                            }
+                            if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
+                                var rdgGraphContent =
+                                    '<div id="rdgChartDiv"><i>Missing valid event date range. Unable to display RDG Real-time graph.</i></div>';
+                                latlng.bindPopup(popupContent + rdgGraphContent);
+                            } else {
+                                var rdgGraphContent =
+                                    '<div id="rdgChartDiv"><label>Water level elevation (ft)</label><img width="350" src="http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=' + usgsSiteID + '&parm_cd=62620&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str + '" alt="rapid deploy gage graph"></div>';
+                                latlng.bindPopup(popupContent + rdgGraphContent, {minWidth: 350})
+                            }
                         } else {
                             var rdgGraphContent =
-                                '<div id="rdgChartDiv"><label for="rdgChartDiv">Missing USGS Site ID. Unable to display RDG Real-time graph.</label></div>';
+                                '<div id="rdgChartDiv"><i>Missing USGS Site ID. Unable to display RDG Real-time graph.</i></div>';
                             latlng.bindPopup(popupContent + rdgGraphContent);
                         }
                     });
@@ -199,10 +210,12 @@
     function populateEventDates (eventID) {
         for (var i = 0; i < fev.data.events.length; i++) {
             if (fev.data.events[i].event_id == eventID) {
-                fev.vars.currentEventStartDate_str = fev.data.events[i].event_start_date.substr(0,10);
-                console.log("Selected event is " + fev.data.events[i].event_name + ". START date is " + fev.vars.currentEventStartDate_str);
-                fev.vars.currentEventEndDate_str = fev.data.events[i].event_end_date.substr(0,10);
-                console.log("Selected event is " + fev.data.events[i].event_name + ". END date is " + fev.vars.currentEventEndDate_str);
+                //set currentEventActive boolean var based on event_status_id value
+                fev.data.events[i].event_status_id == 1 ? fev.vars.currentEventActive = true :   fev.vars.currentEventActive = false;
+                //set event date vars; check for undefined because services do not return the property if it has no value
+                fev.vars.currentEventStartDate_str = (fev.data.events[i].event_start_date == undefined ? '' : fev.data.events[i].event_start_date.substr(0,10));
+                fev.vars.currentEventEndDate_str = (fev.data.events[i].event_end_date == undefined ? '' : fev.data.events[i].event_end_date.substr(0,10));
+                console.log("Selected event is " + fev.data.events[i].event_name + ". START date is " + fev.vars.currentEventStartDate_str + " and END date is " + fev.vars.currentEventEndDate_str + ". Event is active = " + fev.vars.currentEventActive)
             }
         }
     }
