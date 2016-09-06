@@ -9,8 +9,6 @@
 
     //ajax retrieval function
     function displaySensorGeoJSON(type, url, markerIcon) {
-        //increment layerCount
-        layerCount++;
         var currentSubGroup = eval(type);
         currentSubGroup.clearLayers();
         var currentMarker = L.geoJson(false, {
@@ -47,12 +45,12 @@
                     $.getJSON(stnServicesURL + "/Sites/" + feature.properties.site_id + ".json", function(data) {
                         if (data.usgs_sid !== "") {
                             usgsSiteID = data.usgs_sid;
-                            if (fev.vars.currentEventActive == true) {
+                            if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
                                 //use moment.js lib to get current system date string, properly formatted
                                 fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
                                 console.log("Selected event is active, so end date is today, " + fev.vars.currentEventEndDate_str)
                             }
-                            if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
+                            if (fev.vars.currentEventStartDate_str == '' && fev.vars.currentEventEndDate_str == '') {
                                 var rdgGraphContent =
                                     '<div id="rdgChartDiv"><i>Missing valid event date range. Unable to display RDG Real-time graph.</i></div>';
                                 latlng.bindPopup(popupContent + rdgGraphContent);
@@ -75,6 +73,8 @@
         });
 
         $.getJSON(url, function(data) {
+            //increment layerCount
+            layerCount++;
             checkLayerCount(layerCount);
             if (data.length == 0) {
                 console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
@@ -94,8 +94,6 @@
     }
 
     function displayHWMGeoJSON(url, markerIcon) {
-        //increment layerCount
-        layerCount++;
         hwm.clearLayers();
         var currentMarker = L.geoJson(false, {
             pointToLayer: function(feature, latlng) {
@@ -110,6 +108,9 @@
                 oms.addMarker(latlng);
                 // var popupContent = '';
                 var currentEvent = $('#largeEventNameDisplay').html();
+                // var dataDisclaimerLink = $('<button type="button" class="btn btn-sm data-disclaim"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></button>').click(function() {
+                //     alert("test");
+                // })[0];
                 var popupContent =
                 '<table class="table table-hover table-striped table-condensed">'+
                     '<caption class="popup-title">' + getLayerName('hwm') + ' for ' + currentEvent + '</caption>' +
@@ -117,7 +118,7 @@
                     '<tr><td><strong>Elevation(ft): </strong></td><td><span id="hwmElev">'+ feature.properties.elev_ft + '</span></td></tr>'+
                     '<tr><td><strong>Datum: </strong></td><td><span id="hwmWaterbody">'+ feature.properties.verticalDatumName + '</span></td></tr>'+
                     '<tr><td><strong>Height Above Ground: </strong></td><td><span id="hwmHtAboveGnd">'+ (feature.properties.height_above_gnd !== undefined ? feature.properties.height_above_gnd : '<i>No value recorded</i>')+ '</span></td></tr>'+
-                    '<tr><td><strong>Approval status: </strong></td><td><span id="hwmStatus">'+ (feature.properties.approval_id == undefined || feature.properties.approval_id == 0 ? 'Provisional  <button type="button" class="btn btn-sm data-disclaim"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></button>' : 'Approved')+ '</span></td></tr>'+
+                    '<tr><td><strong>Approval status: </strong></td><td><span id="hwmStatus">'+ (feature.properties.approval_id == undefined || feature.properties.approval_id == 0 ? 'Provisional  <button type="button" class="btn btn-sm data-disclaim"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></button>'  : 'Approved')+ '</span></td></tr>'+
                     '<tr><td><strong>Type: </strong></td><td><span id="hwmType"></span>'+ feature.properties.hwmTypeName + '</td></tr>'+
                     '<tr><td><strong>Marker: </strong></td><td><span id="hwmMarker">'+ feature.properties.markerName+ '</span></td></tr>'+
                     '<tr><td><strong>Quality: </strong></td><td><span id="hwmQuality">'+ feature.properties.hwmQualityName+ '</span></td></tr>'+
@@ -132,13 +133,12 @@
                 //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
                 // });
                 latlng.bindPopup(popupContent);
-                $('.data-disclaim').on('click', function() {
-                    $('#aboutModal').modal('show');
-                });
             }
         });
 
         $.getJSON(url, function(data) {
+            //increment layerCount
+            layerCount++;
             checkLayerCount(layerCount);
             if (data.length == 0) {
                 console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
@@ -157,8 +157,6 @@
     }
 
     function displayPeaksGeoJSON(url, markerIcon) {
-        //increment layerCount
-        layerCount++;
         peaks.clearLayers();
         var currentMarker = L.geoJson(false, {
             pointToLayer: function(feature, latlng) {
@@ -188,6 +186,8 @@
         });
 
         $.getJSON(url, function(data) {
+            //increment layerCount
+            layerCount++;
             checkLayerCount(layerCount);
             if (data.length == 0) {
                 console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
@@ -364,12 +364,6 @@
             $.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, type ) {
                 displaySensorGeoJSON(type, fev.urls[type + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window[type + 'MarkerIcon']);
             });
-
-            //hack to zoom to sites after all ajax calls finish
-            //TODO: build some logic that wait until whole markerCoords object is built, then zoom. currently this causes two separate zoom events to trigger
-            // $( document ).ajaxComplete(function() {
-            //     if (markerCoords.length > 0) { map.fitBounds(markerCoords); }
-            // });
 
         //}
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
