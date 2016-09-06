@@ -113,6 +113,7 @@ body {
      font-size: 30px;
      content: "♦";
      color: #8B4513;
+    border: black;
  }
 
 .peaksMarker:before {

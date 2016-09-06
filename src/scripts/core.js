@@ -169,6 +169,15 @@ $( document ).ready(function() {
 
 	L.Icon.Default.imagePath = './images';
 
+
+	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
+	map.on('popupopen', function() {
+		$('.data-disclaim').click(function(e){
+			$('#aboutModal').modal('show');
+			$('#disclaimerTabPane').tab('show')
+		});
+	});
+
 	//add sensor markercluster group to the map
 	//sensorMCG.addTo(map);
 	//add sensor subgroups to the map
@@ -191,7 +200,8 @@ $( document ).ready(function() {
 		"<i class='metMarker'></i>&nbsp;Meteorological Sensor": met,
 		"<i class='rdgMarker'></i>&nbsp;Rapid Deployment Gage" :rdg,
 		"<i class='stormTideMarker'></i>&nbsp;Storm Tide Sensor" : stormTide,
-		"<i class='waveHeightMarker'></i>&nbsp;Wave Height Sensor" : waveHeight
+		"<i class='waveHeightMarker'></i>&nbsp;Wave Height Sensor" : waveHeight,
+		"<i class='nwisMarker'></i>&nbsp;Real-time Stream Gage" : USGSrtGages
 	};
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
 	var sensorsToggle = L.control.layers(null, sensorOverlays, {collapsed: false});
@@ -416,7 +426,6 @@ $( document ).ready(function() {
     });
     /* legend control */
 
-
     // map.on('moveend', function(e) {
     //     USGSrtGages.clearLayers();
     //     if (map.hasLayer(USGSrtGages) && map.getZoom() >= 10) {
@@ -425,8 +434,8 @@ $( document ).ready(function() {
     //     }
     // });
 
-	///fix to prevent re-rendering nwis on pan - but something is wrong with it
-	map.on('load moveend', function(e) {
+	///fix to prevent re-rendering nwis rt gages on pan
+	map.on('load moveend zoomend', function(e) {
 		var foundPopup;
 		$.each(USGSrtGages.getLayers(), function( index, marker ) {
 			var popup = marker.getPopup();
@@ -449,13 +458,8 @@ $( document ).ready(function() {
 			popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + moment(parameter.Time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>'
 		});
 
-		//if there is some data, show the div
-		$('#graphContainer').show();
-
-		e.layer.bindPopup('<b>' + e.layer.data.siteName + '</br>USGS Site ID: ' + e.layer.data.siteCode[0].value + '</b><table class="table table-condensed"><thead><tr><th>Parameter</th><th>Value</th><th>Timestamp</th></tr></thead><tbody>' + popupContent + '</tbody></table><div id="graphContainer" style="width:100%; height:200px;display:none;"></div>',{autoPan:false}).openPopup();
-
 		var timeQueryRange = '';
-		if (fev.vars.currentEventActive == true) {
+		if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
 			//use moment.js lib to get current system date string, properly formatted
 			fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
 		}
@@ -465,14 +469,20 @@ $( document ).ready(function() {
 			timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
 		}
 
+		//if there is some data, show the div
+		//$('#graphContainer').show();
+
+		e.layer.bindPopup('<b>' + e.layer.data.siteName + '</br>Full data link: <a target="_blank" href="http://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode[0].value + '">' + e.layer.data.siteCode[0].value + '</a></b><br><table class="table table-condensed"><thead><tr><th>Parameter</th><th>Value</th><th>Timestamp</th></tr></thead><tbody>' + popupContent + '</tbody></table><div id="graphContainer" style="width:100%; height:200px;display:none;"></div>',{autoPan:false}).openPopup();
 		//date range example '&startDT=2016-08-28&endDT=2016-09-01'
 		//var timeQueryRange = '&startDT=2016-08-28&endDT=2016-09-01';
 		//var periodLast7 = '&period=P7D';
 
-		$.getJSON('http://waterservices.usgs.gov/nwis/iv/?format=json&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQueryRange, function(data) {
-			console.log('graphdata: ',data)
+		$.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQueryRange, function(data) {
+		///temporary substitution of direct address to NWIS server that works
+		//$.getJSON('http://nadww01.er.usgs.gov/nwis/iv/?format=json&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQueryRange, function(data) {
+			console.log('graphdata: ',data);
 
-			if (data.value.timeSeries[0].values[0].value.length <= 0) return;
+			if (data.value.timeSeries.length <= 0) return;
 
 			//if there is some data, show the div
 			$('#graphContainer').show();
@@ -498,9 +508,11 @@ $( document ).ready(function() {
 					type: "datetime",
 					labels: {
 						formatter: function () {
-							return Highcharts.dateFormat('%b %d %Y', this.value);
+							//return Highcharts.dateFormat('%d %b %y', this.value);
+							//w/out year
+							return Highcharts.dateFormat('%d %b', this.value);
 						},
-						//rotation: 90,
+						//rotation: -90,
 						align: 'center'
 					}
 				},
