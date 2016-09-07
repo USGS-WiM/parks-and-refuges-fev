@@ -8,7 +8,7 @@
     var layerCount = 0;
 
     //ajax retrieval function
-    function displaySensorGeoJSON(type, url, markerIcon) {
+    function displaySensorGeoJSON(type, name, url, markerIcon) {
         var currentSubGroup = eval(type);
         currentSubGroup.clearLayers();
         var currentMarker = L.geoJson(false, {
@@ -26,7 +26,7 @@
                 var currentEvent = $('#largeEventNameDisplay').html();
                 var popupContent =
                     '<table class="table table-hover table-striped table-condensed">'+
-                        '<caption class="popup-title">' + getLayerName(type) + ' for ' + currentEvent + '</caption>' +
+                        '<caption class="popup-title">' + name + ' for ' + currentEvent + '</caption>' +
                         '<tr><td><strong>STN Site Name: </strong></td><td><span id="siteName">'+ feature.properties.site_name+'</span></td></tr>'+
                         '<tr><td><strong>Status: </strong></td><td><span id="status">'+ feature.properties.status+'</span></td></tr>'+
                         '<tr><td><strong>City: </strong></td><td><span id="city">'+ (feature.properties.city == ''|| feature.properties.city == null || feature.properties.city == undefined ? '<i>No city recorded</i>' : feature.properties.city ) + '</span></td></tr>'+
@@ -94,7 +94,7 @@
 
     }
 
-    function displayHWMGeoJSON(url, markerIcon) {
+    function displayHWMGeoJSON(type, name, url, markerIcon) {
         hwm.clearLayers();
         var currentMarker = L.geoJson(false, {
             pointToLayer: function(feature, latlng) {
@@ -114,7 +114,7 @@
                 // })[0];
                 var popupContent =
                 '<table class="table table-hover table-striped table-condensed">'+
-                    '<caption class="popup-title">' + getLayerName('hwm') + ' for ' + currentEvent + '</caption>' +
+                    '<caption class="popup-title">' + name + ' for ' + currentEvent + '</caption>' +
                     '<tr><td><strong>STN Site No.: </strong></td><td><span id="hwmSiteNo">'+ feature.properties.site_no+ '</span></td></tr>'+
                     '<tr><td><strong>Elevation(ft): </strong></td><td><span id="hwmElev">'+ feature.properties.elev_ft + '</span></td></tr>'+
                     '<tr><td><strong>Datum: </strong></td><td><span id="hwmWaterbody">'+ feature.properties.verticalDatumName + '</span></td></tr>'+
@@ -158,7 +158,7 @@
 
     }
 
-    function displayPeaksGeoJSON(url, markerIcon) {
+    function displayPeaksGeoJSON(type, name, url, markerIcon) {
         peaks.clearLayers();
         var currentMarker = L.geoJson(false, {
             pointToLayer: function(feature, latlng) {
@@ -175,7 +175,7 @@
                 var currentEvent = $('#largeEventNameDisplay').html();
                 var popupContent =
                     '<table class="table table-condensed table-striped table-hover">' +
-                    '<caption class="popup-title">' + getLayerName('peaks') + ' for ' + currentEvent + '</caption>' +
+                    '<caption class="popup-title">' + name + ' for ' + currentEvent + '</caption>' +
                         '<tr><th>Peak Stage (ft)</th><th>Datum</th><th>Peak Date & Time (UTC)</th></tr>'+
                         '<tr><td>' + feature.properties.peak_stage + '</td><td>' + feature.properties.vdatum + '</td><td>' + feature.properties.peak_date + '</td></tr>'+
                     '</table>';
@@ -235,7 +235,7 @@
     }
 
     function checkLayerCount (layerCount) {
-        if (layerCount == 7 ) {
+        if (layerCount == fev.layerList.length) {
             if (markerCoords.length > 0) { map.fitBounds(markerCoords); }
         }
     }
@@ -364,9 +364,9 @@
             //return fev.queryStrings.sensorsQueryString;
 
             //get geoJSON
-            $.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, type ) {
-                displaySensorGeoJSON(type, fev.urls[type + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window[type + 'MarkerIcon']);
-            });
+            // $.each([ 'baro','met','rdg','stormTide','waveHeight'], function( index, type ) {
+            //     displaySensorGeoJSON(type, fev.urls[type + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window[type + 'MarkerIcon']);
+            // });
 
         //}
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,9 +441,7 @@
             $('#hwmDownloadButtonXML').attr('href', fev.urls.xmlHWMsQueryURL);
 
             //get geoJSON
-            //displayGeoJSON(fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
-
-            displayHWMGeoJSON(fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
+            //displayHWMGeoJSON(fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
 
 
         //}
@@ -471,9 +469,16 @@
             $('#peaksDownloadButtonXML').attr('href', fev.urls.xmlPeaksQueryURL);
 
             //get geoJSON
-            displayPeaksGeoJSON(fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peaksMarkerIcon);
+            //displayPeaksGeoJSON(fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peaksMarkerIcon);
 
         //}
+
+        //main loop over layers
+        $.each(fev.layerList, function( index, layer ) {
+            if(layer.Type == 'sensor') displaySensorGeoJSON(layer.ID, layer.Name, fev.urls[layer.ID + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window[layer.ID + 'MarkerIcon']);
+            if(layer.ID == 'hwm') displayHWMGeoJSON(layer.ID, layer.Name, fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
+            if(layer.ID == 'peak') displayPeaksGeoJSON(layer.ID, layer.Name, fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peaksMarkerIcon);
+        });
 
     } //end filterMapData function
 
@@ -486,7 +491,18 @@
 			var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
 			var siteStatus = 'active';
 
-			var url = 'http://waterservices.usgs.gov/nwis/iv/?format=json&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
+            var timeQueryRange = '';
+            if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
+                //use moment.js lib to get current system date string, properly formatted
+                fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+            }
+            if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
+                timeQueryRange = ''
+            } else {
+                timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
+            }
+
+			var url = 'http://nwis.waterservices.usgs.gov/nwis/iv/?format=json&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus  + timeQueryRange;
 			$.getJSON(url, function(data) {
 				console.log(data.value.timeSeries.length + ' usgs gages found.');
 

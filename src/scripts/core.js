@@ -4,48 +4,86 @@ var sensorPageURLRoot = "http://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site
 var hwmPageURLRoot = "http://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 
 var fev = fev || {
-		data: {
-			events: [],
-			eventTypes: [],
-			states: [],
-			counties : [],
-			sensorTypes : [],
-			sensorStatusTypes : [],
-			collectionConditions: [],
-			deploymentTypes : [],
-			hwmTypes: [],
-			hwmQualities : []
-		},
-		urls: {
-			jsonSensorsURLRoot : stnServicesURL + '/Instruments.json',
-			xmlSensorsURLRoot: stnServicesURL + '/Instruments.xml',
-			csvSensorsURLRoot : stnServicesURL + '/Instruments.csv',
+	data: {
+		events: [],
+		eventTypes: [],
+		states: [],
+		counties : [],
+		sensorTypes : [],
+		sensorStatusTypes : [],
+		collectionConditions: [],
+		deploymentTypes : [],
+		hwmTypes: [],
+		hwmQualities : []
+	},
+	urls: {
+		jsonSensorsURLRoot : stnServicesURL + '/Instruments.json',
+		xmlSensorsURLRoot: stnServicesURL + '/Instruments.xml',
+		csvSensorsURLRoot : stnServicesURL + '/Instruments.csv',
 
-			jsonHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.json',
-			xmlHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.xml',
-			csvHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.csv',
-			hwmFilteredGeoJSONViewURL: stnServicesURL + '/HWMs/FilteredHWMs.geojson',
-			hwmGeoJSONViewURL: stnServicesURL + '/hwms.geojson',
+		jsonHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.json',
+		xmlHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.xml',
+		csvHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.csv',
+		hwmFilteredGeoJSONViewURL: stnServicesURL + '/HWMs/FilteredHWMs.geojson',
+		hwmGeoJSONViewURL: stnServicesURL + '/hwms.geojson',
 
-			xmlPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.xml',
-			jsonPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.json',
-			csvPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.csv',
-			peaksFilteredGeoJSONViewURL: stnServicesURL + '/PeakSummaries/FilteredPeaks.geojson',
+		xmlPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.xml',
+		jsonPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.json',
+		csvPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.csv',
+		peaksFilteredGeoJSONViewURL: stnServicesURL + '/PeakSummaries/FilteredPeaks.geojson',
 
-			baroGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=baro_view&',
-			metGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=met_view&',
-			rdgGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=rdg_view&',
-			stormTideGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=stormtide_view&',
-			waveHeightGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=waveheight_view&'
+		baroGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=baro_view&',
+		metGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=met_view&',
+		rdgGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=rdg_view&',
+		stormTideGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=stormtide_view&',
+		waveHeightGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=waveheight_view&'
+	},
+	queryStrings: {
+	},
+	vars : {
+		currentEventStartDate_str : "",
+		currentEventEndDate_str : "",
+		currentEventActive : false
+	},
+	layerList: 	[
+		{
+			"ID": "baro",
+			"Name": "Barometric Pressure Sensor",
+			"Type":"sensor"
 		},
-		queryStrings: {
+		{
+			"ID": "stormTide",
+			"Name": "Storm Tide Sensor",
+			"Type":"sensor"
 		},
-		vars : {
-			currentEventStartDate_str : "",
-			currentEventEndDate_str : "",
-			currentEventActive : false
+		{
+			"ID": "met",
+			"Name": "Meteorological Sensor",
+			"Type":"sensor"
+		},
+		{
+			"ID": "waveHeight",
+			"Name": "Wave Height Sensor",
+			"Type":"sensor"
+		},
+		{
+			"ID": "rdg",
+			"Name": "Rapid Deployment Gage",
+			"Type":"sensor"
+		},
+		{
+			"ID": "hwm",
+			"Name": "High Water Mark",
+			"Type":"observed"
+		},
+		{
+			"ID": "peak",
+			"Name": "Peak Summary",
+			"Type":"observed"
 		}
+	]
 };
+
 var map;
 var markerCoords = [];
 var oms;
@@ -206,28 +244,24 @@ $( document ).ready(function() {
 	//add USGS rt gages to the map
 	USGSrtGages.addTo(map);
 
-	//define sensor layers 'overlays' (leaflet term)
+	//define layer 'overlays' (leaflet term)
 	var sensorOverlays = {
-		"<i class='baroMarker'></i>&nbsp;Barometric Pressure Sensor": baro,
-		"<i class='metMarker'></i>&nbsp;Meteorological Sensor": met,
-		"<i class='rdgMarker'></i>&nbsp;Rapid Deployment Gage" :rdg,
-		"<i class='stormTideMarker'></i>&nbsp;Storm Tide Sensor" : stormTide,
-		"<i class='waveHeightMarker'></i>&nbsp;Wave Height Sensor" : waveHeight,
 		"<i class='nwisMarker'></i>&nbsp;Real-time Stream Gage" : USGSrtGages
 	};
+	var observedOverlays = {};
+	$.each(fev.layerList, function( index, layer ) {
+		if(layer.Type == 'sensor') sensorOverlays["<i class='" + layer.ID + "Marker'></i>&nbsp;" + layer.Name] = window[layer.ID]
+		if(layer.Type != 'sensor') observedOverlays["<i class='" + layer.ID + "Marker'></i>&nbsp;" + layer.Name] = window[layer.ID]
+	});
+
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
 	var sensorsToggle = L.control.layers(null, sensorOverlays, {collapsed: false});
 	sensorsToggle.addTo(map);
 	sensorsToggle._container.remove();
 	document.getElementById('sensorsToggleDiv').appendChild(sensorsToggle.onAdd(map));
 
-	// define observed layers 'overlays' (leaflet term)
-	var observedOverlay = {
-		"<i class='hwmMarker'></i>&nbsp;High Water Marks": hwm,
-		"<i class='peaksMarker'></i>&nbsp;Peak Summaries": peaks
-	};
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	var observedToggle = L.control.layers(null, observedOverlay, {collapsed: false});
+	var observedToggle = L.control.layers(null, observedOverlays, {collapsed: false});
 	observedToggle.addTo(map);
 	observedToggle._container.remove();
 	document.getElementById('observedToggleDiv').appendChild(observedToggle.onAdd(map));
@@ -439,6 +473,7 @@ $( document ).ready(function() {
 
 	///fix to prevent re-rendering nwis rt gages on pan
 	map.on('load moveend zoomend', function(e) {
+		USGSrtGages.clearLayers();
 		var foundPopup;
 		$.each(USGSrtGages.getLayers(), function( index, marker ) {
 			var popup = marker.getPopup();
@@ -448,7 +483,6 @@ $( document ).ready(function() {
 		})
 
 		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 7 && !foundPopup) {
-			USGSrtGages.clearLayers();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 			queryNWISrtGages(bbox);
 		}
@@ -483,53 +517,54 @@ $( document ).ready(function() {
 		$.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQueryRange, function(data) {
 		///temporary substitution of direct address to NWIS server that works
 		//$.getJSON('http://nadww01.er.usgs.gov/nwis/iv/?format=json&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQueryRange, function(data) {
-			console.log('graphdata: ',data);
 
-			if (data.value.timeSeries.length <= 0) return;
+			if (data.value.timeSeries.length <= 0) console.log("No NWIS graph data available for this time period");
 
-			//if there is some data, show the div
-			$('#graphContainer').show();
+			else {
+				//if there is some data, show the div
+				$('#graphContainer').show();
 
-			//transpose array
-			var graphData = [];
-			$.map( data.value.timeSeries[0].values[0].value, function( val, i ) {
-				graphData.push([Date.parse(val.dateTime),parseFloat(val.value)])
-			});
-			Highcharts.setOptions({global: { useUTC: false } });
-			$('#graphContainer').highcharts({
-				chart: {
-					type: 'line'
-				},
-				title: {
-					//text: e.layer.data.siteCode[0].agencyCode + ' ' + e.layer.data.siteCode[0].value + ' ' + e.layer.data.siteName
-					text: null
-				},
-				credits: {
-					enabled: false
-				},
-				xAxis: {
-					type: "datetime",
-					labels: {
-						formatter: function () {
-							//return Highcharts.dateFormat('%d %b %y', this.value);
-							//w/out year
-							return Highcharts.dateFormat('%d %b', this.value);
-						},
-						//rotation: -90,
-						align: 'center'
-					}
-				},
-				yAxis: {
-					title: { text: 'Gage Height, feet' }
-				},
-				series: [{
-					showInLegend: false,
-					data: graphData,
-					tooltip: {
-						pointFormat: "Gage height: {point.y} feet"
-					}
-				}]
-			});
+				//transpose array
+				var graphData = [];
+				$.map( data.value.timeSeries[0].values[0].value, function( val, i ) {
+					graphData.push([Date.parse(val.dateTime),parseFloat(val.value)])
+				});
+				Highcharts.setOptions({global: { useUTC: false } });
+				$('#graphContainer').highcharts({
+					chart: {
+						type: 'line'
+					},
+					title: {
+						//text: e.layer.data.siteCode[0].agencyCode + ' ' + e.layer.data.siteCode[0].value + ' ' + e.layer.data.siteName
+						text: null
+					},
+					credits: {
+						enabled: false
+					},
+					xAxis: {
+						type: "datetime",
+						labels: {
+							formatter: function () {
+								//return Highcharts.dateFormat('%d %b %y', this.value);
+								//w/out year
+								return Highcharts.dateFormat('%d %b', this.value);
+							},
+							//rotation: -90,
+							align: 'center'
+						}
+					},
+					yAxis: {
+						title: { text: 'Gage Height, feet' }
+					},
+					series: [{
+						showInLegend: false,
+						data: graphData,
+						tooltip: {
+							pointFormat: "Gage height: {point.y} feet"
+						}
+					}]
+				});
+			}
 		});
 	})
 
