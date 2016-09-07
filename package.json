@@ -25,6 +25,7 @@
     "wiredep": "^1.4.4"
   },
   "dependencies": {
+    "bootstrap-datepicker": "^1.6.4",
     "moment": "^2.14.1"
   }
 }
