@@ -9,6 +9,8 @@
 
     //ajax retrieval function
     function displaySensorGeoJSON(type, name, url, markerIcon) {
+        //increment layerCount
+        layerCount++;
         var currentSubGroup = eval(type);
         currentSubGroup.clearLayers();
         var currentMarker = L.geoJson(false, {
@@ -73,9 +75,6 @@
         });
 
         $.getJSON(url, function(data) {
-            //increment layerCount
-            layerCount++;
-            checkLayerCount(layerCount);
             if (data.length == 0) {
                 console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
                 return
@@ -87,6 +86,7 @@
                     layer.addTo(currentSubGroup);
                 });
             currentSubGroup.addTo(map)
+            checkLayerCount(layerCount);
             }
 
         });
@@ -95,6 +95,8 @@
     }
 
     function displayHWMGeoJSON(type, name, url, markerIcon) {
+        //increment layerCount
+        layerCount++;
         hwm.clearLayers();
         var currentMarker = L.geoJson(false, {
             pointToLayer: function(feature, latlng) {
@@ -105,12 +107,20 @@
                 return marker;
             },
             onEachFeature: function (feature, latlng) {
+
+                if (feature.properties.longitude_dd == undefined ||feature.properties.latitude_dd == undefined ) {
+                    console.log("Lat/lng undefined for HWM at site no: " + feature.properties.site_no );
+                    return
+                }
+
+                if (latlng.feature.geometry.coordinates[0] == null || latlng.feature.geometry.coordinates[1] == null) {
+                    console.log("null coordinates returned for " + feature.properties.site_no)
+                }
                 //add marker to overlapping marker spidifier
                 oms.addMarker(latlng);
                 // var popupContent = '';
                 var currentEvent = $('#largeEventNameDisplay').html();
-                // var dataDisclaimerLink = $('<button type="button" class="btn btn-sm data-disclaim"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></button>').click(function() {
-                //     alert("test");
+
                 // })[0];
                 var popupContent =
                 '<table class="table table-hover table-striped table-condensed">'+
@@ -138,9 +148,6 @@
         });
 
         $.getJSON(url, function(data) {
-            //increment layerCount
-            layerCount++;
-            checkLayerCount(layerCount);
             if (data.length == 0) {
                 console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
                 return
@@ -149,9 +156,12 @@
                 console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
                 currentMarker.addData(data);
                 currentMarker.eachLayer(function(layer) {
+                    // var latlng = L.latLng(layer.feature.geometry.coordinates);
+                    // markerCoords.push(latlng);
                     layer.addTo(hwm);
                 });
             hwm.addTo(map);
+            checkLayerCount(layerCount);
             }
 
         });
@@ -159,6 +169,8 @@
     }
 
     function displayPeaksGeoJSON(type, name, url, markerIcon) {
+        //increment layerCount
+        layerCount++;
         peaks.clearLayers();
         var currentMarker = L.geoJson(false, {
             pointToLayer: function(feature, latlng) {
@@ -188,9 +200,6 @@
         });
 
         $.getJSON(url, function(data) {
-            //increment layerCount
-            layerCount++;
-            checkLayerCount(layerCount);
             if (data.length == 0) {
                 console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
                 return
@@ -201,7 +210,8 @@
                 currentMarker.eachLayer(function(layer) {
                     layer.addTo(peaks);
                 });
-            peaks.addTo(map)
+            peaks.addTo(map);
+            checkLayerCount(layerCount);
             }
 
         });
