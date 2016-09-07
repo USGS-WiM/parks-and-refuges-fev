@@ -141,6 +141,18 @@ $( document ).ready(function() {
 	//for jshint
 	'use strict';
 
+	$('#peakDatePicker .input-daterange').datepicker({
+		format:  "yyyy-mm-dd",
+		endDate: "today",
+		startView: 2,
+		maxViewMode: 3,
+		todayBtn: true,
+		clearBtn: true,
+		multidate: false,
+		autoclose: true,
+		todayHighlight: true
+	});
+
 	//submit event button
 	$('#btnSubmitEvent').click(function(){
 		//check if an event has been selected
@@ -227,7 +239,7 @@ $( document ).ready(function() {
 	//add hwm markercluster group to the map
 	//hwmMCG.addTo(map);
 	// add hwm subgroup to the map
-	hwm.addTo(map);
+	//hwm.addTo(map);
 	//peaks.addTo(map);
 	//add USGS rt gages to the map
 	USGSrtGages.addTo(map);
@@ -283,16 +295,7 @@ $( document ).ready(function() {
 	$('.check').on('click', function(){
 		$(this).find('span').toggle();
 	});
-	// $('#peakDatePicker').datepicker({
-	// 	format: 'mm/dd/yyyy',
-	// 	autoclose: true,
-	// 	endDate: 'today',
-	// 	startView: 1,
-	// 	startView: 1,
-	// 	todayBtn: true,
-	// 	multidate: false,
-	// 	clearBtn: true
-	// });
+
 
 	function showGeosearchModal() {
 		$('#geosearchModal').modal('show');

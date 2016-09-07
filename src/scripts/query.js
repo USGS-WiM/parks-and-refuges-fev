@@ -86,6 +86,7 @@
                 currentMarker.eachLayer(function(layer) {
                     layer.addTo(currentSubGroup);
                 });
+            currentSubGroup.addTo(map)
             }
 
         });
@@ -150,6 +151,7 @@
                 currentMarker.eachLayer(function(layer) {
                     layer.addTo(hwm);
                 });
+            hwm.addTo(map);
             }
 
         });
@@ -199,6 +201,7 @@
                 currentMarker.eachLayer(function(layer) {
                     layer.addTo(peaks);
                 });
+            peaks.addTo(map)
             }
 
         });
