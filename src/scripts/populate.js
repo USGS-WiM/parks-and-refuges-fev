@@ -278,17 +278,14 @@ $( document ).ready(function() {
                 currentState: fev.data.states[i].state_abbrev,
                 success: function (data)  {
                     fev.data.counties[(this.currentState)] = data;
+                    //console.log("Loaded counties for: ",this.currentState)
                 },
                 error: function (error) {
                     console.log('Error retrieving counties. The error is: ' + error);
                 }
             });
         }
-        setTimeout(function (){
-            console.log(fev.data.counties);
-        }, 300);
     };
-
 
     //begin onChange functions for Event form (these tie the event type and event forms together)
     $('#evtTypeSelect').on('select2:select select2:unselect', function (selection) {
