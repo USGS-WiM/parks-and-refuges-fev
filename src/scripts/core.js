@@ -473,7 +473,7 @@ $( document ).ready(function() {
 
 	///fix to prevent re-rendering nwis rt gages on pan
 	map.on('load moveend zoomend', function(e) {
-		USGSrtGages.clearLayers();
+		
 		var foundPopup;
 		$.each(USGSrtGages.getLayers(), function( index, marker ) {
 			var popup = marker.getPopup();
@@ -481,8 +481,9 @@ $( document ).ready(function() {
 				foundPopup = popup._isOpen;
 			}
 		})
-
+		if (map.getZoom() < 7) USGSrtGages.clearLayers();
 		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 7 && !foundPopup) {
+			USGSrtGages.clearLayers();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 			queryNWISrtGages(bbox);
 		}
