@@ -554,19 +554,15 @@ function queryNWISgraph(e) {
 
     e.layer.bindPopup('<b>' + e.layer.data.siteName + '</br>Full data link: <a target="_blank" href="http://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode[0].value + '">' + e.layer.data.siteCode[0].value + '</a></b><br><table class="table table-condensed"><thead><tr><th>Parameter</th><th>Value</th><th>Timestamp</th></tr></thead><tbody>' + popupContent + '</tbody></table><div id="graphContainer" style="width:100%; height:200px;display:none;"></div>').openPopup();
 
-    $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=json&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQueryRange, function(data) {
+    $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQueryRange, function(data) {
 
-        if (data.value.timeSeries.length <= 0) console.log("No NWIS graph data available for this time period");
+        if (data.data[0].time_series_data.length <= 0) console.log("No NWIS graph data available for this time period");
 
         else {
             //if there is some data, show the div
             $('#graphContainer').show();
 
-            //transpose array
-            var graphData = [];
-            $.map( data.value.timeSeries[0].values[0].value, function( val, i ) {
-                graphData.push([Date.parse(val.dateTime),parseFloat(val.value)])
-            });
+            //create chart
             Highcharts.setOptions({global: { useUTC: false } });
             $('#graphContainer').highcharts({
                 chart: {
@@ -594,7 +590,7 @@ function queryNWISgraph(e) {
                 },
                 series: [{
                     showInLegend: false,
-                    data: graphData,
+                    data: data.data[0].time_series_data,
                     tooltip: {
                         pointFormat: "Gage height: {point.y} feet"
                     }
