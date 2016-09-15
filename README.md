@@ -15,7 +15,7 @@ run `npm install` AND `bower install` to get dependencies after first cloning
 To go directly to an event view on load, append `#{event name}` to the URL. Example: `stn.wim.usgs.gov/FEV#Sandy`.  If arriving without event in URL, user will be directed, via modal, to choose an event first before proceeding.
 
 ####NWIS real-time layers
-FEV contains an USGS NWIS real-time streamgage layer to display gage data for the period of the event specified.  A graph of stage in elevation feet is generated on-the-fly using the HighCharts library.
+FEV contains a USGS NWIS real-time streamgage layer to display gage data for the period of the event specified.  A graph of stage in elevation feet is generated on-the-fly using the HighCharts library.
 
 The app currently displays gages meeting the following criteria:
 
