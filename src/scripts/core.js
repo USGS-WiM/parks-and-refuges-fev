@@ -275,17 +275,18 @@ $( document ).ready(function() {
 
 	L.esri.dynamicMapLayer({
 		url:"http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
-		opacity: 0.5
+		opacity: 0.5,
+		f:'image'
 	}).addTo(map);
 
-	// use whatever Esri Leaflet thinks is best (based on browser support)
-	L.esri.get('http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer', {}, function(error, response){console.log("error: " + error, response);});
+	// // use whatever Esri Leaflet thinks is best (based on browser support)
+	// L.esri.get('http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer', {}, function(error, response){console.log("error: " + error, response);});
 
-	// make a CORS request
-	L.esri.Request.get.CORS('http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer', {}, function(error, response){console.log("error: " + error, response);});
+	// // make a CORS request
+	// L.esri.Request.get.CORS('http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer', {}, function(error, response){console.log("error: " + error, response);});
 
-	// make a JSONP request
-	L.esri.Request.get.JSONP('http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer', {}, function(error, response){console.log("error: " + error, response);});
+	// // make a JSONP request
+	// L.esri.Request.get.JSONP('http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer', {}, function(error, response){console.log("error: " + error, response);});
 
 	//populate initial unfiltered download URLs
 	$('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsURLRoot);
