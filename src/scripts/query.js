@@ -7,6 +7,8 @@ var layerCount = 0;
 
 //ajax retrieval function
 function displaySensorGeoJSON(type, name, url, markerIcon) {
+    //increment layerCount
+    layerCount++;
     var currentSubGroup = eval(type);
     currentSubGroup.clearLayers();
     var currentMarker = L.geoJson(false, {
@@ -69,8 +71,7 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
     });
 
     $.getJSON(url, function(data) {
-        //increment layerCount
-        layerCount++;
+
         if (data.length == 0) {
             console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
             return
@@ -88,6 +89,8 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
 }
 
 function displayHWMGeoJSON(type, name, url, markerIcon) {
+    //increment layerCount
+    layerCount++;
     hwm.clearLayers();
     var currentMarker = L.geoJson(false, {
         pointToLayer: function(feature, latlng) {
@@ -139,8 +142,7 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
     });
 
     $.getJSON(url, function(data) {
-        //increment layerCount
-        layerCount++;
+
         if (data.length == 0) {
             console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
             return
@@ -160,6 +162,8 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
 }
 
 function displayPeaksGeoJSON(type, name, url, markerIcon) {
+    //increment layerCount
+    layerCount++;
     peaks.clearLayers();
     var currentMarker = L.geoJson(false, {
         pointToLayer: function(feature, latlng) {
@@ -189,8 +193,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
     });
 
     $.getJSON(url, function(data) {
-        //increment layerCount
-        layerCount++;
+
         if (data.length == 0) {
             console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
             return
