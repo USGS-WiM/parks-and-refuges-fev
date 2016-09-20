@@ -23,6 +23,7 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
             //add marker to overlapping marker spidifier
             oms.addMarker(latlng);
             //var popupContent = '';
+            if (type == 'rdg') {return};
             var currentEvent = $('#largeEventNameDisplay').html();
             var popupContent =
                 '<table class="table table-hover table-striped table-condensed">'+
@@ -39,34 +40,47 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
             //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
             // });
             ////logic to retrieve and display Rapid Deploy gage graph
-            if (type == 'rdg') {
-                var usgsSiteID;
-                $.getJSON(stnServicesURL + "/Sites/" + feature.properties.site_id + ".json", function(data) {
-                    if (data.usgs_sid !== "") {
-                        usgsSiteID = data.usgs_sid;
-                        if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
-                            //use moment.js lib to get current system date string, properly formatted
-                            fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
-                            console.log("Selected event is active, so end date is today, " + fev.vars.currentEventEndDate_str)
-                        }
-                        if (fev.vars.currentEventStartDate_str == '' && fev.vars.currentEventEndDate_str == '') {
-                            var rdgGraphContent =
-                                '<div id="rdgChartDiv"><i>Missing valid event date range. Unable to display RDG Real-time graph.</i></div>';
-                            latlng.bindPopup(popupContent + rdgGraphContent);
-                        } else {
-                            var rdgGraphContent =
-                                '<div id="rdgChartDiv"><label>Water level elevation (ft)</label><img width="350" src="http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=' + usgsSiteID + '&parm_cd=62620&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str + '" alt="rapid deploy gage graph"></div>';
-                            latlng.bindPopup(popupContent + rdgGraphContent, {minWidth: 350})
-                        }
-                    } else {
-                        var rdgGraphContent =
-                            '<div id="rdgChartDiv"><i>Missing USGS Site ID. Unable to display RDG Real-time graph.</i></div>';
-                        latlng.bindPopup(popupContent + rdgGraphContent);
-                    }
-                });
-            } else {
-                latlng.bindPopup(popupContent);
-            }
+            // if (type == 'rdg') {
+            //
+            //     ///begin new logic here to retrieve RDG data form NWIS (or have separate function?)
+            //
+            //
+            //     var usgsSiteID;
+            //     $.getJSON(stnServicesURL + "/Sites/" + feature.properties.site_id + ".json", function(data) {
+            //         if (data.usgs_sid !== "") {
+            //             //sensor type is RDG, and there is a usgs id. proceed with retreiving and displaying graph.
+            //             usgsSiteID = data.usgs_sid;
+            //
+            //             //check if event is active and has a blank end date - in that case set ened of time query to current date
+            //             if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
+            //                 //use moment.js lib to get current system date string, properly formatted
+            //                 fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+            //                 console.log("Selected event is active, so end date is today, " + fev.vars.currentEventEndDate_str)
+            //             }
+            //             //if there is no valid date string for start or end, there is no way to retrieve data - display NA message. Otherwise proceed.
+            //             if (fev.vars.currentEventStartDate_str == '' && fev.vars.currentEventEndDate_str == '') {
+            //                 var rdgGraphContent =
+            //                     '<div id="rdgChartDiv"><i>Missing valid event date range. Unable to display RDG Real-time graph.</i></div>';
+            //                 latlng.bindPopup(popupContent + rdgGraphContent);
+            //             } else {
+            //                 ///now have valid start and end date strings, so proceed with getting the graph
+            //                 var rdgGraphContent =
+            //                     '<div id="rdgChartDiv"><label>Water level elevation (ft)</label><img width="350" src="http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=' + usgsSiteID + '&parm_cd=62620&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str + '" alt="rapid deploy gage graph"></div>';
+            //                 latlng.bindPopup(popupContent + rdgGraphContent, {minWidth: 350})
+            //             }
+            //
+            //         } else {
+            //             //no usgs id, so no RDG data available - show message saying that
+            //             var rdgGraphContent =
+            //                 '<div id="rdgChartDiv"><i>Missing USGS Site ID. Unable to display RDG Real-time graph.</i></div>';
+            //             latlng.bindPopup(popupContent + rdgGraphContent);
+            //         }
+            //     });
+            // } else {
+            //     latlng.bindPopup(popupContent);
+            // }
+
+            latlng.bindPopup(popupContent);
         }
     });
 
@@ -82,9 +96,13 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
             currentMarker.eachLayer(function(layer) {
                 layer.addTo(currentSubGroup);
             });
-            currentSubGroup.addTo(map)
-            checkLayerCount(layerCount);
+            currentSubGroup.addTo(map);
+            if (currentSubGroup == 'rdg') {
+                alert("RDG feature created");
             }
+
+            checkLayerCount(layerCount);
+        }
     });
 }
 
@@ -534,6 +552,127 @@ function queryNWISrtGages(bbox) {
                 }
             }
         });
+    });
+}
+
+function queryNWISgraphRDG(e) {
+    var usgsSiteID;
+
+    //TODO:determine the reliable NWIS web data url for the RDG site
+    //http://waterdata.usgs.gov/nwis/uv?site_no=365423076051300
+    var currentEvent = $('#largeEventNameDisplay').html();
+    var popupContent =
+        '<table class="table table-hover table-striped table-condensed">'+
+        '<caption class="popup-title">Rapid Deployment Gage for ' + currentEvent + '</caption>' +
+        '<tr><td><strong>STN Site Name: </strong></td><td><span id="siteName">'+ e.layer.feature.properties.site_name+'</span></td></tr>'+
+        '<tr><td><strong>Status: </strong></td><td><span id="status">'+ e.layer.feature.properties.status+'</span></td></tr>'+
+        '<tr><td><strong>City: </strong></td><td><span id="city">'+ (e.layer.feature.properties.city == ''|| e.layer.feature.properties.city == null || e.layer.feature.properties.city == undefined ? '<i>No city recorded</i>' : e.layer.feature.properties.city ) + '</span></td></tr>'+
+        '<tr><td><strong>County: </strong></td><td><span id="county">' + e.layer.feature.properties.county +'</span></td></tr>'+
+        '<tr><td><strong>State: </strong></td><td><span id="state">'+e.layer.feature.properties.state+'</span></td></tr>'+
+        '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">'+e.layer.feature.properties.latitude_dd.toFixed(4)+', ' + e.layer.feature.properties.longitude_dd.toFixed(4)+'</span></td></tr>'+
+        '<tr><td><strong>Full data link: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + e.layer.feature.properties.site_id + '&Sensor=' + e.layer.feature.properties.instrument_id+ '\>Sensor data page</a></b></span></td></tr>'+
+        '</table>' +
+        '<div id="RDGgraphContainer" style="width:100%; height:250px;display:none;"></div>'+
+        '<div id="RDGdataLink" style="width:100%;display:none;"><b><span style="color:red;"> - Provisional Data Subject to Revision -</span><br>More parameters available at NWIS Web: <a id="rdgNWISLink" href="http://usgs.gov"></a></b></div>'+
+        '<div id="noDataMessage" style="width:100%;display:none;"><b><span>No NWIS Data Available for Graph</span></b></div>';
+
+        e.layer.bindPopup(popupContent).openPopup();
+
+    $.getJSON(stnServicesURL + "/Sites/" + e.layer.feature.properties.site_id + ".json", function(data) {
+        if (data.usgs_sid !== "") {
+            //sensor type is RDG, and there is a usgs id. proceed with retreiving and displaying graph.
+            usgsSiteID = data.usgs_sid;
+            //hardcode usgsid that does have RDG data, for testing
+            //usgsSiteID = '365423076051300';
+
+            var rdgNWIS_URL = 'http://waterdata.usgs.gov/nwis/uv?site_no=' + usgsSiteID;
+
+            $('#rdgNWISLink').prop('href', rdgNWIS_URL);
+            $('#rdgNWISLink').html(usgsSiteID);
+
+            var timeQueryRange = '';
+            //check if event is active and has a blank end date - in that case set end of time query to current date
+            if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
+                //use moment.js lib to get current system date string, properly formatted
+                fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+                console.log("Selected event is active, so end date is today, " + fev.vars.currentEventEndDate_str)
+            }
+            //if there is no valid date string for start or end, there is no way to retrieve data - display NA message. Otherwise proceed.
+            if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
+                // var rdgGraphContent =
+                //     '<div id="rdgChartDiv"><i>Missing valid event date range. Unable to display RDG Real-time graph.</i></div>';
+                // e.layer.bindPopup(popupContent + rdgGraphContent);
+                $('#noDataMessage').show();
+            } else {
+                //set timeQueryRange to the event start date and end date
+                timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
+                ///now have valid start and end date strings, so proceed with getting the graph (THIS IS FOR tidal gages height, PC 62620
+                $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + usgsSiteID + '&parameterCd=62620' + timeQueryRange, function(data) {
+
+                    if (data.data == undefined) {
+                        console.log("No NWIS RDG data available for this time period");
+                        $('#noDataMessage').show();
+                        //if no time series data, display data NA message
+                        if (data.data[0].time_series_data.length <= 0 ){}
+                    }
+                    else {
+                        //if there is some data, show the div
+                        $('#RDGdataLink').show();
+                        $('#RDGgraphContainer').show();
+
+                        //create chart
+                        Highcharts.setOptions({global: { useUTC: false } });
+                        $('#RDGgraphContainer').highcharts({
+                            chart: {
+                                type: 'line'
+                            },
+                            title: {
+                                //text: e.layer.data.siteCode[0].agencyCode + ' ' + e.layer.data.siteCode[0].value + ' ' + e.layer.data.siteName
+                                //text: null
+                                text: 'Water Level'
+                            },
+                            credits: {
+                                enabled: true,
+                                text: "USGS NWIS",
+                                href: "http://waterdata.usgs.gov/nwis"
+                            },
+                            xAxis: {
+                                type: "datetime",
+                                labels: {
+                                    formatter: function () {
+                                        return Highcharts.dateFormat('%d %b %y', this.value);
+                                    },
+                                    //rotation: -90,
+                                    align: 'center'
+                                }
+                            },
+                            yAxis: {
+                                title: { text: 'Gage Height, feet' }
+                            },
+                            series: [{
+                                showInLegend: false,
+                                data: data.data[0].time_series_data,
+                                tooltip: {
+                                    pointFormat: "Gage height: {point.y} feet"
+                                }
+                            }]
+                        });
+                    }
+                });
+
+
+
+                // var rdgGraphContent =
+                //     '<div id="rdgChartDiv"><label>Water level elevation (ft)</label><img width="350" src="http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=' + usgsSiteID + '&parm_cd=62620&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str + '" alt="rapid deploy gage graph"></div>';
+                // e.layer.bindPopup(popupContent + rdgGraphContent, {minWidth: 350})
+            }
+
+        } else {
+            //no usgs id, so no RDG data available - show message saying that
+            var rdgGraphContent =
+                '<div id="rdgChartDiv"><i>Missing USGS Site ID. Unable to display RDG Real-time graph.</i></div>';
+            e.layer.bindPopup(popupContent + rdgGraphContent);
+        }
     });
 }
 

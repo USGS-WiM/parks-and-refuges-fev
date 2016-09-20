@@ -99,14 +99,16 @@ var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popu
 var peaksMarkerIcon = L.divIcon({className: 'peaksMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
 var nwisMarkerIcon  = L.divIcon({className: 'nwisMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
 
-//sensor subgroups for sensor marker cluster group
+//sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
 var	baro = L.layerGroup();
 var stormTide = L.layerGroup();
 var	met = L.layerGroup();
-var rdg = L.layerGroup();
 var	waveHeight = L.layerGroup();
 var hwm = L.layerGroup();
 var peaks = L.layerGroup();
+
+//rdg and USGSrtGages layers must be featureGroup type to support mouse event listeners
+var rdg = L.featureGroup();
 var USGSrtGages = L.featureGroup();
 
 /////markercluster code, can remove eventually
@@ -236,7 +238,6 @@ $( document ).ready(function() {
 	//baro.addTo(map);
 	//stormTide.addTo(map);
 	//met.addTo(map);
-	//rdg.addTo(map);
 	//waveHeight.addTo(map);
 	//add hwm markercluster group to the map
 	//hwmMCG.addTo(map);
@@ -244,6 +245,9 @@ $( document ).ready(function() {
 	//hwm.addTo(map);
 	//peaks.addTo(map);
 	//add USGS rt gages to the map
+
+	//rdg.addTo(map);
+
 	USGSrtGages.addTo(map);
 
 	//define layer 'overlays' (leaflet term)
@@ -508,7 +512,12 @@ $( document ).ready(function() {
 
 	USGSrtGages.on('click', function(e) {
 		queryNWISgraph(e);
-	})
+
+	});
+
+	rdg.on('click', function(e) {
+		queryNWISgraphRDG(e);
+	});
 
     //begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
 
