@@ -22,11 +22,22 @@ To go directly to an event view on load, append `#{event name}` to the URL. Exam
 ####Guide to NWIS real-time layer
 FEV contains a USGS NWIS real-time streamgage layer to display gage data for the period of the event specified.  A graph of stage in elevation feet is generated on-the-fly using the HighCharts library. Proper time period display is dependent on proper event management in the STN database - an invalid event date range may result in a failure to retrieve data. FEV defaults to showing the last 7 days of real-time gage data for any absent or invalid event date range.
 
-The app currently displays gages meeting the following criteria:
+FEV displays NWIS sites of the following type:
+ - ES - Estuary
+ - LK - Lake, Reservoir, Impoundment
+ - OC - Ocean
+ - OC-CO - Coastal
+ - ST - Stream
+ - ST-CA - Canal
+ - ST-DCH - Ditch
+ - ST-TS - Tidal stream
 
- - Parameter code 00065 (stage)
+[Full NWIS site type list](http://maps.waterdata.usgs.gov/mapper/help/sitetype.html)
 
-More parameters and site types are coming soon.
+The following parameter codes are used to display water level:
+ -  00065 (Gage height, feet)
+ -  62620 (Estuary or ocean water surface elevation above NAVD 1988, feet)
+
 
 
 ####Guide to Rapid Deployment Gage (RDG) layer
@@ -40,3 +51,5 @@ Parameter codes used to display water level:
 An absent or invalid NWIS site ID will result in a "No NWIS Data Available for Graph" message, and no NWISWeb link will be provided to the user. NWIS site IDs have a length range between 8 and 15 digits, thus any ID provided that is shorter than 8 characters or longer than 15 is invalid and will result in no graph or link. One common mistake is to omit the leading zero of an ID (for example: entering '2092576' instead of '02092576').
 
 A graph and link will also not appear if there is an invalid response from NWIS web services. If you expect to see RDG time-series data in FEV and it does not appear, confirm the NWIS site ID is correct and valid in STNWeb. If it is and the data still does not appear, please review the site's data availability in NWIS.
+
+[Lookup NWIS parameter codes](http://nwis.waterdata.usgs.gov/usa/nwis/pmcodes)
