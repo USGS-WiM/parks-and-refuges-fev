@@ -116,7 +116,7 @@ body {
     border: black;
  }
 
-.peaksMarker:before {
+.peakMarker:before {
     font-size: 30px;
     content: "♦";
     color: darkblue;
