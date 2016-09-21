@@ -34,11 +34,8 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
                     '<tr><td><strong>County: </strong></td><td><span id="county">' + feature.properties.county +'</span></td></tr>'+
                     '<tr><td><strong>State: </strong></td><td><span id="state">'+feature.properties.state+'</span></td></tr>'+
                     '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">'+feature.properties.latitude_dd.toFixed(4)+', ' + feature.properties.longitude_dd.toFixed(4)+'</span></td></tr>'+
-                    '<tr><td><strong>Full data link: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + feature.properties.site_id + '&Sensor=' + feature.properties.instrument_id+ '\>Sensor data page</a></b></span></td></tr>'+
+                    '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + feature.properties.site_id + '&Sensor=' + feature.properties.instrument_id+ '\>Sensor data page</a></b></span></td></tr>'+
                 '</table>';
-            // $.each(feature.properties, function( index, value ) {
-            //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-            // });
             ////logic to retrieve and display Rapid Deploy gage graph
             // if (type == 'rdg') {
             //
@@ -79,7 +76,6 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
             // } else {
             //     latlng.bindPopup(popupContent);
             // }
-
             latlng.bindPopup(popupContent);
         }
     });
@@ -226,18 +222,6 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             checkLayerCount(layerCount);
         }
     });
-}
-
-function getLayerName(type) {
-    switch(type) {
-        case "baro": return "Barometric Pressure Sensor";
-        case "stormTide": return "Storm Tide Sensor";
-        case "met" : return "Meteorological Sensor";
-        case 'waveHeight': return "Wave Height Sensor";
-        case "rdg" : return "Rapid Deployment Gage";
-        case "hwm": return  "High Water Mark";
-        case "peaks": return  "Peak Summary";
-    }
 }
 
 ///this function sets the current event's start and end dates as global vars. may be better as a function called on demand when date compare needed for NWIS graph setup
@@ -555,6 +539,7 @@ function queryNWISrtGages(bbox) {
     });
 }
 
+//get data and generate graph of RDG water level time-series data
 function queryNWISgraphRDG(e) {
     var usgsSiteID;
 
@@ -570,25 +555,21 @@ function queryNWISgraphRDG(e) {
         '<tr><td><strong>County: </strong></td><td><span id="county">' + e.layer.feature.properties.county +'</span></td></tr>'+
         '<tr><td><strong>State: </strong></td><td><span id="state">'+e.layer.feature.properties.state+'</span></td></tr>'+
         '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">'+e.layer.feature.properties.latitude_dd.toFixed(4)+', ' + e.layer.feature.properties.longitude_dd.toFixed(4)+'</span></td></tr>'+
-        '<tr><td><strong>Full data link: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + e.layer.feature.properties.site_id + '&Sensor=' + e.layer.feature.properties.instrument_id+ '\>Sensor data page</a></b></span></td></tr>'+
+        '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + e.layer.feature.properties.site_id + '&Sensor=' + e.layer.feature.properties.instrument_id+ '\>Sensor data page</a></b></span></td></tr>'+
         '</table>' +
         '<div id="RDGgraphContainer" style="width:100%; height:250px;display:none;"></div>'+
-        '<div id="RDGdataLink" style="width:100%;display:none;"><b><span style="color:red;"> - Provisional Data Subject to Revision -</span><br>More parameters available at NWIS Web: <a id="rdgNWISLink" href="http://usgs.gov"></a></b></div>'+
+        '<div id="RDGdataLink" style="width:100%;display:none;"><b><span style="color:red;"> - Provisional Data Subject to Revision -</span><br>More parameters available at NWIS Web: <a id="rdgNWISLink" target="_blank" href="http://usgs.gov"></a></b></div>'+
         '<div id="noDataMessage" style="width:100%;display:none;"><b><span>No NWIS Data Available for Graph</span></b></div>';
 
         e.layer.bindPopup(popupContent).openPopup();
 
     $.getJSON(stnServicesURL + "/Sites/" + e.layer.feature.properties.site_id + ".json", function(data) {
-        if (data.usgs_sid !== "") {
-            //sensor type is RDG, and there is a usgs id. proceed with retreiving and displaying graph.
+        //USGS UD must be minimum 8 characters long, max 15
+        if (data.usgs_sid.length >= 8 && data.usgs_sid.length <= 15) {
+            //sensor type is RDG, and there is a usgs id. proceed with retrieving and displaying graph.
             usgsSiteID = data.usgs_sid;
             //hardcode usgsid that does have RDG data, for testing
             //usgsSiteID = '365423076051300';
-
-            var rdgNWIS_URL = 'http://waterdata.usgs.gov/nwis/uv?site_no=' + usgsSiteID;
-
-            $('#rdgNWISLink').prop('href', rdgNWIS_URL);
-            $('#rdgNWISLink').html(usgsSiteID);
 
             var timeQueryRange = '';
             //check if event is active and has a blank end date - in that case set end of time query to current date
@@ -597,17 +578,26 @@ function queryNWISgraphRDG(e) {
                 fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
                 console.log("Selected event is active, so end date is today, " + fev.vars.currentEventEndDate_str)
             }
+
             //if there is no valid date string for start or end, there is no way to retrieve data - display NA message. Otherwise proceed.
             if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
-                // var rdgGraphContent =
-                //     '<div id="rdgChartDiv"><i>Missing valid event date range. Unable to display RDG Real-time graph.</i></div>';
-                // e.layer.bindPopup(popupContent + rdgGraphContent);
                 $('#noDataMessage').show();
             } else {
                 //set timeQueryRange to the event start date and end date
                 timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
-                ///now have valid start and end date strings, so proceed with getting the graph (THIS IS FOR tidal gages height, PC 62620
-                $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + usgsSiteID + '&parameterCd=62620' + timeQueryRange, function(data) {
+                //set the URL for the NWIS RDG page, with time period specified
+                var rdgNWIS_URL = 'http://waterdata.usgs.gov/nwis/uv?site_no=' + usgsSiteID + '&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str;
+                $('#rdgNWISLink').prop('href', rdgNWIS_URL);
+                $('#rdgNWISLink').html(usgsSiteID);
+
+                ///now have valid start and end date strings, so proceed with getting the graph (for water level, generically defined, PCs 62620,00065,00067
+                //may need to account for cases where multiple time-series sets returns, 1 for each of multiple params hint: data.parameter_cd should show PC before drilling down to time series object
+                //idea below for prioritizing 00065
+                ///var gageHeightCode = 00065
+                //$each(sites) function(site) {
+                //    if (site.parameter_cd =='62620') gageheightCode == site.parameter_cd
+                //}
+                $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + usgsSiteID + '&parameterCd=62620,00065,00067' + timeQueryRange, function(data) {
 
                     if (data.data == undefined) {
                         console.log("No NWIS RDG data available for this time period");
@@ -640,7 +630,7 @@ function queryNWISgraphRDG(e) {
                                 type: "datetime",
                                 labels: {
                                     formatter: function () {
-                                        return Highcharts.dateFormat('%d %b %y', this.value);
+                                        return Highcharts.dateFormat('%m/%d/%y', this.value);
                                     },
                                     //rotation: -90,
                                     align: 'center'
@@ -659,23 +649,15 @@ function queryNWISgraphRDG(e) {
                         });
                     }
                 });
-
-
-
-                // var rdgGraphContent =
-                //     '<div id="rdgChartDiv"><label>Water level elevation (ft)</label><img width="350" src="http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=' + usgsSiteID + '&parm_cd=62620&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str + '" alt="rapid deploy gage graph"></div>';
-                // e.layer.bindPopup(popupContent + rdgGraphContent, {minWidth: 350})
             }
-
         } else {
-            //no usgs id, so no RDG data available - show message saying that
-            var rdgGraphContent =
-                '<div id="rdgChartDiv"><i>Missing USGS Site ID. Unable to display RDG Real-time graph.</i></div>';
-            e.layer.bindPopup(popupContent + rdgGraphContent);
+            //no valid usgs id, so no RDG data available - show message saying that
+            $('#noDataMessage').show();
         }
     });
 }
 
+//get data and generate graph of real-time gage water level time-series data
 function queryNWISgraph(e) {
     var popupContent = '';
     $.each(e.layer.data.parameters, function( index, parameter ) {
@@ -741,3 +723,16 @@ function queryNWISgraph(e) {
         }
     });
 }
+
+//out of use
+// function getLayerName(type) {
+//     switch(type) {
+//         case "baro": return "Barometric Pressure Sensor";
+//         case "stormTide": return "Storm Tide Sensor";
+//         case "met" : return "Meteorological Sensor";
+//         case 'waveHeight': return "Wave Height Sensor";
+//         case "rdg" : return "Rapid Deployment Gage";
+//         case "hwm": return  "High Water Mark";
+//         case "peaks": return  "Peak Summary";
+//     }
+// }
