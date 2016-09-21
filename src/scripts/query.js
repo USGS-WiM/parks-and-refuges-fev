@@ -490,7 +490,7 @@ function queryNWISrtGages(bbox) {
     var NWISmarkers = {};
 
     //NWIS query options from http://waterservices.usgs.gov/rest/IV-Test-Tool.html
-    var parameterCodeList = '00060,00065';
+    var parameterCodeList = '00065,62620';
     var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
     var siteStatus = 'active';
 
