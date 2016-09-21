@@ -2,9 +2,7 @@
  * Created by bdraper on 8/4/2016.
  */
 ///function to grab all values from the inputs, form into arrays, and build query strings
-
 var layerCount = 0;
-
 //ajax retrieval function
 function displaySensorGeoJSON(type, name, url, markerIcon) {
     //increment layerCount
@@ -178,7 +176,7 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
 function displayPeaksGeoJSON(type, name, url, markerIcon) {
     //increment layerCount
     layerCount++;
-    peaks.clearLayers();
+    peak.clearLayers();
     var currentMarker = L.geoJson(false, {
         pointToLayer: function(feature, latlng) {
             markerCoords.push(latlng);
@@ -192,11 +190,12 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             oms.addMarker(latlng);
             //var popupContent = '';
             var currentEvent = $('#largeEventNameDisplay').html();
+            //set popup content using moment js to pretty format the date value
             var popupContent =
                 '<table class="table table-condensed table-striped table-hover">' +
                 '<caption class="popup-title">' + name + ' for ' + currentEvent + '</caption>' +
                     '<tr><th>Peak Stage (ft)</th><th>Datum</th><th>Peak Date & Time (UTC)</th></tr>'+
-                    '<tr><td>' + feature.properties.peak_stage + '</td><td>' + feature.properties.vdatum + '</td><td>' + feature.properties.peak_date + '</td></tr>'+
+                    '<tr><td>' + feature.properties.peak_stage + '</td><td>' + feature.properties.vdatum + '</td><td>' + moment(feature.properties.peak_date).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>'+
                 '</table>';
 
             // $.each(feature.properties, function( index, value ) {
@@ -216,9 +215,9 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             currentMarker.addData(data);
             currentMarker.eachLayer(function(layer) {
-                layer.addTo(peaks);
+                layer.addTo(peak);
             });
-            peaks.addTo(map);
+            peak.addTo(map);
             checkLayerCount(layerCount);
         }
     });
@@ -249,6 +248,7 @@ function filterMapData(event, isUrlParam) {
     layerCount = 0;
     markerCoords = [];
     var eventSelections = '';
+
 
     if (isUrlParam) {
         eventSelections = event;
@@ -481,7 +481,7 @@ function filterMapData(event, isUrlParam) {
     $.each(fev.layerList, function( index, layer ) {
         if(layer.Type == 'sensor') displaySensorGeoJSON(layer.ID, layer.Name, fev.urls[layer.ID + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window[layer.ID + 'MarkerIcon']);
         if(layer.ID == 'hwm') displayHWMGeoJSON(layer.ID, layer.Name, fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
-        if(layer.ID == 'peak') displayPeaksGeoJSON(layer.ID, layer.Name, fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peaksMarkerIcon);
+        if(layer.ID == 'peak') displayPeaksGeoJSON(layer.ID, layer.Name, fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
     });
 
 } //end filterMapData function
@@ -733,6 +733,6 @@ function queryNWISgraph(e) {
 //         case 'waveHeight': return "Wave Height Sensor";
 //         case "rdg" : return "Rapid Deployment Gage";
 //         case "hwm": return  "High Water Mark";
-//         case "peaks": return  "Peak Summary";
+//         case "peak": return  "Peak Summary";
 //     }
 // }

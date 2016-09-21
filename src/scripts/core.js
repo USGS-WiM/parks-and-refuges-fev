@@ -96,7 +96,7 @@ var rdgMarkerIcon = L.divIcon({className: 'rdgMarker', iconAnchor: [8, 24], popu
 var stormTideMarkerIcon = L.divIcon({className: 'stormTideMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
 var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
 var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
-var peaksMarkerIcon = L.divIcon({className: 'peaksMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
+var peakMarkerIcon = L.divIcon({className: 'peakMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
 var nwisMarkerIcon  = L.divIcon({className: 'nwisMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
@@ -105,7 +105,7 @@ var stormTide = L.layerGroup();
 var	met = L.layerGroup();
 var	waveHeight = L.layerGroup();
 var hwm = L.layerGroup();
-var peaks = L.layerGroup();
+var peak = L.layerGroup();
 
 //rdg and USGSrtGages layers must be featureGroup type to support mouse event listeners
 var rdg = L.featureGroup();
@@ -192,7 +192,7 @@ $( document ).ready(function() {
 
 				//call filter function, passing the event parameter string and 'true' for the 'isUrlParam' boolean argument
 				filterMapData(eventParam, true);
-				setEventIndicators(data.event_name, data.event_id);
+				setEventIndicators(data.event_name, data.event_id, fev.vars.currentEventStartDate_str, fev.vars.currentEventEndDate_str);
 
 			})
 			.fail(function() {
@@ -206,29 +206,32 @@ $( document ).ready(function() {
 	//var url = document.location.href;
 	//var root = location.protocol + '//' + location.host;
 
-	function setEventIndicators (eventName, eventID) {
+	function setEventIndicators (eventName, eventID, eventStartDateStr, eventEndDateStr) {
 		$('#eventNameDisplay').html(eventName);
 		$('#largeEventNameDisplay').html(eventName);
 		//TODO: determine why this is not working, though its same code and input as in the btnSubmitEvent function above
 		var eventValue = [eventID.toString()];
 		$('#evtSelect_filterModal').val([eventValue]).trigger("change");
+
+		//set the event display, only if both date strings are not empty
+		if (eventStartDateStr == '' && eventEndDateStr == '') {
+			return
+		} else {
+			$('#largeEventDateRangeDisplay').html(moment(eventStartDateStr).format("D MMM YYYY") + " thru " + moment(eventEndDateStr).format("D MMM YYYY"));
+		}
 	}
-
-
 
 	/* create map */
 	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
 	var layer = L.esri.basemapLayer('Gray').addTo(map);
 	var layerLabels;
-
 	L.Icon.Default.imagePath = './images';
-
 
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
 	map.on('popupopen', function() {
 		$('.data-disclaim').click(function(e){
 			$('#aboutModal').modal('show');
-			$('#disclaimerTabPane').tab('show')
+			$('.nav-tabs a[href="#disclaimerTabPane"]').tab('show');
 		});
 	});
 
@@ -243,13 +246,11 @@ $( document ).ready(function() {
 	//hwmMCG.addTo(map);
 	// add hwm subgroup to the map
 	//hwm.addTo(map);
-	//peaks.addTo(map);
+	//peak.addTo(map);
 	//add USGS rt gages to the map
-
 	//rdg.addTo(map);
 
 	USGSrtGages.addTo(map);
-
 	//define layer 'overlays' (leaflet term)
 	var sensorOverlays = {
 		"<i class='nwisMarker'></i>&nbsp;Real-time Stream Gage" : USGSrtGages
@@ -283,15 +284,6 @@ $( document ).ready(function() {
 		f:'image'
 	}).addTo(map);
 
-	// // use whatever Esri Leaflet thinks is best (based on browser support)
-	// L.esri.get('http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer', {}, function(error, response){console.log("error: " + error, response);});
-
-	// // make a CORS request
-	// L.esri.Request.get.CORS('http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer', {}, function(error, response){console.log("error: " + error, response);});
-
-	// // make a JSONP request
-	// L.esri.Request.get.JSONP('http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer', {}, function(error, response){console.log("error: " + error, response);});
-
 	//populate initial unfiltered download URLs
 	$('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsURLRoot);
 	$('#sensorDownloadButtonJSON').attr('href', fev.urls.jsonSensorsURLRoot); 
@@ -316,7 +308,6 @@ $( document ).ready(function() {
 	$('.check').on('click', function(){
 		$(this).find('span').toggle();
 	});
-
 
 	function showGeosearchModal() {
 		$('#geosearchModal').modal('show');
@@ -343,7 +334,7 @@ $( document ).ready(function() {
 		$('#filtersModal').modal('hide');
 	});
 
-	/* basemap controller */
+	/* begin basemap controller */
 	function setBasemap(basemap) {
 	    if (layer) {
 	      map.removeLayer(layer);
@@ -381,11 +372,9 @@ $( document ).ready(function() {
 		setBasemap(baseMap);
 
 	});
-  	/* basemap controller */
+  	/* end basemap controller */
 
 	/* geocoder control */
-
-
 	//import USGS search API
 	var searchScript = document.createElement('script');
 	searchScript.src = 'http://txpub.usgs.gov/DSS/search_api/1.1/api/search_api.min.js';
