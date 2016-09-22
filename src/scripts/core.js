@@ -41,6 +41,8 @@ var fev = fev || {
 	queryStrings: {
 	},
 	vars : {
+		currentEventName:"",
+		currentEventID_str: "",
 		currentEventStartDate_str : "",
 		currentEventEndDate_str : "",
 		currentEventActive : false
@@ -157,43 +159,65 @@ $( document ).ready(function() {
 		todayHighlight: true
 	});
 
-	//submit event button
+	//listener for submit event button on welcome modal - sets event vars and passes event id to filterMapData function
 	$('#btnSubmitEvent').click(function(){
 		//check if an event has been selected
 		if ($('#evtSelect_welcomeModal').val() !== null) {
 			//if event selected, hide welcome modal and begin filter process
 			$('#welcomeModal').modal('hide');
-			var eventValue = $('#evtSelect_welcomeModal').val();
-			$('#evtSelect_filterModal').val([eventValue]).trigger("change");
-			populateEventDates(eventValue);
-			filterMapData();
-			
+			var eventID = $('#evtSelect_welcomeModal').val()[0];
+			$('#evtSelect_filterModal').val([eventID]).trigger("change");
+			//retrieve event details
+			$.getJSON( 'https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {} )
+				.done(function( data ) {
+					setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
+				})
+				.fail(function() {
+					console.log( "Request Failed. Most likely invalid event name." );
+				});
+			//populateEventDates(eventID);
+			filterMapData(eventID, false);
 		} else {
 			//if no event selected, warn user with alert
 			alert("Please choose an event to proceed.")
 		}
 	});
 
-	//url parameter parsing logic
+	//listener for submit filters button on filters modal - sets event vars and passes event id to filterMapData function
+	$('#btnSubmitFilters').on('click', function() {
+
+		if ($('#evtSelect_filterModal').val() !== null) {
+			//if event selected, hide welcome modal and begin filter process
+			$('#welcomeModal').modal('hide');
+			var eventID = $('#evtSelect_filterModal').val()[0];
+			//$('#evtSelect_filterModal').val([eventValue]).trigger("change");
+			//retrieve event details
+			for (var i = 0; i < fev.data.events.length; i++) {
+				if (fev.data.events[i].event_id == eventID) {
+					//set currentEventActive boolean var based on event_status_id value
+					setEventVars(fev.data.events[i].event_name, fev.data.events[i].event_id, fev.data.events[i].event_status_id, fev.data.events[i].event_start_date, fev.data.events[i].event_end_date);
+				}
+			}
+			filterMapData(eventID, false);
+		} else {
+			//if no event selected, warn user with alert
+			alert("Please choose an event to proceed.")
+		}
+		$('#filtersModal').modal('hide');
+	});
+
+	//'listener' for URL event params - sets event vars and passes event id to filterMapData function
 	if (window.location.hash){
 		//user has arrived with an event name after the hash on the URL
 		//grab the hash value, remove the '#', leaving the event name parameter
 		var eventParam = window.location.hash.substring(1);
-		//do a service request to match the event name param to an event id for filtering purposes
+		//retrieve event details
 		$.getJSON( 'https://stn.wim.usgs.gov/STNServices/events/' + eventParam + '.json', {} )
 			.done(function( data ) {
-				eventParam = data.event_id.toString();
-				//set currentEventActive boolean var based on event_status_id value
-				data.event_status_id == 1 ? fev.vars.currentEventActive = true :   fev.vars.currentEventActive = false;
-				//set event date string vars, cutting off time portion and storing date only; check for undefined because services do not return the property if it has no value
-				fev.vars.currentEventStartDate_str = (data.event_start_date == undefined ? '' : data.event_start_date.substr(0,10));
-				fev.vars.currentEventEndDate_str = (data.event_end_date == undefined ? '' : data.event_end_date.substr(0,10));
-				console.log("Selected event is " + data.event_name + ". START date is " + fev.vars.currentEventStartDate_str + " and END date is " + fev.vars.currentEventEndDate_str + ". Event is active = " + fev.vars.currentEventActive)
-
-				//call filter function, passing the event parameter string and 'true' for the 'isUrlParam' boolean argument
-				filterMapData(eventParam, true);
-				setEventIndicators(data.event_name, data.event_id, fev.vars.currentEventStartDate_str, fev.vars.currentEventEndDate_str);
-
+				var eventID = data.event_id.toString();
+				setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
+				//call filter function, passing the eventid parameter string and 'true' for the 'isUrlParam' boolean argument
+				filterMapData(eventID, true);
 			})
 			.fail(function() {
 				console.log( "Request Failed. Most likely invalid event name." );
@@ -203,8 +227,20 @@ $( document ).ready(function() {
 		//show modal and set options - disallow user from bypassing
 		$('#welcomeModal').modal({backdrop: 'static', keyboard: false});
 	}
-	//var url = document.location.href;
-	//var root = location.protocol + '//' + location.host;
+
+	function setEventVars (event_name, event_id, event_status_id, event_start_date, event_end_date) {
+		//set current event name
+		fev.vars.currentEventName = event_name;
+		//set current event id string
+		fev.vars.currentEventID_str = event_id.toString();
+		//set currentEventActive boolean var based on event_status_id value
+		event_status_id == 1 ? fev.vars.currentEventActive = true :   fev.vars.currentEventActive = false;
+		//set event date string vars, cutting off time portion and storing date only; check for undefined because services do not return the property if it has no value
+		fev.vars.currentEventStartDate_str = (event_start_date == undefined ? '' : event_start_date.substr(0,10));
+		fev.vars.currentEventEndDate_str = (event_end_date == undefined ? '' : event_end_date.substr(0,10));
+		console.log("Selected event is " + event_name + ". START date is " + fev.vars.currentEventStartDate_str + " and END date is " + fev.vars.currentEventEndDate_str + ". Event is active = " + fev.vars.currentEventActive)
+		setEventIndicators(event_name, event_id, fev.vars.currentEventStartDate_str, fev.vars.currentEventEndDate_str);
+	}
 
 	function setEventIndicators (eventName, eventID, eventStartDateStr, eventEndDateStr) {
 		$('#eventNameDisplay').html(eventName);
@@ -327,11 +363,6 @@ $( document ).ready(function() {
 	}
 	$('#btnChangeFilters').click(function(){
 		showFiltersModal();
-	});
-
-	$('#btnSubmitFilters').on('click', function() {
-		filterMapData();
-		$('#filtersModal').modal('hide');
 	});
 
 	/* begin basemap controller */

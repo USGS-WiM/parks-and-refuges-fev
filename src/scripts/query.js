@@ -22,7 +22,7 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
             oms.addMarker(latlng);
             //var popupContent = '';
             if (type == 'rdg') {return};
-            var currentEvent = $('#largeEventNameDisplay').html();
+            var currentEvent = fev.vars.currentEventName;
             var popupContent =
                 '<table class="table table-hover table-striped table-condensed">'+
                     '<caption class="popup-title">' + name + ' for ' + currentEvent + '</caption>' +
@@ -125,7 +125,7 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
             //add marker to overlapping marker spidifier
             oms.addMarker(latlng);
             // var popupContent = '';
-            var currentEvent = $('#largeEventNameDisplay').html();
+            var currentEvent = fev.vars.currentEventName;
 
             // })[0];
             var popupContent =
@@ -189,7 +189,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             //add marker to overlapping marker spidifier
             oms.addMarker(latlng);
             //var popupContent = '';
-            var currentEvent = $('#largeEventNameDisplay').html();
+            var currentEvent = fev.vars.currentEventName;
             //set popup content using moment js to pretty format the date value
             var popupContent =
                 '<table class="table table-condensed table-striped table-hover">' +
@@ -248,21 +248,31 @@ function filterMapData(event, isUrlParam) {
     layerCount = 0;
     markerCoords = [];
     var eventSelections = '';
-
-
-    if (isUrlParam) {
-        eventSelections = event;
+    eventSelections = event;
+    if (event == null || event == undefined) {
+        alert("Please select an event to proceed");
+        return
     }
 
+    //below not needed because we know when user submits event from welcome modal based on button click listener
     ///eventSelect_welcomeModal: display the event name both in display area and large event indicator; set the eventSelections value
-    if ($('#evtSelect_welcomeModal').val() !== null){
-        var eventSelectionsArray = $('#evtSelect_welcomeModal').val();
-        eventSelections = eventSelectionsArray.toString();
-        $('#eventNameDisplay').html($('#evtSelect_welcomeModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
-        $('#largeEventNameDisplay').html($('#evtSelect_welcomeModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
-        //populateEventDates(eventSelections);
-
-    }
+    // if ($('#evtSelect_welcomeModal').val() !== null){
+    //     var eventSelectionsArray = $('#evtSelect_welcomeModal').val();
+    //     eventSelections = eventSelectionsArray.toString();
+    //     $('#eventNameDisplay').html($('#evtSelect_welcomeModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
+    //     $('#largeEventNameDisplay').html($('#evtSelect_welcomeModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
+    //
+    // }
+    //eventSelect_filterModal: display the event name both in display area and large event indicator; set the eventSelections value
+    //eventSelections = '';
+    // if ($('#evtSelect_filterModal').val() !== null){
+    //     var eventSelectionsArray = $('#evtSelect_filterModal').val();
+    //     eventSelections = eventSelectionsArray.toString();
+    //     $('#eventNameDisplay').html($('#evtSelect_filterModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
+    //     $('#largeEventNameDisplay').html($('#evtSelect_filterModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
+    //     populateEventDates(eventSelections);
+    //
+    // }
 
     //event type
     var eventTypeSelections = '';
@@ -270,16 +280,6 @@ function filterMapData(event, isUrlParam) {
         var evtTypeSelectionsArray = $('#evtTypeSelect').val();
         eventTypeSelections = evtTypeSelectionsArray.toString();
         $('#eventTypeDisplay').html($('#evtTypeSelect').select2('data').map(function(elem){ return elem.text;}).join(', '));
-    }
-    //event
-    //eventSelections = '';
-    if ($('#evtSelect_filterModal').val() !== null){
-        var eventSelectionsArray = $('#evtSelect_filterModal').val();
-        eventSelections = eventSelectionsArray.toString();
-        $('#eventNameDisplay').html($('#evtSelect_filterModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
-        $('#largeEventNameDisplay').html($('#evtSelect_filterModal').select2('data').map(function(elem){ return elem.text;}).join(', '));
-        populateEventDates(eventSelections);
-
     }
     //event status
     var eventStatusSelectionArray = [];
@@ -543,9 +543,7 @@ function queryNWISrtGages(bbox) {
 function queryNWISgraphRDG(e) {
     var usgsSiteID;
 
-    //TODO:determine the reliable NWIS web data url for the RDG site
-    //http://waterdata.usgs.gov/nwis/uv?site_no=365423076051300
-    var currentEvent = $('#largeEventNameDisplay').html();
+    var currentEvent = fev.vars.currentEventName;
     var popupContent =
         '<table class="table table-hover table-striped table-condensed">'+
         '<caption class="popup-title">Rapid Deployment Gage for ' + currentEvent + '</caption>' +
