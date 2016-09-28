@@ -287,96 +287,98 @@ $( document ).ready(function() {
         }
     };
 
+    //disabling the logic below pending removal of the event type selector
     //begin onChange functions for Event form (these tie the event type and event forms together)
-    $('#evtTypeSelect').on('select2:select select2:unselect', function (selection) {
-        var currentSelection = $(this).val();
-        if (currentSelection !== null) {
+    // $('#evtTypeSelect').on('select2:select select2:unselect', function (selection) {
+    //     var currentSelection = $(this).val();
+    //     if (currentSelection !== null) {
+    //
+    //         if (currentSelection.length > 0) {
+    //             var selectedEvtTypeIds = [];
+    //             for (var i = 0; i < currentSelection.length; i++) {
+    //                 selectedEvtTypeIds.push(Number(currentSelection[i]));
+    //             }
+    //             var currentEvents = fev.data.events.filter(function (element) {
+    //                 return selectedEvtTypeIds.indexOf(element.event_type_id) > -1;
+    //             });
+    //             $('.evtSelect').html('');
+    //             //$('.evtSelect').select2('val', '');
+    //             for (var x = 0; x < currentEvents.length; x++) {
+    //                 $('.evtSelect').append('<option value="' + currentEvents[x].event_id + '">' + currentEvents[x].event_name + '</option>');
+    //                 //build string here with event type names??
+    //             }
+    //         } else {
+    //             $('.evtSelect').html('');
+    //             for (var i = 0; i < fev.data.events.length; i++) {
+    //                 $('.evtSelect').append('<option value="' + fev.data.events[i].event_id + '">' + fev.data.events[i].event_name + '</option>');
+    //             }
+    //         }
+    //     }
+    // });
 
-            if (currentSelection.length > 0) {
-                var selectedEvtTypeIds = [];
-                for (var i = 0; i < currentSelection.length; i++) {
-                    selectedEvtTypeIds.push(Number(currentSelection[i]));
-                }
-                var currentEvents = fev.data.events.filter(function (element) {
-                    return selectedEvtTypeIds.indexOf(element.event_type_id) > -1;
-                });
-                $('.evtSelect').html('');
-                //$('.evtSelect').select2('val', '');
-                for (var x = 0; x < currentEvents.length; x++) {
-                    $('.evtSelect').append('<option value="' + currentEvents[x].event_id + '">' + currentEvents[x].event_name + '</option>');
-                    //build string here with event type names??
-                }
-            } else {
-                $('.evtSelect').html('');
-                for (var i = 0; i < fev.data.events.length; i++) {
-                    $('.evtSelect').append('<option value="' + fev.data.events[i].event_id + '">' + fev.data.events[i].event_name + '</option>');
-                }
-            }
-        }
-    });
-
-    $('.evtSelect').on('change', function (selection){
-        //check to see if there is any value selected
-        var currentSelection = $(this).val();
-        if (currentSelection !== null) {
-            if (!(currentSelection.length > 0)) {
-                var opts = document.getElementById('evtTypeSelect').options;
-                for (var i=0; i < opts.length; i++) {
-                    opts[i].disabled = false;
-                }
-                return;
-            }
-
-            // Functions
-            // Returns a new array with only unique elements from the one given.
-            var onlyUnique = function(array) {
-                var distinctValues = [];
-                // Build a new array with only distinct elements.
-                for (var i = 0; i < array.length; i++)
-                {
-                    // Check if the value is already in the new array; if so, skip it.
-                    if (distinctValues.indexOf(array[i]) !== -1) {
-                        continue;
-                    }
-                    // Add the element to the distinct-values array.
-                    distinctValues.push(array[i]);
-                }
-                // Return the array of distinct values.
-                return distinctValues;
-            };
-            // Execution
-            //set up an array with the strings from the currentSelection object strings converted to numbers
-            var selectedEventIDNumbers = [];
-            for (var i=0; i<currentSelection.length; i++){
-                selectedEventIDNumbers.push(parseInt(currentSelection[i]));
-            }
-            // Build a list of the event-type IDs chosen.
-            var selectedEventTypeIDs = [];
-            for (var i = 0; i < fev.data.events.length; i++)
-            {
-                // If this is not one of the chosen events, skip it.
-                if (selectedEventIDNumbers.indexOf(fev.data.events[i].event_id) === -1)
-                {
-                    continue;
-                }
-                // Add the event-type ID to the list.
-                selectedEventTypeIDs.push(fev.data.events[i].event_type_id);
-            }
-            // Reduce the array of selected event-type IDs to only unique elements.
-            var distinctSelectedEventTypeIDs = onlyUnique(selectedEventTypeIDs);
-            //Iterate through the DOM elements and disable those not having event IDs that are selected.
-            var options = document.getElementById('evtTypeSelect').options;
-            for (var i=0; i < options.length; i++) {
-                // Disable the element first.
-                options[i].disabled = true;
-                // If the element is within the list of those selected, enable it.
-                if (distinctSelectedEventTypeIDs.indexOf(parseInt(options[i].value)) !== -1) {
-                    options[i].disabled = false;
-                }
-            }
-            return;
-        }
-    });
+    //disabling the logic to sort event types by event selection pending removal of the event type selector
+    // $('.evtSelect').on('change', function (selection){
+    //     //check to see if there is any value selected
+    //     var currentSelection = $(this).val();
+    //     if (currentSelection !== null) {
+    //         if (!(currentSelection.length > 0)) {
+    //             var opts = document.getElementById('evtTypeSelect').options;
+    //             for (var i=0; i < opts.length; i++) {
+    //                 opts[i].disabled = false;
+    //             }
+    //             return;
+    //         }
+    //
+    //         // Functions
+    //         // Returns a new array with only unique elements from the one given.
+    //         var onlyUnique = function(array) {
+    //             var distinctValues = [];
+    //             // Build a new array with only distinct elements.
+    //             for (var i = 0; i < array.length; i++)
+    //             {
+    //                 // Check if the value is already in the new array; if so, skip it.
+    //                 if (distinctValues.indexOf(array[i]) !== -1) {
+    //                     continue;
+    //                 }
+    //                 // Add the element to the distinct-values array.
+    //                 distinctValues.push(array[i]);
+    //             }
+    //             // Return the array of distinct values.
+    //             return distinctValues;
+    //         };
+    //         // Execution
+    //         //set up an array with the strings from the currentSelection object strings converted to numbers
+    //         var selectedEventIDNumbers = [];
+    //         for (var i=0; i<currentSelection.length; i++){
+    //             selectedEventIDNumbers.push(parseInt(currentSelection[i]));
+    //         }
+    //         // Build a list of the event-type IDs chosen.
+    //         var selectedEventTypeIDs = [];
+    //         for (var i = 0; i < fev.data.events.length; i++)
+    //         {
+    //             // If this is not one of the chosen events, skip it.
+    //             if (selectedEventIDNumbers.indexOf(fev.data.events[i].event_id) === -1)
+    //             {
+    //                 continue;
+    //             }
+    //             // Add the event-type ID to the list.
+    //             selectedEventTypeIDs.push(fev.data.events[i].event_type_id);
+    //         }
+    //         // Reduce the array of selected event-type IDs to only unique elements.
+    //         var distinctSelectedEventTypeIDs = onlyUnique(selectedEventTypeIDs);
+    //         //Iterate through the DOM elements and disable those not having event IDs that are selected.
+    //         var options = document.getElementById('evtTypeSelect').options;
+    //         for (var i=0; i < options.length; i++) {
+    //             // Disable the element first.
+    //             options[i].disabled = true;
+    //             // If the element is within the list of those selected, enable it.
+    //             if (distinctSelectedEventTypeIDs.indexOf(parseInt(options[i].value)) !== -1) {
+    //                 options[i].disabled = false;
+    //             }
+    //         }
+    //         return;
+    //     }
+    // });
     //end onChange functions for Event form
 
     //begin onChange function for state form (updates county options based on state selection)
