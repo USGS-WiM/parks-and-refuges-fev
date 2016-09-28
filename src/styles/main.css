@@ -684,3 +684,9 @@ input[type="checkbox"], input[type="radio"] {
     top: 5px;
     margin-right: 5px;
 }
+
+.esconder {
+    display: none;
+    /*visibility: hidden;*/
+}
+

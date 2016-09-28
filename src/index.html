@@ -216,31 +216,31 @@
                     <div class="panel-body">
                         <!--<h4 class="formSectionHead">Event Options</h4>-->
                         <form class="form-horizontal" role="form" id="eventForm">
-                            <div class="form-group" id="evtTypeForm">
-                                <label for="evtTypeSelect" class="col-sm-2 control-label filterForms">Event Type</label>
-                                <div class="col-sm-10 filterForms">
-                                    <select id="evtTypeSelect" style="width: 100%" multiple class="clearable"></select>
-                                </div>
-                            </div>
+                            <!--<div class="form-group" id="evtTypeForm">-->
+                                <!--<label for="evtTypeSelect" class="col-sm-2 control-label filterForms">Event Type</label>-->
+                                <!--<div class="col-sm-10 filterForms">-->
+                                    <!--<select id="evtTypeSelect" style="width: 100%" multiple class="clearable"></select>-->
+                                <!--</div>-->
+                            <!--</div>-->
                             <div class="form-group" id="evtNameForm_filterModal">
-                                <label for="evtSelect_filterModal"  class="col-sm-2 control-label filterForms">Event Name</label>
+                                <label for="evtSelect_filterModal"  class="col-sm-2 control-label filterForms">Event: </label>
                                 <div class="col-sm-10 filterForms">
                                     <select id="evtSelect_filterModal" class="evtSelect" multiple style="width: 100%"></select>
                                 </div>
                             </div>
-                            <div class="form-group" id="evtStatusForm">
-                                <label for="evtStatusRadios" class="col-sm-2 control-label filterForms">Event Status</label>
-                                <div class="col-sm-10 filterForms">
-                                    <div class="btn-group" data-toggle="buttons" id="evtStatusRadios">
-                                        <label class="btn btn-default check">
-                                            <input type="checkbox"  name="active" id="active">Active  <span class="glyphicon glyphicon-ok selected" style="display: none"></span>
-                                        </label>
-                                        <label class="btn btn-default check">
-                                            <input type="checkbox" class="check" name="complete" id="complete">Complete  <span class="glyphicon glyphicon-ok selected" style="display: none"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                            <!--<div class="form-group" id="evtStatusForm">-->
+                                <!--<label for="evtStatusRadios" class="col-sm-2 control-label filterForms">Event Status</label>-->
+                                <!--<div class="col-sm-10 filterForms">-->
+                                    <!--<div class="btn-group" data-toggle="buttons" id="evtStatusRadios">-->
+                                        <!--<label class="btn btn-default check">-->
+                                            <!--<input type="checkbox"  name="active" id="active">Active  <span class="glyphicon glyphicon-ok selected" style="display: none"></span>-->
+                                        <!--</label>-->
+                                        <!--<label class="btn btn-default check">-->
+                                            <!--<input type="checkbox" class="check" name="complete" id="complete">Complete  <span class="glyphicon glyphicon-ok selected" style="display: none"></span>-->
+                                        <!--</label>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
                         </form>
                     </div>
                 </div>
@@ -450,44 +450,55 @@
 
                     <div class="panel-body collapse in">
 
-                        <label for="eventGroup">Event Options</label>
-                        <ul class="list-group" id="eventGroup">
-                            <li class="list-group-item col-lg-12 filterItems">Event Type: <span id="eventTypeDisplay"></span></li>
-                            <li class="list-group-item col-lg-12 filterItems">Event Name: <span id="eventNameDisplay"></span></li>
-                            <li class="list-group-item col-lg-12 filterItems">Event Status: <span id="eventStatusDisplay"></span></li>
-                        </ul>
+                        <h3>Current Filters</h3>
+                        <div id="eventGroupDiv">
+                            <label for="eventGroup">Event</label>
+                            <ul class="list-group" id="eventGroup">
+                                <li class="list-group-item col-lg-12 filterItems esconder">Event Type: <span id="eventTypeDisplay"></span></li>
+                                <li class="list-group-item col-lg-12 filterItems">Event: <span id="eventNameDisplay"></span></li>
+                                <li class="list-group-item col-lg-12 filterItems esconder">Event Status: <span id="eventStatusDisplay"></span></li>
+                            </ul>
+                        </div>
+
+                        <div id="locationGroupDiv" class="esconder">
+                            <label for="locationGroup">Location</label>
+                            <ul class="list-group" id="locationGroup">
+                                <li id="stateDisplay_li"class="list-group-item col-lg-12 filterItems esconder">State: <span id="stateDisplay"></span> </li>
+                                <li id="countyDisplay_li" class="list-group-item col-lg-12 filterItems esconder">County: <span id="countyDisplay"></span> </li>
+                            </ul>
+                        </div>
 
 
-                        <label for="locationGroup">Location Options</label>
-                        <ul class="list-group" id="locationGroup">
-                            <li class="list-group-item col-lg-12 filterItems">State: <span id="stateDisplay"></span> </li>
-                            <li class="list-group-item col-lg-12 filterItems">County: <span id="countyDisplay"></span> </li>
-                        </ul>
+                        <div id="sensorsGroupDiv" class="esconder">
+                            <label for="sensorsGroup">Sensors</label>
+                            <ul class="list-group" id="sensorsGroup">
+                                <li id="sensorTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Sensor Type: <span id="sensorTypeDisplay"></span></li>
+                                <li id="sensorStatusDisplay_li"class="list-group-item col-lg-12 filterItems esconder">Status: <span id="sensorStatusDisplay"></span> </li>
+                                <li id="collectConditionDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Collection Condition: <span id="collectConditionDisplay"></span></li>
+                                <li id="deployTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Deployment Type: <span id="deployTypeDisplay"></span> </li>
+                            </ul>
+                        </div>
 
 
-                        <label for="sensorsGroup">Sensors</label>
-                        <ul class="list-group" id="sensorsGroup">
-                            <li class="list-group-item col-lg-12 filterItems">Sensor Type: <span id="sensorTypeDisplay"></span></li>
-                            <li class="list-group-item col-lg-12 filterItems">Status: <span id="sensorStatusDisplay"></span> </li>
-                            <li class="list-group-item col-lg-12 filterItems">Collection Condition: <span id="collectConditionDisplay"></span></li>
-                            <li class="list-group-item col-lg-12 filterItems">Deployment Type: <span id="deployTypeDisplay"></span> </li>
-                        </ul>
+                        <div id="hwmGroupDiv" class="esconder">
+                            <label for="hwmGroup">High-Water Marks</label>
+                            <ul class="list-group" id="hwmGroup">
+                                <li id="hwmTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">HWM Type: <span id="hwmTypeDisplay"></span> </li>
+                                <li id="hwmQualityDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Quality: <span id="hwmQualityDisplay"></span></li>
+                                <li id="hwmEnvDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Environment: <span id="hwmEnvDisplay"></span></li>
+                                <li id="hwmSurveyCompDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Survey Completed: <span id="hwmSurveyCompDisplay"></span> </li>
+                                <li id="hwmStillWaterDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Stillwater Location: <span id="hwmStillWaterDisplay"></span></li>
+                            </ul>
+                        </div>
 
+                        <div id="peaksGroupDiv" class="esconder">
+                            <label for="peaksGroup">Peak Dates</label>
+                            <ul class="list-group" id="peaksGroup">
+                                <li id="peakStartDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Start Date: <span id="peakStartDisplay"></span></li>
+                                <li id="peakEndDisplay_li" class="list-group-item col-lg-12 filterItems esconder">End Date: <span id="peakEndDisplay"></span></li>
+                            </ul>
+                        </div>
 
-                        <label for="hwmGroup">High-Water Marks</label>
-                        <ul class="list-group" id="hwmGroup">
-                            <li class="list-group-item col-lg-12 filterItems">HWM Type: <span id="hwmTypeDisplay"></span> </li>
-                            <li class="list-group-item col-lg-12 filterItems">Quality: <span id="hwmQualityDisplay"></span></li>
-                            <li class="list-group-item col-lg-12 filterItems">Environment: <span id="hwmEnvDisplay"></span></li>
-                            <li class="list-group-item col-lg-12 filterItems">Survey Completed: <span id="hwmSurveyCompDisplay"></span> </li>
-                            <li class="list-group-item col-lg-12 filterItems">Stillwater Location: <span id="hwmStillWaterDisplay"></span></li>
-                        </ul>
-
-
-                        <label for="peaksGroup">Peaks</label>
-                        <ul class="list-group" id="peaksGroup">
-                            <li class="list-group-item col-lg-12 filterItems">Start Date: <span id="peakStartDisplay"></span> End Date: <span id="peakEndDisplay"></span></li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -508,9 +519,9 @@
                                         <span data-bind="label" value="Sensor">Download Sensor Data</span>&nbsp;<span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
-                                        <li><a id="sensorDownloadButtonCSV" href="#" value="CSV">CSV</a></li>
-                                        <li><a id="sensorDownloadButtonJSON" href="#" value="JSON">JSON</a></li>
-                                        <li><a id="sensorDownloadButtonXML" href="#" value="XML">XML</a></li>
+                                        <li><a id="sensorDownloadButtonCSV" href="#" value="CSV">Download CSV</a></li>
+                                        <li><a id="sensorDownloadButtonJSON" href="#" value="JSON">View JSON</a></li>
+                                        <li><a id="sensorDownloadButtonXML" href="#" value="XML">View XML</a></li>
                                     </ul>
                                 </div>
                         </div>
@@ -520,9 +531,9 @@
                                         <span data-bind="label" value="HWM">Download HWM Data</span>&nbsp;<span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
-                                        <li><a id="hwmDownloadButtonCSV" href="#" value="CSV">CSV</a></li>
-                                        <li><a id="hwmDownloadButtonJSON" href="#" value="JSON">JSON</a></li>
-                                        <li><a id="hwmDownloadButtonXML" href="#" value="XML">XML</a></li>
+                                        <li><a id="hwmDownloadButtonCSV" href="#" value="CSV">Download CSV</a></li>
+                                        <li><a id="hwmDownloadButtonJSON" href="#" value="JSON">View JSON</a></li>
+                                        <li><a id="hwmDownloadButtonXML" href="#" value="XML">View XML</a></li>
                                     </ul>
                                 </div>
                         </div>
@@ -532,9 +543,9 @@
                                         <span data-bind="label" value="Peaks">Download Peaks Data</span>&nbsp;<span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
-                                        <li><a id="peaksDownloadButtonCSV" href="#" value="CSV">CSV</a></li>
-                                        <li><a id="peaksDownloadButtonJSON" href="#" value="JSON">JSON</a></li>
-                                        <li><a id="peaksDownloadButtonXML" href="#" value="XML">XML</a></li>
+                                        <li><a id="peaksDownloadButtonCSV" href="#" value="CSV">Download CSV</a></li>
+                                        <li><a id="peaksDownloadButtonJSON" href="#" value="JSON">View JSON</a></li>
+                                        <li><a id="peaksDownloadButtonXML" href="#" value="XML">View XML</a></li>
                                     </ul>
                                 </div>
                         </div>
