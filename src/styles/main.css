@@ -29,7 +29,7 @@ body {
     font-family: 'Open Sans', sans-serif !important;
     width: 100% !important;
     height: 35px !important;
-    padding: 6px 12px !important; 
+    padding: 6px 12px !important;
     margin-left: 0px !important;
     border-radius: 2px !important;
     border: 2px solid rgba(45, 49, 70, 0.23) !important;
@@ -593,4 +593,94 @@ input[type="checkbox"], input[type="radio"] {
     font-size: larger;
     font-weight: bold;
     text-align: left;
+}
+
+
+/*Additions - Samuels 10/27*/
+/*Sidebar*/
+.event-name{
+    color: #6F7192;
+    font-size: 14pt;
+    box-sizing: border-box;
+    padding: 12px 0 0 0;
+}
+.event-name small{
+    font-size: 9pt;
+    box-sizing: border-box;
+    padding: 0 0 5px 0;
+    display: block;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+.event-range{
+    font-size: 10pt;
+    font-weight: bolder;
+    color: #6F7390;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #DDDDDD;
+}
+.identification{
+    display: block;
+    box-sizing: border-box;
+    padding: 25px 0 0 0;
+    text-align: center;
+}
+
+.dropdown-toggle{
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 5px 0;
+    display: block;
+    width: 100%;
+    background-color: #ECEEF3;
+    border: 1px solid rgba(0,0,0,0.25);
+    font-weight:bolder;
+}
+
+#sensorDownloadButtons .btn-group,
+#hwmrDownloadButtons .btn-group,
+#peaksDownloadButtons .btn-group{
+    display: block;
+    width: 100%;
+}
+
+.list-group{
+    background-color: #ECEEF3;
+}
+.filterItems{
+    background-color: transparent !important;
+    padding-top:10px;
+    padding-right:10px;
+    padding-bottom:10px;
+    padding-left:10px;
+    font-size: 8pt;
+    font-weight: bolder;
+    text-transform: uppercase;
+    letter-spacing: -0.25px;
+    color: rgba(0,0,0,0.8);
+}
+
+.filterItems span{
+    font-size: 10pt;
+    text-transform: none;
+    color: #000;
+    letter-spacing: 0;
+    box-sizing: border-box;
+    padding: 0 0 1px 5px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+
+
+/*MAP LAYERS*/
+#legendElement{
+    margin-top: 10px;
+}
+.legend-panel-body input[type='checkbox']{
+    position: relative;
+    top: 5px;
+    margin-right: 5px;
 }
