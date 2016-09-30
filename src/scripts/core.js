@@ -179,7 +179,8 @@ $( document ).ready(function() {
 			filterMapData(eventID, false);
 		} else {
 			//if no event selected, warn user with alert
-			alert("Please choose an event to proceed.")
+			//alert("Please choose an event to proceed.")
+			$('.eventSelectAlert').show();
 		}
 	});
 
@@ -199,11 +200,13 @@ $( document ).ready(function() {
 				}
 			}
 			filterMapData(eventID, false);
+			$('.eventSelectAlert').hide();
+			$('#filtersModal').modal('hide');
 		} else {
 			//if no event selected, warn user with alert
-			alert("Please choose an event to proceed.")
+			//alert("Please choose an event to proceed.")
+			$('.eventSelectAlert').show();
 		}
-		$('#filtersModal').modal('hide');
 	});
 
 	//'listener' for URL event params - sets event vars and passes event id to filterMapData function

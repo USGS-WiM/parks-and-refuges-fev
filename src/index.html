@@ -44,6 +44,8 @@
     <!-- endbower -->
     <!-- endbuild -->
 
+    <!--<link rel="stylesheet" href="bower_components/wim-styles/core/css/wim.css">-->
+
     <link rel="stylesheet" href="styles/base.css">
 
     <!-- CSS for the mapping components -->
@@ -110,21 +112,32 @@
             <div class="modal-body">
                 <h4>Welcome to the USGS Flood Event Viewer. Please select an event to get started.</h4>
                 <br>
-                <div class="form-group" id="evtNameForm_welcomeModal">
-                <!--<label for="evtSelect_welcomeModal"  class="col-sm-2 control-label filterForms">Event Name</label>-->
-                    <div class="col-sm-10 filterForms">
-                        <select id="evtSelect_welcomeModal" class="evtSelect" style="width: 100%" multiple></select>
-                    </div>
+                <!--<div class="form-group" id="evtNameForm_welcomeModal">-->
+                <!--&lt;!&ndash;<label for="evtSelect_welcomeModal"  class="col-sm-2 control-label filterForms">Event Name</label>&ndash;&gt;-->
+                    <!--<div class="col-sm-10 filterForms">-->
+                        <!--<select id="evtSelect_welcomeModal" class="evtSelect" style="width: 100%" multiple></select>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <div id="evtNameForm_welcomeModal" class="input-group form-group">
+                      <!--<input type="text" class="form-control" placeholder="Search for...">-->
+                      <select id="evtSelect_welcomeModal" class="evtSelect form-control select" style="width: 100%" multiple></select>
+                      <span class="input-group-btn">
+                        <button id="btnSubmitEvent" class="btn btn-secondary input-group-addon" type="button">Go</button>
+                      </span>
                 </div>
+                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose an event to proceed.</div>
+
                 <br>
                 <!--<form id="welcome-optout-form" class="form-inline">-->
                     <!--<input id="welcome-optout" type="checkbox">  Don't show me this again<br>-->
                 <!--</form>-->
             </div>
-            <div class="modal-footer">
-                <button id="btnSubmitEvent" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Go</button>
-                <!--<button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>-->
-            </div>
+            <!--<div class="modal-footer">-->
+                <!--<span><div class="alert alert-danger" role="alert">Please choose an event to proceed.</div><button id="btnSubmitEvent" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Go</button></span>-->
+
+                <!--&lt;!&ndash;<button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>&ndash;&gt;-->
+            <!--</div>-->
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
@@ -381,6 +394,7 @@
                     </div>
                 </div>
                 <!-- end filter panels -->
+                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose an event to proceed.</div>
             </div>
             <div class="modal-footer">
                 <button id="btnClearFilters" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Clear Filters</button>
