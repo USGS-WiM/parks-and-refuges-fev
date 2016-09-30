@@ -570,6 +570,7 @@ function filterMapData(event, isUrlParam) {
 
 } //end filterMapData function
 
+//use extent to get NWIS rt gages based on bounding box, display on map
 function queryNWISrtGages(bbox) {
     var NWISmarkers = {};
 
@@ -617,6 +618,9 @@ function queryNWISrtGages(bbox) {
                     NWISmarkers[siteID].data.parameters[site.variable.variableName]['Value'] = site.values[0].value[0].value;
                     //add point to featureGroup
                     USGSrtGages.addLayer(NWISmarkers[siteID]);
+                    //$('#nwisLoadingAlert').hide();
+
+                    $( "#nwisLoadingAlert" ).fadeOut(2000)
                 }
             }
         });
