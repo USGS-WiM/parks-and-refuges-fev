@@ -271,6 +271,23 @@ $( document ).ready(function() {
 		});
 	});
 
+	map.on({
+		overlayadd: function(e) {
+			if (e.name.indexOf('Stream Gage') !== -1) {
+				if (map.getZoom() < 8) USGSrtGages.clearLayers();
+				if (map.hasLayer(USGSrtGages) && map.getZoom() >= 8) {
+					//USGSrtGages.clearLayers();
+					$('#nwisLoadingAlert').show();
+					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+					queryNWISrtGages(bbox);
+				}
+			}
+		},
+		overlayremove: function(e) {
+			if (e.name === 'Cities') alert('removed');
+		}
+	});
+
 	//add sensor markercluster group to the map
 	//sensorMCG.addTo(map);
 	//add sensor subgroups to the map
@@ -286,10 +303,10 @@ $( document ).ready(function() {
 	//add USGS rt gages to the map
 	//rdg.addTo(map);
 
-	USGSrtGages.addTo(map);
+	//USGSrtGages.addTo(map);
 	//define layer 'overlays' (leaflet term)
 	var sensorOverlays = {
-		"<i class='nwisMarker'></i>&nbsp;Real-time Stream Gage" : USGSrtGages
+		"<i class='nwisMarker'></i>&nbsp;Real-time Stream Gage *" : USGSrtGages
 	};
 	var observedOverlays = {};
 	$.each(fev.layerList, function( index, layer ) {
@@ -522,9 +539,11 @@ $( document ).ready(function() {
 				foundPopup = popup._isOpen;
 			}
 		})
-		if (map.getZoom() < 7) USGSrtGages.clearLayers();
-		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 7 && !foundPopup) {
-			USGSrtGages.clearLayers();
+		//USGSrtGages.clearLayers();
+		if (map.getZoom() < 8) USGSrtGages.clearLayers();
+		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 8 && !foundPopup) {
+			//USGSrtGages.clearLayers();
+			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 			queryNWISrtGages(bbox);
 		}
@@ -558,6 +577,7 @@ $( document ).ready(function() {
 		var mapZoom = map.getZoom();
 		var mapScale = scaleLookup(mapZoom);
 		$('#scale')[0].innerHTML = mapScale;
+		$('#zoomLevel')[0].innerHTML = mapZoom;
 	});
 
 //updates lat/lng indicator on mouse move. does not apply on devices w/out mouse. removes 'map center' label
