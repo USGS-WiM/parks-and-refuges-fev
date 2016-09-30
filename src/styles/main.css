@@ -704,10 +704,27 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 
-.fade {
-    opacity: 0.75;
-    transition: opacity 0.15s linear;
+.eventSelectAlert{
+    display: none;
 }
-.fade.out {
-    opacity: 0;
+
+.select {
+    border-radius:0px !important;
+}
+
+#btnSubmitEvent {
+    height: 32px;
+    width: 40px;
+    border: 1px solid #000000;
+}
+
+.select2-container--default .select2-selection--multiple {
+    background-color: white;
+    border: 1px solid #aaa;
+    border-radius: 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+    cursor: text;
 }
