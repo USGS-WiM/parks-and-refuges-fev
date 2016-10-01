@@ -246,6 +246,7 @@ function checkLayerCount (layerCount) {
 function filterMapData(event, isUrlParam) {
 
     $('.esconder').hide();
+    $('.labelSpan').empty();
 
     layerCount = 0;
     markerCoords = [];
@@ -312,18 +313,32 @@ function filterMapData(event, isUrlParam) {
     if ($('#stateSelect').val() !== null){
         var stateSelectionsArray = $('#stateSelect').val();
         stateSelections = stateSelectionsArray.toString();
+        if ($('#stateSelect').select2('data').length > 0) {
+            for (var i = 0; i <  $('#stateSelect').select2('data').length; i++) {
+                //sensorTypeSelectionsTextArray.push($('#sensorTypeSelect').select2('data')[i].text);
+                $('#stateDisplay').append('<span class="label label-default">' + $('#stateSelect').select2('data')[i].text + '</span>');
+
+            }
+        }
         $('#locationGroupDiv').show();
         $('#stateDisplay_li').show();
-        $('#stateDisplay').html(stateSelections);
+        //$('#stateDisplay').html(stateSelections);
     }
     //county
     var countySelections = '';
     if ($('#countySelect').val() !== null){
         var countySelectionsArray = $('#countySelect').val();
         countySelections = countySelectionsArray.toString();
+        if ($('#countySelect').select2('data').length > 0) {
+            for (var i = 0; i <  $('#countySelect').select2('data').length; i++) {
+                //sensorTypeSelectionsTextArray.push($('#sensorTypeSelect').select2('data')[i].text);
+                $('#countyDisplay').append('<span class="label label-default">' + $('#countySelect').select2('data')[i].text + '</span>');
+
+            }
+        }
         $('#locationGroupDiv').show();
         $('#countyDisplay_li').show();
-        $('#countyDisplay').html(countySelections);
+        //$('#countyDisplay').html(countySelections);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -340,28 +355,31 @@ function filterMapData(event, isUrlParam) {
         if ($('#sensorTypeSelect').val() !== null ){
             var sensorTypeSelectionArray = $('#sensorTypeSelect').val();
             sensorTypeSelections = sensorTypeSelectionArray.toString();
-            var sensorTypeSelectionsTextArray = [];
+            //var sensorTypeSelectionsTextArray = [];
             if ($('#sensorTypeSelect').select2('data').length > 0) {
                 for (var i = 0; i <  $('#sensorTypeSelect').select2('data').length; i++) {
-                    sensorTypeSelectionsTextArray.push($('#sensorTypeSelect').select2('data')[i].text)
+                    //sensorTypeSelectionsTextArray.push($('#sensorTypeSelect').select2('data')[i].text);
+                    $('#sensorTypeDisplay').append('<span class="label label-default">' + $('#sensorTypeSelect').select2('data')[i].text + '</span>');
+
                 }
             }
             $('#sensorTypeDisplay_li').show();
-            $('#sensorTypeDisplay').html(sensorTypeSelectionsTextArray.toString());
+            //$('#sensorTypeDisplay').html(sensorTypeSelectionsTextArray.toString());
         }
         //sensor status
         var sensorStatusSelections = '';
         if ($('#sensorStatusSelect').val() !== null ){
             var sensorStatusSelectionArray = $('#sensorStatusSelect').val();
             sensorStatusSelections = sensorStatusSelectionArray.toString();
-            var sensorStatusSelectionsTextArray = [];
+            //var sensorStatusSelectionsTextArray = [];
             if ($('#sensorStatusSelect').select2('data').length > 0) {
                 for (var i = 0; i <  $('#sensorStatusSelect').select2('data').length; i++) {
-                    sensorStatusSelectionsTextArray.push($('#sensorStatusSelect').select2('data')[i].text)
+                    //sensorStatusSelectionsTextArray.push($('#sensorStatusSelect').select2('data')[i].text)
+                    $('#sensorStatusDisplay').append('<span class="label label-default">' + $('#sensorStatusSelect').select2('data')[i].text + '</span>');
                 }
             }
             $('#sensorStatusDisplay_li').show();
-            $('#sensorStatusDisplay').html(sensorStatusSelectionsTextArray.toString());
+            //$('#sensorStatusDisplay').html(sensorStatusSelectionsTextArray.toString());
         }
 
         //sensor collection condition
@@ -369,14 +387,15 @@ function filterMapData(event, isUrlParam) {
         if ($('#collectionConditionSelect').val() !== null ){
             var collectConditionSelectionArray = $('#collectionConditionSelect').val();
             collectConditionSelections = collectConditionSelectionArray.toString();
-            var collectConditionSelectionsTextArray = [];
+            //var collectConditionSelectionsTextArray = [];
             if ($('#collectionConditionSelect').select2('data').length > 0) {
                 for (var i = 0; i <  $('#collectionConditionSelect').select2('data').length; i++) {
-                    collectConditionSelectionsTextArray.push($('#collectionConditionSelect').select2('data')[i].text)
+                    //collectConditionSelectionsTextArray.push($('#collectionConditionSelect').select2('data')[i].text)
+                    $('#collectConditionDisplay').append('<span class="label label-default">' + $('#collectionConditionSelect').select2('data')[i].text + '</span>');
                 }
             }
             $('#collectConditionDisplay_li').show();
-            $('#collectConditionDisplay').html(collectConditionSelectionsTextArray.toString());
+            //$('#collectConditionDisplay').html(collectConditionSelectionsTextArray.toString());
         }
 
         //sensor deployment type
@@ -384,14 +403,15 @@ function filterMapData(event, isUrlParam) {
         if ($('#deployTypeSelect').val() !== null ){
             var deploymentTypeSelectionArray = $('#deployTypeSelect').val();
             deploymentTypeSelections = deploymentTypeSelectionArray.toString();
-            var deployTypeSelectionsTextArray = [];
+            //var deployTypeSelectionsTextArray = [];
             if ($('#deployTypeSelect').select2('data').length > 0) {
                 for (var i = 0; i <  $('#deployTypeSelect').select2('data').length; i++) {
-                    deployTypeSelectionsTextArray.push($('#deployTypeSelect').select2('data')[i].text)
+                    //deployTypeSelectionsTextArray.push($('#deployTypeSelect').select2('data')[i].text)
+                    $('#deployTypeDisplay').append('<span class="label label-default">' + $('#deployTypeSelect').select2('data')[i].text + '</span>');
                 }
             }
             $('#deployTypeDisplay_li').show();
-            $('#deployTypeDisplay').html(deployTypeSelectionsTextArray.toString());
+            //$('#deployTypeDisplay').html(deployTypeSelectionsTextArray.toString());
         }
 
         //query string including event status and event type params
@@ -432,28 +452,30 @@ function filterMapData(event, isUrlParam) {
         if ($('#hwmTypeSelect').val() !== null ){
             var hwmTypeSelectionArray = $('#hwmTypeSelect').val();
             hwmTypeSelections = hwmTypeSelectionArray.toString();
-            var hwmTypeSelectionsTextArray = [];
+            //var hwmTypeSelectionsTextArray = [];
             if ($('#hwmTypeSelect').select2('data').length > 0) {
                 for (var i = 0; i <  $('#hwmTypeSelect').select2('data').length; i++) {
-                    hwmTypeSelectionsTextArray.push($('#hwmTypeSelect').select2('data')[i].text)
+                    //hwmTypeSelectionsTextArray.push($('#hwmTypeSelect').select2('data')[i].text)
+                    $('#hwmTypeDisplay').append('<span class="label label-default">' + $('#hwmTypeSelect').select2('data')[i].text + '</span>');
                 }
             }
             $('#hwmTypeDisplay_li').show();
-            $('#hwmTypeDisplay').html(hwmTypeSelectionsTextArray.toString());
+            //$('#hwmTypeDisplay').html(hwmTypeSelectionsTextArray.toString());
         }
         //HWM quality
         var hwmQualitySelections = '';
         if ($('#hwmQualitySelect').val() !== null ){
             var hwmQualitySelectionArray = $('#hwmQualitySelect').val();
             hwmQualitySelections = hwmQualitySelectionArray.toString();
-            var hwmQualitySelectionsTextArray = [];
+            //var hwmQualitySelectionsTextArray = [];
             if ($('#hwmQualitySelect').select2('data').length > 0) {
                 for (var i = 0; i <  $('#hwmQualitySelect').select2('data').length; i++) {
-                    hwmQualitySelectionsTextArray.push($('#hwmQualitySelect').select2('data')[i].text)
+                    //hwmQualitySelectionsTextArray.push($('#hwmQualitySelect').select2('data')[i].text)
+                    $('#hwmQualityDisplay').append('<span class="label label-default">' + $('#hwmQualitySelect').select2('data')[i].text + '</span>');
                 }
             }
             $('#hwmQualityDisplay_li').show();
-            $('#hwmQualityDisplay').html(hwmQualitySelectionsTextArray.toString());
+            //$('#hwmQualityDisplay').html(hwmQualitySelectionsTextArray.toString());
         }
         ////HWM environment
         var hwmEnvSelectionArray = [];
@@ -461,13 +483,15 @@ function filterMapData(event, isUrlParam) {
         if ($('#coastal')[0].checked && !($('#riverine')[0].checked)) {
             hwmEnvSelectionArray.push('Coastal');
             $('#hwmEnvDisplay_li').show();
-            $('#hwmEnvDisplay').html('Coastal');
+            //$('#hwmEnvDisplay').html('Coastal');
+            $('#hwmEnvDisplay').html('<span class="label label-default">Coastal</span>');
         }
         //HWM environment: riverine
         if ($('#riverine')[0].checked && !($('#coastal')[0].checked) ) {
             hwmEnvSelectionArray.push('Riverine');
             $('#hwmEnvDisplay_li').show();
-            $('#hwmEnvDisplay').html('Riverine');
+            //$('#hwmEnvDisplay').html('Riverine');
+            $('#hwmEnvDisplay').html('<span class="label label-default">Riverine</span>');
         }
         var hwmEnvSelections = hwmEnvSelectionArray.toString();
         //HWM survey status
@@ -476,13 +500,15 @@ function filterMapData(event, isUrlParam) {
         if ($('#surveyCompleteYes')[0].checked && !($('#surveyCompleteNo')[0].checked)) {
             hwmSurveyStatusSelectionArray.push('true');
             $('#hwmSurveyCompDisplay_li').show();
-            $('#hwmSurveyCompDisplay').html('True');
+            //$('#hwmSurveyCompDisplay').html('True');
+            $('#hwmSurveyCompDisplay').html('<span class="label label-default">True</span>');
         }
         ///HWM survey status: not complete
         if ($('#surveyCompleteNo')[0].checked && !($('#surveyCompleteYes')[0].checked)) {
             hwmSurveyStatusSelectionArray.push('false');
             $('#hwmSurveyCompDisplay_li').show();
-            $('#hwmSurveyCompDisplay').html('False');
+            //$('#hwmSurveyCompDisplay').html('False');
+            $('#hwmSurveyCompDisplay').html('<span class="label label-default">False</span>');
         }
         var hwmSurveyStatusSelections = hwmSurveyStatusSelectionArray.toString();
         //HWM stillwater status
@@ -491,13 +517,15 @@ function filterMapData(event, isUrlParam) {
         if ($('#stillWaterYes')[0].checked && !($('#stillWaterNo')[0].checked)) {
             hwmStillwaterStatusSelectionArray.push('true');
             $('#hwmStillWaterDisplay_li').show();
-            $('#hwmStillWaterDisplay').html('True');
+            //$('#hwmStillWaterDisplay').html('True');
+            $('#hwmStillWaterDisplay').html('<span class="label label-default">True</span>');
         }
         ///HWM stillwater status: no
         if ($('#stillWaterNo')[0].checked  && !($('#stillWaterYes')[0].checked)) {
             hwmStillwaterStatusSelectionArray.push('false');
             $('#hwmStillWaterDisplay_li').show();
-            $('#hwmStillWaterDisplay').html('False');
+            //$('#hwmStillWaterDisplay').html('False');
+            $('#hwmStillWaterDisplay').html('<span class="label label-default">False</span>');
         }
         var hwmStillwaterStatusSelections = hwmStillwaterStatusSelectionArray.toString();
 
