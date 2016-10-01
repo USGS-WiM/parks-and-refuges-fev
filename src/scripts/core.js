@@ -232,6 +232,8 @@ $( document ).ready(function() {
 	}
 
 	function setEventVars (event_name, event_id, event_status_id, event_start_date, event_end_date) {
+		//set event name in URL, using regex to remove spaces
+		history.pushState(null, null, '#' + (event_name.replace(/\s+/g, '')));
 		//set current event name
 		fev.vars.currentEventName = event_name;
 		//set current event id string
@@ -255,7 +257,11 @@ $( document ).ready(function() {
 		//set the event display, only if both date strings are not empty
 		if (eventStartDateStr == '' && eventEndDateStr == '') {
 			return
+		} else if (eventEndDateStr == '') {
+			//if no end date, only show begin date
+			$('#largeEventDateRangeDisplay').html(moment(eventStartDateStr).format("D MMM YYYY"));
 		} else {
+			//if both start and end date, show beginDate thru endDate
 			$('#largeEventDateRangeDisplay').html(moment(eventStartDateStr).format("D MMM YYYY") + " thru " + moment(eventEndDateStr).format("D MMM YYYY"));
 		}
 	}
