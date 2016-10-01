@@ -543,48 +543,50 @@
                 <div class="panel-heading" id="downloadHeader">
                     <h4 class="panel-title">
                         <a data-toggle="collapse"  href="#downloadPanel" aria-expanded="false" aria-controls="downloadPanel">
-                            Download Data
+                            Get Data
                         </a>
                     </h4>
                 </div>
                 <div id="downloadPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="downloadHeader">
                     <div class="panel-body collapse in">
+                        <p>Use buttons to access event-based data, reflecting the filters chosen above.</p>
                         <div id="sensorDownloadButtons">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-                                        <span data-bind="label" value="Sensor">Download Sensor Data</span>&nbsp;<span class="caret"></span>
+                                        <span data-bind="label" value="Sensor">Sensor Data</span>&nbsp;<span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
                                         <li><a id="sensorDownloadButtonCSV" href="#" value="CSV">Download CSV</a></li>
-                                        <li><a id="sensorDownloadButtonJSON" href="#" value="JSON">View JSON</a></li>
-                                        <li><a id="sensorDownloadButtonXML" href="#" value="XML">View XML</a></li>
+                                        <li><a id="sensorDownloadButtonJSON" href="#" value="JSON" target="_blank">View JSON</a></li>
+                                        <li><a id="sensorDownloadButtonXML" href="#" value="XML" target="_blank">View XML</a></li>
                                     </ul>
                                 </div>
                         </div>
                         <div id="hwmrDownloadButtons">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-                                        <span data-bind="label" value="HWM">Download HWM Data</span>&nbsp;<span class="caret"></span>
+                                        <span data-bind="label" value="HWM">High-water Mark Data</span>&nbsp;<span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
                                         <li><a id="hwmDownloadButtonCSV" href="#" value="CSV">Download CSV</a></li>
-                                        <li><a id="hwmDownloadButtonJSON" href="#" value="JSON">View JSON</a></li>
-                                        <li><a id="hwmDownloadButtonXML" href="#" value="XML">View XML</a></li>
+                                        <li><a id="hwmDownloadButtonJSON" href="#" value="JSON" target="_blank">View JSON</a></li>
+                                        <li><a id="hwmDownloadButtonXML" href="#" value="XML" target="_blank">View XML</a></li>
                                     </ul>
                                 </div>
                         </div>
                         <div id="peaksDownloadButtons">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-                                        <span data-bind="label" value="Peaks">Download Peaks Data</span>&nbsp;<span class="caret"></span>
+                                        <span data-bind="label" value="Peaks">Peak Summary Data</span>&nbsp;<span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
                                         <li><a id="peaksDownloadButtonCSV" href="#" value="CSV">Download CSV</a></li>
-                                        <li><a id="peaksDownloadButtonJSON" href="#" value="JSON">View JSON</a></li>
-                                        <li><a id="peaksDownloadButtonXML" href="#" value="XML">View XML</a></li>
+                                        <li><a id="peaksDownloadButtonJSON" href="#" value="JSON" target="_blank">View JSON</a></li>
+                                        <li><a id="peaksDownloadButtonXML" href="#" value="XML" target="_blank">View XML</a></li>
                                     </ul>
                                 </div>
                         </div>
+                        <p>Visit the <span><a href="http://stn.wim.usgs.gov/STNDataPortal" target="_blank">STN Data Portal <i class="fa fa-external-link" aria-hidden="true"></i></a></span> for broader data retrieval capability. </p>
                     </div>
                 </div>
             </div>
