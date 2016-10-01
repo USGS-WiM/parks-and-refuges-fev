@@ -467,47 +467,69 @@
                         <h3>Current Filters</h3>
                         <div id="eventGroupDiv">
                             <label for="eventGroup">Event</label>
-                            <ul class="list-group" id="eventGroup">
-                                <li class="list-group-item col-lg-12 filterItems esconder">Event Type: <span id="eventTypeDisplay"></span></li>
-                                <li class="list-group-item col-lg-12 filterItems">Event: <span id="eventNameDisplay"></span></li>
-                                <li class="list-group-item col-lg-12 filterItems esconder">Event Status: <span id="eventStatusDisplay"></span></li>
+                            <ul class="list-group" id="eventGroup" style="list-style-type:none">
+                                <!--<li class="list-group-item col-lg-12 filterItems esconder">Event Type: <span id="eventTypeDisplay"></span></li>-->
+                                <li class="list-group-item col-lg-12 filterItems">Event <span id="eventNameDisplay"></span></li>
+                                <!--<li class="list-group-item col-lg-12 filterItems esconder">Event Status: <span id="eventStatusDisplay"></span></li>-->
                             </ul>
                         </div>
 
                         <div id="locationGroupDiv" class="esconder">
                             <label for="locationGroup">Location</label>
-                            <ul class="list-group" id="locationGroup">
-                                <li id="stateDisplay_li"class="list-group-item col-lg-12 filterItems esconder">State: <span id="stateDisplay"></span> </li>
-                                <li id="countyDisplay_li" class="list-group-item col-lg-12 filterItems esconder">County: <span id="countyDisplay"></span> </li>
+                            <ul class="list-group" id="locationGroup" style="list-style-type:none">
+                                <li id="stateDisplay_li"class="list-group-item col-lg-12 filterItems esconder">
+                                    <label for="stateDisplay">States</label><span id="stateDisplay" class="labelSpan"></span>
+                                </li>
+                                <li id="countyDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
+                                    <label for="countyDisplay">Counties</label><span id="countyDisplay" class="labelSpan"></span>
+                                </li>
                             </ul>
                         </div>
 
 
-                        <div id="sensorsGroupDiv" class="esconder">
+                        <div id="sensorsGroupDiv" class="esconder" >
                             <label for="sensorsGroup">Sensors</label>
-                            <ul class="list-group" id="sensorsGroup">
-                                <li id="sensorTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Sensor Type: <span id="sensorTypeDisplay"></span></li>
-                                <li id="sensorStatusDisplay_li"class="list-group-item col-lg-12 filterItems esconder">Status: <span id="sensorStatusDisplay"></span> </li>
-                                <li id="collectConditionDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Collection Condition: <span id="collectConditionDisplay"></span></li>
-                                <li id="deployTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Deployment Type: <span id="deployTypeDisplay"></span> </li>
+                            <ul class="list-group" id="sensorsGroup" style="list-style-type:none">
+                                <li id="sensorTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
+                                    <label for="sensorTypeDisplay">Sensor Type</label><span id="sensorTypeDisplay" class="labelSpan"></span>
+                                </li>
+                                <li id="sensorStatusDisplay_li"class="list-group-item col-lg-12 filterItems esconder">
+                                    <label for="sensorStatusDisplay">Sensor Status</label><span id="sensorStatusDisplay" class="labelSpan"></span>
+                                </li>
+                                <li id="collectConditionDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
+                                   <label for="collectConditionDisplay">Collection Condition</label><span id="collectConditionDisplay" class="labelSpan"></span>
+                                </li>
+                                <li id="deployTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
+                                    <label for="deployTypeDisplay">Deployment Type</label><span id="deployTypeDisplay" class="labelSpan"></span>
+                                </li>
                             </ul>
                         </div>
 
 
                         <div id="hwmGroupDiv" class="esconder">
                             <label for="hwmGroup">High-Water Marks</label>
-                            <ul class="list-group" id="hwmGroup">
-                                <li id="hwmTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">HWM Type: <span id="hwmTypeDisplay"></span> </li>
-                                <li id="hwmQualityDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Quality: <span id="hwmQualityDisplay"></span></li>
-                                <li id="hwmEnvDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Environment: <span id="hwmEnvDisplay"></span></li>
-                                <li id="hwmSurveyCompDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Survey Completed: <span id="hwmSurveyCompDisplay"></span> </li>
-                                <li id="hwmStillWaterDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Stillwater Location: <span id="hwmStillWaterDisplay"></span></li>
+                            <ul class="list-group" id="hwmGroup" style="list-style-type:none">
+                                <li id="hwmTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
+                                    <label for="hwmTypeDisplay">HWM Type</label><span id="hwmTypeDisplay" class="labelSpan"></span>
+                                </li>
+                                <li id="hwmQualityDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
+                                    <label for="hwmQualityDisplay">Quality</label><span id="hwmQualityDisplay" class="labelSpan"></span>
+                                </li>
+                                <li id="hwmEnvDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
+                                    <label for="hwmEnvDisplay">Environment</label><span id="hwmEnvDisplay" class="labelSpan"></span>
+                                </li>
+                                <li id="hwmSurveyCompDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
+                                    <label for="hwmSurveyCompDisplay">Survey Completed</label><span id="hwmSurveyCompDisplay" class="labelSpan"></span>
+                                </li>
+                                <li id="hwmStillWaterDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
+                                    <label for="hwmStillWaterDisplay">Stillwater Location</label><span id="hwmStillWaterDisplay" class="labelSpan"></span>
+                                </li>
                             </ul>
                         </div>
 
                         <div id="peaksGroupDiv" class="esconder">
                             <label for="peaksGroup">Peak Dates</label>
-                            <ul class="list-group" id="peaksGroup">
+                            <ul class="list-group" id="peaksGroup" style="list-style-type:none">
                                 <li id="peakStartDisplay_li" class="list-group-item col-lg-12 filterItems esconder">Start Date: <span id="peakStartDisplay"></span></li>
                                 <li id="peakEndDisplay_li" class="list-group-item col-lg-12 filterItems esconder">End Date: <span id="peakEndDisplay"></span></li>
                             </ul>
