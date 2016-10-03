@@ -661,7 +661,7 @@ input[type="checkbox"], input[type="radio"] {
     text-transform: uppercase;
     letter-spacing: -0.25px;
     color: rgba(0,0,0,0.8);
-    line-height: : 1.5em;
+    line-height: 1.5em;
 }
 
 .filterItems span{
@@ -767,8 +767,6 @@ input[type="checkbox"], input[type="radio"] {
     margin-right: 2px;
 }
 
-<<<<<<< HEAD
-
 .panel-title{
     border-top: 1px solid #E9EBF1;
     transition: 0.2s !important;
@@ -786,7 +784,7 @@ input[type="checkbox"], input[type="radio"] {
     padding: 10px !important;
     transition: 0.2s;
     text-align: center !important;
-    background-color: #3C69C5 !important;
+    background-color: #0071BC !important;
     color: #FFF !important;
     border-left: none !important;
 }
