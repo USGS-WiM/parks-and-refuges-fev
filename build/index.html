@@ -64,7 +64,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <!-- X close button - removed to prevent user from avoiding event selection -->
+                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>-->
                 <h4 class="modal-title">USGS Flood Event Viewer</h4>
             </div>
             <div class="modal-body">
@@ -425,9 +426,9 @@
 
                     <div class="panel-body collapse in">
 
-                        <h3>Current Filters</h3>
+                        <label style="font-size:large;">Current Filters</label>
                         <div id="eventGroupDiv">
-                            <label for="eventGroup">Event</label>
+                            <!--<label for="eventGroup">Event</label>-->
                             <ul class="list-group" id="eventGroup" style="list-style-type:none">
                                 <!--<li class="list-group-item col-lg-12 filterItems esconder">Event Type: <span id="eventTypeDisplay"></span></li>-->
                                 <li class="list-group-item col-lg-12 filterItems">Event <span id="eventNameDisplay"></span></li>
@@ -617,7 +618,7 @@
                                 <b>Observed Data</b>
                             </div>
 
-                            <br>*available at zoom level 8 and above
+                            <p>*available at zoom level 8 and above</p>
 
                             <!--<input type="checkbox" aria-label="..."><i class="rdgMarker"></i><span>Rapid Deployment Streamgage</span></br>-->
                             <!--<input type="checkbox" aria-label="..."><i class="waveHeightMarker"></i><span>Wave Height Sensor</span></br>-->
