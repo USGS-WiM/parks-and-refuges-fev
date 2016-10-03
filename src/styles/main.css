@@ -583,6 +583,10 @@ input[type="checkbox"], input[type="radio"] {
     font-size: larger;
     font-weight: bold;
     text-align: left;
+    /*text-transform: uppercase;*/
+    /*font-family: 'Merriweather', serif;*/
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
 }
 
 
@@ -763,6 +767,7 @@ input[type="checkbox"], input[type="radio"] {
     margin-right: 2px;
 }
 
+<<<<<<< HEAD
 
 .panel-title{
     border-top: 1px solid #E9EBF1;
@@ -928,4 +933,23 @@ input[type='checkbox']{
     width: 25px;
     margin: 0 auto;
     text-align: center;
+}
+.table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td {
+    padding: 2px;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+}
+
+.wim-table {
+    font-family: 'Open Sans', sans-serif !important;
+}
+
+.data-disclaim {
+    background: transparent;
+}
+
+.data-disclaim:hover {
+    background:  #d3d3d3;
 }
