@@ -527,10 +527,10 @@ a.lgi-zoom:hover {
     padding-bottom: 50px;
 }
 
-#mapContainer {
+/*#mapContainer {
     top:50px;
     position: fixed;
-}
+}*/
 input[type="checkbox"], input[type="radio"] {
     float: left;
 }
@@ -590,21 +590,24 @@ input[type="checkbox"], input[type="radio"] {
 /*Sidebar*/
 .event-name{
     color: #6F7192;
-    font-size: 14pt;
+    font-size: 12.5pt;
     box-sizing: border-box;
     padding: 12px 0 0 0;
 }
 .event-name small{
     font-size: 9pt;
     box-sizing: border-box;
-    padding: 0 0 5px 0;
+    color: #6F7192;
+    padding: 0 0 7px 0;
     display: block;
     text-transform: uppercase;
-    font-weight: 500;
+    font-weight: bolder;
+    opacity: 0.5;
 }
 .event-range{
     font-size: 10pt;
-    font-weight: bolder;
+    font-weight: 500;
+    opacity: 0.8;
     color: #6F7390;
     margin-bottom: 0;
     box-sizing: border-box;
@@ -654,6 +657,7 @@ input[type="checkbox"], input[type="radio"] {
     text-transform: uppercase;
     letter-spacing: -0.25px;
     color: rgba(0,0,0,0.8);
+    line-height: : 1.5em;
 }
 
 .filterItems span{
@@ -662,9 +666,22 @@ input[type="checkbox"], input[type="radio"] {
     color: #000;
     letter-spacing: 0;
     box-sizing: border-box;
-    padding: 1px 1px 1px 5px;
+    padding: 2px 1px 2px 5px;
     vertical-align: middle;
     display: inline-block;
+    position: relative;
+    top: -0.5px;
+}
+#locationGroupDiv label,
+#hwmGroupDiv label,
+#sensorsGroupDiv label,
+#eventGroupDiv label{
+    text-align: left !important;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1px 0;
+    margin: 0 auto;
 }
 
 
@@ -677,6 +694,7 @@ input[type="checkbox"], input[type="radio"] {
     position: relative;
     top: 5px;
     margin-right: 5px;
+    color: rgba(0,0,0,0.7) !important;
 }
 
 .esconder {
@@ -707,9 +725,21 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 #btnSubmitEvent {
-    height: 32px;
-    width: 40px;
-    border: 1px solid #000000;
+    height: 34px;
+    width: 50px;
+    background-color: #345EBD;
+    border: 1px solid transparent;
+    color: white;
+    font-weight: 600;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    transition: 0.2s;
+    box-sizing: border-box;
+}
+#btnSubmitEvent:hover{
+    cursor: pointer;
+    background-color: #1E3668;
+    transition: 0.2s;
 }
 
 .select2-container--default .select2-selection--multiple {
@@ -731,4 +761,171 @@ input[type="checkbox"], input[type="radio"] {
 .label {
     margin-left: 2px;
     margin-right: 2px;
+}
+
+
+.panel-title{
+    border-top: 1px solid #E9EBF1;
+    transition: 0.2s !important;
+}
+.panel-title:hover{
+    background-color: rgba(0,0,0,0.05);
+    border-top: 1px solid #D8D8D8;
+    transition: 0.2s !important;
+}
+
+#btnChangeFilters{
+    display: block;
+    width: 100% !important;
+    box-sizing: border-box;
+    padding: 10px !important;
+    transition: 0.2s;
+    text-align: center !important;
+    background-color: #3C69C5 !important;
+    color: #FFF !important;
+    border-left: none !important;
+}
+#btnChangeFilters:hover{
+    cursor: pointer;
+    transition: 0.2s !important;
+    background-color: rgba(52,94,189, 0.8) !important;
+}
+
+
+.panel-body h3{
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 14pt;
+    font-weight: bolder;
+    letter-spacing: -0.5px;
+    color: rgba(0,0,0,0.75);
+}
+
+
+.labelSpan .label{
+    background-color: white !important;
+    color: rgba(0,0,0,0.8) !important;
+    box-sizing: border-box !important;
+    padding: 5px !important;
+    font-size: 9pt !important;
+    margin: 3px;
+}
+
+
+.modal-footer button{
+    display: inline-block !important;
+    box-sizing: border-box;
+    font-weight: bolder !important;
+    letter-spacing: 0.5px !important;
+    padding: 12px 15px !important;
+    color: rgba(0,0,0,0.8) !important;
+    font-size: 10pt !important;
+    transition: 0.2s !important;
+    border-radius: 4px !important;
+}
+#btnSubmitFilters{
+    color: white !important;
+    font-weight: 500 !important;
+    letter-spacing: 1px !important;
+}
+.modal-footer .close{
+    position: relative !important;
+    top: 4px !important;
+}
+.modal-footer button:hover{
+    transition: 0.2s !important;
+}
+.legendClass{
+    border-radius: 4px !important;
+}
+
+.leaflet-control-layers-expanded{
+    border: none !important;
+    background-color: #FCFCFC !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+#legendDiv p{
+    display: block;
+    box-sizing: border-box;
+    padding: 8px 0 0 0;
+    text-align: center;
+    font-size: 8pt;
+    color: rgba(0,0,0,0.5) !important;
+    margin: 0 auto;
+}
+#legendDiv b{
+    box-sizing: border-box;
+    padding: 0 0 0 5px;
+}
+
+.modal-content{
+    border-radius: 3px !important;
+}
+h4.modal-title{
+    font-weight: bolder !important;
+    color: rgba(0,0,0,0.75) !important;
+}
+.modal-header button.close{
+    position: relative;
+    font-family: 'Arial', sans-serif;
+    top: -5px;
+}
+input[type='checkbox']{
+    margin-right: 5px;
+    position: relative;
+    top: -0.5px;
+}
+
+#sapi-searchTextBox{
+    border: 1px solid rgba(0,0,0,0.3) !important;
+}
+#searchSubmit{
+    padding: 6px 12px 7px 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.8px;
+    background-color: #3C69C5 !important;
+    color: rgba(255,255,255,1) !important;
+    border: 1px solid transparent;
+}
+
+
+.modal-body .panel-default{
+    border: none !important;
+}
+
+.modal-body .form-group label{
+    text-transform: uppercase;
+    font-size: 8pt;
+    color: rgba(0,0,0,0.7);
+}
+.leaflet-control-layers-overlays label span i{
+    text-align: center !important;
+}
+
+.popup-title{
+    box-sizing: border-box;
+    padding: 0 0 6px 0;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.6);
+    font-size: 9pt;
+}
+
+.leaflet-popup-close-button{
+    position: relative;
+    top: 5px;
+    right: 5px;
+}
+
+.leaflet-control-layers-overlays label input[type='checkbox']{
+    top: 3px;
+}
+.leaflet-control-layers-overlays label span i{
+    position: relative;
+    top: -2px;
+    width: 25px;
+    margin: 0 auto;
+    text-align: center;
 }
