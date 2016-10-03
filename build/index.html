@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="http://usgs.gov">
+            <a class="navbar-brand" href="https://usgs.gov">
                 <img alt="USGS logo" height="38px" src="images/USGS_ID_white.png">
                 <span class='hidden-xs' style='font-size:20px;display:inline-block;'>&nbsp;&nbsp;Flood Event Viewer</span>
             </a>
@@ -138,12 +138,15 @@
             <div id="aboutModalBody" class="modal-body">
                 <ul class="nav nav-tabs" id="aboutModalTabs">
                     <li role="presentation" class="active"><a id="aboutTab" href="#aboutTabPane" data-toggle="tab"><i class="fa fa-question-circle"></i>&nbsp;About the application</a></li>
-                    <li role="presentation"><a id="disclaimerTab" href="#disclaimerTabPane" data-toggle="tab"><i class="fa fa-exclamation-circle"></i>&nbsp;Disclaimer</a></li>
+                    <li role="presentation"><a id="disclaimerTab" href="#disclaimerTabPane" data-toggle="tab"><i class="fa fa-exclamation-circle"></i>&nbsp;Data Limitations</a></li>
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="aboutTabPane"></br>
                         <p style="color:black; font-size: larger">The USGS Flood Event Viewer (FEV) is the public data discovery component of the Short-Term Network (STN) database. Data viewable and downloadable from this page are from the STN database.</p>
-                        <p>This application integrates with the USGS National Water Information System (NWIS) database for display of time-series water data. As a user of FEV you will encounter links to NWIS pages and data sources, which are maintained separately from STN and FEV.</p>
+
+                        <p>This application relies on the STN Web Services to retrieve and display STN data. Application developers and general data seekers are encouraged to use the web services data API to retrieve STN data. Visit the <span><a href="https://stn.wim.usgs.gov/STNServices" target="_blank">STN Web Services Documentation Page <i class="fa fa-external-link" aria-hidden="true"></i></a></span> for more information, including full documentation of available endpoints and examples.</p>
+
+                        <p>This application integrates with the <span><a href="http://waterdata.usgs.gov/nwis" target="_blank">USGS National Water Information System (NWIS) database <i class="fa fa-external-link" aria-hidden="true"></i></a></span> for display of time-series water data. As a user of FEV you will encounter links to NWIS pages and data sources, which are maintained separately from STN and FEV.</p>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="disclaimerTabPane"></br>
                         <h3>Data Limitations</h3>
@@ -544,7 +547,7 @@
                                     </ul>
                                 </div>
                         </div>
-                        <p>Visit the <span><a href="http://stn.wim.usgs.gov/STNDataPortal" target="_blank">STN Data Portal <i class="fa fa-external-link" aria-hidden="true"></i></a></span> for broader data retrieval capability. </p>
+                        <p>Visit the <span><a href="https://stn.wim.usgs.gov/STNDataPortal" target="_blank">STN Data Portal <i class="fa fa-external-link" aria-hidden="true"></i></a></span> for broader data retrieval capability. </p>
                     </div>
                 </div>
             </div>
