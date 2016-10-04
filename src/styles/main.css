@@ -951,3 +951,7 @@ input[type='checkbox']{
 .data-disclaim:hover {
     background:  #d3d3d3;
 }
+
+.esri-leaflet-logo {
+    display:none !important;
+}
