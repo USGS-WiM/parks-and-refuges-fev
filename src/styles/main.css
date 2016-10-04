@@ -755,6 +755,7 @@ input[type="checkbox"], input[type="radio"] {
     border-bottom-right-radius: 0px;
     border-bottom-left-radius: 0px;
     cursor: text;
+    height: 34px;
 }
 
 .labelSpan {

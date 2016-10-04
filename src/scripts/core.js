@@ -484,6 +484,8 @@ $( document ).ready(function() {
 			// define what to do when a location is found
 			search_api.on('location-found', function(lastLocationFound) {
 
+				$('#geosearchModal').modal('hide');
+
 				var zoomlevel = 14;
 				if (lastLocationFound.Category === 'U.S. State or Territory') zoomlevel = 9;
 
