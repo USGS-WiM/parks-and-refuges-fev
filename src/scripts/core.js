@@ -340,11 +340,22 @@ $( document ).ready(function() {
 		keepSpiderfied: true
 	});
 
-	L.esri.dynamicMapLayer({
+
+	var noaaTrack = L.esri.dynamicMapLayer({
 		url:"http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
 		opacity: 0.5,
 		f:'image'
 	}).addTo(map);
+
+	var noaaOverlays = {
+		"Tropical Cyclone Track" : noaaTrack
+	}
+
+	// set up toggle for the noaa layers and place within legend div, overriding default behavior
+	var noaaToggle = L.control.layers(null, noaaOverlays, {collapsed: false});
+	noaaToggle.addTo(map);
+	noaaToggle._container.remove();
+	document.getElementById('noaaToggleDiv').appendChild(noaaToggle.onAdd(map));
 
 	//populate initial unfiltered download URLs
 	$('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsURLRoot);
@@ -388,6 +399,8 @@ $( document ).ready(function() {
 		$('#filtersModal').modal('show');
 	}
 	$('#btnChangeFilters').click(function(){
+		//update the event select within the filters modal to reflect current event
+		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
 	});
 
@@ -470,6 +483,8 @@ $( document ).ready(function() {
 			
 			// define what to do when a location is found
 			search_api.on('location-found', function(lastLocationFound) {
+
+				$('#geosearchModal').modal('hide');
 
 				var zoomlevel = 14;
 				if (lastLocationFound.Category === 'U.S. State or Territory') zoomlevel = 9;

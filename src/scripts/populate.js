@@ -84,7 +84,7 @@ $( document ).ready(function() {
     // Register states select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.states array
     $('#stateSelect').select2({
-        placeholder: 'All Events'
+        placeholder: 'All States'
     });
     $.ajax({
         dataType: 'json',

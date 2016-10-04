@@ -607,8 +607,8 @@ function filterMapData(event, isUrlParam) {
 function queryNWISrtGages(bbox) {
     var NWISmarkers = {};
 
-    //NWIS query options
-    var parameterCodeList = '00065,62620';
+    //NWIS query options from http://waterservices.usgs.gov/rest/IV-Test-Tool.html
+    var parameterCodeList = '00065,62619,62620,63160';
     var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
     var siteStatus = 'active';
     var url = 'http://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
@@ -630,8 +630,11 @@ function queryNWISrtGages(bbox) {
                 //add point to featureGroup
                 USGSrtGages.addLayer(NWISmarkers[siteID]);
 
-                $( "#nwisLoadingAlert" ).fadeOut(2000)
+                $( "#nwisLoadingAlert" ).fadeOut(2000);
             });
+        },
+        error : function(xml) {
+            $( "#nwisLoadingAlert" ).fadeOut(2000);
         }
     });
 }
@@ -643,7 +646,7 @@ function queryNWISgraphRDG(e) {
     var currentEvent = fev.vars.currentEventName;
     var popupContent =
         '<table class="table table-hover table-striped table-condensed">'+
-        '<caption class="popup-title">Rapid Deployment Gage for ' + currentEvent + '</caption>' +
+        '<caption class="popup-title">Rapid Deployment Gage | ' + currentEvent + '</caption>' +
         '<tr><td><strong>STN Site Name: </strong></td><td><span id="siteName">'+ e.layer.feature.properties.site_name+'</span></td></tr>'+
         '<tr><td><strong>Status: </strong></td><td><span id="status">'+ e.layer.feature.properties.status+'</span></td></tr>'+
         '<tr><td><strong>City: </strong></td><td><span id="city">'+ (e.layer.feature.properties.city == ''|| e.layer.feature.properties.city == null || e.layer.feature.properties.city == undefined ? '<i>No city recorded</i>' : e.layer.feature.properties.city ) + '</span></td></tr>'+
@@ -755,10 +758,13 @@ function queryNWISgraphRDG(e) {
 //get data and generate graph of real-time gage water level time-series data
 function queryNWISgraph(e) {
     var popupContent = '';
-    $.each(e.layer.data.parameters, function( index, parameter ) {
+    //$.each(e.layer.data.parameters, function( index, parameter ) {
         //create table, converting timestamp to friendly format using moment.js library
-        popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + moment(parameter.Time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>'
-    });
+        //popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + moment(parameter.Time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>'
+    //});
+
+    var parameterCodeList = '00065,62619,62620,63160';
+    //var parameterCodeList = '00065';
 
     var timeQueryRange = '';
     if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
@@ -771,11 +777,19 @@ function queryNWISgraph(e) {
         timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
     }
 
-    e.layer.bindPopup('<b>' + e.layer.data.siteName + '</br>Full data link: <a target="_blank" href="http://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">' + e.layer.data.siteCode + '</a></b><br><table class="table table-condensed"><thead><tr><th>Parameter</th><th>Value</th><th>Timestamp</th></tr></thead><tbody>' + popupContent + '</tbody></table><div id="graphContainer" style="width:100%; height:200px;display:none;"></div>', {minWidth: 350}).openPopup();
+    e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="http://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>No NWIS Data Available for Graph</span></b></div>', {minWidth: 350}).openPopup();
 
-    $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode + '&parameterCd=00065' + timeQueryRange, function(data) {
+    $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function(data) {
 
-        if (data.data[0].time_series_data.length <= 0) console.log("No NWIS graph data available for this time period");
+        //if (data.data[0].time_series_data.length <= 0) console.log("No NWIS graph data available for this time period");
+
+
+        if (data.data == undefined) {
+            console.log("No NWIS data available for this time period");
+            $('#noDataMessage').show();
+            //if no time series data, display data NA message
+            //if (data.data[0].time_series_data.length <= 0 ){}
+        }
 
         else {
             //if there is some data, show the div

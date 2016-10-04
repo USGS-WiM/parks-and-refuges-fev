@@ -755,6 +755,7 @@ input[type="checkbox"], input[type="radio"] {
     border-bottom-right-radius: 0px;
     border-bottom-left-radius: 0px;
     cursor: text;
+    height: 34px;
 }
 
 .labelSpan {
@@ -950,4 +951,8 @@ input[type='checkbox']{
 
 .data-disclaim:hover {
     background:  #d3d3d3;
+}
+
+.esri-leaflet-logo {
+    display:none !important;
 }
