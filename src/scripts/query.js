@@ -607,56 +607,32 @@ function filterMapData(event, isUrlParam) {
 function queryNWISrtGages(bbox) {
     var NWISmarkers = {};
 
-    //NWIS query options from http://waterservices.usgs.gov/rest/IV-Test-Tool.html
+    //NWIS query options
     var parameterCodeList = '00065,62620';
     var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
     var siteStatus = 'active';
+    var url = 'http://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
+    
+    $.ajax({
+        url: url,
+        dataType: "xml",
+        success: function(xml){
+            $(xml).find('site').each(function(){
 
-    var timeQueryRange = '';
-    if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
-        //use moment.js lib to get current system date string, properly formatted
-        fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
-    }
-    if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
-        timeQueryRange = ''
-    } else {
-        timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
-    }
+                var siteID = $(this).attr('sno');
+                var siteName = $(this).attr('sna');
+                var lat = $(this).attr('lat');
+                var lng = $(this).attr('lng');
+                NWISmarkers[siteID] = L.marker([lat, lng], {icon: nwisMarkerIcon});
+                NWISmarkers[siteID].data = {siteName:siteName,siteCode:siteID};
+                NWISmarkers[siteID].data.parameters = {};
 
-    var url = 'http://nwis.waterservices.usgs.gov/nwis/iv/?format=json&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus  + timeQueryRange;
-    $.getJSON(url, function(data) {
-        console.log(data.value.timeSeries.length + ' usgs gages found.');
+                //add point to featureGroup
+                USGSrtGages.addLayer(NWISmarkers[siteID]);
 
-        $.each(data.value.timeSeries, function( index, site ) {
-            
-            var siteID = site.name.split(':')[1];
-
-            //check to see if we have this site already 
-            if (NWISmarkers[siteID]) {
-                if (site.values[0].value[0]) {
-                    NWISmarkers[siteID].data.parameters[site.variable.variableName] = {};
-                    NWISmarkers[siteID].data.parameters[site.variable.variableName]['Time'] = site.values[0].value[0].dateTime;
-                    NWISmarkers[siteID].data.parameters[site.variable.variableName]['Value'] = site.values[0].value[0].value;
-                }
-            }
-
-            //otherwise add new site
-            else {
-                if (site.values[0].value[0]) {
-                    NWISmarkers[siteID] = L.marker([site.sourceInfo.geoLocation.geogLocation.latitude, site.sourceInfo.geoLocation.geogLocation.longitude], {icon: nwisMarkerIcon});
-                    NWISmarkers[siteID].data = {siteName:site.sourceInfo.siteName,siteCode:site.sourceInfo.siteCode};
-                    NWISmarkers[siteID].data.parameters = {};
-                    NWISmarkers[siteID].data.parameters[site.variable.variableName] = {};
-                    NWISmarkers[siteID].data.parameters[site.variable.variableName]['Time'] = site.values[0].value[0].dateTime;
-                    NWISmarkers[siteID].data.parameters[site.variable.variableName]['Value'] = site.values[0].value[0].value;
-                    //add point to featureGroup
-                    USGSrtGages.addLayer(NWISmarkers[siteID]);
-                    //$('#nwisLoadingAlert').hide();
-
-                    $( "#nwisLoadingAlert" ).fadeOut(2000)
-                }
-            }
-        });
+                $( "#nwisLoadingAlert" ).fadeOut(2000)
+            });
+        }
     });
 }
 
@@ -795,9 +771,9 @@ function queryNWISgraph(e) {
         timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
     }
 
-    e.layer.bindPopup('<b>' + e.layer.data.siteName + '</br>Full data link: <a target="_blank" href="http://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode[0].value + '">' + e.layer.data.siteCode[0].value + '</a></b><br><table class="table table-condensed"><thead><tr><th>Parameter</th><th>Value</th><th>Timestamp</th></tr></thead><tbody>' + popupContent + '</tbody></table><div id="graphContainer" style="width:100%; height:200px;display:none;"></div>').openPopup();
+    e.layer.bindPopup('<b>' + e.layer.data.siteName + '</br>Full data link: <a target="_blank" href="http://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">' + e.layer.data.siteCode + '</a></b><br><table class="table table-condensed"><thead><tr><th>Parameter</th><th>Value</th><th>Timestamp</th></tr></thead><tbody>' + popupContent + '</tbody></table><div id="graphContainer" style="width:100%; height:200px;display:none;"></div>', {minWidth: 350}).openPopup();
 
-    $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode[0].value + '&parameterCd=00065' + timeQueryRange, function(data) {
+    $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode + '&parameterCd=00065' + timeQueryRange, function(data) {
 
         if (data.data[0].time_series_data.length <= 0) console.log("No NWIS graph data available for this time period");
 
