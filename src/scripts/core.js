@@ -1,7 +1,7 @@
-var stnServicesURL = 'http://stn.wim.usgs.gov/STNServices';
-var stnServicesTestURL = 'http://stntest.wim.usgs.gov/STNServices2';
-var sensorPageURLRoot = "http://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
-var hwmPageURLRoot = "http://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
+var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
+var stnServicesTestURL = 'https://stntest.wim.usgs.gov/STNServices2';
+var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
+var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 
 var fev = fev || {
 	data: {
@@ -342,7 +342,7 @@ $( document ).ready(function() {
 
 
 	var noaaTrack = L.esri.dynamicMapLayer({
-		url:"http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
+		url:"https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
 		opacity: 0.5,
 		f:'image'
 	}).addTo(map);
