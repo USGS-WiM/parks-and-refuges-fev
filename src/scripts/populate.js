@@ -17,7 +17,7 @@ $( document ).ready(function() {
     $.ajax({
         dataType: 'json',
         type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/eventtypes.json',
+        url: 'https://stn.wim.usgs.gov/STNServices/eventtypes.json',
         headers: {'Accept': '*/*'},
         success: function (data) {
             data.sort(function (a, b) {
@@ -54,7 +54,7 @@ $( document ).ready(function() {
     $.ajax({
         dataType: 'json',
         type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/events.json',
+        url: 'https://stn.wim.usgs.gov/STNServices/events.json',
         headers: {'Accept': '*/*'},
         success: function (data) {
             data.sort(function (a, b) {
@@ -89,7 +89,7 @@ $( document ).ready(function() {
     $.ajax({
         dataType: 'json',
         type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/Sites/States.json',
+        url: 'https://stn.wim.usgs.gov/STNServices/Sites/States.json',
         headers: {'Accept': '*/*'},
         success: function (data) {
             data.sort(function (a, b) {
@@ -135,7 +135,7 @@ $( document ).ready(function() {
     $.ajax({
         dataType: 'json',
         type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/sensortypes.json',
+        url: 'https://stn.wim.usgs.gov/STNServices/sensortypes.json',
         headers: {'Accept': '*/*'},
         success: function (data) {
             data.sort(function (a, b) {
@@ -169,7 +169,7 @@ $( document ).ready(function() {
     $.ajax({
         dataType: 'json',
         type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/statustypes.json',
+        url: 'https://stn.wim.usgs.gov/STNServices/statustypes.json',
         headers: {'Accept': '*/*'},
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
@@ -190,7 +190,7 @@ $( document ).ready(function() {
     $.ajax({
         dataType: 'json',
         type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/InstrCollectConditions.json',
+        url: 'https://stn.wim.usgs.gov/STNServices/InstrCollectConditions.json',
         headers: {'Accept': '*/*'},
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
@@ -211,7 +211,7 @@ $( document ).ready(function() {
     $.ajax({
         dataType: 'json',
         type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/deploymenttypes.json',
+        url: 'https://stn.wim.usgs.gov/STNServices/deploymenttypes.json',
         headers: {'Accept': '*/*'},
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
@@ -232,7 +232,7 @@ $( document ).ready(function() {
     $.ajax({
         dataType: 'json',
         type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/hwmtypes.json',
+        url: 'https://stn.wim.usgs.gov/STNServices/hwmtypes.json',
         headers: {'Accept': '*/*'},
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
@@ -254,7 +254,7 @@ $( document ).ready(function() {
     $.ajax({
         dataType: 'json',
         type: 'GET',
-        url: 'http://stn.wim.usgs.gov/STNServices/hwmqualities.json',
+        url: 'https://stn.wim.usgs.gov/STNServices/hwmqualities.json',
         headers: {'Accept': '*/*'},
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
@@ -273,7 +273,7 @@ $( document ).ready(function() {
             $.ajax({
                 dataType: 'json',
                 type: 'GET',
-                url: 'http://stn.wim.usgs.gov/STNServices/Sites/CountiesByState.json?StateAbbrev=' + fev.data.states[i].state_abbrev ,
+                url: 'https://stn.wim.usgs.gov/STNServices/Sites/CountiesByState.json?StateAbbrev=' + fev.data.states[i].state_abbrev ,
                 headers: {'Accept': '*/*'},
                 currentState: fev.data.states[i].state_abbrev,
                 success: function (data)  {

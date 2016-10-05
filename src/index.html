@@ -5,6 +5,17 @@
 
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
+    <script>
+        if (/MSIE 10/i.test(navigator.userAgent)) {
+            // this is internet explorer 10
+            window.alert('The Flood Event Viewer is not supported in Internet Explorer. Please use Google Chrome, Mozilla Firefox, or Microsoft Edge.');
+        }
+        if(/MSIE 9/i.test(navigator.userAgent) || /rv:11.0/i.test(navigator.userAgent)){
+            // this is internet explorer 9 and 11
+            window.alert('The Flood Event Viewer is not supported in Internet Explorer. Please use Google Chrome, Mozilla Firefox, or Microsoft Edge.');
+        }
+    </script>
+
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -75,7 +86,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="http://usgs.gov">
+            <a class="navbar-brand" href="https://www.usgs.gov">
                 <img alt="USGS logo" height="38px" src="images/USGS_ID_white.png">
                 <span class='hidden-xs' style='font-size:20px;display:inline-block;'>&nbsp;&nbsp;Flood Event Viewer</span>
             </a>
@@ -189,7 +200,7 @@
 
                         <p>This application relies on the STN Web Services to retrieve and display STN data. Application developers and general data seekers are encouraged to use the web services data API to retrieve STN data. Visit the <span><a href="https://stn.wim.usgs.gov/STNServices" target="_blank">STN Web Services Documentation Page <i class="fa fa-external-link" aria-hidden="true"></i></a></span> for more information, including full documentation of available endpoints and examples.</p>
 
-                        <p>This application integrates with the <span><a href="http://waterdata.usgs.gov/nwis" target="_blank">USGS National Water Information System (NWIS) database <i class="fa fa-external-link" aria-hidden="true"></i></a></span> for display of time-series water data. As a user of FEV you will encounter links to NWIS pages and data sources, which are maintained separately from STN and FEV.</p>
+                        <p>This application integrates with the <span><a href="https://waterdata.usgs.gov/nwis" target="_blank">USGS National Water Information System (NWIS) database <i class="fa fa-external-link" aria-hidden="true"></i></a></span> for display of time-series water data. As a user of FEV you will encounter links to NWIS pages and data sources, which are maintained separately from STN and FEV.</p>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="disclaimerTabPane"></br>
                         <h3>Data Limitations</h3>
