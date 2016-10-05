@@ -221,7 +221,7 @@ body {
 }
 
 /*basemapBtn elements manually set to width of widest - temp solution until dynamic solution is implemented */
-.basemapBtn, .filtersBtn {
+.basemapBtn {
     width: 86px;
     margin-bottom: 2px;
     padding:2px;
@@ -237,10 +237,12 @@ body {
     box-sizing: border-box;
     padding: 5px;
     display: block;
-    width: 100%;
+    /*width: 100%;*/
     text-align: left;
     color: #6F758E;
     margin: 0 auto;
+    display: inline-block;
+    float: right;
     border-left: 4px solid transparent;
 }
 #sidebar .filtersBtn img {
@@ -780,7 +782,7 @@ input[type="checkbox"], input[type="radio"] {
 
 #btnChangeFilters{
     display: block;
-    width: 100% !important;
+    /*width: 100% !important;*/
     box-sizing: border-box;
     padding: 10px !important;
     transition: 0.2s;
@@ -955,4 +957,12 @@ input[type='checkbox']{
 
 .esri-leaflet-logo {
     display:none !important;
+}
+
+#currentFiltersHeading{
+    text-align: left;
+    height: 37px;
+    font-size: large;
+    font-weight: 700;
+    /*float: left;*/
 }

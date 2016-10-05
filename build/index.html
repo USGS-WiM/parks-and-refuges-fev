@@ -423,11 +423,15 @@
                 </div>
                 <div id="filtersPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="filtersHeader">
                     <!------------------------------------------------------------------------------------------>
-                    <button id="btnChangeFilters" class="btn btn-default equalize filtersBtn">Change Filters</button>
+
 
                     <div class="panel-body collapse in">
 
-                        <label style="font-size:large;">Current Filters</label>
+                        <button id="btnChangeFilters" class="btn btn-default filtersBtn">Change Filters</button><br>
+                        <div id="currentFiltersHeading">Current Filters</div>
+
+                        <!--<div style="float:left;"><label id="currentFiltersHeading" style="font-size:large;">Current Filters</label></div><div style="float:right"><button id="btnChangeFilters" class="btn btn-default filtersBtn">Change Filters</button></div>-->
+
                         <div id="eventGroupDiv">
                             <!--<label for="eventGroup">Event</label>-->
                             <ul class="list-group" id="eventGroup" style="list-style-type:none">
