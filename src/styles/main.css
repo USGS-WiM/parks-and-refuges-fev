@@ -782,14 +782,18 @@ input[type="checkbox"], input[type="radio"] {
 
 #btnChangeFilters{
     display: block;
-    /*width: 100% !important;*/
+    width: 100% !important;
+    margin: 15px auto 15px auto;
     box-sizing: border-box;
     padding: 10px !important;
     transition: 0.2s;
+    border-radius: 5px !important;
     text-align: center !important;
     background-color: #0071BC !important;
     color: #FFF !important;
     border-left: none !important;
+    border: 2px solid #00568F !important;
+    margin-bottom: 16px !important;
 }
 #btnChangeFilters:hover{
     cursor: pointer;
@@ -964,5 +968,7 @@ input[type='checkbox']{
     height: 37px;
     font-size: large;
     font-weight: 700;
+    display: block;
+    margin-top: 15px;
     /*float: left;*/
 }
