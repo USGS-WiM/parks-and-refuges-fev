@@ -701,7 +701,7 @@ function queryNWISgraphRDG(e) {
                         console.log("No NWIS RDG data available for this time period");
                         $('#noDataMessage').show();
                         //if no time series data, display data NA message
-                        if (data.data[0].time_series_data.length <= 0 ){}
+                        //if (data.data[0].time_series_data.length <= 0 ){}
                     }
                     else {
                         //if there is some data, show the div
@@ -777,7 +777,7 @@ function queryNWISgraph(e) {
         timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
     }
 
-    e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="http://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>No NWIS Data Available for Graph</span></b></div>', {minWidth: 350}).openPopup();
+    e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="http://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>No NWIS Data Available for Graph</span></b></div>', {minWidth: 350}).openPopup();
 
     $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function(data) {
 
@@ -786,6 +786,7 @@ function queryNWISgraph(e) {
 
         if (data.data == undefined) {
             console.log("No NWIS data available for this time period");
+            $('#graphLoadMessage').hide();
             $('#noDataMessage').show();
             //if no time series data, display data NA message
             //if (data.data[0].time_series_data.length <= 0 ){}
@@ -793,6 +794,7 @@ function queryNWISgraph(e) {
 
         else {
             //if there is some data, show the div
+            $('#graphLoadMessage').hide();
             $('#graphContainer').show();
 
             //create chart
