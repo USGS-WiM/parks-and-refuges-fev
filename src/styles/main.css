@@ -664,6 +664,10 @@ input[type="checkbox"], input[type="radio"] {
     letter-spacing: -0.25px;
     color: rgba(0,0,0,0.8);
     line-height: 1.5em;
+    border-bottom-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
 }
 
 .filterItems span{
@@ -787,7 +791,7 @@ input[type="checkbox"], input[type="radio"] {
     box-sizing: border-box;
     padding: 10px !important;
     transition: 0.2s;
-    border-radius: 5px !important;
+    /*border-radius: 5px !important;*/
     text-align: center !important;
     background-color: #0071BC !important;
     color: #FFF !important;
@@ -838,7 +842,19 @@ input[type="checkbox"], input[type="radio"] {
     color: white !important;
     font-weight: 500 !important;
     letter-spacing: 1px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
 }
+
+#btnClearFilters{
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+}
+
 .modal-footer .close{
     position: relative !important;
     top: 4px !important;
