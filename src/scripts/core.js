@@ -326,14 +326,14 @@ $( document ).ready(function() {
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
 	var sensorsToggle = L.control.layers(null, sensorOverlays, {collapsed: false});
 	sensorsToggle.addTo(map);
-	sensorsToggle._container.remove();
-	document.getElementById('sensorsToggleDiv').appendChild(sensorsToggle.onAdd(map));
+	$('#sensorsToggleDiv').append(sensorsToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
 	var observedToggle = L.control.layers(null, observedOverlays, {collapsed: false});
 	observedToggle.addTo(map);
-	observedToggle._container.remove();
-	document.getElementById('observedToggleDiv').appendChild(observedToggle.onAdd(map));
+	$('#observedToggleDiv').append(observedToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
 
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
@@ -354,8 +354,8 @@ $( document ).ready(function() {
 	// set up toggle for the noaa layers and place within legend div, overriding default behavior
 	var noaaToggle = L.control.layers(null, noaaOverlays, {collapsed: false});
 	noaaToggle.addTo(map);
-	noaaToggle._container.remove();
-	document.getElementById('noaaToggleDiv').appendChild(noaaToggle.onAdd(map));
+	$('#noaaToggleDiv').append(noaaToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
 
 	//populate initial unfiltered download URLs
 	$('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsURLRoot);
