@@ -1,6 +1,6 @@
 {
   "name": "flood-event-viewer",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "USGS Flood Event Viewer",
   "repository": {
     "type": "git",
