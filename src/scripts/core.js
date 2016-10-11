@@ -1,5 +1,5 @@
 var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
-var stnServicesTestURL = 'https://stntest.wim.usgs.gov/STNServices2';
+//var stnServicesURL = 'https://stntest.wim.usgs.gov/STNServices2'; //test URL
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 
