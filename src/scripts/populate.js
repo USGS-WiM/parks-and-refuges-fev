@@ -58,12 +58,14 @@ $( document ).ready(function() {
         headers: {'Accept': '*/*'},
         success: function (data) {
             data.sort(function (a, b) {
-                var eventA = a.event_name;
-                var eventB = b.event_name;
-                if (eventA < eventB) {
+                // var eventA = a.event_name;
+                // var eventB = b.event_name;
+                var eventA = a.event_start_date;
+                var eventB = b.event_start_date;
+                if (eventA > eventB) {
                     return -1;
                 }
-                if (eventA > eventB) {
+                if (eventA < eventB) {
                     return 1;
                 }
                 else {
