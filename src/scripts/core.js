@@ -45,7 +45,11 @@ var fev = fev || {
 		currentEventID_str: "",
 		currentEventStartDate_str : "",
 		currentEventEndDate_str : "",
-		currentEventActive : false
+		currentEventActive : false,
+		extentNorth : 71.3888898,  // north lat: Point Barrow Alaska
+		extentWest : -179.148611, //west long: Amatignak Island, Alaska
+		extentEast :  -66.947028, //east long: Sail Rock, Maine
+		extentSouth :  18.910833  //south lat: Ka Lae. Hawaii
 	},
 	layerList: 	[
 		{

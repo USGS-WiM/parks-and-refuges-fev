@@ -86,6 +86,21 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
         }
         if (data.features.length > 0) {
             console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+            //check for bad lat/lon values
+            for (var i = data.features.length - 1; i >= 0; i--) {
+                //check that lat/lng are not NaN
+                if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
+                    console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                    //remove it from array
+                    data.features.splice(i, 1);
+                }
+                //check that lat/lng are within the US and also not 0
+                if (fev.vars.extentSouth <= data.features[i].geometry.coordinates[0] <= fev.vars.extentNorth && fev.vars.extentWest <= data.features[i].geometry.coordinates[1] <= fev.vars.extentEast || data.features[i].geometry.coordinates[0] == 0 || data.features[i].geometry.coordinates[1] == 0){
+                    console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                    //remove it from array
+                    data.features.splice(i, 1);
+                }
+            }
             currentMarker.addData(data);
             currentMarker.eachLayer(function(layer) {
                 layer.addTo(currentSubGroup);
@@ -128,8 +143,6 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
             var currentEvent = fev.vars.currentEventName;
 
 
-
-
             // })[0];
             var popupContent =
             '<table class="table table-hover table-striped table-condensed wim-table">'+
@@ -167,7 +180,14 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
             console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
+                //check that lat/lng are not NaN
                 if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
+                    console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                    //remove it from array
+                    data.features.splice(i, 1);
+                }
+                //check that lat/lng are within the US and also not 0
+                if (fev.vars.extentSouth <= data.features[i].geometry.coordinates[0] <= fev.vars.extentNorth && fev.vars.extentWest <= data.features[i].geometry.coordinates[1] <= fev.vars.extentEast || data.features[i].geometry.coordinates[0] == 0 || data.features[i].geometry.coordinates[1] == 0){
                     console.error("Bad latitude or latitude value for point: ", data.features[i]);
                     //remove it from array
                     data.features.splice(i, 1);
@@ -223,6 +243,21 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
         }
         if (data.features.length > 0) {
             console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+            //check for bad lat/lon values
+            for (var i = data.features.length - 1; i >= 0; i--) {
+                //check that lat/lng are not NaN
+                if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
+                    console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                    //remove it from array
+                    data.features.splice(i, 1);
+                }
+                //check that lat/lng are within the US and also not 0
+                if (fev.vars.extentSouth <= data.features[i].geometry.coordinates[0] <= fev.vars.extentNorth && fev.vars.extentWest <= data.features[i].geometry.coordinates[1] <= fev.vars.extentEast || data.features[i].geometry.coordinates[0] == 0 || data.features[i].geometry.coordinates[1] == 0){
+                    console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                    //remove it from array
+                    data.features.splice(i, 1);
+                }
+            }
             currentMarker.addData(data);
             currentMarker.eachLayer(function(layer) {
                 layer.addTo(peak);
