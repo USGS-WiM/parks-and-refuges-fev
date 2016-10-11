@@ -24,7 +24,7 @@ var fev = fev || {
 		jsonHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.json',
 		xmlHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.xml',
 		csvHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.csv',
-		hwmFilteredGeoJSONViewURL: stnServicesURL + '/HWMs/FilteredHWMs.geojson',
+		hwmFilteredGeoJSONViewURL: stnServicesTestURL + '/HWMs/FilteredHWMs.geojson',
 		hwmGeoJSONViewURL: stnServicesURL + '/hwms.geojson',
 
 		xmlPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.xml',

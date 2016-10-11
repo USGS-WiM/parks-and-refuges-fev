@@ -159,17 +159,22 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
     });
 
     $.getJSON(url, function(data) {
-
         if (data.length == 0) {
             console.log( '0 ' + markerIcon.options.className + ' GeoJSON features found');
             return
         }
         if (data.features.length > 0) {
-            console.log( data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+            console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+            //check for bad lat/lon values
+            for (var i = data.features.length - 1; i >= 0; i--) {
+                if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
+                    console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                    //remove it from array
+                    data.features.splice(i, 1);
+                }
+            }
             currentMarker.addData(data);
             currentMarker.eachLayer(function(layer) {
-                // var latlng = L.latLng(layer.feature.geometry.coordinates);
-                // markerCoords.push(latlng);
                 layer.addTo(hwm);
             });
             hwm.addTo(map);
