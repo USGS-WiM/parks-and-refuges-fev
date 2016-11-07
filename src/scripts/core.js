@@ -350,19 +350,22 @@ $( document ).ready(function() {
 		opacity: 0.5,
 		f:'image'
 	}).addTo(map);
+
 	///Matthew-specific NOAA NGS coastal oblique imagery layers
-	var noaaOct07a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161007aOblique/{z}/{x}/{y}.png');
-	var noaaOct08a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161008aOblique/{z}/{x}/{y}.png');
-	var noaaOct08b = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161008bOblique/{z}/{x}/{y}.png');
-	var noaaOct09a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161009aOblique/{z}/{x}/{y}.png');
-	var noaaOct10a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161010aOblique/{z}/{x}/{y}.png');
-	//group layer to combine all NGS layers into one layer/one toggle
-	var noaaImagery = L.layerGroup([noaaOct07a, noaaOct08a, noaaOct08b, noaaOct09a, noaaOct10a]);
+	// var noaaOct07a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161007aOblique/{z}/{x}/{y}.png');
+	// var noaaOct08a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161008aOblique/{z}/{x}/{y}.png');
+	// var noaaOct08b = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161008bOblique/{z}/{x}/{y}.png');
+	// var noaaOct09a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161009aOblique/{z}/{x}/{y}.png');
+	// var noaaOct10a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161010aOblique/{z}/{x}/{y}.png');
+	// //group layer to combine all NGS layers into one layer/one toggle
+	// var noaaImagery = L.layerGroup([noaaOct07a, noaaOct08a, noaaOct08b, noaaOct09a, noaaOct10a]);
+	// noaaImagery.addTo(map);
+
 	var noaaOverlays = {
-		"Tropical Cyclone Track" : noaaTrack,
-		"National Geodetic Survey Imagery": noaaImagery
+		"Tropical Cyclone Track" : noaaTrack
+		//"National Geodetic Survey Imagery": noaaImagery
 	};
-	noaaImagery.addTo(map);
+
 	// set up toggle for the noaa layers and place within legend div, overriding default behavior
 	var noaaToggle = L.control.layers(null, noaaOverlays, {collapsed: false});
 	noaaToggle.addTo(map);
