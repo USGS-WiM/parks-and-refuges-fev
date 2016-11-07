@@ -445,13 +445,10 @@ $( document ).ready(function() {
 	  	switch (baseMap) {
 		    case 'Streets': baseMap = 'Streets'; break;
 		    case 'Satellite': baseMap = 'Imagery'; break;
-		    //case 'Hybrid': baseMap = 'ImageryLabels'; break;
 		    case 'Topo': baseMap = 'Topographic'; break;
 		    case 'Terrain': baseMap = 'ShadedRelief'; break;
 		    case 'Gray': baseMap = 'Gray'; break;
-		    // case 'OSM': baseMap = 'n/a'; break;
 		    case 'NatGeo': baseMap = 'NationalGeographic'; break;
-		    // case 'NatlMap': baseMap = 'n/a'; break;
 		}
 
 		setBasemap(baseMap);
@@ -462,7 +459,7 @@ $( document ).ready(function() {
 	/* geocoder control */
 	//import USGS search API
 	var searchScript = document.createElement('script');
-	searchScript.src = 'http://txpub.usgs.gov/DSS/search_api/1.1/api/search_api.min.js';
+	searchScript.src = 'https://txpub.usgs.gov/DSS/search_api/1.1/api/search_api.min.js';
 	searchScript.onload = function() {
 		setSearchAPI();
 	};

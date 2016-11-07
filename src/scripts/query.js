@@ -26,7 +26,7 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
             var popupContent =
                 '<table class="table table-hover table-striped table-condensed wim-table">'+
                     '<caption class="popup-title">' + name + ' | <span style="color:gray"> ' + currentEvent + '</span></caption>' +
-                    '<tr><td><strong>STN Site Name: </strong></td><td><span id="siteName">'+ feature.properties.site_name+'</span></td></tr>'+
+                    '<tr><td><strong>STN Site Number: </strong></td><td><span id="siteName">'+ feature.properties.site_no+'</span></td></tr>'+
                     '<tr><td><strong>Status: </strong></td><td><span id="status">'+ feature.properties.status+'</span></td></tr>'+
                     '<tr><td><strong>City: </strong></td><td><span id="city">'+ (feature.properties.city == ''|| feature.properties.city == null || feature.properties.city == undefined ? '<i>No city recorded</i>' : feature.properties.city ) + '</span></td></tr>'+
                     '<tr><td><strong>County: </strong></td><td><span id="county">' + feature.properties.county +'</span></td></tr>'+
@@ -687,7 +687,7 @@ function queryNWISgraphRDG(e) {
     var popupContent =
         '<table class="table table-hover table-striped table-condensed">'+
         '<caption class="popup-title">Rapid Deployment Gage | ' + currentEvent + '</caption>' +
-        '<tr><td><strong>STN Site Name: </strong></td><td><span id="siteName">'+ e.layer.feature.properties.site_name+'</span></td></tr>'+
+        '<tr><td><strong>STN Site Number: </strong></td><td><span id="siteName">'+ e.layer.feature.properties.site_no+'</span></td></tr>'+
         '<tr><td><strong>Status: </strong></td><td><span id="status">'+ e.layer.feature.properties.status+'</span></td></tr>'+
         '<tr><td><strong>City: </strong></td><td><span id="city">'+ (e.layer.feature.properties.city == ''|| e.layer.feature.properties.city == null || e.layer.feature.properties.city == undefined ? '<i>No city recorded</i>' : e.layer.feature.properties.city ) + '</span></td></tr>'+
         '<tr><td><strong>County: </strong></td><td><span id="county">' + e.layer.feature.properties.county +'</span></td></tr>'+
@@ -724,7 +724,7 @@ function queryNWISgraphRDG(e) {
                 //set timeQueryRange to the event start date and end date
                 timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
                 //set the URL for the NWIS RDG page, with time period specified
-                var rdgNWIS_URL = 'http://waterdata.usgs.gov/nwis/uv?site_no=' + usgsSiteID + '&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str;
+                var rdgNWIS_URL = 'https://waterdata.usgs.gov/nwis/uv?site_no=' + usgsSiteID + '&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str;
                 $('#rdgNWISLink').prop('href', rdgNWIS_URL);
                 $('#rdgNWISLink').html(usgsSiteID);
 
@@ -735,7 +735,7 @@ function queryNWISgraphRDG(e) {
                 //$each(sites) function(site) {
                 //    if (site.parameter_cd =='62620') gageheightCode == site.parameter_cd
                 //}
-                $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + usgsSiteID + '&parameterCd=62620,00065,00067' + timeQueryRange, function(data) {
+                $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + usgsSiteID + '&parameterCd=62620,00065,00067' + timeQueryRange, function(data) {
 
                     if (data.data == undefined) {
                         console.log("No NWIS RDG data available for this time period");
