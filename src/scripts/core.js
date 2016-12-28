@@ -55,37 +55,44 @@ var fev = fev || {
 		{
 			"ID": "baro",
 			"Name": "Barometric Pressure Sensor",
-			"Type":"sensor"
+			"Type":"sensor",
+			"Category": "observed"
 		},
 		{
 			"ID": "stormTide",
 			"Name": "Storm Tide Sensor",
-			"Type":"sensor"
+			"Type":"sensor",
+			"Category": "observed"
 		},
 		{
 			"ID": "met",
 			"Name": "Meteorological Sensor",
-			"Type":"sensor"
+			"Type":"sensor",
+			"Category": "observed"
 		},
 		{
 			"ID": "waveHeight",
 			"Name": "Wave Height Sensor",
-			"Type":"sensor"
+			"Type":"sensor",
+			"Category": "observed"
 		},
 		{
 			"ID": "rdg",
 			"Name": "Rapid Deployment Gage",
-			"Type":"sensor"
+			"Type":"sensor",
+			"Category": "real-time"
 		},
 		{
 			"ID": "hwm",
 			"Name": "High Water Mark",
-			"Type":"observed"
+			"Type":"observed",
+			"Category": "observed"
 		},
 		{
 			"ID": "peak",
 			"Name": "Peak Summary",
-			"Type":"observed"
+			"Type":"interpreted",
+			"Category": "interpreted"
 		}
 	]
 };
@@ -96,14 +103,14 @@ var map;
 var markerCoords = [];
 var oms;
 
-var baroMarkerIcon = L.divIcon({className: 'baroMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
-var metMarkerIcon = L.divIcon({className: 'metMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
-var rdgMarkerIcon = L.divIcon({className: 'rdgMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
-var stormTideMarkerIcon = L.divIcon({className: 'stormTideMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
-var waveHeightMarkerIcon = L.divIcon({className: 'waveHeightMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
-var hwmMarkerIcon = L.divIcon({className: 'hwmMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
-var peakMarkerIcon = L.divIcon({className: 'peakMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
-var nwisMarkerIcon  = L.divIcon({className: 'nwisMarker', iconAnchor: [8, 24], popupAnchor: [0, 0]});
+var baroMarkerIcon = L.icon({className: 'baroMarker', iconUrl: 'images/baro.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
+var metMarkerIcon = L.icon({className: 'metMarker', iconUrl: 'images/met.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
+var rdgMarkerIcon = L.icon({className: 'rdgMarker', iconUrl: 'images/rdg.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
+var stormTideMarkerIcon = L.icon({className: 'stormTideMarker', iconUrl: 'images/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
+var waveHeightMarkerIcon = L.icon({className: 'waveHeightMarker', iconUrl: 'images/waveheight.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12,12]});
+var hwmMarkerIcon = L.icon({className: 'hwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2]});
+var peakMarkerIcon = L.icon({className: 'peakMarker', iconUrl: 'images/peak.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
+var nwisMarkerIcon = L.icon({className: 'nwisMarker', iconUrl: 'images/nwis.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
 var	baro = L.layerGroup();
@@ -317,20 +324,25 @@ $( document ).ready(function() {
 	//rdg.addTo(map);
 
 	//USGSrtGages.addTo(map);
-	//define layer 'overlays' (leaflet term)
-	var sensorOverlays = {
+	//define layer 'overlays' (overlay is a leaflet term)
+	//define the real-time overlay and manually add the NWIS RT gages to it
+	var realTimeOverlays = {
 		"<i class='nwisMarker'></i>&nbsp;Real-time Stream Gage *" : USGSrtGages
 	};
+	//define observed overlay and interpreted overlay, leave blank at first
 	var observedOverlays = {};
+	var interpretedOverlays = {};
+	//loop thru layer list and add the legend item to the appropriate heading
 	$.each(fev.layerList, function( index, layer ) {
-		if(layer.Type == 'sensor') sensorOverlays["<i class='" + layer.ID + "Marker'></i>&nbsp;" + layer.Name] = window[layer.ID]
-		if(layer.Type != 'sensor') observedOverlays["<i class='" + layer.ID + "Marker'></i>&nbsp;" + layer.Name] = window[layer.ID]
+		if(layer.Category == 'real-time') realTimeOverlays["<i class='" + layer.ID + "Marker'></i>&nbsp;" + layer.Name] = window[layer.ID];
+		if(layer.Category == 'observed') observedOverlays["<i class='" + layer.ID + "Marker'></i>&nbsp;" + layer.Name] = window[layer.ID];
+		if(layer.Category == 'interpreted') interpretedOverlays["<i class='" + layer.ID + "Marker'></i>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
-	var sensorsToggle = L.control.layers(null, sensorOverlays, {collapsed: false});
-	sensorsToggle.addTo(map);
-	$('#sensorsToggleDiv').append(sensorsToggle.onAdd(map));
+	var realTimeToggle = L.control.layers(null, realTimeOverlays, {collapsed: false});
+	realTimeToggle.addTo(map);
+	$('#realTimeToggleDiv').append(realTimeToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
@@ -339,38 +351,46 @@ $( document ).ready(function() {
 	$('#observedToggleDiv').append(observedToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
+	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
+	var interpretedToggle = L.control.layers(null, interpretedOverlays, {collapsed: false});
+	interpretedToggle.addTo(map);
+	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
+
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
 		keepSpiderfied: true
 	});
 
+	//experimental - untested against actual hurricane track published by NOAA
+	//run identify operation against the NOAA tropical cyclone service to check if any features exist within a bounding box around US and into hurricane formation territory of Atlantic Ocean
+	$.getJSON( 'https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer/identify?geometry=%7B%22rings%22%3A%5B%5B%5B1095773.4076228663%2C-2264052.666983325%5D%2C%5B-16260935.479144061%2C1853127.202922333%5D%2C%5B-16280503.35838506%2C9515810.636098623%5D%2C%5B880526.735971868%2C9554946.394580625%5D%2C%5B1095773.4076228663%2C-2264052.666983325%5D%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A102100%2C%22latestWkid%22%3A3857%7D%7D%7D&geometryType=esriGeometryPolygon&sr=&layers=&layerDefs=&time=&layerTimeOptions=&tolerance=1&mapExtent=%7B%22xmin%22%3A-18853651.648703426%2C%22ymin%22%3A-6174306.988588039%2C%22xmax%22%3A7739096.239815462%2C%22ymax%22%3A11123698.260455891%2C%22spatialReference%22%3A%7B%22wkid%22%3A102100%7D%7D&imageDisplay=600%2C550%2C96&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&dynamicLayers=&returnZ=false&returnM=false&gdbVersion=&f=pjson', {} )
+		.done(function( data ) {
+			//if any results (features in the bounding box), then add forecast track layer to map, add toggle to interpreted data category.
+			if (data.results.length > 0 ){
+				var noaaTrack = L.esri.dynamicMapLayer({
+					url:"https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
+					opacity: 0.5,
+					f:'image'
+				}).addTo(map);
 
-	var noaaTrack = L.esri.dynamicMapLayer({
-		url:"https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
-		opacity: 0.5,
-		f:'image'
-	}).addTo(map);
+				interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaTrack";
 
-	///Matthew-specific NOAA NGS coastal oblique imagery layers
-	// var noaaOct07a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161007aOblique/{z}/{x}/{y}.png');
-	// var noaaOct08a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161008aOblique/{z}/{x}/{y}.png');
-	// var noaaOct08b = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161008bOblique/{z}/{x}/{y}.png');
-	// var noaaOct09a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161009aOblique/{z}/{x}/{y}.png');
-	// var noaaOct10a = L.tileLayer('http://ngs-storm-viewer-web.azurewebsites.net/storms/tilesb/services/tileserver.php?/20161010aOblique/{z}/{x}/{y}.png');
-	// //group layer to combine all NGS layers into one layer/one toggle
-	// var noaaImagery = L.layerGroup([noaaOct07a, noaaOct08a, noaaOct08b, noaaOct09a, noaaOct10a]);
-	// noaaImagery.addTo(map);
-
-	var noaaOverlays = {
-		"Tropical Cyclone Track" : noaaTrack
-		//"National Geodetic Survey Imagery": noaaImagery
-	};
-
-	// set up toggle for the noaa layers and place within legend div, overriding default behavior
-	var noaaToggle = L.control.layers(null, noaaOverlays, {collapsed: false});
-	noaaToggle.addTo(map);
-	$('#noaaToggleDiv').append(noaaToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
+				//below is older logic, for a dedicated NOAA overlays group. replaced in favor of appending NOAA layer to 'Interpreted Data'
+				// var noaaOverlays = {
+				// 	"NOAA Tropical Cyclone Forecast Track" : noaaTrack
+				// 	//"National Geodetic Survey Imagery": noaaImagery
+				// };
+				// set up toggle for the noaa layers and place within legend div, overriding default behavior
+				// var noaaToggle = L.control.layers(null, noaaOverlays, {collapsed: false});
+				// noaaToggle.addTo(map);
+				// $('#noaaToggleDiv').append(noaaToggle.onAdd(map));
+				// $('.leaflet-top.leaflet-right').hide();
+			}
+		})
+		.fail(function() {
+			console.log( "NOAA Tropical Cyclone layer identify operation failed." );
+		});
 
 	//populate initial unfiltered download URLs
 	$('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsURLRoot);
