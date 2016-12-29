@@ -2,11 +2,17 @@
  * Created by bdraper on 8/2/2016.
  */
 
-
 $( document ).ready(function() {
 
     $('#btnClearFilters').click(function(){
+        //clear all text inputs
         $('.clearable').val('').trigger('change');
+        //hide all checkmark icons
+        $('.check').find('span').hide();
+        //make all inactive
+        $('.check').removeClass("active");
+        //set checked property to false for all
+        $('.btn-group input[type="checkbox"]').prop('checked', false);
     });
 
     // Register Event type select as select2, retrieve values from jQuery ajax, sort, populate dropdown

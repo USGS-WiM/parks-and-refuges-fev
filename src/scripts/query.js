@@ -651,7 +651,7 @@ function queryNWISrtGages(bbox) {
     var parameterCodeList = '00065,62619,62620,63160';
     var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
     var siteStatus = 'active';
-    var url = 'http://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
+    var url = 'https://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
     
     $.ajax({
         url: url,
@@ -696,7 +696,7 @@ function queryNWISgraphRDG(e) {
         '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + e.layer.feature.properties.site_id + '&Sensor=' + e.layer.feature.properties.instrument_id+ '\>Sensor data page</a></b></span></td></tr>'+
         '</table>' +
         '<div id="RDGgraphContainer" style="width:100%; height:250px;display:none;"></div>'+
-        '<div id="RDGdataLink" style="width:100%;display:none;"><b><span style="color:red;"> - Provisional Data Subject to Revision -</span><br>More parameters available at NWIS Web: <a id="rdgNWISLink" target="_blank" href="http://usgs.gov"></a></b></div>'+
+        '<div id="RDGdataLink" style="width:100%;display:none;"><b><span style="color:red;"> - Provisional Data Subject to Revision -</span><br>More parameters available at NWIS Web: <a id="rdgNWISLink" target="_blank" href="https://usgs.gov"></a></b></div>'+
         '<div id="noDataMessage" style="width:100%;display:none;"><b><span>No NWIS Data Available for Graph</span></b></div>';
 
         e.layer.bindPopup(popupContent).openPopup();
@@ -762,7 +762,7 @@ function queryNWISgraphRDG(e) {
                             credits: {
                                 enabled: true,
                                 text: "USGS NWIS",
-                                href: "http://waterdata.usgs.gov/nwis"
+                                href: "https://waterdata.usgs.gov/nwis"
                             },
                             xAxis: {
                                 type: "datetime",
@@ -817,9 +817,9 @@ function queryNWISgraph(e) {
         timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
     }
 
-    e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="http://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>No NWIS Data Available for Graph</span></b></div>', {minWidth: 350}).openPopup();
+    e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>No NWIS Data Available for Graph</span></b></div>', {minWidth: 350}).openPopup();
 
-    $.getJSON('http://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function(data) {
+    $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function(data) {
 
         //if (data.data[0].time_series_data.length <= 0) console.log("No NWIS graph data available for this time period");
 
