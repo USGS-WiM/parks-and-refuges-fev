@@ -106,7 +106,7 @@ var oms;
 var baroMarkerIcon = L.icon({className: 'baroMarker', iconUrl: 'images/baro.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var metMarkerIcon = L.icon({className: 'metMarker', iconUrl: 'images/met.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
 var rdgMarkerIcon = L.icon({className: 'rdgMarker', iconUrl: 'images/rdg.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
-var stormTideMarkerIcon = L.icon({className: 'stormTideMarker', iconUrl: 'images/stormTide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
+var stormTideMarkerIcon = L.icon({className: 'stormTideMarker', iconUrl: 'images/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
 var waveHeightMarkerIcon = L.icon({className: 'waveHeightMarker', iconUrl: 'images/waveheight.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12,12]});
 var hwmMarkerIcon = L.icon({className: 'hwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var peakMarkerIcon = L.icon({className: 'peakMarker', iconUrl: 'images/peak.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
