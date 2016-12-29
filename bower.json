@@ -1,6 +1,6 @@
 {
   "name": "flood-event-viewer",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "dependencies": {
     "jquery": "^2.1.3",
     "fontawesome": "^4.3.0",
@@ -11,7 +11,6 @@
     "bootstrap-sidebar": "^0.2.0",
     "leaflet": "^0.7.3",
     "esri-leaflet": "^1.0.4",
-    "leaflet-groupedlayercontrol": "latest",
     "select2": "^4.0.3",
     "leaflet.markercluster": "leaflet-0.7",
     "OverlappingMarkerSpiderfier-Leaflet": "http://jawj.github.com/OverlappingMarkerSpiderfier-Leaflet/bin/oms.min.js",

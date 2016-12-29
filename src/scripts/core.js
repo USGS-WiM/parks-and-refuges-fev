@@ -106,7 +106,7 @@ var oms;
 var baroMarkerIcon = L.icon({className: 'baroMarker', iconUrl: 'images/baro.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var metMarkerIcon = L.icon({className: 'metMarker', iconUrl: 'images/met.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
 var rdgMarkerIcon = L.icon({className: 'rdgMarker', iconUrl: 'images/rdg.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
-var stormTideMarkerIcon = L.icon({className: 'stormTideMarker', iconUrl: 'images/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
+var stormTideMarkerIcon = L.icon({className: 'stormTideMarker', iconUrl: 'images/stormTide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
 var waveHeightMarkerIcon = L.icon({className: 'waveHeightMarker', iconUrl: 'images/waveheight.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12,12]});
 var hwmMarkerIcon = L.icon({className: 'hwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var peakMarkerIcon = L.icon({className: 'peakMarker', iconUrl: 'images/peak.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
@@ -294,8 +294,8 @@ $( document ).ready(function() {
 	map.on({
 		overlayadd: function(e) {
 			if (e.name.indexOf('Stream Gage') !== -1) {
-				if (map.getZoom() < 8) USGSrtGages.clearLayers();
-				if (map.hasLayer(USGSrtGages) && map.getZoom() >= 8) {
+				if (map.getZoom() < 9) USGSrtGages.clearLayers();
+				if (map.hasLayer(USGSrtGages) && map.getZoom() >= 9) {
 					//USGSrtGages.clearLayers();
 					$('#nwisLoadingAlert').show();
 					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -327,22 +327,26 @@ $( document ).ready(function() {
 	//define layer 'overlays' (overlay is a leaflet term)
 	//define the real-time overlay and manually add the NWIS RT gages to it
 	var realTimeOverlays = {
-		"<i class='nwisMarker'></i>&nbsp;Real-time Stream Gage *" : USGSrtGages
+		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage" : USGSrtGages
 	};
 	//define observed overlay and interpreted overlay, leave blank at first
 	var observedOverlays = {};
 	var interpretedOverlays = {};
 	//loop thru layer list and add the legend item to the appropriate heading
 	$.each(fev.layerList, function( index, layer ) {
-		if(layer.Category == 'real-time') realTimeOverlays["<i class='" + layer.ID + "Marker'></i>&nbsp;" + layer.Name] = window[layer.ID];
-		if(layer.Category == 'observed') observedOverlays["<i class='" + layer.ID + "Marker'></i>&nbsp;" + layer.Name] = window[layer.ID];
-		if(layer.Category == 'interpreted') interpretedOverlays["<i class='" + layer.ID + "Marker'></i>&nbsp;" + layer.Name] = window[layer.ID];
+		if(layer.Category == 'real-time') realTimeOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
+		if(layer.Category == 'observed') observedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
+		if(layer.Category == 'interpreted') interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
 	var realTimeToggle = L.control.layers(null, realTimeOverlays, {collapsed: false});
 	realTimeToggle.addTo(map);
 	$('#realTimeToggleDiv').append(realTimeToggle.onAdd(map));
+
+	// var rtScaleAlertMarkup = "<div class='alert alert-warning' role='alert'>Please zoom in to refresh</div>";
+	// $('#realTimeToggleDiv').append(rtScaleAlertMarkup);
+
 	$('.leaflet-top.leaflet-right').hide();
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
@@ -363,34 +367,52 @@ $( document ).ready(function() {
 	});
 
 	//experimental - untested against actual hurricane track published by NOAA
-	//run identify operation against the NOAA tropical cyclone service to check if any features exist within a bounding box around US and into hurricane formation territory of Atlantic Ocean
-	$.getJSON( 'https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer/identify?geometry=%7B%22rings%22%3A%5B%5B%5B1095773.4076228663%2C-2264052.666983325%5D%2C%5B-16260935.479144061%2C1853127.202922333%5D%2C%5B-16280503.35838506%2C9515810.636098623%5D%2C%5B880526.735971868%2C9554946.394580625%5D%2C%5B1095773.4076228663%2C-2264052.666983325%5D%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A102100%2C%22latestWkid%22%3A3857%7D%7D%7D&geometryType=esriGeometryPolygon&sr=&layers=&layerDefs=&time=&layerTimeOptions=&tolerance=1&mapExtent=%7B%22xmin%22%3A-18853651.648703426%2C%22ymin%22%3A-6174306.988588039%2C%22xmax%22%3A7739096.239815462%2C%22ymax%22%3A11123698.260455891%2C%22spatialReference%22%3A%7B%22wkid%22%3A102100%7D%7D&imageDisplay=600%2C550%2C96&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&dynamicLayers=&returnZ=false&returnM=false&gdbVersion=&f=pjson', {} )
+	//make request for tropical cyclones layer legend. if label = "No active advisories at this time", no data to show. else, add forecast track layer to map. This method suggested by NOAA developer Jason Greenlaw. See below for alternate Identify method
+	$.getJSON( 'https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {} )
 		.done(function( data ) {
 			//if any results (features in the bounding box), then add forecast track layer to map, add toggle to interpreted data category.
-			if (data.results.length > 0 ){
+			if (data[0].label == "No active advisories at this time"){
+				return
+			} else {
 				var noaaTrack = L.esri.dynamicMapLayer({
 					url:"https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
 					opacity: 0.5,
 					f:'image'
 				}).addTo(map);
-
 				interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaTrack";
-
-				//below is older logic, for a dedicated NOAA overlays group. replaced in favor of appending NOAA layer to 'Interpreted Data'
-				// var noaaOverlays = {
-				// 	"NOAA Tropical Cyclone Forecast Track" : noaaTrack
-				// 	//"National Geodetic Survey Imagery": noaaImagery
-				// };
-				// set up toggle for the noaa layers and place within legend div, overriding default behavior
-				// var noaaToggle = L.control.layers(null, noaaOverlays, {collapsed: false});
-				// noaaToggle.addTo(map);
-				// $('#noaaToggleDiv').append(noaaToggle.onAdd(map));
-				// $('.leaflet-top.leaflet-right').hide();
 			}
 		})
 		.fail(function() {
-			console.log( "NOAA Tropical Cyclone layer identify operation failed." );
+			console.log( "NOAA Tropical Cyclone legend retrieve failed." );
 		});
+
+	//experimental - untested against actual hurricane track published by NOAA
+	//run identify operation against the NOAA tropical cyclone service to check if any features exist within a bounding box around US and into hurricane formation territory of Atlantic Ocean. Suspended in favor of legend check method above.
+	// $.getJSON( 'https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer/identify?geometry=%7B%22rings%22%3A%5B%5B%5B1095773.4076228663%2C-2264052.666983325%5D%2C%5B-16260935.479144061%2C1853127.202922333%5D%2C%5B-16280503.35838506%2C9515810.636098623%5D%2C%5B880526.735971868%2C9554946.394580625%5D%2C%5B1095773.4076228663%2C-2264052.666983325%5D%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A102100%2C%22latestWkid%22%3A3857%7D%7D%7D&geometryType=esriGeometryPolygon&sr=&layers=&layerDefs=&time=&layerTimeOptions=&tolerance=1&mapExtent=%7B%22xmin%22%3A-18853651.648703426%2C%22ymin%22%3A-6174306.988588039%2C%22xmax%22%3A7739096.239815462%2C%22ymax%22%3A11123698.260455891%2C%22spatialReference%22%3A%7B%22wkid%22%3A102100%7D%7D&imageDisplay=600%2C550%2C96&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&dynamicLayers=&returnZ=false&returnM=false&gdbVersion=&f=pjson', {} )
+	// 	.done(function( data ) {
+	// 		//if any results (features in the bounding box), then add forecast track layer to map, add toggle to interpreted data category.
+	// 		if (data.results.length > 0 ){
+	// 			var noaaTrack = L.esri.dynamicMapLayer({
+	// 				url:"https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
+	// 				opacity: 0.5,
+	// 				f:'image'
+	// 			}).addTo(map);
+	// 			interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaTrack";
+	// 			//below is older logic, for a dedicated NOAA overlays group. replaced in favor of appending NOAA layer to 'Interpreted Data'
+	// 			// var noaaOverlays = {
+	// 			// 	"NOAA Tropical Cyclone Forecast Track" : noaaTrack
+	// 			// 	//"National Geodetic Survey Imagery": noaaImagery
+	// 			// };
+	// 			// set up toggle for the noaa layers and place within legend div, overriding default behavior
+	// 			// var noaaToggle = L.control.layers(null, noaaOverlays, {collapsed: false});
+	// 			// noaaToggle.addTo(map);
+	// 			// $('#noaaToggleDiv').append(noaaToggle.onAdd(map));
+	// 			// $('.leaflet-top.leaflet-right').hide();
+	// 		}
+	// 	})
+	// 	.fail(function() {
+	// 		console.log( "NOAA Tropical Cyclone layer identify operation failed." );
+	// 	});
 
 	//populate initial unfiltered download URLs
 	$('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsURLRoot);
@@ -413,6 +435,8 @@ $( document ).ready(function() {
 			$('.hiddenForm').not(formToShow).hide();
 		});
 	});
+
+	//toggle the appearance of the check box on click, including toggling the check icon
 	$('.check').on('click', function(){
 		$(this).find('span').toggle();
 	});
@@ -596,8 +620,15 @@ $( document ).ready(function() {
 			}
 		})
 		//USGSrtGages.clearLayers();
-		if (map.getZoom() < 8) USGSrtGages.clearLayers();
-		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 8 && !foundPopup) {
+		if (map.getZoom() < 9) {
+			USGSrtGages.clearLayers();
+			$('#rtScaleAlert').show();
+		}
+
+		if (map.getZoom() >= 9){
+			$('#rtScaleAlert').hide();
+		}
+		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 9 && !foundPopup) {
 			//USGSrtGages.clearLayers();
 			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
