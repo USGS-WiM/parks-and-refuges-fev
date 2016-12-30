@@ -6,7 +6,7 @@
     "fontawesome": "^4.3.0",
     "jquery.nicescroll": "inuyaksa/jquery.nicescroll#~3.6.0",
     "bootstrap": "latest",
-    "wim-mapper-styles": "https://github.com/USGS-WiM/WiM-Mapper-Styles.git",
+    "wim-mapper-styles": "https://github.com/USGS-WiM/WiM-Mapper-Styles.git#^0.0.3",
     "wim-styles": "https://github.com/USGS-WiM/wim-styles.git",
     "bootstrap-sidebar": "^0.2.0",
     "leaflet": "^0.7.3",
