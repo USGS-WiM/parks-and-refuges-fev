@@ -17,5 +17,13 @@
     "highcharts": "^4.2.6",
     "moment": "^2.14.1",
     "bootstrap-datepicker": "^1.6.4"
+  },
+  "overrides": {
+    "select2": {
+      "main": [
+        "dist/js/select2.js",
+        "dist/css/select2.min.css"
+      ]
+    }
   }
 }
