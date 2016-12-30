@@ -80,7 +80,7 @@ gulp.task('clean', function (cb) {
     del([
         'build/styles/**',
         'build/scripts/**',
-        'build/images/**',
+        'build/images/**'
     ], cb);
 });
 
