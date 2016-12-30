@@ -18,7 +18,7 @@ gulp.task('leaflet', function() {
 
 //less compilation
 gulp.task('less', function () {
-    return gulp.src(['src/bower_components/wim-mapper-styles/less/base.less'])
+    return gulp.src(['src/bower_components/wim-styles/template/less/base.less'])
         .pipe(less())
         .pipe(gulp.dest('src/styles'))
         .pipe(gulp.dest('build/styles'))
