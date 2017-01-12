@@ -710,8 +710,8 @@ function queryNWISgraphRDG(e) {
             //usgsSiteID = '365423076051300';
 
             var timeQueryRange = '';
-            //check if event is active and has a blank end date - in that case set end of time query to current date
-            if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
+            //check if event has a blank end date - in that case set end of time query to current date
+            if (fev.vars.currentEventEndDate_str == '') {
                 //use moment.js lib to get current system date string, properly formatted
                 fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
                 console.log("Selected event is active, so end date is today, " + fev.vars.currentEventEndDate_str)
@@ -807,17 +807,21 @@ function queryNWISgraph(e) {
     //var parameterCodeList = '00065';
 
     var timeQueryRange = '';
-    if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
-        //use moment.js lib to get current system date string, properly formatted
+    //if event has no end date
+    if (fev.vars.currentEventEndDate_str == '') {
+        //use moment.js lib to get current system date string, properly formatted, set currentEventEndDate var to current date
         fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
     }
+    //if no start date and
     if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
         timeQueryRange = '&period=P7D'
     } else {
         timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
     }
 
-    e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>No NWIS Data Available for Graph</span></b></div>', {minWidth: 350}).openPopup();
+    //popup markup with site name number and name - moved into chart title
+    //e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', {minWidth: 350}).openPopup();
+    e.layer.bindPopup('<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '"><b>NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', {minWidth: 350}).openPopup();
 
     $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function(data) {
 
@@ -835,6 +839,7 @@ function queryNWISgraph(e) {
         else {
             //if there is some data, show the div
             $('#graphLoadMessage').hide();
+            $('.popup-title').hide();
             $('#graphContainer').show();
 
             //create chart
@@ -844,8 +849,18 @@ function queryNWISgraph(e) {
                     type: 'line'
                 },
                 title: {
-                    //text: e.layer.data.siteCode[0].agencyCode + ' ' + e.layer.data.siteCode[0].value + ' ' + e.layer.data.siteName
-                    text: null
+                    text:  'NWIS Site ' + e.layer.data.siteCode + '<br> ' + e.layer.data.siteName,
+                    align: 'left',
+                    style: {
+                        color: 'rgba(0,0,0,0.6)',
+                        fontSize: 'small',
+                        fontWeight: 'bold',
+                        fontFamily: 'Open Sans, sans-serif'
+                    }
+                    //text: null
+                },
+                exporting: {
+                    filename: 'FEV_NWIS_Site' + e.layer.data.siteCode
                 },
                 credits: {
                     enabled: false

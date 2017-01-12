@@ -588,6 +588,16 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 .popup-title {
+     font-size: larger;
+     font-weight: bold;
+     text-align: left;
+     /*text-transform: uppercase;*/
+     /*font-family: 'Merriweather', serif;*/
+     font-family: 'Open Sans', sans-serif;
+     font-weight: 700;
+ }
+
+.nwis-link {
     font-size: larger;
     font-weight: bold;
     text-align: left;
@@ -595,8 +605,8 @@ input[type="checkbox"], input[type="radio"] {
     /*font-family: 'Merriweather', serif;*/
     font-family: 'Open Sans', sans-serif;
     font-weight: 700;
+    cursor: auto;
 }
-
 
 /*Additions - Samuels 10/27*/
 /*Sidebar*/
