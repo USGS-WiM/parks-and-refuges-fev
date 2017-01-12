@@ -608,6 +608,15 @@ input[type="checkbox"], input[type="radio"] {
     cursor: auto;
 }
 
+.rdg-nwis-info{
+    font-weight: bold;
+    text-align: left;
+    /*text-transform: uppercase;*/
+    /*font-family: 'Merriweather', serif;*/
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+}
+
 /*Additions - Samuels 10/27*/
 /*Sidebar*/
 .event-name{

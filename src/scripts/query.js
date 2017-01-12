@@ -696,7 +696,7 @@ function queryNWISgraphRDG(e) {
         '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + e.layer.feature.properties.site_id + '&Sensor=' + e.layer.feature.properties.instrument_id+ '\>Sensor data page</a></b></span></td></tr>'+
         '</table>' +
         '<div id="RDGgraphContainer" style="width:100%; height:250px;display:none;"></div>'+
-        '<div id="RDGdataLink" style="width:100%;display:none;"><b><span style="color:red;"> - Provisional Data Subject to Revision -</span><br>More parameters available at NWIS Web: <a id="rdgNWISLink" target="_blank" href="https://usgs.gov"></a></b></div>'+
+        '<div id="RDGdataLink" style="width:100%;display:none;"><b><span class="rdg-nwis-info" style="color:red;"> - Provisional Data Subject to Revision -</span><br><span class="rdg-nwis-info">Additional parameters available at NWISWeb</span><br><a class="nwis-link" id="rdgNWISLink" target="_blank" href="https://usgs.gov"></a></b></div>'+
         '<div id="noDataMessage" style="width:100%;display:none;"><b><span>No NWIS Data Available for Graph</span></b></div>';
 
         e.layer.bindPopup(popupContent).openPopup();
@@ -726,7 +726,7 @@ function queryNWISgraphRDG(e) {
                 //set the URL for the NWIS RDG page, with time period specified
                 var rdgNWIS_URL = 'https://waterdata.usgs.gov/nwis/uv?site_no=' + usgsSiteID + '&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str;
                 $('#rdgNWISLink').prop('href', rdgNWIS_URL);
-                $('#rdgNWISLink').html(usgsSiteID);
+                $('#rdgNWISLink').html('Site ' + usgsSiteID + ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i>');
 
                 ///now have valid start and end date strings, so proceed with getting the graph (for water level, generically defined, PCs 62620,00065,00067
                 //may need to account for cases where multiple time-series sets returns, 1 for each of multiple params hint: data.parameter_cd should show PC before drilling down to time series object
@@ -755,9 +755,18 @@ function queryNWISgraphRDG(e) {
                                 type: 'line'
                             },
                             title: {
-                                //text: e.layer.data.siteCode[0].agencyCode + ' ' + e.layer.data.siteCode[0].value + ' ' + e.layer.data.siteName
+                                text:  'RDG water level, NWIS site ' + usgsSiteID,
+                                align: 'left',
+                                style: {
+                                    color: 'rgba(0,0,0,0.6)',
+                                    fontSize: 'small',
+                                    fontWeight: 'bold',
+                                    fontFamily: 'Open Sans, sans-serif'
+                                }
                                 //text: null
-                                text: 'Water Level'
+                            },
+                            exporting: {
+                                filename: 'FEV_RDG_NWISSite' + usgsSiteID
                             },
                             credits: {
                                 enabled: true,
@@ -821,7 +830,7 @@ function queryNWISgraph(e) {
 
     //popup markup with site name number and name - moved into chart title
     //e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', {minWidth: 350}).openPopup();
-    e.layer.bindPopup('<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '"><b>NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', {minWidth: 350}).openPopup();
+    e.layer.bindPopup('<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '"><b>Site ' + e.layer.data.siteCode + ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', {minWidth: 350}).openPopup();
 
     $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function(data) {
 
