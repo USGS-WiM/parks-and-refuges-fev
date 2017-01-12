@@ -24,6 +24,11 @@
         "dist/js/select2.js",
         "dist/css/select2.min.css"
       ]
+    },
+    "fontawesome": {
+      "main": [
+        "css/font-awesome.css"
+      ]
     }
   }
 }
