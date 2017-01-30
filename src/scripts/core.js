@@ -59,7 +59,7 @@ var fev = fev || {
 			"Category": "observed"
 		},
 		{
-			"ID": "stormTide",
+			"ID": "stormtide",
 			"Name": "Storm Tide Sensor",
 			"Type":"sensor",
 			"Category": "observed"
@@ -71,7 +71,7 @@ var fev = fev || {
 			"Category": "observed"
 		},
 		{
-			"ID": "waveHeight",
+			"ID": "waveheight",
 			"Name": "Wave Height Sensor",
 			"Type":"sensor",
 			"Category": "observed"
@@ -114,9 +114,9 @@ var nwisMarkerIcon = L.icon({className: 'nwisMarker', iconUrl: 'images/nwis.png'
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
 var	baro = L.layerGroup();
-var stormTide = L.layerGroup();
+var stormtide = L.layerGroup();
 var	met = L.layerGroup();
-var	waveHeight = L.layerGroup();
+var	waveheight = L.layerGroup();
 var hwm = L.layerGroup();
 var peak = L.layerGroup();
 
