@@ -35,8 +35,8 @@ var fev = fev || {
 		baroGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=baro_view&',
 		metGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=met_view&',
 		rdgGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=rdg_view&',
-		stormTideGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=stormtide_view&',
-		waveHeightGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=waveheight_view&'
+		stormtideGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=stormtide_view&',
+		waveheightGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=waveheight_view&'
 	},
 	queryStrings: {
 	},
@@ -106,8 +106,8 @@ var oms;
 var baroMarkerIcon = L.icon({className: 'baroMarker', iconUrl: 'images/baro.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var metMarkerIcon = L.icon({className: 'metMarker', iconUrl: 'images/met.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
 var rdgMarkerIcon = L.icon({className: 'rdgMarker', iconUrl: 'images/rdg.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
-var stormTideMarkerIcon = L.icon({className: 'stormTideMarker', iconUrl: 'images/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
-var waveHeightMarkerIcon = L.icon({className: 'waveHeightMarker', iconUrl: 'images/waveheight.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12,12]});
+var stormtideMarkerIcon = L.icon({className: 'stormtideMarker', iconUrl: 'images/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
+var waveheightMarkerIcon = L.icon({className: 'waveheightMarker', iconUrl: 'images/waveheight.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12,12]});
 var hwmMarkerIcon = L.icon({className: 'hwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var peakMarkerIcon = L.icon({className: 'peakMarker', iconUrl: 'images/peak.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var nwisMarkerIcon = L.icon({className: 'nwisMarker', iconUrl: 'images/nwis.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
