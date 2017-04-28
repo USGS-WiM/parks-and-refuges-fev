@@ -1,10 +1,10 @@
 # FEV
-###Version 2 of the Flood Event Viewer (FEV)
+### Version 2 of the Flood Event Viewer (FEV)
 
 
 ----------
 
-##Developer Instructions
+## Developer Instructions
 
 run `npm install` AND `bower install` to get dependencies after first cloning
 
@@ -12,7 +12,7 @@ run `npm install` AND `bower install` to get dependencies after first cloning
 
 `gulp` to build project
 
-####Semver versioning/release tags
+#### Semver versioning/release tags
 
 Advance the version when adding features, fixing bugs or making minor enhancement. Follow semver principles. To add tag in git,  type `git tag v{major}.{minor}.{patch}`. Example: `git tag v2.0.5`
 
@@ -20,12 +20,12 @@ First push tags to origin: `git push origin --tags` then, after pull request, up
 
 ---
 
-##App Features
+## App Features
 
-####Event URL Parameter
+#### Event URL Parameter
 To go directly to an event view on load, append `#{event name}` to the URL. Example: `stn.wim.usgs.gov/FEV#Sandy`.  If arriving without event in URL, user will be directed, via modal, to choose an event first before proceeding.
 
-####Guide to NWIS real-time layer
+#### Guide to NWIS real-time layer
 FEV contains a USGS NWIS real-time streamgage layer to display gage data for the period of the event specified.  A graph of stage in elevation feet is generated on-the-fly using the HighCharts library. Proper time period display is dependent on proper event management in the STN database - an invalid event date range may result in a failure to retrieve data. FEV defaults to showing the last 7 days of real-time gage data for any absent or invalid event date range.
 
 FEV displays NWIS sites of the following type:
@@ -48,7 +48,7 @@ The following parameter codes are used to display water level:
 
 
 
-####Guide to Rapid Deployment Gage (RDG) layer
+#### Guide to Rapid Deployment Gage (RDG) layer
 FEV contains a layer for RDGs. The RDG layer reflects the RDGs recorded in the STN database, which is essentially a metadata record for the sensor, with the option to include files such as photos and diagrams.  Actual time-series data is recorded by the NWIS database. USGS staff that record the RDG in the STN database must include a USGS NWIS site ID for the RDG in order to associate the records and allow FEV to display a water level graph and link to the NWISWeb data page.  FEV retrieves RDG water level time-series data from NWIS for the date range of the chosen event using the [Instantaneous Values Web Service](http://waterservices.usgs.gov/rest/IV-Service.html).
 
 Parameter codes used to display water level:
