@@ -648,7 +648,7 @@ function queryNWISrtGages(bbox) {
     var NWISmarkers = {};
 
     //NWIS query options from http://waterservices.usgs.gov/rest/IV-Test-Tool.html
-    var parameterCodeList = '00065,62619,62620,63160';
+    var parameterCodeList = '00065,62619,62620,63160,72214';
     var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
     var siteStatus = 'active';
     var url = 'https://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;

@@ -55,6 +55,7 @@ Parameter codes used to display water level:
  - 62620 (Estuary or ocean water surface elevation above NAVD 1988, feet)
  - 00065 (Gage height, feet)
  - 00067 (Tide stage, code)
+ - 72214 (Lake or reservoir elevation above International Great Lakes Datum (IGLD), feet)
 
 An absent or invalid NWIS site ID will result in a "No NWIS Data Available for Graph" message, and no NWISWeb link will be provided to the user. NWIS site IDs have a length range between 8 and 15 digits, thus any ID provided that is shorter than 8 characters or longer than 15 is invalid and will result in no graph or link. One common mistake is to omit the leading zero of an ID (for example: entering '2092576' instead of '02092576').
 
