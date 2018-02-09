@@ -18,7 +18,7 @@
 
     "homepageURL": "stn.wim.usgs.gov/fev",
     "downloadURL": "https://github.com/USGS-WiM/FEV/archive/master.zip",
-    "disclaimerURL": "https://github.com/USGS-WiM/FEV/blob/master/LICENSE.md",
+    "disclaimerURL": "https://github.com/USGS-WiM/FEV/blob/master/DISCLAIMER.md",
     "repositoryUrl": "https://github.com/USGS-WiM/FEV",
     "vcs": "git",
 
