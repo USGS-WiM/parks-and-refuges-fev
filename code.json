@@ -4,7 +4,7 @@
     "organization": "U.S. Geological Survey",
     "description": "Displays flood events from the short-term network (STN) database",
     "version": "v2.3.4",
-    "status": "Production"
+    "status": "Production",
 
     "permissions": {
       "usageType": "openSource",
@@ -32,7 +32,7 @@
     ],
 
     "languages": [
-      "javascript",
+      "javascript"
     ],
 
     "contact": {
