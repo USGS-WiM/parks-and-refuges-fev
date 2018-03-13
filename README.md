@@ -30,6 +30,7 @@ The following parameter codes are used to display water level:
  -  62619 (Estuary or ocean water surface elevation above NGVD 1929, feet)
  -  62620 (Estuary or ocean water surface elevation above NAVD 1988, feet)
  -  63160 (Stream water level elevation above NAVD 1988, in feet)
+ -  72279 (Tidal elevation, NOS-averaged, NAVD88, feet)
 
 
 

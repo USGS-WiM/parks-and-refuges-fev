@@ -1,10 +1,10 @@
 {
   "name": "flood-event-viewer",
-  "version": "2.3.4",
+  "version": "2.4.4",
   "description": "USGS Flood Event Viewer",
   "repository": {
     "type": "git",
-    "url": "https://github.com/USGS-WiM/FEV"
+    "url": "https://github.com/USGS-WiM/FEV.git"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

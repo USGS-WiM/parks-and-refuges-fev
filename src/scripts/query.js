@@ -812,7 +812,7 @@ function queryNWISgraph(e) {
         //popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + moment(parameter.Time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>'
     //});
 
-    var parameterCodeList = '00065,62619,62620,63160';
+    var parameterCodeList = '00065,62619,62620,63160,72279';
     //var parameterCodeList = '00065';
 
     var timeQueryRange = '';
