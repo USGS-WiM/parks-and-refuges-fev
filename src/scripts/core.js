@@ -17,9 +17,9 @@ var fev = fev || {
 		hwmQualities : []
 	},
 	urls: {
-		jsonSensorsURLRoot : stnServicesURL + '/Instruments.json',
-		xmlSensorsURLRoot: stnServicesURL + '/Instruments.xml',
-		csvSensorsURLRoot : stnServicesURL + '/Instruments.csv',
+		jsonSensorsURLRoot : stnServicesURL + '/Instruments/FilteredInstruments.json',
+		xmlSensorsURLRoot: stnServicesURL + '/Instruments/FilteredInstruments.xml',
+		csvSensorsURLRoot : stnServicesURL + '/Instruments/FilteredInstruments.csv',
 
 		jsonHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.json',
 		xmlHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.xml',
