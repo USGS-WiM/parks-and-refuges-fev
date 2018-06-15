@@ -17,9 +17,9 @@ var fev = fev || {
 		hwmQualities : []
 	},
 	urls: {
-		jsonSensorsURLRoot : stnServicesURL + '/Instruments.json',
-		xmlSensorsURLRoot: stnServicesURL + '/Instruments.xml',
-		csvSensorsURLRoot : stnServicesURL + '/Instruments.csv',
+		jsonSensorsURLRoot : stnServicesURL + '/Instruments/FilteredInstruments.json',
+		xmlSensorsURLRoot: stnServicesURL + '/Instruments/FilteredInstruments.xml',
+		csvSensorsURLRoot : stnServicesURL + '/Instruments/FilteredInstruments.csv',
 
 		jsonHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.json',
 		xmlHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.xml',
@@ -279,7 +279,7 @@ $( document ).ready(function() {
 
 	/* create map */
 	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
-	var layer = L.esri.basemapLayer('Gray').addTo(map);
+	var layer = L.esri.basemapLayer('Topographic').addTo(map);
 	var layerLabels;
 	L.Icon.Default.imagePath = './images';
 
@@ -323,7 +323,9 @@ $( document ).ready(function() {
 	//add USGS rt gages to the map
 	//rdg.addTo(map);
 
-	//USGSrtGages.addTo(map);
+	//display USGS rt gages by default on map load
+	USGSrtGages.addTo(map);
+
 	//define layer 'overlays' (overlay is a leaflet term)
 	//define the real-time overlay and manually add the NWIS RT gages to it
 	var realTimeOverlays = {

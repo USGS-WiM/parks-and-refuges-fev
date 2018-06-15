@@ -1,0 +1,47 @@
+[
+  {
+    "name": "FEV",
+    "organization": "U.S. Geological Survey",
+    "description": "Displays flood events from the short-term network (STN) database",
+    "version": "v2.4.6",
+    "status": "Production",
+
+    "permissions": {
+      "usageType": "openSource",
+      "licenses": [
+        {
+          "name": "Public Domain",
+          "URL": "https://github.com/USGS-WiM/FEV/blob/master/LICENSE.md"
+        }
+      ]
+    },
+
+    "homepageURL": "stn.wim.usgs.gov/fev",
+    "downloadURL": "https://github.com/USGS-WiM/FEV/archive/master.zip",
+    "disclaimerURL": "https://github.com/USGS-WiM/FEV/blob/master/DISCLAIMER.md",
+    "repositoryUrl": "https://github.com/USGS-WiM/FEV",
+    "vcs": "git",
+
+    "laborHours": null,
+
+    "tags": [
+      "flood event",
+      "flood event viewer",
+      "fev",
+      "stn"
+    ],
+
+    "languages": [
+      "javascript"
+    ],
+
+    "contact": {
+      "name": "Blake Draper",
+      "email": "bdraper@usgs.gov"
+    },
+
+    "date": {
+      "metadataLastUpdated": "2018-02-07"
+    }
+  }
+]
