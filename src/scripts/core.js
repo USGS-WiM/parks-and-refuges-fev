@@ -111,6 +111,7 @@ var waveheightMarkerIcon = L.icon({className: 'waveheightMarker', iconUrl: 'imag
 var hwmMarkerIcon = L.icon({className: 'hwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var peakMarkerIcon = L.icon({className: 'peakMarker', iconUrl: 'images/peak.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var nwisMarkerIcon = L.icon({className: 'nwisMarker', iconUrl: 'images/nwis.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
+var nwisRainMarkerIcon = L.icon({className: 'nwisMarker', iconUrl: 'images/rain.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
 var	baro = L.layerGroup();
@@ -123,6 +124,8 @@ var peak = L.layerGroup();
 //rdg and USGSrtGages layers must be featureGroup type to support mouse event listeners
 var rdg = L.featureGroup();
 var USGSrtGages = L.featureGroup();
+var USGSRainGages = L.featureGroup();
+
 
 /////markercluster code, can remove eventually
 // Marker Cluster Group for sensors
@@ -300,7 +303,12 @@ $( document ).ready(function() {
 					$('#nwisLoadingAlert').show();
 					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 					queryNWISrtGages(bbox);
+					queryNWISRainGages(bbox);
+					console.log("querying rain gages");
 				}
+				/* if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9) {
+					
+				} */
 			}
 		},
 		overlayremove: function(e) {
@@ -329,7 +337,8 @@ $( document ).ready(function() {
 	//define layer 'overlays' (overlay is a leaflet term)
 	//define the real-time overlay and manually add the NWIS RT gages to it
 	var realTimeOverlays = {
-		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage" : USGSrtGages
+		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage" : USGSrtGages,
+		"<img class='legendSwatch' src='images/rain.png'>&nbsp;Real-time Rain Gage" : USGSRainGages
 	};
 	//define observed overlay and interpreted overlay, leave blank at first
 	var observedOverlays = {};
