@@ -642,7 +642,64 @@ function filterMapData(event, isUrlParam) {
     });
 
 } //end filterMapData function
+function queryNWISRainGages(bbox) {
+    var NWISRainmarkers = {};
 
+    var siteStatus = 'active';
+    //var state = ['DE', 'FL', 'GA', 'MD', 'MA', 'NJ', 'NC', 'ND', 'PA', 'RI', 'SC', 'VA', 'WV', 'GU', 'PR'];
+    //var state = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'GU', 'PR', 'VI'];
+    //for (i = 0; i < state.length; i++) {
+
+        var parameterCodeList2 = '00045,46529,72192';
+        var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
+        var siteStatus = 'active';
+        var url = 'https://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList2 + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
+
+
+        //var url = 'https://waterdata.usgs.gov/' + state[i] + '/nwis/current?type=precip&group_key=county_cd&format=sitefile_output&sitefile_output_format=xml&column_name=agency_cd&column_name=site_no&column_name=station_nm&column_name=site_tp_cd&column_name=dec_lat_va&column_name=dec_long_va&column_name=agency_use_cd';
+        //var url = 'https://waterdata.usgs.gov/nwis/current?type=precip&group_key=county_cd&format=sitefile_output&sitefile_output_format=xml&column_name=agency_cd&column_name=site_no&column_name=station_nm&column_name=site_tp_cd&column_name=dec_lat_va&column_name=dec_long_va&column_name=agency_use_cd';
+        console.log(url);
+
+        $.ajax({
+            url: url,
+            dataType: "xml",
+            data: NWISRainmarkers,
+            success: function (xml) {
+                $(xml).find('site').each(function () {
+
+                    var siteID = $(this).attr('sno');
+                var siteName = $(this).attr('sna');
+                var lat = $(this).attr('lat');
+                var lng = $(this).attr('lng');
+                /* NWISmarkers[siteID] = L.marker([lat, lng], { icon: nwisMarkerIcon });
+                NWISmarkers[siteID].data = { siteName: siteName, siteCode: siteID };
+                NWISmarkers[siteID].data.parameters = {};
+
+                    var siteID = this.children[1].innerHTML;
+                    var siteName = this.children[2].innerHTML;
+                    if (this.children[4].innerHTML == "") {
+                        var lat = "36.378769";
+                        var lng = "97.470630";
+                    } else {
+                        var lat = this.children[4].innerHTML;
+                        var lng = this.children[5].innerHTML;
+                    } */
+                    NWISRainmarkers[siteID] = L.marker([lat, lng], { icon: nwisRainMarkerIcon });
+                    NWISRainmarkers[siteID].data = { siteName: siteName, siteCode: siteID };
+                    NWISRainmarkers[siteID].data.parameters = {};
+
+                    //add point to featureGroup
+                    USGSRainGages.addLayer(NWISRainmarkers[siteID]);
+
+                    $("#nwisLoadingAlert").fadeOut(2000);
+                });
+            },
+            error: function (xml) {
+                $("#nwisLoadingAlert").fadeOut(2000);
+            }
+        });
+    //}
+}
 //use extent to get NWIS rt gages based on bounding box, display on map
 function queryNWISrtGages(bbox) {
     var NWISmarkers = {};
@@ -680,56 +737,7 @@ function queryNWISrtGages(bbox) {
 }
 
 //use extent to get NWIS Rain gages based on bounding box, display on map
-function queryNWISRainGages(bbox) {
-    var NWISRainmarkers = {};
 
-    var siteStatus = 'active';
-    //var state = ['DE', 'FL', 'GA', 'MD', 'MA', 'NJ', 'NC', 'ND', 'PA', 'RI', 'SC', 'VA', 'WV', 'GU', 'PR'];
-    //var state = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'GU', 'PR', 'VI'];
-    //for (i = 0; i < state.length; i++) {
-
-        var parameterCodeList = '00045,46529,72192';
-        var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
-        var siteStatus = 'active';
-        var url = 'https://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
-
-
-        //var url = 'https://waterdata.usgs.gov/' + state[i] + '/nwis/current?type=precip&group_key=county_cd&format=sitefile_output&sitefile_output_format=xml&column_name=agency_cd&column_name=site_no&column_name=station_nm&column_name=site_tp_cd&column_name=dec_lat_va&column_name=dec_long_va&column_name=agency_use_cd';
-        //var url = 'https://waterdata.usgs.gov/nwis/current?type=precip&group_key=county_cd&format=sitefile_output&sitefile_output_format=xml&column_name=agency_cd&column_name=site_no&column_name=station_nm&column_name=site_tp_cd&column_name=dec_lat_va&column_name=dec_long_va&column_name=agency_use_cd';
-        console.log(url);
-
-        $.ajax({
-            url: url,
-            dataType: "xml",
-            data: NWISRainmarkers,
-            success: function (xml) {
-                $(xml).find('site').each(function () {
-
-                    var siteID = this.children[1].innerHTML;
-                    var siteName = this.children[2].innerHTML;
-                    if (this.children[4].innerHTML == "") {
-                        var lat = "36.378769";
-                        var lng = "97.470630";
-                    } else {
-                        var lat = this.children[4].innerHTML;
-                        var lng = this.children[5].innerHTML;
-                    }
-                    NWISRainmarkers[siteID] = L.marker([lat, lng], { icon: nwisRainMarkerIcon });
-                    NWISRainmarkers[siteID].data = { siteName: siteName, siteCode: siteID };
-                    NWISRainmarkers[siteID].data.parameters = {};
-
-                    //add point to featureGroup
-                    USGSRainGages.addLayer(NWISRainmarkers[siteID]);
-
-                    $("#nwisLoadingAlert").fadeOut(2000);
-                });
-            },
-            error: function (xml) {
-                $("#nwisLoadingAlert").fadeOut(2000);
-            }
-        });
-    //}
-}
 
 //get data and generate graph of RDG water level time-series data
 function queryNWISgraphRDG(e) {
@@ -944,6 +952,125 @@ function queryNWISgraph(e) {
                     data: data.data[0].time_series_data,
                     tooltip: {
                         pointFormat: "Gage height: {point.y} feet"
+                    }
+                }]
+            });
+        }
+    });
+}
+
+function queryNWISRaingraph(e) {
+    var popupContent = '';
+    //$.each(e.layer.data.parameters, function( index, parameter ) {
+    //create table, converting timestamp to friendly format using moment.js library
+    //popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + moment(parameter.Time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>'
+    //});
+
+    var parameterCodeList = '00045,89363';
+    //var parameterCodeList = '00065';
+
+    var timeQueryRange = '';
+    //if event has no end date
+    if (fev.vars.currentEventEndDate_str == '') {
+        //use moment.js lib to get current system date string, properly formatted, set currentEventEndDate var to current date
+        fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+    }
+    //if no start date and
+    if ((fev.vars.currentEventStartDate_str == "") || (fev.vars.currentEventEndDate_str == "")) {
+        timeQueryRange = '&period=P7D'
+    } else {
+        timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
+    }
+
+    //popup markup with site name number and name - moved into chart title
+    //e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', {minWidth: 350}).openPopup();
+    e.layer.bindPopup('<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '"><b>Site ' + e.layer.data.siteCode + ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', { minWidth: 350 }).openPopup();
+
+    $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
+
+        //if (data.data[0].time_series_data.length <= 0) console.log("No NWIS graph data available for this time period");
+
+
+        if (data.data == undefined) {
+            console.log("No NWIS data available for this time period");
+            $('#graphLoadMessage').hide();
+            $('#noDataMessage').show();
+            //if no time series data, display data NA message
+            //if (data.data[0].time_series_data.length <= 0 ){}
+        }
+
+        else {
+
+           /*  var primalData = data.data[0].time_series_data;
+
+            var cumulativeData = [0];
+
+            primalData.forEach(function(elementToAdd, index) {
+                var newElement = cumulativeData[index] + elementToAdd;
+                cumulativeData.push(newElement);
+              });
+              cumulativeData.shift(); */
+
+            var data = data.data[0].time_series_data;
+            var newList = [];
+            var sum = 0;
+
+            data.forEach(function(item, idx) {
+                //sum is the cumulative count of the value (second element of [time,data] item)
+                sum = sum + item[1];
+                //push new item with the original date, and latest sum value
+                newList.push([item[0],sum]);
+            });
+
+            console.log(newList)
+
+            //if there is some data, show the div
+            $('#graphLoadMessage').hide();
+            $('.popup-title').hide();
+            $('#graphContainer').show();
+
+            //create chart
+            Highcharts.setOptions({ global: { useUTC: false } });
+            $('#graphContainer').highcharts({
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'NWIS Site ' + e.layer.data.siteCode + '<br> ' + e.layer.data.siteName,
+                    align: 'left',
+                    style: {
+                        color: 'rgba(0,0,0,0.6)',
+                        fontSize: 'small',
+                        fontWeight: 'bold',
+                        fontFamily: 'Open Sans, sans-serif'
+                    }
+                    //text: null
+                },
+                exporting: {
+                    filename: 'FEV_NWIS_Station' + e.layer.data.siteCode
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    type: "datetime",
+                    labels: {
+                        formatter: function () {
+                            return Highcharts.dateFormat('%d %b %y', this.value);
+                        },
+                        //rotation: -90,
+                        align: 'center'
+                    }
+                },
+                yAxis: {
+                    title: { text: 'Precipitation total, inches' }
+                },
+                series: [{
+                    turboThreshold: 3000,
+                    showInLegend: false,
+                    data: newList,
+                    tooltip: {
+                        pointFormat: "Precipitation total: {point.y} inches"
                     }
                 }]
             });

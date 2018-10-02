@@ -111,7 +111,7 @@ var waveheightMarkerIcon = L.icon({className: 'waveheightMarker', iconUrl: 'imag
 var hwmMarkerIcon = L.icon({className: 'hwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var peakMarkerIcon = L.icon({className: 'peakMarker', iconUrl: 'images/peak.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var nwisMarkerIcon = L.icon({className: 'nwisMarker', iconUrl: 'images/nwis.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
-var nwisRainMarkerIcon = L.icon({className: 'nwisMarker', iconUrl: 'images/rain.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
+var nwisRainMarkerIcon = L.icon({className: 'nwisMarker', iconUrl: 'images/rainIcon.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30,30]});
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
 var	baro = L.layerGroup();
@@ -123,8 +123,9 @@ var peak = L.layerGroup();
 
 //rdg and USGSrtGages layers must be featureGroup type to support mouse event listeners
 var rdg = L.featureGroup();
-var USGSrtGages = L.featureGroup();
 var USGSRainGages = L.featureGroup();
+var USGSrtGages = L.featureGroup();
+
 
 
 /////markercluster code, can remove eventually
@@ -303,8 +304,28 @@ $( document ).ready(function() {
 					$('#nwisLoadingAlert').show();
 					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 					queryNWISrtGages(bbox);
+					/* if (map.hasLayer(USGSrtGages) && map.hasLayer(USGSRainGages)){
+						
+					} */
+				}
+				/* if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9) {
+					
+				} */
+			}
+		},
+		overlayadd: function(e) {
+			if (e.name.indexOf('Rain Gage') !== -1) {
+				if (map.getZoom() < 9) USGSRainGages.clearLayers();
+				if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9) {
+					//USGSrtGages.clearLayers();
+					$('#nwisLoadingAlert').show();
+					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 					queryNWISRainGages(bbox);
-					console.log("querying rain gages");
+					USGSRainGages.bringToFront();
+
+					/* if (map.hasLayer(USGSrtGages) && map.hasLayer(USGSRainGages)){
+						
+					} */
 				}
 				/* if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9) {
 					
@@ -338,7 +359,7 @@ $( document ).ready(function() {
 	//define the real-time overlay and manually add the NWIS RT gages to it
 	var realTimeOverlays = {
 		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage" : USGSrtGages,
-		"<img class='legendSwatch' src='images/rain.png'>&nbsp;Real-time Rain Gage" : USGSRainGages
+		"<img class='legendSwatch' src='images/rainIcon.png'>&nbsp;Real-time Rain Gage" : USGSRainGages
 	};
 	//define observed overlay and interpreted overlay, leave blank at first
 	var observedOverlays = {};
@@ -630,9 +651,17 @@ $( document ).ready(function() {
 				foundPopup = popup._isOpen;
 			}
 		})
+
+		$.each(USGSRainGages.getLayers(), function( index, marker ) {
+			var popup = marker.getPopup();
+			if (popup) {
+				foundPopup = popup._isOpen;
+			}
+		})
 		//USGSrtGages.clearLayers();
 		if (map.getZoom() < 9) {
 			USGSrtGages.clearLayers();
+			USGSRainGages.clearLayers();
 			$('#rtScaleAlert').show();
 		}
 
@@ -644,11 +673,29 @@ $( document ).ready(function() {
 			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 			queryNWISrtGages(bbox);
+			queryNWISRainGages(bbox);
+			if (map.hasLayer(USGSrtGages) && map.hasLayer(USGSRainGages)){
+				USGSRainGages.bringToFront();
+			}
+		}
+		if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9 && !foundPopup) {
+			//USGSrtGages.clearLayers();
+			$('#nwisLoadingAlert').show();
+			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+			queryNWISRainGages(bbox);
+			if (map.hasLayer(USGSRainGages) && map.hasLayer(USGSRainGages)){
+				USGSRainGages.bringToFront();
+			}
 		}
 	});
 
 	USGSrtGages.on('click', function(e) {
 		queryNWISgraph(e);
+
+	});
+	
+	USGSRainGages.on('click', function(e) {
+		queryNWISRaingraph(e);
 
 	});
 
