@@ -605,7 +605,7 @@ input[type="checkbox"], input[type="radio"] {
     /*font-family: 'Merriweather', serif;*/
     font-family: 'Open Sans', sans-serif;
     font-weight: 700;
-    cursor: auto;
+    cursor: pointer;
 }
 
 .rdg-nwis-info{

@@ -1001,16 +1001,6 @@ function queryNWISRaingraph(e) {
 
         else {
 
-           /*  var primalData = data.data[0].time_series_data;
-
-            var cumulativeData = [0];
-
-            primalData.forEach(function(elementToAdd, index) {
-                var newElement = cumulativeData[index] + elementToAdd;
-                cumulativeData.push(newElement);
-              });
-              cumulativeData.shift(); */
-
             var data = data.data[0].time_series_data;
             var newList = [];
             var sum = 0;
@@ -1065,13 +1055,18 @@ function queryNWISRaingraph(e) {
                 yAxis: {
                     title: { text: 'Precipitation total, inches' }
                 },
+                tooltip: {
+                    formatter: function() {
+                        return 'Precipitation total: '+ Highcharts.numberFormat(this.y, 2, '.') +' inches';
+                    }
+                },
                 series: [{
                     turboThreshold: 3000,
                     showInLegend: false,
                     data: newList,
-                    tooltip: {
-                        pointFormat: "Precipitation total: {point.y} inches"
-                    }
+                    /* tooltip: {
+                    pointFormat: "precip height: {point.y} inches"
+                    } */
                 }]
             });
         }
