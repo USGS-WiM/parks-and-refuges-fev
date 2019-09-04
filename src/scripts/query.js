@@ -651,7 +651,7 @@ function queryNWISRainGages(bbox) {
     //for (i = 0; i < state.length; i++) {
 
         var parameterCodeList2 = '00045,46529,72192';
-        var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
+        var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS,AT';
         var siteStatus = 'active';
         var url = 'https://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList2 + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
 
@@ -966,7 +966,7 @@ function queryNWISRaingraph(e) {
     //popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + moment(parameter.Time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>'
     //});
 
-    var parameterCodeList = '00045,89363';
+    var parameterCodeList = '00045,89363,46529,72192';
     //var parameterCodeList = '00065';
 
     var timeQueryRange = '';
@@ -1000,8 +1000,13 @@ function queryNWISRaingraph(e) {
         }
 
         else {
-
-            var data = data.data[0].time_series_data;
+            var data;
+            if (data.data.length == 2) {
+                data = data.data[1].time_series_data;
+            } else {
+                data = data.data[0].time_series_data;
+            }
+            
             var newList = [];
             var sum = 0;
 
