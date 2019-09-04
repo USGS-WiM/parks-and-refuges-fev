@@ -1017,8 +1017,6 @@ function queryNWISRaingraph(e) {
                 newList.push([item[0],sum]);
             });
 
-            console.log(newList)
-
             //if there is some data, show the div
             $('#graphLoadMessage').hide();
             $('.popup-title').hide();
