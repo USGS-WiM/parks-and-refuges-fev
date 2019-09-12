@@ -134,6 +134,10 @@ body {
     height:15px;
 }
 
+#noTrackAdvisory{
+    top: 3px;
+    margin-left: 5px;
+}
 /*removed when markerclustering removed */
 /*.hwmClusterMarker div {*/
     /*display: inline-block !important;*/
