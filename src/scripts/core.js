@@ -131,23 +131,57 @@ var noaaService = L.esri.dynamicMapLayer({
 	f:'image'
 })
 
-var noAdvisories = "";
+var noAdvisories = false;
+var test;
 
-$.getJSON( 'https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {} )
-		.done(function( data ) {
-			//if any results (features in the bounding box), then add forecast track layer to map, add toggle to interpreted data category.
-			if (data[0].label == "No active advisories at this time"){
-				noAdvisories = "There are no active advisories at this time";
-				return
+$.ajax({
+	url: "https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time",
+	async: false,
+	dataType: 'json',
+	success: function(data) {
+		if (data[0].label == "No active advisories at this time") {
+			noAdvisories = true;
+			test = data;
+			console.log(noAdvisories);
+		} else {
+			//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
+			//noaaService = noaaTrack;
+			console.log("noaa layer added");
+		}
+	}
+});
+
+
+/* $.getJSON('https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {
+	async: false,
+})
+	.done(function (data) {
+		//if any results (features in the bounding box), then add forecast track layer to map, add toggle to interpreted data category.
+
+			if (data[0].label == "No active advisories at this time") {
+				noAdvisories = true;
+				console.log(noAdvisories);
 			} else {
 				//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
 				//noaaService = noaaTrack;
 				console.log("noaa layer added");
 			}
-		})
-		.fail(function() {
-			console.log( "NOAA Tropical Cyclone legend retrieve failed." );
-		});
+	})
+	.fail(function () {
+		console.log("NOAA Tropical Cyclone legend retrieve failed.");
+	}); */
+
+	/* function callbackFuncWithData(data)
+		{
+			if (data[0].label == "No active advisories at this time") {
+				noAdvisories = true;
+				console.log(test);
+			} else {
+				//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
+				//noaaService = noaaTrack;
+				console.log("noaa layer added");
+			}
+		} */
 
 /////markercluster code, can remove eventually
 // Marker Cluster Group for sensors
@@ -388,7 +422,7 @@ $( document ).ready(function() {
 	var interpretedOverlays = {};
 	var noaaOverlays = {};
 
-	if (noAdvisories == "") {
+	if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
 		div.innerHTML += "No Active Advisories";
 	} else {
