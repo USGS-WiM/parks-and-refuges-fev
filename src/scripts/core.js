@@ -125,8 +125,63 @@ var peak = L.layerGroup();
 var rdg = L.featureGroup();
 var USGSRainGages = L.featureGroup();
 var USGSrtGages = L.featureGroup();
+var noaaService = L.esri.dynamicMapLayer({
+	url:"https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
+	opacity: 0.5,
+	f:'image'
+})
+
+var noAdvisories = false;
+var test;
+
+$.ajax({
+	url: "https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time",
+	async: false,
+	dataType: 'json',
+	success: function(data) {
+		if (data[0].label == "No active advisories at this time") {
+			noAdvisories = true;
+			test = data;
+			console.log(noAdvisories);
+		} else {
+			//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
+			//noaaService = noaaTrack;
+			console.log("noaa layer added");
+		}
+	}
+});
 
 
+/* $.getJSON('https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {
+	async: false,
+})
+	.done(function (data) {
+		//if any results (features in the bounding box), then add forecast track layer to map, add toggle to interpreted data category.
+
+			if (data[0].label == "No active advisories at this time") {
+				noAdvisories = true;
+				console.log(noAdvisories);
+			} else {
+				//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
+				//noaaService = noaaTrack;
+				console.log("noaa layer added");
+			}
+	})
+	.fail(function () {
+		console.log("NOAA Tropical Cyclone legend retrieve failed.");
+	}); */
+
+	/* function callbackFuncWithData(data)
+		{
+			if (data[0].label == "No active advisories at this time") {
+				noAdvisories = true;
+				console.log(test);
+			} else {
+				//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
+				//noaaService = noaaTrack;
+				console.log("noaa layer added");
+			}
+		} */
 
 /////markercluster code, can remove eventually
 // Marker Cluster Group for sensors
@@ -354,6 +409,7 @@ $( document ).ready(function() {
 
 	//display USGS rt gages by default on map load
 	USGSrtGages.addTo(map);
+	noaaService.addTo(map);
 
 	//define layer 'overlays' (overlay is a leaflet term)
 	//define the real-time overlay and manually add the NWIS RT gages to it
@@ -364,11 +420,23 @@ $( document ).ready(function() {
 	//define observed overlay and interpreted overlay, leave blank at first
 	var observedOverlays = {};
 	var interpretedOverlays = {};
+	var noaaOverlays = {};
+
+	if (noAdvisories) {
+		var div = document.getElementById('noTrackAdvisory');
+		div.innerHTML += "No Active Advisories";
+	} else {
+		noaaOverlays = {
+			"<img class='legendSwatch' src='images/noaa.png'>&nbsp;NOAA Tropical Cyclone Forecast Track" : noaaService
+		};
+	}
+	
 	//loop thru layer list and add the legend item to the appropriate heading
 	$.each(fev.layerList, function( index, layer ) {
 		if(layer.Category == 'real-time') realTimeOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
 		if(layer.Category == 'observed') observedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
 		if(layer.Category == 'interpreted') interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if(layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
@@ -393,6 +461,11 @@ $( document ).ready(function() {
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
+	var noaaToggle = L.control.layers(null, noaaOverlays, {collapsed: false});
+	noaaToggle.addTo(map);
+	$('#noaaToggleDiv').append(noaaToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
+
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
 		keepSpiderfied: true
@@ -400,7 +473,7 @@ $( document ).ready(function() {
 
 	//experimental - untested against actual hurricane track published by NOAA
 	//make request for tropical cyclones layer legend. if label = "No active advisories at this time", no data to show. else, add forecast track layer to map. This method suggested by NOAA developer Jason Greenlaw. See below for alternate Identify method
-	$.getJSON( 'https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {} )
+	/* $.getJSON( 'https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {} )
 		.done(function( data ) {
 			//if any results (features in the bounding box), then add forecast track layer to map, add toggle to interpreted data category.
 			if (data[0].label == "No active advisories at this time"){
@@ -416,7 +489,7 @@ $( document ).ready(function() {
 		})
 		.fail(function() {
 			console.log( "NOAA Tropical Cyclone legend retrieve failed." );
-		});
+		}); */
 
 	//experimental - untested against actual hurricane track published by NOAA
 	//run identify operation against the NOAA tropical cyclone service to check if any features exist within a bounding box around US and into hurricane formation territory of Atlantic Ocean. Suspended in favor of legend check method above.
