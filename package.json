@@ -1,10 +1,10 @@
 {
   "name": "flood-event-viewer",
-  "version": "2.5.0",
-  "description": "USGS Flood Event Viewer",
+  "version": "0.0.1",
+  "description": "DOI Flood Event Viewer",
   "repository": {
     "type": "git",
-    "url": "https://github.com/USGS-WiM/FEV.git"
+    "url": "https://github.com/USGS-WiM/parks-and-refuges-fev.git"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
