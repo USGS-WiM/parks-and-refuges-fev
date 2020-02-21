@@ -3,7 +3,7 @@
     "name": "FEV",
     "organization": "U.S. Geological Survey",
     "description": "Displays flood events from the short-term network (STN) database",
-    "version": "v2.5.0",
+    "version": "v0.0.1",
     "status": "Production",
 
     "permissions": {
@@ -28,7 +28,9 @@
       "flood event",
       "flood event viewer",
       "fev",
-      "stn"
+      "stn",
+      "nps",
+      "fws"
     ],
 
     "languages": [
@@ -36,8 +38,8 @@
     ],
 
     "contact": {
-      "name": "Blake Draper",
-      "email": "bdraper@usgs.gov"
+      "name": "Lauren Privette",
+      "email": "lprivette@usgs.gov"
     },
 
     "date": {
