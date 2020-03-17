@@ -93,6 +93,18 @@ var fev = fev || {
 			"Name": "Peak Summary",
 			"Type":"interpreted",
 			"Category": "interpreted"
+		},
+		{
+			"ID": "int",
+			"Name": "Interest Boundaries",
+			"Type":"fws",
+			"Category": "fws"
+		},
+		{
+			"ID": "appr",
+			"Name": "Approved Acquisition Boundaries",
+			"Type":"fws",
+			"Category": "fws"
 		}
 	]
 };
@@ -120,6 +132,39 @@ var	met = L.layerGroup();
 var	waveheight = L.layerGroup();
 var hwm = L.layerGroup();
 var peak = L.layerGroup();
+var appr = L.layerGroup();
+var int = L.layerGroup();
+
+// refuge layer
+/* var refuges = L.esri.dynamicMapLayer({
+	url: "https://gis.fws.gov/arcgis/rest/services/FWS_Refuge_Boundaries/MapServer",
+	//opacity: 0.5,
+	//f:'image'
+}); */
+
+// regions
+/* var regions = L.esri.dynamicMapLayer({
+	url: "https://gis.fws.gov/ArcGIS/rest/services/FWS_Regional_Boundaries/MapServer",
+	//opacity: 0.5,
+	//f:'image'
+}); */
+
+$.ajax({
+	url: "https://gis.fws.gov/arcgis/rest/services/FWS_Refuge_Boundaries/MapServer/2",
+	async: false,
+	dataType: 'json',
+	success: function(data) {
+		if (data[0].label == "No active advisories at this time") {
+			noAdvisories = true;
+			test = data;
+			console.log(noAdvisories);
+		} else {
+			//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
+			//noaaService = noaaTrack;
+			console.log("noaa layer added");
+		}
+	}
+});
 
 //rdg and USGSrtGages layers must be featureGroup type to support mouse event listeners
 var rdg = L.featureGroup();
@@ -150,6 +195,45 @@ $.ajax({
 		}
 	}
 });
+
+// FWS Approved Acquisition Boundaries 
+var appr = L.esri.featureLayer({
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
+	//opacity: 0.5,
+	minZoom: 8,
+	style: function (feature) {
+		return { color: 'brown', weight: 2 };
+	}
+})
+
+var int = L.esri.featureLayer({
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1",
+	//opacity: 0.5,
+	minZoom: 10,
+	style: function (feature) {
+		if ((feature.properties.INTTYPE1 === 'F') || (feature.properties.INTTYPE1 === 'O')) {
+			return { color: 'green', weight: 2 };
+		}  if (feature.properties.INTTYPE1 === 'S') {
+			return { color: 'purple', weight: 2 };
+		}  if (feature.properties.INTTYPE1 === 'E') {
+			return { color: 'orange', weight: 2 };
+		}  if (feature.properties.INTTYPE1 === 'L') {
+			return { color: 'yellow', weight: 2 };
+		}  if (feature.properties.INTTYPE1 === 'S') {
+			return { color: 'beige', weight: 2 };
+		}  if (feature.properties.INTTYPE1 === 'P') {
+			return { color: 'blue', weight: 2 };
+		}  if (feature.properties.INTTYPE1 === 'U') {
+			return { color: 'red', weight: 2 };
+		} else {
+			return { color: 'black', weight: 2 };
+		}
+	}
+})
+
+int.bindPopup(function(layer){
+	return L.Util.template('<p>INTTYPE1: {INTTYPE1}', layer.properties);
+})
 
 
 /* $.getJSON('https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {
@@ -408,7 +492,7 @@ $( document ).ready(function() {
 	//rdg.addTo(map);
 
 	//display USGS rt gages by default on map load
-	USGSrtGages.addTo(map);
+	// USGSrtGages.addTo(map);
 	noaaService.addTo(map);
 
 	//define layer 'overlays' (overlay is a leaflet term)
@@ -421,6 +505,7 @@ $( document ).ready(function() {
 	var observedOverlays = {};
 	var interpretedOverlays = {};
 	var noaaOverlays = {};
+	var fwsOverlays = {};
 
 	if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
@@ -430,6 +515,12 @@ $( document ).ready(function() {
 			"<img class='legendSwatch' src='images/noaa.png'>&nbsp;NOAA Tropical Cyclone Forecast Track" : noaaService
 		};
 	}
+
+	fwsOverlays = {
+		"<img class='legendSwatch' src='images/noaa.png'>&nbsp;appr" : appr,
+		"<img class='legendSwatch' src='images/noaa.png'>&nbsp;Int" : int,
+	}
+	
 	
 	//loop thru layer list and add the legend item to the appropriate heading
 	$.each(fev.layerList, function( index, layer ) {
@@ -437,6 +528,7 @@ $( document ).ready(function() {
 		if(layer.Category == 'observed') observedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
 		if(layer.Category == 'interpreted') interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if(layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if(layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
@@ -464,6 +556,12 @@ $( document ).ready(function() {
 	var noaaToggle = L.control.layers(null, noaaOverlays, {collapsed: false});
 	noaaToggle.addTo(map);
 	$('#noaaToggleDiv').append(noaaToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
+
+	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	var fwsToggle = L.control.layers(null, fwsOverlays, {collapsed: false});
+	fwsToggle.addTo(map);
+	$('#fwsToggleDiv').append(fwsToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
 	//overlapping marker spidifier
