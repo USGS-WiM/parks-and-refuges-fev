@@ -363,6 +363,10 @@ $( document ).ready(function() {
 		}
 	});
 
+	$('#print').click(function(){
+		printReport();
+	});
+
 	//'listener' for URL event params - sets event vars and passes event id to filterMapData function
 	if (window.location.hash){
 		//user has arrived with an event name after the hash on the URL
@@ -650,6 +654,7 @@ $( document ).ready(function() {
 	$('#geosearchNav').click(function(){
 		showGeosearchModal();
 	});
+
 	function showAboutModal () {
 		$('#aboutModal').modal('show');
 	}
@@ -912,6 +917,67 @@ $( document ).ready(function() {
 		$('#latitude').html(geographicMapCenter.lat.toFixed(4));
 		$('#longitude').html(geographicMapCenter.lng.toFixed(4));
 	});
+
+	function printReport() {
+		const docDefinition = {
+			pageOrientation: 'landscape',
+			pageMargins: [20, 20, 20, 35],
+			footer: function (currentPage, pageCount) {
+				return {
+					margin: [20, 0, 20, 0],
+					style: 'footer',
+					columns: [
+						{
+							width: 700,
+							text: ['Report generated ']
+						}
+					]
+				},
+				{
+					width: 50,
+					alignment: 'right',
+					text: 'Page ' + currentPage.toString()
+				}
+
+			},
+			content: [
+				{
+					alignment: 'justify',
+					text: 'hi'
+				}
+			],
+			images: {},
+			styles: {
+				header: {
+					fontSize: 15,
+					bold: true
+				},
+				bigger: {
+					fontSize: 18,
+					bold: true
+				},
+				explanation: {
+					fontSize: 9
+				},
+				smaller: {
+					fontSize: 10
+				},
+				smallest: {
+					fontSize: 8
+				},
+				footer: {
+					fontSize: 9
+				},
+				definitionsTable: {
+					fontSize: 9
+				}
+			},
+			defaultStyle: {
+				columnGap: 20
+			}
+		};
+		pdfMake.createPdf(docDefinition).download('report.pdf');
+	}
 
 	function scaleLookup(mapZoom) {
 		switch (mapZoom) {
