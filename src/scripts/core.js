@@ -521,8 +521,8 @@ $( document ).ready(function() {
 	}
 
 	fwsOverlays = {
-		"<img class='legendSwatch' src='images/noaa.png'>&nbsp;appr" : appr,
-		"<img class='legendSwatch' src='images/noaa.png'>&nbsp;Int" : int,
+		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;appr" : appr,
+		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Int" : int,
 	}
 	
 	
@@ -532,7 +532,7 @@ $( document ).ready(function() {
 		if(layer.Category == 'observed') observedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
 		if(layer.Category == 'interpreted') interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if(layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-		if(layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if(layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/usfws.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
