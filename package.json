@@ -20,7 +20,7 @@
     "gulp-uglify": "^0.2.1",
     "gulp-useref": "^0.4.3",
     "gulp-util": "^2.2.14",
-    "open": "0.0.5",
+    "open": "6.0.0",
     "wiredep": "^1.4.4"
   },
   "dependencies": {
