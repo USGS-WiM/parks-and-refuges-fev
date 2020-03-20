@@ -2,7 +2,6 @@ var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 //var stnServicesURL = 'https://stntest.wim.usgs.gov/STNServices2'; //test URL
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
-
 var fev = fev || {
 	data: {
 		events: [],
@@ -112,8 +111,10 @@ var fev = fev || {
 //L.esri.Support.cors = true;
 
 var map;
+var reviewMap;
 var markerCoords = [];
 var oms;
+var mapImage;
 
 var baroMarkerIcon = L.icon({className: 'baroMarker', iconUrl: 'images/baro.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
 var metMarkerIcon = L.icon({className: 'metMarker', iconUrl: 'images/met.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
@@ -642,7 +643,7 @@ $( document ).ready(function() {
 			$('.hiddenForm').not(formToShow).hide();
 		});
 	});
-
+	
 	//toggle the appearance of the check box on click, including toggling the check icon
 	$('.check').on('click', function(){
 		$(this).find('span').toggle();
@@ -654,6 +655,165 @@ $( document ).ready(function() {
 	$('#geosearchNav').click(function(){
 		showGeosearchModal();
 	});
+
+	function showPrintModal() {
+		$('#printModal').modal('show');
+
+		/* setTimeout(() => {
+			reviewMap = L.map('reviewMap').setView([39.833333, -98.583333], 4);
+			L.esri.basemapLayer('Topographic').addTo(reviewMap);
+		}, 500); */	
+	}
+	$('#printNav').click(function(){
+		showPrintModal();
+
+		let mapPane;
+    mapPane = $('.leaflet-map-pane')[0];
+    const mapTransform = mapPane.style.transform.split(',');
+    // const mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
+    let mapX;
+
+    // fix for firefox
+    if (mapTransform[0] === undefined) {
+      mapX = '';
+    } if (mapTransform[0].split('(')[1] === undefined) {
+      mapX = '';
+    } else {
+      mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
+    }
+
+    let mapY;
+    if (mapTransform[1] === undefined) {
+      mapY = '';
+    } else {
+      mapY = parseFloat(mapTransform[1].replace('px', ''));
+    }
+
+    mapPane.style.transform = '';
+    mapPane.style.left = mapX + 'px';
+    mapPane.style.top = mapY + 'px';
+
+    const myTiles = $('img.leaflet-tile');
+    const tilesLeft = [];
+    const tilesTop = [];
+    const tileMethod = [];
+    for (let i = 0; i < myTiles.length; i++) {
+      if (myTiles[i].style.left !== '') {
+        tilesLeft.push(parseFloat(myTiles[i].style.left.replace('px', '')));
+        tilesTop.push(parseFloat(myTiles[i].style.top.replace('px', '')));
+        tileMethod[i] = 'left';
+      } else if (myTiles[i].style.transform !== '') {
+        const tileTransform = myTiles[i].style.transform.split(',');
+        tilesLeft[i] = parseFloat(tileTransform[0].split('(')[1].replace('px', ''));
+        tilesTop[i] = parseFloat(tileTransform[1].replace('px', ''));
+        myTiles[i].style.transform = '';
+        tileMethod[i] = 'transform';
+      } else {
+        tilesLeft[i] = 0;
+        // tilesRight[i] = 0;
+        tileMethod[i] = 'neither';
+      }
+      myTiles[i].style.left = (tilesLeft[i]) + 'px';
+      myTiles[i].style.top = (tilesTop[i]) + 'px';
+    }
+
+    const myDivicons = $('.leaflet-marker-icon');
+    const dx = [];
+    const dy = [];
+    const mLeft = [];
+    const mTop = [];
+    for (let i = 0; i < myDivicons.length; i++) {
+      const curTransform = myDivicons[i].style.transform;
+      const splitTransform = curTransform.split(',');
+      if (splitTransform[0] === '') {
+
+      } else {
+        dx.push(parseFloat(splitTransform[0].split('(')[1].replace('px', '')));
+      }
+      if (splitTransform[0] === '') {
+
+        // when printing without reloading the style.transform property is blank
+        // but the values we need are in the style.cssText string
+        // so with the code below I'm manipulating those strings to get the values we need
+
+        dx.push(myDivicons[i].style.cssText.split(' left: ')[1].split('px')[0]);
+        dy.push(myDivicons[i].style.cssText.split('top')[1].replace('px;', ''));
+      } else {
+        dy.push(parseFloat(splitTransform[1].replace('px', '')));
+      }
+      // dx.push(parseFloat(splitTransform[0].split('(')[1].replace('px', '')));
+      // dy.push(parseFloat(splitTransform[1].replace('px', '')));
+      myDivicons[i].style.transform = '';
+      myDivicons[i].style.left = dx[i] + 'px';
+      myDivicons[i].style.top = dy[i] + 'px';
+    }
+
+    const mapWidth = parseFloat($('#mapDiv').css('width').replace('px', ''));
+    const mapHeight = parseFloat($('#mapDiv').css('height').replace('px', ''));
+
+    /* const linesLayer = $('svg.leaflet-zoom-animated')[0];
+    const oldLinesWidth = linesLayer.getAttribute('width');
+    const oldLinesHeight = linesLayer.getAttribute('height');
+    const oldViewbox = linesLayer.getAttribute('viewBox');
+    linesLayer.setAttribute('width', mapWidth.toString());
+    linesLayer.setAttribute('height', mapHeight.toString());
+    linesLayer.setAttribute('viewBox', '0 0 ' + mapWidth + ' ' + mapHeight);
+    const linesTransform = linesLayer.style.transform.split(',');
+    const linesX = parseFloat(linesTransform[0].split('(')[1].replace('px', ''));
+    const linesY = parseFloat(linesTransform[1].replace('px', ''));
+    linesLayer.style.transform = '';
+    linesLayer.style.left = '';
+    linesLayer.style.top = ''; */
+
+    const options = {
+      useCORS: true,
+    };
+
+    for (let i = 0; i < myTiles.length; i++) {
+      if (tileMethod[i] === 'left') {
+        myTiles[i].style.left = (tilesLeft[i]) + 'px';
+        myTiles[i].style.top = (tilesTop[i]) + 'px';
+      } else if (tileMethod[i] === 'transform') {
+        myTiles[i].style.left = '';
+        myTiles[i].style.top = '';
+        myTiles[i].style.transform = 'translate(' + tilesLeft[i] + 'px, ' + tilesTop[i] + 'px)';
+      } else {
+        myTiles[i].style.left = '0px';
+        myTiles[i].style.top = '0px';
+        myTiles[i].style.transform = 'translate(0px, 0px)';
+      }
+    }
+    for (let i = 0; i < myDivicons.length; i++) {
+      myDivicons[i].style.transform = 'translate(' + dx[i] + 'px, ' + dy[i] + 'px, 0)';
+      myDivicons[i].style.marginLeft = mLeft[i] + 'px';
+      myDivicons[i].style.marginTop = mTop[i] + 'px';
+    }
+    /* linesLayer.style.transform = 'translate(' + (linesX) + 'px,' + (linesY) + 'px)';
+    linesLayer.setAttribute('viewBox', oldViewbox);
+    linesLayer.setAttribute('width', oldLinesWidth);
+    linesLayer.setAttribute('height', oldLinesHeight); */
+    mapPane.style.transform = 'translate(' + (mapX) + 'px,' + (mapY) + 'px)';
+    mapPane.style.left = '';
+    mapPane.style.top = '';
+
+		html2canvas(document.getElementById('mapDiv'), options)
+			.then(function (canvas) {
+				var mapPreview = document.getElementById('reviewMap');
+				/* canvas[0].drawImage */
+				canvas.style.width = '800px';
+				canvas.style.height = '450px';
+				mapPreview.append(canvas);
+				//mapImage = canvas.get(0).toDataUrl('image/png');
+				var test = canvas[0].toDataUrl('image/png');
+			})
+
+		
+	});
+	$('#printModal').bind('load',  function(){
+		reviewMap = L.map('reviewMap').setView([39.833333, -98.583333], 4);
+		L.esri.basemapLayer('Topographic').addTo(reviewMap);
+	})
+
 
 	function showAboutModal () {
 		$('#aboutModal').modal('show');
@@ -946,7 +1106,9 @@ $( document ).ready(function() {
 					text: 'hi'
 				}
 			],
-			images: {},
+			images: {
+				map: mapImage
+			},
 			styles: {
 				header: {
 					fontSize: 15,

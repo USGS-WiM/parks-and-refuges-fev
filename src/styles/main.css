@@ -539,6 +539,19 @@ a.lgi-zoom:hover {
     padding-bottom: 50px;
 }
 
+#reviewMapContainer {
+    display: -webkit-flex !important;
+    display: flex !important;
+    width: 100% !important;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+
+#reviewMap {
+    width: 600px;
+    height: 450px;
+}
+
 /*#mapContainer {
     top:50px;
     position: fixed;

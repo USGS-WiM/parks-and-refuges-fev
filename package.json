@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "bootstrap-datepicker": "^1.6.4",
+    "html2canvas": "^1.0.0-rc.5",
     "moment": "^2.14.1",
     "pdfmake": "^0.1.65"
   }
