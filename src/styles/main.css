@@ -548,9 +548,41 @@ a.lgi-zoom:hover {
 }
 
 #reviewMap {
-    width: 600px;
-    height: 450px;
+    /* width: 600px;
+    height: 450px; */
+    display: inline-block;
 }
+
+.imageLoader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+  }
+  
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+  }
+
+  .reportInfo {
+      padding: 10px;
+  }
+
+  #infoTable, th, td {
+          padding: 8px;
+          text-align: left;
+          /* border-right: 1px solid #ddd; */
+      }
+  
 
 /*#mapContainer {
     top:50px;
