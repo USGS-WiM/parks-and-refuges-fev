@@ -200,7 +200,7 @@ $.ajax({
 var appr = L.esri.featureLayer({
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
 	//opacity: 0.5,
-	minZoom: 8,
+	minZoom: 9,
 	style: function (feature) {
 		return { color: 'brown', weight: 2 };
 	}
@@ -209,7 +209,7 @@ var appr = L.esri.featureLayer({
 var int = L.esri.featureLayer({
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1",
 	//opacity: 0.5,
-	minZoom: 10,
+	minZoom: 9,
 	style: function (feature) {
 		if ((feature.properties.INTTYPE1 === 'F') || (feature.properties.INTTYPE1 === 'O')) {
 			return { color: 'green', weight: 2 };
