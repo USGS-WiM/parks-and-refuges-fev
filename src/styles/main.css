@@ -20,7 +20,7 @@ body {
     ===========================
 */
 
-.search-bar {
+/* .search-bar {
     margin:0px;
     padding-left:0px;
 }
@@ -67,7 +67,7 @@ body {
 .sapi-autocomplete-itemAnnotation {
     font-family: 'Open Sans', sans-serif !important;
     font-weight: bold !important;
-}
+} */
 
 /*
     ===========================
@@ -575,6 +575,7 @@ a.lgi-zoom:hover {
 
   .reportInfo {
       padding: 10px;
+      margin-left: 60px;
   }
 
   #infoTable, th, td {
@@ -583,13 +584,19 @@ a.lgi-zoom:hover {
           /* border-right: 1px solid #ddd; */
       }
   
-
 /*#mapContainer {
     top:50px;
     position: fixed;
 }*/
 input[type="checkbox"], input[type="radio"] {
     float: left;
+}
+
+#search {
+    position : absolute;
+    top      : 10px;
+    left     : 55px;
+    z-index  : 2;
 }
 
 .zoomDialog {

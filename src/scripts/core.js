@@ -104,6 +104,18 @@ var fev = fev || {
 			"Name": "Approved Acquisition Boundaries",
 			"Type": "fws",
 			"Category": "fws"
+		},
+		{
+			"ID": "tracts",
+			"Name": "Park Tracts",
+			"Type": "nps",
+			"Category": "nps"
+		},
+		{
+			"ID": "bounds",
+			"Name": "Park Boundaries",
+			"Type": "nps",
+			"Category": "nps"
 		}
 	]
 };
@@ -135,6 +147,8 @@ var hwm = L.layerGroup();
 var peak = L.layerGroup();
 var appr = L.layerGroup();
 var int = L.layerGroup();
+var tracts = L.layerGroup();
+var bounds = L.layerGroup();
 
 // refuge layer
 /* var refuges = L.esri.dynamicMapLayer({
@@ -197,20 +211,57 @@ $.ajax({
 	}
 });
 
+// NPS Tracts 
+var tracts = L.esri.featureLayer({
+	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/1",
+	//opacity: 0.5,
+	minZoom: 9,
+	style: function (feature) {
+		if (feature.properties.Interest === 'Federal Land (Fee)') {
+			return { color: 'green', weight: 2 };
+		} if (feature.properties.Interest === 'Federal Land (Less than Fee)') {
+			return { color: 'yellow', weight: 2 };
+		} if (feature.properties.Interest === 'Public') {
+			return { color: 'orange', weight: 2 };
+		} if (feature.properties.Interest === 'Private') {
+			return { color: 'blue', weight: 2 };
+		} if (feature.properties.Interest === 'Other Federal Land') {
+			return { color: 'purple', weight: 2 };
+		} if (feature.properties.Interest === 'Acquisition Deferred') {
+			return { color: 'pink', weight: 2 };
+		} if (feature.properties.Interest === 'No Info In Database') {
+			return { color: 'black', weight: 2 };
+		} else {
+			return { color: 'black', weight: 2 };
+		}
+	}
+})
+
+// NPS Boundaries 
+var bounds = L.esri.featureLayer({
+	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2",
+	//opacity: 0.5,
+	minZoom: 9,
+	/* style: function (feature) {
+		return { color: 'brown', weight: 2 };
+	} */
+})
+
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
 	//opacity: 0.5,
-	minZoom: 8,
+	minZoom: 9,
 	style: function (feature) {
 		return { color: 'brown', weight: 2 };
 	}
 })
 
+// FWS Approved Interest Boundaries 
 var int = L.esri.featureLayer({
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1",
 	//opacity: 0.5,
-	minZoom: 10,
+	minZoom: 9,
 	style: function (feature) {
 		if ((feature.properties.INTTYPE1 === 'F') || (feature.properties.INTTYPE1 === 'O')) {
 			return { color: 'green', weight: 2 };
@@ -430,6 +481,7 @@ $(document).ready(function () {
 	var layer = L.esri.basemapLayer('Topographic').addTo(map);
 	var layerLabels;
 	L.Icon.Default.imagePath = './images';
+	setSearchAPI();
 
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
 	map.on('popupopen', function () {
@@ -511,6 +563,7 @@ $(document).ready(function () {
 	var interpretedOverlays = {};
 	var noaaOverlays = {};
 	var fwsOverlays = {};
+	var npsOverlays = {};
 
 	if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
@@ -525,6 +578,10 @@ $(document).ready(function () {
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;appr": appr,
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Int": int,
 	}
+	npsOverlays = {
+		"<img class='legendSwatch' src='images/nps.png'>&nbsp;tracts": tracts,
+		"<img class='legendSwatch' src='images/nps.png'>&nbsp;bounds": bounds,
+	}
 
 
 	//loop thru layer list and add the legend item to the appropriate heading
@@ -534,6 +591,7 @@ $(document).ready(function () {
 		if (layer.Category == 'interpreted') interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if (layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if (layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/usfws.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if (layer.Category == 'nps') npsOverlays["<img class='legendSwatch' src='images/nps.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
@@ -567,6 +625,12 @@ $(document).ready(function () {
 	var fwsToggle = L.control.layers(null, fwsOverlays, { collapsed: false });
 	fwsToggle.addTo(map);
 	$('#fwsToggleDiv').append(fwsToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
+
+	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
+	npsToggle.addTo(map);
+	$('#npsToggleDiv').append(npsToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
 	//overlapping marker spidifier
@@ -671,6 +735,12 @@ $(document).ready(function () {
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
  */
+
+		// adding info to report modal
+		$('#eventName').append('<span class="">' + fev.vars.currentEventName + '</span>');
+		$('#startDate').append('<span class="">' + fev.vars.currentEventStartDate_str + '</span>');
+		$('#endDate').append('<span class="">' + fev.vars.currentEventEndDate_str + '</span>');
+
 		setTimeout(() => {
 			let mapPane;
 		mapPane = $('.leaflet-map-pane')[0];
@@ -814,12 +884,12 @@ $(document).ready(function () {
 				window.dispatchEvent(mapEvent);
 				
 			})
-		}, 5000);
+		}, 3000);
 		
 		setTimeout(() => {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
-		}, 5001);
+		}, 3001);
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -895,12 +965,12 @@ $(document).ready(function () {
 
 	/* geocoder control */
 	//import USGS search API
-	var searchScript = document.createElement('script');
+	/* var searchScript = document.createElement('script');
 	searchScript.src = 'https://txpub.usgs.gov/DSS/search_api/1.1/api/search_api.min.js';
 	searchScript.onload = function () {
 		setSearchAPI();
 	};
-	document.body.appendChild(searchScript);
+	document.body.appendChild(searchScript); */
 
 	function refreshMapData() {
 		displaySensorGeoJSON();
@@ -917,8 +987,98 @@ $(document).ready(function () {
 	}
 
 	function setSearchAPI() {
+		// create search_api widget
+		search_api.create( "search", {
+                
+			// appearance
+			size        : "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
+			width       : 500,  // width of the widget [px]
+			placeholder : "Search for a Park or Refuge", // text box placeholder prompt to display when no text is entered
+			tooltip     : "Search-able places are:\n" +
+				"* Major and minor GNIS locations,\n" +
+				"* U.S. States or Territories,\n" +
+				"* numeric 5-digit ZIP or 3-digit area codes," +
+				"* numeric USGS site numbers,\n" +
+				"* numeric Hydologic Unit Codes (HUCs), and\n" +
+				"* latitude-longitude coordinates (e.g. '32.4 -100.1')",
+			
+			/* // search area
+			lat_min       : bounds.getSouth(), // minimum latitude
+			lat_max       : bounds.getNorth(), // maximum latitude
+			lon_min       : bounds.getWest(),  // minimum longitude
+			lon_max       : bounds.getEast(),  // maximum longitude
+			search_states : "tx,ok,nm",        // csv list of 1 or more U.S. States or Territories */
+			
+			// suggestion menu
+			menu_min_char      : 2,     // minimum number of characters required before attempting to find menu suggestions
+			menu_max_entries   : 50,    // maximum number of menu items to display
+			menu_height        : 300,   // maximum height of menu [px]
+			
+			include_gnis_major : true,  // whether to include GNIS places as suggestions in the menu: major categories (most common)...
+			include_gnis_minor : false,  // ...minor categories (less common)
+			
+			include_state      : true,  // whether to include U.S. States and Territories as suggestions in the menu
+			include_zip_code   : false,  // whether to include 5-digit zip codes as suggestions in the menu
+			include_area_code  : false,  // whether to include 3-digit area codes as suggestions in the menu
+			
+			include_usgs_sw    : false,  // whether to include USGS site numbers as suggestions in the menu: surface water...
+			include_usgs_gw    : false,  // ...ground water
+			include_usgs_sp    : false,  // ...spring
+			include_usgs_at    : false,  // ...atmospheric
+			include_usgs_ot    : false,  // ...other
+			
+			include_huc2       : false,  // whether to include Hydrologic Unit Code (HUC) numbers as suggestions in the menu: 2-digit...
+			include_huc4       : false,  // ... 4-digit
+			include_huc6       : false,  // ... 6-digit
+			include_huc8       : false,  // ... 8-digit
+			include_huc10      : false,  // ...10-digit
+			include_huc12      : false,  // ...12-digit
+			
+			// event callback functions
+			// function argument "o" is widget object
+			// "o.result" is geojson point feature of search result with properties
+			
+			// function to execute when a search is started
+			// triggered when the search textbox text changes
+			on_search: function(o) {
+				console.warn(o.id+": my 'on_search' callback function - a search is started");
+				map.closePopup(); // close any previous popup when user searches for new location
+			},
+			
+			// function to execute when the suggestion menu is updated
+			// triggered when new items are displayed in the menu and when the menu closes
+			on_update: function(o) {
+				console.warn(o.id+": my 'on_update' callback function - the menu was updated");
+			},
+			
+			// function to execute when a suggestion is chosen
+			// triggered when a menu item is selected
+			on_result: function(o) {
+				console.warn(o.id+": my 'on_result' callback function - a menu item was selected");
+				map
+					.fitBounds([ // zoom to location
+						[ o.result.properties.LatMin, o.result.properties.LonMin ],
+						[ o.result.properties.LatMax, o.result.properties.LonMax ]
+					])
+					.openPopup(  // open popup at location listing all properties
+						$.map( Object.keys(o.result.properties), function(property) {
+							return "<b>" + property + ": </b>" + o.result.properties[property];
+						}).join("<br/>"),
+						[ o.result.properties.Lat, o.result.properties.Lon ]
+					);
+			},
+			
+			// function to execute when no suggestions are found for the typed text
+			// triggered when services return no results or time out
+			on_failure: function(o){
+				console.warn(o.id+": my 'on_failure' callback function - the services returned no results or timed out");
+			},
+			
+			// miscellaneous
+			verbose : true // whether to set verbose mode on (true) or off (false)
+		});
 		// setup must be done after the search_api is loaded and ready ('load' event triggered)
-		search_api.on('load', function () {
+		/* search_api.on('load', function () {
 
 			$('#chkExtent').change(function () {
 				if ($(this).is(':checked')) {
@@ -937,6 +1097,9 @@ $(document).ready(function () {
 			search_api.setOpts({
 				'textboxPosition': 'user-defined',
 				'theme': 'user-defined',
+				'DbSearchIncludeState' : false,
+				'DbSearchIncludeZipCode' : false,
+				'DbSearchIncludeAreaCode' : false,
 				'DbSearchIncludeUsgsSiteSW': true,
 				'DbSearchIncludeUsgsSiteGW': true,
 				'DbSearchIncludeUsgsSiteSP': true,
@@ -993,7 +1156,7 @@ $(document).ready(function () {
 		$('#searchSubmit').on('click', function () {
 			console.log('in search submit');
 			$('#sapi-searchTextBox').keyup();
-		});
+		}); */
 	}
 
 	/* geocoder control */
