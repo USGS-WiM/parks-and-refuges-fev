@@ -477,7 +477,10 @@ $(document).ready(function () {
 	}
 
 	/* create map */
-	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
+	map = L.map('mapDiv', {
+		maxZoom: 13
+	}).setView([39.833333, -98.583333], 4);
+
 	var layer = L.esri.basemapLayer('Topographic').addTo(map);
 	var layerLabels;
 	L.Icon.Default.imagePath = './images';
@@ -1053,42 +1056,49 @@ $(document).ready(function () {
 			
 			// function to execute when a suggestion is chosen
 			// triggered when a menu item is selected
-			on_result: function(o) {
-				console.warn(o.id+": my 'on_result' callback function - a menu item was selected");
+			on_result: function (o) {
+				console.warn(o.id + ": my 'on_result' callback function - a menu item was selected");
 				map
 					.fitBounds([ // zoom to location
-						[ o.result.properties.LatMin, o.result.properties.LonMin ],
-						[ o.result.properties.LatMax, o.result.properties.LonMax ]
+						[o.result.properties.LatMin, o.result.properties.LonMin],
+						[o.result.properties.LatMax, o.result.properties.LonMax]
 					])
 					.openPopup(  // open popup at location listing all properties
-						$.map( Object.keys(o.result.properties), function(property) {
+						$.map(Object.keys(o.result.properties), function (property) {
 							return "<b>" + property + ": </b>" + o.result.properties[property];
 						}).join("<br/>"),
-						[ o.result.properties.Lat, o.result.properties.Lon ]
+						[o.result.properties.Lat, o.result.properties.Lon]
 					);
-
-					var parkName = o.result.properties.Name;
-
-					L.esri.Tasks.query({
-						url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2'
-					}).where("UNIT_NAME=" + parkName).run(function (error, park) {
-						if (error) {
-							return;
-						}
-					});
-
-					var drawPark = L.geoJSON(park).addTo(map);
-					console.log(park);
-
-					console.log(parkName);
 				
-					/* var query = 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2/query?where=UNIT_NAME+%3D+%27Assateague+Island+National+Seashore%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=PARKNAME&returnGeometry=true&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=html&token='
-					var zoning = L.esri.featureLayer({
-						url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
-						simplifyFactor: 0.5,
-						precision: 4
-					  }).addTo(map); */
 					
+
+				// getting and setting park name from search
+				var parkName = o.result.properties.Name;
+
+				/* L.esri.Tasks.identifyFeatures({
+					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2'
+				}).where("UNIT_NAME='Assateague Island National Seashore'").run(function (error, park) {
+					if (error) {
+						return;
+					}
+				}); */
+
+				// formatiing park name for use in esri leaflet query
+				parkName = "'" + parkName + "'";
+
+				// setting the where class for the query
+				// UNIT_NAME holds gnis major value of park name (I think)
+				var where = "UNIT_NAME=" + parkName;
+
+				var parks = L.esri.featureLayer({
+					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
+					simplifyFactor: 0.5,
+					precision: 4,
+				}).addTo(map);
+				parks.setWhere(where);
+
+				
+
 			},
 			
 			// function to execute when no suggestions are found for the typed text
