@@ -1069,7 +1069,7 @@ $(document).ready(function () {
 
 					var parkName = o.result.properties.Name;
 
-					L.esri.Tasks.Identify({
+					L.esri.Tasks.query({
 						url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2'
 					}).where("UNIT_NAME=" + parkName).run(function (error, park) {
 						if (error) {

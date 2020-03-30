@@ -437,6 +437,7 @@ body {
 }
 
 
+
 .lgi-zoom {
     color: white;
     background-color: black;
@@ -469,6 +470,17 @@ a.lgi-zoom:hover {
 
 .opacity {
     padding-left: 10px;
+}
+
+#search_container {
+    display    : inline-block;
+    width      : 300px;
+    height     : 30px;
+    padding    : 25px;
+}
+#search {
+    display : inline-block;
+    border: #000;
 }
 
 .opacitySlider {
