@@ -179,8 +179,16 @@ body {
     transition: .2s;
     color: rgba(255,255,255,.35);
 }
-
-
+#search_container {
+    display    : inline-block;
+    width      : 300px;
+    height     : 30px;
+    padding    : 25px;
+}
+#search {
+    display : inline-block;
+    border: #000;
+}
 #aboutNav{
     letter-spacing: 2px;
     position: relative; top: 2px;

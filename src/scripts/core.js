@@ -1014,7 +1014,7 @@ $(document).ready(function () {
 			menu_max_entries   : 50,    // maximum number of menu items to display
 			menu_height        : 300,   // maximum height of menu [px]
 			
-			include_gnis_major : true,  // whether to include GNIS places as suggestions in the menu: major categories (most common)...
+			include_gnis_major : true ,  // whether to include GNIS places as suggestions in the menu: major categories (most common)...
 			include_gnis_minor : false,  // ...minor categories (less common)
 			
 			include_state      : true,  // whether to include U.S. States and Territories as suggestions in the menu
@@ -1066,6 +1066,29 @@ $(document).ready(function () {
 						}).join("<br/>"),
 						[ o.result.properties.Lat, o.result.properties.Lon ]
 					);
+
+					var parkName = o.result.properties.Name;
+
+					L.esri.Tasks.Identify({
+						url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2'
+					}).where("UNIT_NAME=" + parkName).run(function (error, park) {
+						if (error) {
+							return;
+						}
+					});
+
+					var drawPark = L.geoJSON(park).addTo(map);
+					console.log(park);
+
+					console.log(parkName);
+				
+					/* var query = 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2/query?where=UNIT_NAME+%3D+%27Assateague+Island+National+Seashore%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=PARKNAME&returnGeometry=true&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=html&token='
+					var zoning = L.esri.featureLayer({
+						url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
+						simplifyFactor: 0.5,
+						precision: 4
+					  }).addTo(map); */
+					
 			},
 			
 			// function to execute when no suggestions are found for the typed text
