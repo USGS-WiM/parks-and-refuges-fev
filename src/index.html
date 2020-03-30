@@ -65,6 +65,9 @@
     <script src="scripts/util.js"></script>
     <!-- endbuild -->
 
+    <link    rel="stylesheet"     href="https://txpub.usgs.gov/DSS/search_api/2.1/api/search_api.css"/>
+    <script type="text/javascript" src="https://txpub.usgs.gov/DSS/search_api/2.1/api/search_api.min.js"></script>
+
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -94,7 +97,12 @@
 
         <button id="geosearchNav" type="button" class="btn btn-primary navbar-btn pull-right">
             <span class="glyphicon glyphicon-search"></span>
-            <span id="geosearchButtonText"> Geosearch</span>
+            <span id="geosearchButtonText"> Find Location</span>
+        </button>
+
+        <button id="printNavButton" type="button" class="btn btn-primary navbar-btn pull-right">
+            <span class="glyphicon glyphicon-print"></span>
+            <span id="printButtonText"> Print</span>
         </button>
 
         <button id="aboutNav" class="btn btn-default navbar-btn pull-right">
@@ -156,6 +164,44 @@
 </div>
 
 
+
+<div class="modal fade overflow-y-hidden" id="geosearchModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <h4 class="modal-title">Find Location</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                   <!-- <div id="geosearch" align="center"></div> -->
+                        <div id="search_container">
+                            <!-- search_api widget -->
+                            <div id="search"></div>
+                        </div>
+                    </div>
+                        
+                    <!-- 
+                        <div class="search-help", align="center">
+                            <b>Supported Search Strings:</b>
+                            <code>Geographic Names</code>
+                            <code>Zip Codes</code>
+                            <code>States</code>
+                            <code>Street Address</code>
+                            <br/>
+                            <br/> Search provided by
+                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript API</a>
+                        </div> -->
+            </div>
+                <form id="geosearch-form" class="form-inline">
+                    <!--<button id="btnGeosearch" type="button" class="search-api-button; btn btn-success btn-fixed" data-dismiss="modal"> Go </button>-->
+                    <button id="btnDismiss" type="submit" class="btn btn-default btn-fixed" data-dismiss="modal">Dismiss</button>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
 <div class="modal fade overflow-y-hidden" id="geosearchModal" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -165,16 +211,12 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <div class="input-group">
-                        <div id="sapi_searchTextBoxDiv">Loading Search Bar...</div>
-                        <span class="input-group-btn">
-                        <button id="searchSubmit" class="btn btn-success" type="button">Go!</button>
-                        </span>
+                    <div id="search_container">
+                        <div id="search"></div>
                     </div><!-- /input-group -->
+                    
                 </div>
-                <form id="geosearch-form" class="form-inline">
-                    <input id="chkExtent" type="checkbox">  Search within current map extent only<br>
-                </form>
+
             </div>
             <div class="modal-footer">
                 <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
@@ -699,6 +741,7 @@
 
             <div id="homeButton"></div>
             <div id="locateButton"></div>
+            
 
             <div id="latLngScale" class="latLngScale">
                 <span class="hover-content"> <b>Map scale </b></span>
