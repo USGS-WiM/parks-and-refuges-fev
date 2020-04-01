@@ -2,6 +2,7 @@ var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 //var stnServicesURL = 'https://stntest.wim.usgs.gov/STNServices2'; //test URL
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
+var flattenedPoly;
 var fev = fev || {
 	data: {
 		events: [],
@@ -478,7 +479,7 @@ $(document).ready(function () {
 
 	/* create map */
 	map = L.map('mapDiv', {
-		maxZoom: 13
+		maxZoom: 12
 	}).setView([39.833333, -98.583333], 4);
 
 	var layer = L.esri.basemapLayer('Topographic').addTo(map);
@@ -1085,20 +1086,39 @@ $(document).ready(function () {
 
 				// formatiing park name for use in esri leaflet query
 				parkName = "'" + parkName + "'";
-
+				
 				// setting the where class for the query
 				// UNIT_NAME holds gnis major value of park name (I think)
 				var where = "UNIT_NAME=" + parkName;
-
+				var polys = [];
+				var test;
 				var parks = L.esri.featureLayer({
 					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
 					simplifyFactor: 0.5,
 					precision: 4,
-				}).addTo(map);
-				parks.setWhere(where);
-
+					where: "UNIT_NAME=" + parkName,
+					onEachFeature: function (feature, latlng) {
+						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
+						latlng.bindPopup(popupContent);
+						polys = feature.geometry;
+						// flattening the geometry for use in turf
+						flattenedPoly = turf.flatten(polys);
+						console.log(flattenedPoly);
+						test = flattenedPoly;
+					}
+				}).addTo(map);		
 				
-
+				setTimeout(() => {
+					// hack to get the correct result. Something is wrong with the where/setWhere and I'm 
+					// getting multiple results for a query when there should be only one. So here I'm just setting the features to 
+					// the first one which is the correct one.
+					// I believe it is related to this issue here: https://github.com/Esri/esri-leaflet/issues/875
+					test.features.length = 1;
+					var buffered = turf.buffer(test, 20, { units: 'miles' });
+					console.log(buffered);
+					L.geoJson(buffered.features).addTo(map);
+				}, 600);
+				
 			},
 			
 			// function to execute when no suggestions are found for the typed text

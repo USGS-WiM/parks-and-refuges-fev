@@ -124,6 +124,22 @@ gulp.task('wiredep', function () {
         }))
         .pipe(gulp.dest('src'));
 });
+// Inject node_module components
+gulp.task('wiredep', function () {
+    gulp.src('src/styles/*.css')
+        .pipe(wiredep({
+            directory: 'src/node_modules',
+            ignorePath: 'src/node_modules/'
+        }))
+        .pipe(gulp.dest('src/styles'));
+
+    gulp.src('src/*.html')
+        .pipe(wiredep({
+            directory: 'src/node_modules',
+            ignorePath: 'src/'
+        }))
+        .pipe(gulp.dest('src'));
+});
 
 // Watch
 gulp.task('watch', ['less', 'connect', 'serve'], function () {
