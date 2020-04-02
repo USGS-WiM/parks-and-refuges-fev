@@ -1092,6 +1092,7 @@ $(document).ready(function () {
 				var where = "UNIT_NAME=" + parkName;
 				var polys = [];
 				var test;
+				var unifiedPolys;
 				var parks = L.esri.featureLayer({
 					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
 					simplifyFactor: 0.5,
@@ -1109,14 +1110,37 @@ $(document).ready(function () {
 				}).addTo(map);		
 				
 				setTimeout(() => {
-					// hack to get the correct result. Something is wrong with the where/setWhere and I'm 
-					// getting multiple results for a query when there should be only one. So here I'm just setting the features to 
-					// the first one which is the correct one.
-					// I believe it is related to this issue here: https://github.com/Esri/esri-leaflet/issues/875
-					test.features.length = 1;
 					var buffered = turf.buffer(test, 20, { units: 'miles' });
 					console.log(buffered);
-					L.geoJson(buffered.features).addTo(map);
+
+					var polysCount = test.features.length;
+					unifiedPolys = buffered.features[0];
+
+					//var nextFeature = i + 1;
+					/* var coordsOne = buffered.features[0].geometry.coordinates;
+					var coordsTwo = buffered.features[1].geometry.coordinates;
+					var union = turf.union(buffered.features[1], buffered.features[2]);
+					var final = turf.union(buffered.features[0], union);
+					console.log("UNION" + final); */
+
+					for (var i = 0; i < buffered.features.length; i++) {
+						if (i === (polysCount - 1)){
+
+						} else {
+						var nextFeature = i + 1;
+						//var coordsOne = buffered.features[i].geometry.coordinates;
+						var coordsTwo = buffered.features[nextFeature];
+						unifiedPolys = turf.union(unifiedPolys, coordsTwo);
+						}
+					}
+					
+					/* var mergedBuffers = turf.merge(buffered);
+					L.geoJSON(mergedBuffers.features).addTo(map); */
+					L.geoJson(unifiedPolys).addTo(map);
+					//var poly = turf.polygon([[[125, -30], [145, -30], [145, -20], [125, -20], [125, -30]]]);features[""0""].geometry.coordinates[""0""]
+
+					/* var polyline = turf.polygonToLine(buffered.features[0].geometry.coordinates);
+					L.geoJson(polyline).addTo(map); */
 				}, 600);
 				
 			},
@@ -1211,7 +1235,6 @@ $(document).ready(function () {
 			$('#sapi-searchTextBox').keyup();
 		}); */
 	}
-
 	/* geocoder control */
 
 	/* legend control */
