@@ -1130,7 +1130,7 @@ $(document).ready(function () {
 						//test = flattenedPoly;
 					},
 					style: parkStyle
-				}).addTo(map);		
+				}).addTo(map);
 				
 				setTimeout(() => {
 					var buffered = turf.buffer(flattenedPoly, 20, { units: 'miles' });
@@ -1166,7 +1166,7 @@ $(document).ready(function () {
 					//parks.bringToFront();
 
 				}, 600);
-				
+				$('#geosearchModal').modal('hide');
 			},
 			
 			// function to execute when no suggestions are found for the typed text
