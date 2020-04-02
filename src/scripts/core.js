@@ -1074,10 +1074,10 @@ $(document).ready(function () {
 					
 
 				// getting and setting park name from search
-				var parkName = o.result.properties.Name;
+				var name = o.result.properties.Name;
 
 				// formatiing park name for use in esri leaflet query
-				parkName = "'" + parkName + "'";
+				name = "'" + name + "'";
 					
 				// setting buffer style
 				var bufferStyle = {
@@ -1095,14 +1095,31 @@ $(document).ready(function () {
 				
 				// setting the where class for the query
 				// UNIT_NAME holds gnis major value of park name (I think)
-				var where = "UNIT_NAME=" + parkName;
+				var where = "UNIT_NAME=" + name;
 				var polys = [];
 				var buffer;
 				var parks = L.esri.featureLayer({
 					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
 					simplifyFactor: 0.5,
 					precision: 4,
-					where: "UNIT_NAME=" + parkName,
+					where: "UNIT_NAME=" + name,
+					onEachFeature: function (feature, latlng) {
+						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
+						latlng.bindPopup(popupContent);
+						polys = feature.geometry;
+						// flattening the geometry for use in turf
+						flattenedPoly = turf.flatten(polys);
+						console.log(flattenedPoly);
+						//test = flattenedPoly;
+					},
+					style: parkStyle
+				}).addTo(map);
+
+				var refuges = L.esri.featureLayer({
+					url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
+					simplifyFactor: 0.5,
+					precision: 4,
+					where: "ORGNAME=" + name,
 					onEachFeature: function (feature, latlng) {
 						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
 						latlng.bindPopup(popupContent);
@@ -1146,7 +1163,7 @@ $(document).ready(function () {
 						style: bufferStyle
 					}).addTo(map);
 
-					parks.bringToFront();
+					//parks.bringToFront();
 
 				}, 600);
 				
