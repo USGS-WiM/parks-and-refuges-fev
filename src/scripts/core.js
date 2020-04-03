@@ -45,6 +45,7 @@ var fev = fev || {
 		currentEventID_str: "",
 		currentEventStartDate_str: "",
 		currentEventEndDate_str: "",
+		currentBufferSelection: 20,
 		currentEventActive: false,
 		extentNorth: 71.3888898,  // north lat: Point Barrow Alaska
 		extentWest: -179.148611, //west long: Amatignak Island, Alaska
@@ -989,6 +990,64 @@ $(document).ready(function () {
 		queryNWISgraph();
 		queryNWISRaingraph();
 	}
+	// setting checked values for buffer radio buttons
+	document.getElementById('tenKm').checked = false;
+	document.getElementById('twentyKm').checked = true;
+	document.getElementById('thirtyKm').checked = false;
+	// 10 kilometers
+	$('#tenKm').click(function() {
+		console.log('yes');
+		document.getElementById('twentyKm').checked = false;
+		document.getElementById('thirtyKm').checked = false;
+		fev.vars.currentBufferSelection = 10;
+	});
+	// 20 kilometers
+	$('#twentyKm').click(function() {
+		console.log('yes');
+		document.getElementById('tenKm').checked = false;
+		document.getElementById('thirtyKm').checked = false;
+		fev.vars.currentBufferSelection = 20;
+	});
+	// 30 kilometers
+	$('#thirtyKm').click(function() {
+		console.log('yes');
+		document.getElementById('twentyKm').checked = false;
+		document.getElementById('tenKm').checked = false;
+		fev.vars.currentBufferSelection = 30;
+	});
+
+	// add empty geojson layer that will contain suggested locations on update
+	var suggestion_layer = L.geoJson( null, {
+		pointToLayer: function(feature,latlng) {
+			return (
+				L.marker(latlng,{
+					opacity: 0.4
+				})
+				.bindPopup(
+					// popup content
+					'<div style="text-align:center;">' +
+						'<b>' + feature.properties.Label + '</b><br/>' +
+						feature.properties.Category +
+					'</div>',
+					// options
+					{ autoPan:false } // do not pan map to popup when opens
+				)
+				.on("mouseover", function() {
+					// make marker opaque and open popup when mouse is over marker
+					this.setOpacity(1.0).openPopup();
+				})
+				.on("mouseout", function() {
+					// make marker semi-transparent and close popup when mouse exits marker
+					this.setOpacity(0.4).closePopup();
+				})
+				.on("click", function() {
+					// set result with the marker feature and trigger result event to select the location when the marker is clicked
+					searchObj.result = feature;
+					searchObj.val("").trigger("result");
+				})
+			);
+		}
+	}).addTo(map);
 
 	function setSearchAPI() {
 		// create search_api widget
@@ -1050,9 +1109,35 @@ $(document).ready(function () {
 			},
 			
 			// function to execute when the suggestion menu is updated
-			// triggered when new items are displayed in the menu and when the menu closes
 			on_update: function(o) {
-				console.warn(o.id+": my 'on_update' callback function - the menu was updated");
+				// update geojson layer with menu suggestions
+				suggestion_layer.clearLayers().addData( o.getSuggestions() );
+				
+				// zoom to layer if there are any points
+				// pad left so open menu does not cover any points
+				if ( suggestion_layer.getBounds().isValid() ) {
+					map.fitBounds( suggestion_layer.getBounds().pad(0.4), {paddingTopLeft:[350,0]} );
+				}
+				
+				// find corresponding map marker by lat-lon when mouse enters a menu item
+				// open the marker popup and set opaque
+				$(".search-api-menu-item").off( "mouseenter").on( "mouseenter", function() {
+					var Lat = $(this).data("properties").Lat;
+					var Lon = $(this).data("properties").Lon;
+					suggestion_layer.eachLayer( function(lyr) {
+						if ( Lat===lyr.feature.properties.Lat && Lon===lyr.feature.properties.Lon ) {
+							lyr.setOpacity(1.0).openPopup();
+						} else {
+							lyr.setOpacity(0.4).closePopup();
+						}
+					});
+				});
+				
+				// close popups and set markers semi-transparent when mouse leaves a menu item
+				$(".search-api-menu-item").off( "mouseleave").on( "mouseleave", function() {
+					map.closePopup();
+					suggestion_layer.eachLayer( function(lyr) { lyr.setOpacity(0.4); } );
+				});
 			},
 			
 			// function to execute when a suggestion is chosen
@@ -1133,7 +1218,7 @@ $(document).ready(function () {
 				}).addTo(map);
 				
 				setTimeout(() => {
-					var buffered = turf.buffer(flattenedPoly, 20, { units: 'miles' });
+					var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
 					var polysCount = flattenedPoly.features.length;
 					buffer = buffered; 
 

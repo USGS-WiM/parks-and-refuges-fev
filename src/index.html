@@ -181,8 +181,20 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                 <h4 class="modal-title">Geosearch</h4>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
+            <div class="modal-body" style="text-align: center;">
+                <div class="form-group" id="bufferOptions">
+                <label class="radio-inline" style="display: inline;">
+                    <p>Select a buffer distance:</p>
+                    <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
+                  </label>
+                  <label class="radio-inline">
+                    <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
+                  </label>
+                  <label class="radio-inline">
+                    <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
+                  </label>
+                </div>
+                <div class="form-group" style="position: inherit;">
                     <div id="search_container">
                         <div id="search"></div>
                     </div><!-- /input-group -->
