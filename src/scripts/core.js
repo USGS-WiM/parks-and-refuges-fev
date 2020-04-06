@@ -3,6 +3,11 @@ var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
+var parksLayerGroup = new L.LayerGroup();
+var parks;
+var refuges;
+var bufferPoly;
+var currentParkOrRefuge = "";
 var fev = fev || {
 	data: {
 		events: [],
@@ -480,7 +485,7 @@ $(document).ready(function () {
 
 	/* create map */
 	map = L.map('mapDiv', {
-		maxZoom: 12
+		maxZoom: 15
 	}).setView([39.833333, -98.583333], 4);
 
 	var layer = L.esri.basemapLayer('Topographic').addTo(map);
@@ -720,6 +725,13 @@ $(document).ready(function () {
 
 	function showGeosearchModal() {
 		$('#geosearchModal').modal('show');
+
+		// clearing the layers if a search has already been performed
+		if (parks !== undefined) {
+			map.removeLayer(parks);
+			map.removeLayer(refuges);
+			map.removeLayer(bufferPoly);
+		}
 	}
 	$('#geosearchNav').click(function () {
 		showGeosearchModal();
@@ -748,149 +760,149 @@ $(document).ready(function () {
 
 		setTimeout(() => {
 			let mapPane;
-		mapPane = $('.leaflet-map-pane')[0];
-		const mapTransform = mapPane.style.transform.split(',');
-		// const mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
-		let mapX;
+			mapPane = $('.leaflet-map-pane')[0];
+			const mapTransform = mapPane.style.transform.split(',');
+			// const mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
+			let mapX;
 
-		// fix for firefox
-		if (mapTransform[0] === undefined) {
-			mapX = '';
-		} if (mapTransform[0].split('(')[1] === undefined) {
-			mapX = '';
-		} else {
-			mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
-		}
-
-		let mapY;
-		if (mapTransform[1] === undefined) {
-			mapY = '';
-		} else {
-			mapY = parseFloat(mapTransform[1].replace('px', ''));
-		}
-
-		mapPane.style.transform = '';
-		mapPane.style.left = mapX + 'px';
-		mapPane.style.top = mapY + 'px';
-
-		const myTiles = $('img.leaflet-tile');
-		const tilesLeft = [];
-		const tilesTop = [];
-		const tileMethod = [];
-		for (let i = 0; i < myTiles.length; i++) {
-			if (myTiles[i].style.left !== '') {
-				tilesLeft.push(parseFloat(myTiles[i].style.left.replace('px', '')));
-				tilesTop.push(parseFloat(myTiles[i].style.top.replace('px', '')));
-				tileMethod[i] = 'left';
-			} else if (myTiles[i].style.transform !== '') {
-				const tileTransform = myTiles[i].style.transform.split(',');
-				tilesLeft[i] = parseFloat(tileTransform[0].split('(')[1].replace('px', ''));
-				tilesTop[i] = parseFloat(tileTransform[1].replace('px', ''));
-				myTiles[i].style.transform = '';
-				tileMethod[i] = 'transform';
+			// fix for firefox
+			if (mapTransform[0] === undefined) {
+				mapX = '';
+			} if (mapTransform[0].split('(')[1] === undefined) {
+				mapX = '';
 			} else {
-				tilesLeft[i] = 0;
-				// tilesRight[i] = 0;
-				tileMethod[i] = 'neither';
+				mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
 			}
-			myTiles[i].style.left = (tilesLeft[i]) + 'px';
-			myTiles[i].style.top = (tilesTop[i]) + 'px';
-		}
 
-		const myDivicons = $('.leaflet-marker-icon');
-		const dx = [];
-		const dy = [];
-		const mLeft = [];
-		const mTop = [];
-		for (let i = 0; i < myDivicons.length; i++) {
-			const curTransform = myDivicons[i].style.transform;
-			const splitTransform = curTransform.split(',');
-			if (splitTransform[0] === '') {
-
+			let mapY;
+			if (mapTransform[1] === undefined) {
+				mapY = '';
 			} else {
-				dx.push(parseFloat(splitTransform[0].split('(')[1].replace('px', '')));
+				mapY = parseFloat(mapTransform[1].replace('px', ''));
 			}
-			if (splitTransform[0] === '') {
 
-				// when printing without reloading the style.transform property is blank
-				// but the values we need are in the style.cssText string
-				// so with the code below I'm manipulating those strings to get the values we need
+			mapPane.style.transform = '';
+			mapPane.style.left = mapX + 'px';
+			mapPane.style.top = mapY + 'px';
 
-				dx.push(myDivicons[i].style.cssText.split(' left: ')[1].split('px')[0]);
-				dy.push(myDivicons[i].style.cssText.split('top')[1].replace('px;', ''));
-			} else {
-				dy.push(parseFloat(splitTransform[1].replace('px', '')));
-			}
-			// dx.push(parseFloat(splitTransform[0].split('(')[1].replace('px', '')));
-			// dy.push(parseFloat(splitTransform[1].replace('px', '')));
-			myDivicons[i].style.transform = '';
-			myDivicons[i].style.left = dx[i] + 'px';
-			myDivicons[i].style.top = dy[i] + 'px';
-		}
-
-		const mapWidth = parseFloat($('#mapDiv').css('width').replace('px', ''));
-		const mapHeight = parseFloat($('#mapDiv').css('height').replace('px', ''));
-
-		/* const linesLayer = $('svg.leaflet-zoom-animated')[0];
-		const oldLinesWidth = linesLayer.getAttribute('width');
-		const oldLinesHeight = linesLayer.getAttribute('height');
-		const oldViewbox = linesLayer.getAttribute('viewBox');
-		linesLayer.setAttribute('width', mapWidth.toString());
-		linesLayer.setAttribute('height', mapHeight.toString());
-		linesLayer.setAttribute('viewBox', '0 0 ' + mapWidth + ' ' + mapHeight);
-		const linesTransform = linesLayer.style.transform.split(',');
-		const linesX = parseFloat(linesTransform[0].split('(')[1].replace('px', ''));
-		const linesY = parseFloat(linesTransform[1].replace('px', ''));
-		linesLayer.style.transform = '';
-		linesLayer.style.left = '';
-		linesLayer.style.top = ''; */
-
-		const options = {
-			useCORS: true,
-		};
-
-		for (let i = 0; i < myTiles.length; i++) {
-			if (tileMethod[i] === 'left') {
+			const myTiles = $('img.leaflet-tile');
+			const tilesLeft = [];
+			const tilesTop = [];
+			const tileMethod = [];
+			for (let i = 0; i < myTiles.length; i++) {
+				if (myTiles[i].style.left !== '') {
+					tilesLeft.push(parseFloat(myTiles[i].style.left.replace('px', '')));
+					tilesTop.push(parseFloat(myTiles[i].style.top.replace('px', '')));
+					tileMethod[i] = 'left';
+				} else if (myTiles[i].style.transform !== '') {
+					const tileTransform = myTiles[i].style.transform.split(',');
+					tilesLeft[i] = parseFloat(tileTransform[0].split('(')[1].replace('px', ''));
+					tilesTop[i] = parseFloat(tileTransform[1].replace('px', ''));
+					myTiles[i].style.transform = '';
+					tileMethod[i] = 'transform';
+				} else {
+					tilesLeft[i] = 0;
+					// tilesRight[i] = 0;
+					tileMethod[i] = 'neither';
+				}
 				myTiles[i].style.left = (tilesLeft[i]) + 'px';
 				myTiles[i].style.top = (tilesTop[i]) + 'px';
-			} else if (tileMethod[i] === 'transform') {
-				myTiles[i].style.left = '';
-				myTiles[i].style.top = '';
-				myTiles[i].style.transform = 'translate(' + tilesLeft[i] + 'px, ' + tilesTop[i] + 'px)';
-			} else {
-				myTiles[i].style.left = '0px';
-				myTiles[i].style.top = '0px';
-				myTiles[i].style.transform = 'translate(0px, 0px)';
 			}
-		}
-		for (let i = 0; i < myDivicons.length; i++) {
-			myDivicons[i].style.transform = 'translate(' + dx[i] + 'px, ' + dy[i] + 'px, 0)';
-			myDivicons[i].style.marginLeft = mLeft[i] + 'px';
-			myDivicons[i].style.marginTop = mTop[i] + 'px';
-		}
-		/* linesLayer.style.transform = 'translate(' + (linesX) + 'px,' + (linesY) + 'px)';
-		linesLayer.setAttribute('viewBox', oldViewbox);
-		linesLayer.setAttribute('width', oldLinesWidth);
-		linesLayer.setAttribute('height', oldLinesHeight); */
-		mapPane.style.transform = 'translate(' + (mapX) + 'px,' + (mapY) + 'px)';
-		mapPane.style.left = '';
-		mapPane.style.top = '';
 
-		var mapEvent;
-		html2canvas(document.getElementById('mapDiv'), options)
-			.then(function (canvas) {
-				mapEvent = new Event('map_ready');
-				/* canvas[0].drawImage */
-				canvas.style.width = '800px';
-				canvas.style.height = '450px';
-				mapPreview.append(canvas);
-				//mapImage = canvas.get(0).toDataUrl('image/png');
-				var test = canvas[0].toDataUrl('image/png');
-				window.dispatchEvent(mapEvent);
-				
-			})
+			const myDivicons = $('.leaflet-marker-icon');
+			const dx = [];
+			const dy = [];
+			const mLeft = [];
+			const mTop = [];
+			for (let i = 0; i < myDivicons.length; i++) {
+				const curTransform = myDivicons[i].style.transform;
+				const splitTransform = curTransform.split(',');
+				if (splitTransform[0] === '') {
+
+				} else {
+					dx.push(parseFloat(splitTransform[0].split('(')[1].replace('px', '')));
+				}
+				if (splitTransform[0] === '') {
+
+					// when printing without reloading the style.transform property is blank
+					// but the values we need are in the style.cssText string
+					// so with the code below I'm manipulating those strings to get the values we need
+
+					dx.push(myDivicons[i].style.cssText.split(' left: ')[1].split('px')[0]);
+					dy.push(myDivicons[i].style.cssText.split('top')[1].replace('px;', ''));
+				} else {
+					dy.push(parseFloat(splitTransform[1].replace('px', '')));
+				}
+				// dx.push(parseFloat(splitTransform[0].split('(')[1].replace('px', '')));
+				// dy.push(parseFloat(splitTransform[1].replace('px', '')));
+				myDivicons[i].style.transform = '';
+				myDivicons[i].style.left = dx[i] + 'px';
+				myDivicons[i].style.top = dy[i] + 'px';
+			}
+
+			const mapWidth = parseFloat($('#mapDiv').css('width').replace('px', ''));
+			const mapHeight = parseFloat($('#mapDiv').css('height').replace('px', ''));
+
+			/* const linesLayer = $('svg.leaflet-zoom-animated')[0];
+			const oldLinesWidth = linesLayer.getAttribute('width');
+			const oldLinesHeight = linesLayer.getAttribute('height');
+			const oldViewbox = linesLayer.getAttribute('viewBox');
+			linesLayer.setAttribute('width', mapWidth.toString());
+			linesLayer.setAttribute('height', mapHeight.toString());
+			linesLayer.setAttribute('viewBox', '0 0 ' + mapWidth + ' ' + mapHeight);
+			const linesTransform = linesLayer.style.transform.split(',');
+			const linesX = parseFloat(linesTransform[0].split('(')[1].replace('px', ''));
+			const linesY = parseFloat(linesTransform[1].replace('px', ''));
+			linesLayer.style.transform = '';
+			linesLayer.style.left = '';
+			linesLayer.style.top = ''; */
+
+			const options = {
+				useCORS: true,
+			};
+
+			for (let i = 0; i < myTiles.length; i++) {
+				if (tileMethod[i] === 'left') {
+					myTiles[i].style.left = (tilesLeft[i]) + 'px';
+					myTiles[i].style.top = (tilesTop[i]) + 'px';
+				} else if (tileMethod[i] === 'transform') {
+					myTiles[i].style.left = '';
+					myTiles[i].style.top = '';
+					myTiles[i].style.transform = 'translate(' + tilesLeft[i] + 'px, ' + tilesTop[i] + 'px)';
+				} else {
+					myTiles[i].style.left = '0px';
+					myTiles[i].style.top = '0px';
+					myTiles[i].style.transform = 'translate(0px, 0px)';
+				}
+			}
+			for (let i = 0; i < myDivicons.length; i++) {
+				myDivicons[i].style.transform = 'translate(' + dx[i] + 'px, ' + dy[i] + 'px, 0)';
+				myDivicons[i].style.marginLeft = mLeft[i] + 'px';
+				myDivicons[i].style.marginTop = mTop[i] + 'px';
+			}
+			/* linesLayer.style.transform = 'translate(' + (linesX) + 'px,' + (linesY) + 'px)';
+			linesLayer.setAttribute('viewBox', oldViewbox);
+			linesLayer.setAttribute('width', oldLinesWidth);
+			linesLayer.setAttribute('height', oldLinesHeight); */
+			mapPane.style.transform = 'translate(' + (mapX) + 'px,' + (mapY) + 'px)';
+			mapPane.style.left = '';
+			mapPane.style.top = '';
+
+			var mapEvent;
+			html2canvas(document.getElementById('mapDiv'), options)
+				.then(function (canvas) {
+					mapEvent = new Event('map_ready');
+					/* canvas[0].drawImage */
+					canvas.style.width = '800px';
+					canvas.style.height = '450px';
+					mapPreview.append(canvas);
+					//mapImage = canvas.get(0).toDataUrl('image/png');
+					var test = canvas[0].toDataUrl('image/png');
+					window.dispatchEvent(mapEvent);
+
+				})
 		}, 3000);
-		
+
 		setTimeout(() => {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
@@ -906,7 +918,7 @@ $(document).ready(function () {
 	//Need to figure out how to fix this, maybe just reintialize the map? we did have to fix 
 	//this in whispers too but can't remember what I did off hand
 	$("#printModal").on("hidden.bs.modal", function () {
-		location.reload();
+		//location.reload();
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
 
 		/* USGSrtGages.clearLayers();
@@ -995,21 +1007,21 @@ $(document).ready(function () {
 	document.getElementById('twentyKm').checked = true;
 	document.getElementById('thirtyKm').checked = false;
 	// 10 kilometers
-	$('#tenKm').click(function() {
+	$('#tenKm').click(function () {
 		console.log('yes');
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
 		fev.vars.currentBufferSelection = 10;
 	});
 	// 20 kilometers
-	$('#twentyKm').click(function() {
+	$('#twentyKm').click(function () {
 		console.log('yes');
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
 		fev.vars.currentBufferSelection = 20;
 	});
 	// 30 kilometers
-	$('#thirtyKm').click(function() {
+	$('#thirtyKm').click(function () {
 		console.log('yes');
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
@@ -1017,129 +1029,121 @@ $(document).ready(function () {
 	});
 
 	// add empty geojson layer that will contain suggested locations on update
-	var suggestion_layer = L.geoJson( null, {
-		pointToLayer: function(feature,latlng) {
+	var suggestion_layer = L.geoJson(null, {
+		pointToLayer: function (feature, latlng) {
 			return (
-				L.marker(latlng,{
+				L.marker(latlng, {
 					opacity: 0.4
 				})
-				.bindPopup(
-					// popup content
-					'<div style="text-align:center;">' +
+					.bindPopup(
+						// popup content
+						'<div style="text-align:center;">' +
 						'<b>' + feature.properties.Label + '</b><br/>' +
 						feature.properties.Category +
-					'</div>',
-					// options
-					{ autoPan:false } // do not pan map to popup when opens
-				)
-				.on("mouseover", function() {
-					// make marker opaque and open popup when mouse is over marker
-					this.setOpacity(1.0).openPopup();
-				})
-				.on("mouseout", function() {
-					// make marker semi-transparent and close popup when mouse exits marker
-					this.setOpacity(0.4).closePopup();
-				})
-				.on("click", function() {
-					// set result with the marker feature and trigger result event to select the location when the marker is clicked
-					searchObj.result = feature;
-					searchObj.val("").trigger("result");
-				})
+						'</div>',
+						// options
+						{ autoPan: false } // do not pan map to popup when opens
+					)
+					.on("mouseover", function () {
+						// make marker opaque and open popup when mouse is over marker
+						this.setOpacity(1.0).openPopup();
+					})
+					.on("mouseout", function () {
+						// make marker semi-transparent and close popup when mouse exits marker
+						this.setOpacity(0.4).closePopup();
+					})
+					.on("click", function () {
+						// set result with the marker feature and trigger result event to select the location when the marker is clicked
+						searchObj.result = feature;
+						searchObj.val("").trigger("result");
+					})
 			);
 		}
 	}).addTo(map);
 
 	function setSearchAPI() {
 		// create search_api widget
-		search_api.create( "search", {
-                
+		search_api.create("search", {
+
 			// appearance
-			size        : "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
-			width       : 500,  // width of the widget [px]
-			placeholder : "Search for a Park or Refuge", // text box placeholder prompt to display when no text is entered
-			tooltip     : "Search-able places are:\n" +
-				"* Major and minor GNIS locations,\n" +
-				"* U.S. States or Territories,\n" +
-				"* numeric 5-digit ZIP or 3-digit area codes," +
-				"* numeric USGS site numbers,\n" +
-				"* numeric Hydologic Unit Codes (HUCs), and\n" +
-				"* latitude-longitude coordinates (e.g. '32.4 -100.1')",
-			
+			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
+			width: 500,  // width of the widget [px]
+			placeholder: "Search for a Park or Refuge", // text box placeholder prompt to display when no text is entered
 			/* // search area
 			lat_min       : bounds.getSouth(), // minimum latitude
 			lat_max       : bounds.getNorth(), // maximum latitude
 			lon_min       : bounds.getWest(),  // minimum longitude
 			lon_max       : bounds.getEast(),  // maximum longitude
 			search_states : "tx,ok,nm",        // csv list of 1 or more U.S. States or Territories */
-			
+
 			// suggestion menu
-			menu_min_char      : 2,     // minimum number of characters required before attempting to find menu suggestions
-			menu_max_entries   : 50,    // maximum number of menu items to display
-			menu_height        : 300,   // maximum height of menu [px]
-			
-			include_gnis_major : true ,  // whether to include GNIS places as suggestions in the menu: major categories (most common)...
-			include_gnis_minor : false,  // ...minor categories (less common)
-			
-			include_state      : true,  // whether to include U.S. States and Territories as suggestions in the menu
-			include_zip_code   : false,  // whether to include 5-digit zip codes as suggestions in the menu
-			include_area_code  : false,  // whether to include 3-digit area codes as suggestions in the menu
-			
-			include_usgs_sw    : false,  // whether to include USGS site numbers as suggestions in the menu: surface water...
-			include_usgs_gw    : false,  // ...ground water
-			include_usgs_sp    : false,  // ...spring
-			include_usgs_at    : false,  // ...atmospheric
-			include_usgs_ot    : false,  // ...other
-			
-			include_huc2       : false,  // whether to include Hydrologic Unit Code (HUC) numbers as suggestions in the menu: 2-digit...
-			include_huc4       : false,  // ... 4-digit
-			include_huc6       : false,  // ... 6-digit
-			include_huc8       : false,  // ... 8-digit
-			include_huc10      : false,  // ...10-digit
-			include_huc12      : false,  // ...12-digit
-			
+			menu_min_char: 2,     // minimum number of characters required before attempting to find menu suggestions
+			menu_max_entries: 50,    // maximum number of menu items to display
+			menu_height: 300,   // maximum height of menu [px]
+
+			include_gnis_major: true,  // whether to include GNIS places as suggestions in the menu: major categories (most common)...
+			include_gnis_minor: false,  // ...minor categories (less common)
+
+			include_state: true,  // whether to include U.S. States and Territories as suggestions in the menu
+			include_zip_code: false,  // whether to include 5-digit zip codes as suggestions in the menu
+			include_area_code: false,  // whether to include 3-digit area codes as suggestions in the menu
+
+			include_usgs_sw: false,  // whether to include USGS site numbers as suggestions in the menu: surface water...
+			include_usgs_gw: false,  // ...ground water
+			include_usgs_sp: false,  // ...spring
+			include_usgs_at: false,  // ...atmospheric
+			include_usgs_ot: false,  // ...other
+
+			include_huc2: false,  // whether to include Hydrologic Unit Code (HUC) numbers as suggestions in the menu: 2-digit...
+			include_huc4: false,  // ... 4-digit
+			include_huc6: false,  // ... 6-digit
+			include_huc8: false,  // ... 8-digit
+			include_huc10: false,  // ...10-digit
+			include_huc12: false,  // ...12-digit
+
 			// event callback functions
 			// function argument "o" is widget object
 			// "o.result" is geojson point feature of search result with properties
-			
+
 			// function to execute when a search is started
 			// triggered when the search textbox text changes
-			on_search: function(o) {
-				console.warn(o.id+": my 'on_search' callback function - a search is started");
+			on_search: function (o) {
+				console.warn(o.id + ": my 'on_search' callback function - a search is started");
 				map.closePopup(); // close any previous popup when user searches for new location
 			},
-			
+
 			// function to execute when the suggestion menu is updated
-			on_update: function(o) {
+			on_update: function (o) {
 				// update geojson layer with menu suggestions
-				suggestion_layer.clearLayers().addData( o.getSuggestions() );
-				
+				suggestion_layer.clearLayers().addData(o.getSuggestions());
+
 				// zoom to layer if there are any points
 				// pad left so open menu does not cover any points
-				if ( suggestion_layer.getBounds().isValid() ) {
-					map.fitBounds( suggestion_layer.getBounds().pad(0.4), {paddingTopLeft:[350,0]} );
+				if (suggestion_layer.getBounds().isValid()) {
+					map.fitBounds(suggestion_layer.getBounds().pad(0.4), { paddingTopLeft: [350, 0] });
 				}
-				
+
 				// find corresponding map marker by lat-lon when mouse enters a menu item
 				// open the marker popup and set opaque
-				$(".search-api-menu-item").off( "mouseenter").on( "mouseenter", function() {
+				$(".search-api-menu-item").off("mouseenter").on("mouseenter", function () {
 					var Lat = $(this).data("properties").Lat;
 					var Lon = $(this).data("properties").Lon;
-					suggestion_layer.eachLayer( function(lyr) {
-						if ( Lat===lyr.feature.properties.Lat && Lon===lyr.feature.properties.Lon ) {
+					suggestion_layer.eachLayer(function (lyr) {
+						if (Lat === lyr.feature.properties.Lat && Lon === lyr.feature.properties.Lon) {
 							lyr.setOpacity(1.0).openPopup();
 						} else {
 							lyr.setOpacity(0.4).closePopup();
 						}
 					});
 				});
-				
+
 				// close popups and set markers semi-transparent when mouse leaves a menu item
-				$(".search-api-menu-item").off( "mouseleave").on( "mouseleave", function() {
+				$(".search-api-menu-item").off("mouseleave").on("mouseleave", function () {
 					map.closePopup();
-					suggestion_layer.eachLayer( function(lyr) { lyr.setOpacity(0.4); } );
+					suggestion_layer.eachLayer(function (lyr) { lyr.setOpacity(0.4); });
 				});
 			},
-			
+
 			// function to execute when a suggestion is chosen
 			// triggered when a menu item is selected
 			on_result: function (o) {
@@ -1155,15 +1159,19 @@ $(document).ready(function () {
 						}).join("<br/>"),
 						[o.result.properties.Lat, o.result.properties.Lon]
 					);
-				
-					
+
+
 
 				// getting and setting park name from search
 				var name = o.result.properties.Name;
 
+				// setting the current Park or Refuge selected for the report
+				currentParkOrRefuge = name;
+				console.log(currentParkOrRefuge);
+
 				// formatiing park name for use in esri leaflet query
 				name = "'" + name + "'";
-					
+
 				// setting buffer style
 				var bufferStyle = {
 					"color": "#9933ff",
@@ -1177,13 +1185,13 @@ $(document).ready(function () {
 					"weight": 2,
 					"opacity": 100
 				};
-				
+
 				// setting the where class for the query
 				// UNIT_NAME holds gnis major value of park name (I think)
 				var where = "UNIT_NAME=" + name;
 				var polys = [];
 				var buffer;
-				var parks = L.esri.featureLayer({
+				parks = L.esri.featureLayer({
 					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
 					simplifyFactor: 0.5,
 					precision: 4,
@@ -1199,8 +1207,9 @@ $(document).ready(function () {
 					},
 					style: parkStyle
 				}).addTo(map);
+				parksLayerGroup.addLayer(parks);
 
-				var refuges = L.esri.featureLayer({
+				refuges = L.esri.featureLayer({
 					url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
 					simplifyFactor: 0.5,
 					precision: 4,
@@ -1216,11 +1225,13 @@ $(document).ready(function () {
 					},
 					style: parkStyle
 				}).addTo(map);
-				
+
 				setTimeout(() => {
+					var insidePeaks = [];
+
 					var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
 					var polysCount = flattenedPoly.features.length;
-					buffer = buffered; 
+					buffer = buffered;
 
 					// if there is more than one poly for a park we merge the buffers made for each park. can only do two at a time
 					if (polysCount >= 1) {
@@ -1229,39 +1240,54 @@ $(document).ready(function () {
 						// cycling through features
 						for (var i = 0; i < buffered.features.length; i++) {
 							// not cycling through if we're on the last one
-							if (i === (polysCount - 1)){
-	
+							if (i === (polysCount - 1)) {
+
 							} else {
-							
-							// getting the index of the next feature to use in the union
-							var nextFeatureIndex = i + 1;
-							var nextFeature = buffered.features[nextFeatureIndex];
-							
-							// unifying or merging the buffer
-							buffer = turf.union(buffer, nextFeature);
+
+								// getting the index of the next feature to use in the union
+								var nextFeatureIndex = i + 1;
+								var nextFeature = buffered.features[nextFeatureIndex];
+
+								// unifying or merging the buffer
+								buffer = turf.union(buffer, nextFeature);
 							}
 						}
 					}
-					
+
 					// adding the buffer to the map
-					L.geoJson(buffer, {
+					bufferPoly = L.geoJson(buffer, {
 						style: bufferStyle
 					}).addTo(map);
+					map.fitBounds(bufferPoly.getBounds());
 
-					//parks.bringToFront();
+					// cycling through each peak and seeing if it's inside the buffer
+					for (var i in peak._layers) {
+
+						// formatting point for turf
+						var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
+
+						var isItInside = turf.booleanPointInPolygon(cords, buffer);
+
+						if (isItInside) {
+							insidePeaks.push(peak._layers[i])
+						}
+					}
+
+					console.log(insidePeaks);
+
 
 				}, 600);
 				$('#geosearchModal').modal('hide');
 			},
-			
+
 			// function to execute when no suggestions are found for the typed text
 			// triggered when services return no results or time out
-			on_failure: function(o){
-				console.warn(o.id+": my 'on_failure' callback function - the services returned no results or timed out");
+			on_failure: function (o) {
+				console.warn(o.id + ": my 'on_failure' callback function - the services returned no results or timed out");
 			},
-			
+
 			// miscellaneous
-			verbose : true // whether to set verbose mode on (true) or off (false)
+			verbose: true // whether to set verbose mode on (true) or off (false)
 		});
 		// setup must be done after the search_api is loaded and ready ('load' event triggered)
 		/* search_api.on('load', function () {
@@ -1488,10 +1514,47 @@ $(document).ready(function () {
 
 			},
 			content: [
+				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + 'Kilometer Buffer', style: 'subheader' },
+				'It is of course possible to nest any other type of nodes available in pdfmake inside table cells',
 				{
-					alignment: 'justify',
-					text: 'hi'
-				}
+					style: 'tableExample',
+					table: {
+						body: [
+							['Column 1', 'Column 2', 'Column 3'],
+							[
+								{
+									stack: [
+										'Let\'s try an unordered list',
+										{
+											ul: [
+												'item 1',
+												'item 2'
+											]
+										}
+									]
+								},
+								[
+									'or a nested table',
+									{
+										table: {
+											body: [
+												['Col1', 'Col2', 'Col3'],
+												['1', '2', '3'],
+												['1', '2', '3']
+											]
+										},
+									}
+								],
+								{
+									text: [
+										'Inlines can be ',
+										{ text: 'styled\n', italics: true },
+										{ text: 'easily as everywhere else', fontSize: 10 }]
+								}
+							]
+						]
+					}
+				},
 			],
 			images: {
 				map: mapImage

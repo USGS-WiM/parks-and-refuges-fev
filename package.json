@@ -24,6 +24,7 @@
     "wiredep": "^1.4.4"
   },
   "dependencies": {
+    "@turf/boolean-point-in-polygon": "^6.0.1",
     "@turf/flatten": "^5.1.5",
     "@turf/helpers": "^6.1.4",
     "@turf/polygon-to-line": "^6.0.3",

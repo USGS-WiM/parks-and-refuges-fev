@@ -15,6 +15,8 @@
     <script src="bower_components/bootstrap-sidebar/dist/js/sidebar.js"></script>
     <script src="bower_components/leaflet/dist/leaflet-src.js"></script>
     <script src="bower_components/esri-leaflet/dist/esri-leaflet.js"></script>
+    <script src="bower_components/Leaflet.label/dist/leaflet.label.css"></script>
+    <script src="bower_components/Leaflet.label/dist/leaflet.label.js"></script>
     <script src="bower_components/select2/dist/js/select2.js"></script>
     <script src="bower_components/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
     <script src="bower_components/OverlappingMarkerSpiderfier-Leaflet/index.js"></script>
@@ -26,11 +28,12 @@
 
     <!-- build:js scripts/vendor.js -->
     <!-- npm -->
-    <script src="node_modules/turf-flatten/index.js"></script>
-    <script src="node_modules/turf-buffer/index.js"></script>
-    <script src="node_modules/turf-featurecollection/index.js"></script>
-    <script src="node_modules/turf-helpers/index.js"></script>
-    <script src="node_modules/turf-meta/index.js"></script>
+    <script src="../node_modules/turf-flatten/index.js"></script>
+    <script src="../node_modules/turf-buffer/index.js"></script>
+    <script src="../node_modules/turf-featurecollection/index.js"></script>
+    <script src="../node_modules/turf-helpers/index.js"></script>
+    <script src="../node_modules/turf-meta/index.js"></script>
+    <script src="../node_modules/@turf/boolean-point-in-polygon/index.js"></script>
 
 
     <!-- Report dependencies -->
@@ -219,19 +222,18 @@
                     <div id='loader' class='imageLoader'></div><p id='loadingMessage'>loading image...</p>
                 </div>
                 <div class='reportInfo'>
-                    <table id="infoTable" style="border-collapse: collapse;">
-                        <tr>
-                          <td style="border-right: 1px solid #ddd; font-weight: bold;">Event</td>
-                          <td id='eventName'></td>
-                        </tr>
-                        <tr>
-                          <td style="border-right: 1px solid #ddd; font-weight: bold;">Start Date</td>
-                          <td id='startDate'></td>
-                        </tr>
-                        <tr>
-                          <td style="border-right: 1px solid #ddd; font-weight: bold;">End Date</td>
-                          <td id='endDate'></td>
-                        </tr>
+                    <table id="infoTable" style="border-collapse: collapse;" class='table'>
+                        <thead>
+                            <tr>
+                                <td>Site Number</td>
+                                <td>Description</td>
+                                <td>Networks</td>
+                                <td>State</td>
+                                <td>County</td>
+                                <td>Peak Estimated?</td>
+                                <td>Peak Stage</td>
+                            </tr>
+                        </thead>
                       </table>
                 </div>
                 <!-- <div id="reviewMapContainer">
