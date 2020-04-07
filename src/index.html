@@ -100,11 +100,6 @@
             <span id="geosearchButtonText"> Find Location</span>
         </button>
 
-        <button id="printNavButton" type="button" class="btn btn-primary navbar-btn pull-right">
-            <span class="glyphicon glyphicon-print"></span>
-            <span id="printButtonText"> Print</span>
-        </button>
-
         <button id="aboutNav" class="btn btn-default navbar-btn pull-right">
             <i class="fa fa-question-circle"></i><span class="hidden-xs">&nbsp;&nbsp;About</span>
         </button>
@@ -173,16 +168,15 @@
                 <h4 class="modal-title">Find Location</h4>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                   <!-- <div id="geosearch" align="center"></div> -->
+                <div class="form-group" align="center">
+                  <div id="geosearch" align="center"></div>
                         <div id="search_container">
                             <!-- search_api widget -->
-                            <div id="search"></div>
+                           <div id="search">
+                               
+                            </div>
                         </div>
-                    </div>
-                        
-                    <!-- 
-                        <div class="search-help", align="center">
+                        <div class="search-help" align="center"> </br>
                             <b>Supported Search Strings:</b>
                             <code>Geographic Names</code>
                             <code>Zip Codes</code>
@@ -191,17 +185,21 @@
                             <br/>
                             <br/> Search provided by
                             <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript API</a>
-                        </div> -->
+                        </div>
+                    </div>
             </div>
                 <form id="geosearch-form" class="form-inline">
                     <!--<button id="btnGeosearch" type="button" class="search-api-button; btn btn-success btn-fixed" data-dismiss="modal"> Go </button>-->
-                    <button id="btnDismiss" type="submit" class="btn btn-default btn-fixed" data-dismiss="modal">Dismiss</button>
-                </form>
+                    <button id="btnDismiss" type="submit" class="dismissbutton btn" data-dismiss="modal">Dismiss</button>
+                </form> 
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
 
+<!--class="btn btn-default btn-fixed"-->
+
+<!--
 <div class="modal fade overflow-y-hidden" id="geosearchModal" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -214,16 +212,21 @@
                     <div id="search_container">
                         <div id="search"></div>
                     </div><!-- /input-group -->
-                    
-                </div>
 
+<!--
+                </div>
             </div>
             <div class="modal-footer">
                 <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
             </div>
         </div><!-- /.modal-content -->
+
+<!--
     </div><!-- /.modal-dialog -->
+
+<!--
 </div>
+-->
 
 <div id="aboutModal" class="modal fade"  tabindex="-1" role="dialog" >
     <div class="modal-dialog  modal-lg">
