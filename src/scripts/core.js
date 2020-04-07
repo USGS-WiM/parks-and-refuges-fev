@@ -723,14 +723,15 @@ $( document ).ready(function() {
 	document.body.appendChild(searchScript); */
 
 
+setSearchAPI();
 
 	function setSearchAPI() {
 		search_api.create( "search", {
                 
 			// appearance
-			size        : "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
-			width       : 500,  // width of the widget [px]
-			placeholder : "Search for a place in TX, OK, or NM", // text box placeholder prompt to display when no text is entered
+			size        : "md", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
+			width       : 250,  // width of the widget [px]
+			placeholder : "Search for a park or refuge", // text box placeholder prompt to display when no text is entered
 			tooltip     : "Search-able places are:\n" +
 				"* Major and minor GNIS locations,\n" +
 				"* U.S. States or Territories,\n" +
@@ -758,12 +759,12 @@ $( document ).ready(function() {
 			include_usgs_at    : true,  // ...atmospheric
 			include_usgs_ot    : true,  // ...other
 			
-			include_huc2       : true,  // whether to include Hydrologic Unit Code (HUC) numbers as suggestions in the menu: 2-digit...
-			include_huc4       : true,  // ... 4-digit
-			include_huc6       : true,  // ... 6-digit
-			include_huc8       : true,  // ... 8-digit
-			include_huc10      : true,  // ...10-digit
-			include_huc12      : true,  // ...12-digit
+			include_huc2       : false,  // whether to include Hydrologic Unit Code (HUC) numbers as suggestions in the menu: 2-digit...
+			include_huc4       : false,  // ... 4-digit
+			include_huc6       : false,  // ... 6-digit
+			include_huc8       : false,  // ... 8-digit
+			include_huc10      : false,  // ...10-digit
+			include_huc12      : false,  // ...12-digit
 			
 			// event callback functions
 			// function argument "o" is widget object
