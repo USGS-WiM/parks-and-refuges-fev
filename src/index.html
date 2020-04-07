@@ -211,30 +211,19 @@
 </div>
 
 <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog" style="width: 1000px;">
+    <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important" >
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                 <h4 class="modal-title">Print Report</h4>
             </div>
-            <div class="modal-body" style="height: 700px; text-align: center;">
+            <div class="modal-body" style="text-align: center; height: 700px; overflow-y: auto;">
                 <div id="reviewMap">
                     <div id='loader' class='imageLoader'></div><p id='loadingMessage'>loading image...</p>
                 </div>
                 <div class='reportInfo'>
-                    <table id="infoTable" style="border-collapse: collapse;" class='table'>
-                        <thead>
-                            <tr>
-                                <td>Site Number</td>
-                                <td>Description</td>
-                                <td>Networks</td>
-                                <td>State</td>
-                                <td>County</td>
-                                <td>Peak Estimated?</td>
-                                <td>Peak Stage</td>
-                            </tr>
-                        </thead>
-                      </table>
+                    <table class="table" id="dataTable">
+                    </table>
                 </div>
                 <!-- <div id="reviewMapContainer">
                     <div id="reviewMap">

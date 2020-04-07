@@ -8,6 +8,7 @@ var parks;
 var refuges;
 var bufferPoly;
 var currentParkOrRefuge = "";
+var identifiedPeaks = [];
 var fev = fev || {
 	data: {
 		events: [],
@@ -747,16 +748,73 @@ $(document).ready(function () {
 	}
 	$('#printNav').click(function () {
 		showPrintModal();
-		//document.getElementById('reviewMap').innerHTML = 'Loading Map';
+
+		// setting element to empty string incase a report has already been ran
+		document.getElementById('dataTable').innerHTML = "";
+
 		var mapPreview = document.getElementById('reviewMap');
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
- */
+		 */
 
-		// adding info to report modal
-		$('#eventName').append('<span class="">' + fev.vars.currentEventName + '</span>');
-		$('#startDate').append('<span class="">' + fev.vars.currentEventStartDate_str + '</span>');
-		$('#endDate').append('<span class="">' + fev.vars.currentEventEndDate_str + '</span>');
+		// setting up peak data for table
+		var peakTableData = [];
+		for (var i in identifiedPeaks) {
+			var peakEstimated = "";
+			if (identifiedPeaks[i].feature.properties.is_peak_stage_estimated === 0) {
+				peakEstimated = "no";
+			} else {
+				peakEstimated = "yes"
+			}
+
+			peakTableData.push({
+				"Site Number": identifiedPeaks[i].feature.properties.site_no,
+				"Description": identifiedPeaks[i].feature.properties.description,
+				"Networks": identifiedPeaks[i].feature.properties.networks,
+				"State": identifiedPeaks[i].feature.properties.state,
+				"County": identifiedPeaks[i].feature.properties.county,
+				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Estimated": peakEstimated
+			});
+		}
+		console.log(peakTableData)
+
+		// Builds the HTML Table
+		function buildHtmlTable() {
+			var columns = addAllColumnHeaders(peakTableData);
+
+			for (var i = 0; i < peakTableData.length; i++) {
+				var row$ = $('<tr/>');
+				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+					var cellValue = peakTableData[i][columns[colIndex]];
+
+					if (cellValue == null) { cellValue = ""; }
+
+					row$.append($('<td/>').html(cellValue));
+				}
+				$("#dataTable").append(row$);
+			}
+		}
+
+		function addAllColumnHeaders(peakTableData) {
+			var columnSet = [];
+			var headerTr$ = $('<tr/>');
+
+			for (var i = 0; i < peakTableData.length; i++) {
+				var rowHash = peakTableData[i];
+				for (var key in rowHash) {
+					if ($.inArray(key, columnSet) == -1) {
+						columnSet.push(key);
+						headerTr$.append($('<th/>').html(key));
+					}
+				}
+			}
+			$("#dataTable").append(headerTr$);
+
+			return columnSet;
+		}
+
+		buildHtmlTable();
 
 		setTimeout(() => {
 			let mapPane;
@@ -1227,8 +1285,6 @@ $(document).ready(function () {
 				}).addTo(map);
 
 				setTimeout(() => {
-					var insidePeaks = [];
-
 					var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
 					var polysCount = flattenedPoly.features.length;
 					buffer = buffered;
@@ -1269,11 +1325,11 @@ $(document).ready(function () {
 						var isItInside = turf.booleanPointInPolygon(cords, buffer);
 
 						if (isItInside) {
-							insidePeaks.push(peak._layers[i])
+							identifiedPeaks.push(peak._layers[i])
 						}
 					}
-
-					console.log(insidePeaks);
+					identifiedPeaks
+					console.log(identifiedPeaks);
 
 
 				}, 600);
