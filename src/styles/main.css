@@ -472,7 +472,9 @@ a.lgi-zoom:hover {
     padding-left: 10px;
 }
 
+
 #search_container {
+<<<<<<< HEAD
     display: inline-block;
     width: 300px;
     height: 30px;
@@ -487,6 +489,16 @@ a.lgi-zoom:hover {
     margin-bottom: 30px;
 }
 
+=======
+    display    : inline-block;
+    width      : 300px;
+    height     : 30px;
+    padding    : 25px;
+
+}
+
+
+>>>>>>> 9d7ec901e92e1ec7e59753b363446718d46f8189
 #search {
     display : inline-block;
     border: #000;
@@ -498,12 +510,14 @@ a.lgi-zoom:hover {
     width: 200px;
     padding: 10px;
     /*padding-bottom: 40px;*/
+
     opacity: 0.8;
     border: solid 1px white;
     background-color: black;
     z-index: 1000;
     border-radius: 5px;
-}
+} 
+
 
 .modal-dialog {
     padding-top: 60px;
@@ -804,7 +818,20 @@ input[type="checkbox"], input[type="radio"] {
     margin: 0 auto;
 }
 
-
+.dismissbutton {
+    display: inline-block;
+    margin-bottom: 15px; 
+    margin-left: 15px;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: white;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-color: rgb(204, 204, 204);
+}
 
 /*MAP LAYERS*/
 #legendElement{
@@ -1006,8 +1033,12 @@ input[type="checkbox"], input[type="radio"] {
     border-radius: 3px !important;
 }
 h4.modal-title{
-    font-weight: bolder !important;
-    color: rgba(0,0,0,0.75) !important;
+    font-weight: 300 !important;
+    font-family: 'Open Sans', sans-serif;
+    position: relative;
+    top: 5px;
+   /* color: rgba(0,0,0,0.75) !important; */
+    max-width: 90%
 }
 .modal-header button.close{
     position: relative;

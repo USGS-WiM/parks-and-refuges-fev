@@ -10,7 +10,7 @@
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>
+    <script src="bower_components/jquery.nicescroll/jquery.nicescroll.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/bootstrap-sidebar/dist/js/sidebar.js"></script>
     <script src="bower_components/leaflet/dist/leaflet-src.js"></script>
@@ -24,6 +24,7 @@
     <script src="bower_components/highcharts/highcharts-more.js"></script>
     <script src="bower_components/highcharts/modules/exporting.js"></script>
     <script src="bower_components/moment/moment.js"></script>
+<<<<<<< HEAD
     <script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 
     <!-- build:js scripts/vendor.js -->
@@ -41,6 +42,9 @@
     <script src="bower_components/pdfmake/build/vfs_fonts.js"></script>
     <!-- <script src="bower_components/html2canvas/build/html2canvas.js"></script>
     <script src="node_modules/html2canvas/build/html2canvas.js"></script> -->
+=======
+    <script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+>>>>>>> 9d7ec901e92e1ec7e59753b363446718d46f8189
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -114,10 +118,14 @@
             <span class="glyphicon glyphicon-search"></span>
             <span id="geosearchButtonText"> Geosearch</span>
         </button>
+<<<<<<< HEAD
         <button id="printNav" type="button" class="btn btn-primary navbar-btn pull-right">
             <span class="glyphicon glyphicon-search"></span>
             <span id="printButtonText"> Print</span>
         </button>
+=======
+
+>>>>>>> 9d7ec901e92e1ec7e59753b363446718d46f8189
         <button id="aboutNav" class="btn btn-default navbar-btn pull-right">
             <i class="fa fa-question-circle"></i><span class="hidden-xs">&nbsp;&nbsp;About</span>
         </button>
@@ -184,39 +192,64 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                 <h4 class="modal-title">Geosearch</h4>
             </div>
-            <div class="modal-body" style="text-align: center;">
+            <div class="modal-body">
                 <div class="form-group" id="bufferOptions">
-                <label class="radio-inline" style="display: inline;">
-                    <p>Select a buffer distance:</p>
-                    <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
-                  </label>
-                  <label class="radio-inline">
-                    <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
-                  </label>
-                  <label class="radio-inline">
-                    <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
-                  </label>
-                </div>
-                <div class="form-group" style="position: inherit;">
-                    <div id="search_container">
-                        <div id="search"></div>
-                    </div><!-- /input-group -->
-                </div>
+                    <label class="radio-inline" style="display: inline;">
+                        <p>Select a buffer distance:</p>
+                        <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
+                      </label>
+                    </div>
+                <div class="form-group" align="center">
+                  <div id="geosearch" align="center"></div>
+                        <div id="search_container">
+                            <!-- search_api widget -->
+                           <div id="search">
+                               
+                            </div>
+                        </div>
+                        <div class="search-help" align="center"> </br>
+                            <b>Supported Search Strings:</b> </br>
+                            <code>Geographic Names</code>
+                            <code>Zip Codes</code>
+                            <code>States</code>
+                            <code>Street Address</code>
+                            <br/>
+                            <br/> Search provided by
+                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript API</a>
+                        </div>
+                    </div>
             </div>
-            <div class="modal-footer">
-                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
+                <form id="geosearch-form" class="form-inline">
+                    <!--<button id="btnGeosearch" type="button" class="search-api-button; btn btn-success btn-fixed" data-dismiss="modal"> Go </button>-->
+                    <button id="btnDismiss" type="submit" class="dismissbutton btn" data-dismiss="modal">Dismiss</button>
+                </form> 
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
 
+<<<<<<< HEAD
 <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" aria-hidden="true">
     <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important" >
+=======
+<!--class="btn btn-default btn-fixed"-->
+
+<!--
+<div class="modal fade overflow-y-hidden" id="geosearchModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+>>>>>>> 9d7ec901e92e1ec7e59753b363446718d46f8189
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                 <h4 class="modal-title">Print Report</h4>
             </div>
+<<<<<<< HEAD
             <div class="modal-body" style="text-align: center; height: 700px; overflow-y: auto;">
                 <div id="reviewMap">
                     <div id='loader' class='imageLoader'></div><p id='loadingMessage'>loading image...</p>
@@ -229,6 +262,16 @@
                     <div id="reviewMap">
                     </div>
                 </div> -->
+=======
+            <div class="modal-body">
+                <div class="form-group">
+                    <div id="search_container">
+                        <div id="search"></div>
+                    </div><!-- /input-group -->
+
+<!--
+                </div>
+>>>>>>> 9d7ec901e92e1ec7e59753b363446718d46f8189
             </div>
             <div class="modal-footer">
                 <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
@@ -236,9 +279,19 @@
                 <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
                     style="color:gray;" class="btn btn-default">Close</button>
             </div>
+<<<<<<< HEAD
         </div>
     </div>
+=======
+        </div><!-- /.modal-content -->
+
+<!--
+    </div><!-- /.modal-dialog -->
+
+<!--
+>>>>>>> 9d7ec901e92e1ec7e59753b363446718d46f8189
 </div>
+-->
 
 <div id="aboutModal" class="modal fade"  tabindex="-1" role="dialog" >
     <div class="modal-dialog  modal-lg">

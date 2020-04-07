@@ -1086,6 +1086,7 @@ $(document).ready(function () {
 		fev.vars.currentBufferSelection = 30;
 	});
 
+<<<<<<< HEAD
 	// add empty geojson layer that will contain suggested locations on update
 	var suggestion_layer = L.geoJson(null, {
 		pointToLayer: function (feature, latlng) {
@@ -1118,12 +1119,16 @@ $(document).ready(function () {
 			);
 		}
 	}).addTo(map);
+=======
+setSearchAPI();
+>>>>>>> 9d7ec901e92e1ec7e59753b363446718d46f8189
 
 	function setSearchAPI() {
 		// create search_api widget
 		search_api.create("search", {
 
 			// appearance
+<<<<<<< HEAD
 			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
 			width: 500,  // width of the widget [px]
 			placeholder: "Search for a Park or Refuge", // text box placeholder prompt to display when no text is entered
@@ -1159,6 +1164,45 @@ $(document).ready(function () {
 			include_huc10: false,  // ...10-digit
 			include_huc12: false,  // ...12-digit
 
+=======
+			size        : "md", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
+			width       : 250,  // width of the widget [px]
+			placeholder : "Search for a park or refuge", // text box placeholder prompt to display when no text is entered
+			tooltip     : "Search-able places are:\n" +
+				"* Major and minor GNIS locations,\n" +
+				"* U.S. States or Territories,\n" +
+				"* numeric 5-digit ZIP or 3-digit area codes," +
+				"* numeric USGS site numbers,\n" +
+				"* numeric Hydologic Unit Codes (HUCs), and\n" +
+				"* latitude-longitude coordinates (e.g. '32.4 -100.1')",
+			
+
+			// suggestion menu
+			menu_min_char      : 2,     // minimum number of characters required before attempting to find menu suggestions
+			menu_max_entries   : 50,    // maximum number of menu items to display
+			menu_height        : 400,   // maximum height of menu [px]
+			
+			include_gnis_major : true,  // whether to include GNIS places as suggestions in the menu: major categories (most common)...
+			include_gnis_minor : true,  // ...minor categories (less common)
+			
+			include_state      : true,  // whether to include U.S. States and Territories as suggestions in the menu
+			include_zip_code   : true,  // whether to include 5-digit zip codes as suggestions in the menu
+			include_area_code  : true,  // whether to include 3-digit area codes as suggestions in the menu
+			
+			include_usgs_sw    : true,  // whether to include USGS site numbers as suggestions in the menu: surface water...
+			include_usgs_gw    : true,  // ...ground water
+			include_usgs_sp    : true,  // ...spring
+			include_usgs_at    : true,  // ...atmospheric
+			include_usgs_ot    : true,  // ...other
+			
+			include_huc2       : false,  // whether to include Hydrologic Unit Code (HUC) numbers as suggestions in the menu: 2-digit...
+			include_huc4       : false,  // ... 4-digit
+			include_huc6       : false,  // ... 6-digit
+			include_huc8       : false,  // ... 8-digit
+			include_huc10      : false,  // ...10-digit
+			include_huc12      : false,  // ...12-digit
+			
+>>>>>>> 9d7ec901e92e1ec7e59753b363446718d46f8189
 			// event callback functions
 			// function argument "o" is widget object
 			// "o.result" is geojson point feature of search result with properties
