@@ -472,15 +472,6 @@ a.lgi-zoom:hover {
     padding-left: 10px;
 }
 
-
-#search_container {
-<<<<<<< HEAD
-    display: inline-block;
-    width: 300px;
-    height: 30px;
-    padding: 25px;
-}
-
 #bufferOptions {
     display: inline-block;
     width: 300px;
@@ -489,19 +480,11 @@ a.lgi-zoom:hover {
     margin-bottom: 30px;
 }
 
-=======
-    display    : inline-block;
-    width      : 300px;
-    height     : 30px;
-    padding    : 25px;
-
-}
-
-
->>>>>>> 9d7ec901e92e1ec7e59753b363446718d46f8189
 #search {
     display : inline-block;
     border: #000;
+    position: relative;
+    left: -120px;
 }
 
 .opacitySlider {
@@ -631,16 +614,9 @@ a.lgi-zoom:hover {
     top:50px;
     position: fixed;
 }*/
-input[type="checkbox"], input[type="radio"] {
+/* input[type="checkbox"], input[type="radio"] {
     float: left;
-}
-
-#search {
-    position : absolute;
-    top      : 10px;
-    left     : 55px;
-    z-index  : 2;
-}
+} */
 
 .zoomDialog {
     position: absolute;
