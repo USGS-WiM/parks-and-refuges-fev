@@ -20,7 +20,7 @@ body {
     ===========================
 */
 
-.search-bar {
+/* .search-bar {
     margin:0px;
     padding-left:0px;
 }
@@ -67,7 +67,7 @@ body {
 .sapi-autocomplete-itemAnnotation {
     font-family: 'Open Sans', sans-serif !important;
     font-weight: bold !important;
-}
+} */
 
 /*
     ===========================
@@ -179,8 +179,16 @@ body {
     transition: .2s;
     color: rgba(255,255,255,.35);
 }
-
-
+#search_container {
+    display    : inline-block;
+    width      : 300px;
+    height     : 30px;
+    padding    : 25px;
+}
+#search {
+    display : inline-block;
+    border: #000;
+}
 #aboutNav{
     letter-spacing: 2px;
     position: relative; top: 2px;
@@ -464,19 +472,19 @@ a.lgi-zoom:hover {
     padding-left: 10px;
 }
 
-
-#search_container {
-    display    : inline-block;
-    width      : 300px;
-    height     : 30px;
-    padding    : 25px;
-
+#bufferOptions {
+    display: inline-block;
+    width: 300px;
+    height: 30px;
+    padding: 0px 25px 25px 25px;
+    margin-bottom: 30px;
 }
-
 
 #search {
     display : inline-block;
     border: #000;
+    position: relative;
+    left: -120px;
 }
 
 .opacitySlider {
@@ -557,13 +565,58 @@ a.lgi-zoom:hover {
     padding-bottom: 50px;
 }
 
+#reviewMapContainer {
+    display: -webkit-flex !important;
+    display: flex !important;
+    width: 100% !important;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+
+#reviewMap {
+    /* width: 600px;
+    height: 450px; */
+    display: inline-block;
+}
+
+.imageLoader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+  }
+  
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+  }
+
+  .reportInfo {
+      padding: 10px;
+      margin-left: 60px;
+  }
+
+  #infoTable, th, td {
+          padding: 8px;
+          text-align: left;
+          /* border-right: 1px solid #ddd; */
+      }
+  
 /*#mapContainer {
     top:50px;
     position: fixed;
 }*/
-input[type="checkbox"], input[type="radio"] {
+/* input[type="checkbox"], input[type="radio"] {
     float: left;
-}
+} */
 
 .zoomDialog {
     position: absolute;

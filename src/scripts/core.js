@@ -2,34 +2,40 @@ var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 //var stnServicesURL = 'https://stntest.wim.usgs.gov/STNServices2'; //test URL
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
-
+var flattenedPoly;
+var parksLayerGroup = new L.LayerGroup();
+var parks;
+var refuges;
+var bufferPoly;
+var currentParkOrRefuge = "";
+var identifiedPeaks = [];
 var fev = fev || {
 	data: {
 		events: [],
 		eventTypes: [],
 		states: [],
-		counties : [],
-		sensorTypes : [],
-		sensorStatusTypes : [],
+		counties: [],
+		sensorTypes: [],
+		sensorStatusTypes: [],
 		collectionConditions: [],
-		deploymentTypes : [],
+		deploymentTypes: [],
 		hwmTypes: [],
-		hwmQualities : []
+		hwmQualities: []
 	},
 	urls: {
-		jsonSensorsURLRoot : stnServicesURL + '/Instruments/FilteredInstruments.json',
+		jsonSensorsURLRoot: stnServicesURL + '/Instruments/FilteredInstruments.json',
 		xmlSensorsURLRoot: stnServicesURL + '/Instruments/FilteredInstruments.xml',
-		csvSensorsURLRoot : stnServicesURL + '/Instruments/FilteredInstruments.csv',
+		csvSensorsURLRoot: stnServicesURL + '/Instruments/FilteredInstruments.csv',
 
-		jsonHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.json',
-		xmlHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.xml',
-		csvHWMsURLRoot : stnServicesURL + '/HWMs/FilteredHWMs.csv',
+		jsonHWMsURLRoot: stnServicesURL + '/HWMs/FilteredHWMs.json',
+		xmlHWMsURLRoot: stnServicesURL + '/HWMs/FilteredHWMs.xml',
+		csvHWMsURLRoot: stnServicesURL + '/HWMs/FilteredHWMs.csv',
 		hwmFilteredGeoJSONViewURL: stnServicesURL + '/HWMs/FilteredHWMs.geojson',
 		hwmGeoJSONViewURL: stnServicesURL + '/hwms.geojson',
 
-		xmlPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.xml',
-		jsonPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.json',
-		csvPeaksURLRoot : stnServicesURL + '/PeakSummaries/FilteredPeaks.csv',
+		xmlPeaksURLRoot: stnServicesURL + '/PeakSummaries/FilteredPeaks.xml',
+		jsonPeaksURLRoot: stnServicesURL + '/PeakSummaries/FilteredPeaks.json',
+		csvPeaksURLRoot: stnServicesURL + '/PeakSummaries/FilteredPeaks.csv',
 		peaksFilteredGeoJSONViewURL: stnServicesURL + '/PeakSummaries/FilteredPeaks.geojson',
 
 		baroGeoJSONViewURL: stnServicesURL + '/SensorViews.geojson?ViewType=baro_view&',
@@ -40,71 +46,84 @@ var fev = fev || {
 	},
 	queryStrings: {
 	},
-	vars : {
-		currentEventName:"",
+	vars: {
+		currentEventName: "",
 		currentEventID_str: "",
-		currentEventStartDate_str : "",
-		currentEventEndDate_str : "",
-		currentEventActive : false,
-		extentNorth : 71.3888898,  // north lat: Point Barrow Alaska
-		extentWest : -179.148611, //west long: Amatignak Island, Alaska
-		extentEast :  -66.947028, //east long: Sail Rock, Maine
-		extentSouth :  18.910833  //south lat: Ka Lae. Hawaii
+		currentEventStartDate_str: "",
+		currentEventEndDate_str: "",
+		currentBufferSelection: 20,
+		currentEventActive: false,
+		extentNorth: 71.3888898,  // north lat: Point Barrow Alaska
+		extentWest: -179.148611, //west long: Amatignak Island, Alaska
+		extentEast: -66.947028, //east long: Sail Rock, Maine
+		extentSouth: 18.910833  //south lat: Ka Lae. Hawaii
 	},
-	layerList: 	[
+	layerList: [
 		{
 			"ID": "baro",
 			"Name": "Barometric Pressure Sensor",
-			"Type":"sensor",
+			"Type": "sensor",
 			"Category": "observed"
 		},
 		{
 			"ID": "stormtide",
 			"Name": "Storm Tide Sensor",
-			"Type":"sensor",
+			"Type": "sensor",
 			"Category": "observed"
 		},
 		{
 			"ID": "met",
 			"Name": "Meteorological Sensor",
-			"Type":"sensor",
+			"Type": "sensor",
 			"Category": "observed"
 		},
 		{
 			"ID": "waveheight",
 			"Name": "Wave Height Sensor",
-			"Type":"sensor",
+			"Type": "sensor",
 			"Category": "observed"
 		},
 		{
 			"ID": "rdg",
 			"Name": "Rapid Deployment Gage",
-			"Type":"sensor",
+			"Type": "sensor",
 			"Category": "real-time"
 		},
 		{
 			"ID": "hwm",
 			"Name": "High Water Mark",
-			"Type":"observed",
+			"Type": "observed",
 			"Category": "observed"
 		},
 		{
 			"ID": "peak",
 			"Name": "Peak Summary",
-			"Type":"interpreted",
+			"Type": "interpreted",
 			"Category": "interpreted"
 		},
 		{
 			"ID": "int",
 			"Name": "Interest Boundaries",
-			"Type":"fws",
+			"Type": "fws",
 			"Category": "fws"
 		},
 		{
 			"ID": "appr",
 			"Name": "Approved Acquisition Boundaries",
-			"Type":"fws",
+			"Type": "fws",
 			"Category": "fws"
+		},
+		{
+			"ID": "tracts",
+			"Name": "Park Tracts",
+			"Type": "nps",
+			"Category": "nps"
+		},
+		{
+			"ID": "bounds",
+			"Name": "Park Boundaries",
+			"Type": "nps",
+			"Category": "nps"
 		}
 	]
 };
@@ -112,28 +131,32 @@ var fev = fev || {
 //L.esri.Support.cors = true;
 
 var map;
+var reviewMap;
 var markerCoords = [];
 var oms;
+var mapImage;
 
-var baroMarkerIcon = L.icon({className: 'baroMarker', iconUrl: 'images/baro.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
-var metMarkerIcon = L.icon({className: 'metMarker', iconUrl: 'images/met.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
-var rdgMarkerIcon = L.icon({className: 'rdgMarker', iconUrl: 'images/rdg.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
-var stormtideMarkerIcon = L.icon({className: 'stormtideMarker', iconUrl: 'images/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16,16]});
-var waveheightMarkerIcon = L.icon({className: 'waveheightMarker', iconUrl: 'images/waveheight.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12,12]});
-var hwmMarkerIcon = L.icon({className: 'hwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2]});
-var peakMarkerIcon = L.icon({className: 'peakMarker', iconUrl: 'images/peak.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
-var nwisMarkerIcon = L.icon({className: 'nwisMarker', iconUrl: 'images/nwis.png',  iconAnchor: [7, 10], popupAnchor: [0, 2]});
-var nwisRainMarkerIcon = L.icon({className: 'nwisMarker', iconUrl: 'images/rainIcon.png',  iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30,30]});
+var baroMarkerIcon = L.icon({ className: 'baroMarker', iconUrl: 'images/baro.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var metMarkerIcon = L.icon({ className: 'metMarker', iconUrl: 'images/met.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var rdgMarkerIcon = L.icon({ className: 'rdgMarker', iconUrl: 'images/rdg.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var stormtideMarkerIcon = L.icon({ className: 'stormtideMarker', iconUrl: 'images/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var waveheightMarkerIcon = L.icon({ className: 'waveheightMarker', iconUrl: 'images/waveheight.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12, 12] });
+var hwmMarkerIcon = L.icon({ className: 'hwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
-var	baro = L.layerGroup();
+var baro = L.layerGroup();
 var stormtide = L.layerGroup();
-var	met = L.layerGroup();
-var	waveheight = L.layerGroup();
+var met = L.layerGroup();
+var waveheight = L.layerGroup();
 var hwm = L.layerGroup();
 var peak = L.layerGroup();
 var appr = L.layerGroup();
 var int = L.layerGroup();
+var tracts = L.layerGroup();
+var bounds = L.layerGroup();
 
 // refuge layer
 /* var refuges = L.esri.dynamicMapLayer({
@@ -153,7 +176,7 @@ $.ajax({
 	url: "https://gis.fws.gov/arcgis/rest/services/FWS_Refuge_Boundaries/MapServer/2",
 	async: false,
 	dataType: 'json',
-	success: function(data) {
+	success: function (data) {
 		if (data[0].label == "No active advisories at this time") {
 			noAdvisories = true;
 			test = data;
@@ -171,9 +194,9 @@ var rdg = L.featureGroup();
 var USGSRainGages = L.featureGroup();
 var USGSrtGages = L.featureGroup();
 var noaaService = L.esri.dynamicMapLayer({
-	url:"https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
+	url: "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
 	opacity: 0.5,
-	f:'image'
+	f: 'image'
 })
 
 var noAdvisories = false;
@@ -183,7 +206,7 @@ $.ajax({
 	url: "https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time",
 	async: false,
 	dataType: 'json',
-	success: function(data) {
+	success: function (data) {
 		if (data[0].label == "No active advisories at this time") {
 			noAdvisories = true;
 			test = data;
@@ -196,6 +219,42 @@ $.ajax({
 	}
 });
 
+// NPS Tracts 
+var tracts = L.esri.featureLayer({
+	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/1",
+	//opacity: 0.5,
+	minZoom: 9,
+	style: function (feature) {
+		if (feature.properties.Interest === 'Federal Land (Fee)') {
+			return { color: 'green', weight: 2 };
+		} if (feature.properties.Interest === 'Federal Land (Less than Fee)') {
+			return { color: 'yellow', weight: 2 };
+		} if (feature.properties.Interest === 'Public') {
+			return { color: 'orange', weight: 2 };
+		} if (feature.properties.Interest === 'Private') {
+			return { color: 'blue', weight: 2 };
+		} if (feature.properties.Interest === 'Other Federal Land') {
+			return { color: 'purple', weight: 2 };
+		} if (feature.properties.Interest === 'Acquisition Deferred') {
+			return { color: 'pink', weight: 2 };
+		} if (feature.properties.Interest === 'No Info In Database') {
+			return { color: 'black', weight: 2 };
+		} else {
+			return { color: 'black', weight: 2 };
+		}
+	}
+})
+
+// NPS Boundaries 
+var bounds = L.esri.featureLayer({
+	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2",
+	//opacity: 0.5,
+	minZoom: 9,
+	/* style: function (feature) {
+		return { color: 'brown', weight: 2 };
+	} */
+})
+
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
@@ -206,6 +265,7 @@ var appr = L.esri.featureLayer({
 	}
 })
 
+// FWS Approved Interest Boundaries 
 var int = L.esri.featureLayer({
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1",
 	//opacity: 0.5,
@@ -213,17 +273,17 @@ var int = L.esri.featureLayer({
 	style: function (feature) {
 		if ((feature.properties.INTTYPE1 === 'F') || (feature.properties.INTTYPE1 === 'O')) {
 			return { color: 'green', weight: 2 };
-		}  if (feature.properties.INTTYPE1 === 'S') {
+		} if (feature.properties.INTTYPE1 === 'S') {
 			return { color: 'purple', weight: 2 };
-		}  if (feature.properties.INTTYPE1 === 'E') {
+		} if (feature.properties.INTTYPE1 === 'E') {
 			return { color: 'orange', weight: 2 };
-		}  if (feature.properties.INTTYPE1 === 'L') {
+		} if (feature.properties.INTTYPE1 === 'L') {
 			return { color: 'yellow', weight: 2 };
-		}  if (feature.properties.INTTYPE1 === 'S') {
+		} if (feature.properties.INTTYPE1 === 'S') {
 			return { color: 'beige', weight: 2 };
-		}  if (feature.properties.INTTYPE1 === 'P') {
+		} if (feature.properties.INTTYPE1 === 'P') {
 			return { color: 'blue', weight: 2 };
-		}  if (feature.properties.INTTYPE1 === 'U') {
+		} if (feature.properties.INTTYPE1 === 'U') {
 			return { color: 'red', weight: 2 };
 		} else {
 			return { color: 'black', weight: 2 };
@@ -231,7 +291,7 @@ var int = L.esri.featureLayer({
 	}
 })
 
-int.bindPopup(function(layer){
+int.bindPopup(function (layer) {
 	return L.Util.template('<p>INTTYPE1: {INTTYPE1}', layer.properties);
 })
 
@@ -255,17 +315,17 @@ int.bindPopup(function(layer){
 		console.log("NOAA Tropical Cyclone legend retrieve failed.");
 	}); */
 
-	/* function callbackFuncWithData(data)
-		{
-			if (data[0].label == "No active advisories at this time") {
-				noAdvisories = true;
-				console.log(test);
-			} else {
-				//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
-				//noaaService = noaaTrack;
-				console.log("noaa layer added");
-			}
-		} */
+/* function callbackFuncWithData(data)
+	{
+		if (data[0].label == "No active advisories at this time") {
+			noAdvisories = true;
+			console.log(test);
+		} else {
+			//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
+			//noaaService = noaaTrack;
+			console.log("noaa layer added");
+		}
+	} */
 
 /////markercluster code, can remove eventually
 // Marker Cluster Group for sensors
@@ -297,12 +357,12 @@ int.bindPopup(function(layer){
 ///end markercluster code//////////////////////////////////////////////////////////////
 
 //main document ready function
-$( document ).ready(function() {
+$(document).ready(function () {
 	//for jshint
 	'use strict';
 
 	$('#peakDatePicker .input-daterange').datepicker({
-		format:  "yyyy-mm-dd",
+		format: "yyyy-mm-dd",
 		endDate: "today",
 		startView: 2,
 		maxViewMode: 3,
@@ -314,7 +374,7 @@ $( document ).ready(function() {
 	});
 
 	//listener for submit event button on welcome modal - sets event vars and passes event id to filterMapData function
-	$('#btnSubmitEvent').click(function(){
+	$('#btnSubmitEvent').click(function () {
 		//check if an event has been selected
 		if ($('#evtSelect_welcomeModal').val() !== null) {
 			//if event selected, hide welcome modal and begin filter process
@@ -322,12 +382,12 @@ $( document ).ready(function() {
 			var eventID = $('#evtSelect_welcomeModal').val()[0];
 			$('#evtSelect_filterModal').val([eventID]).trigger("change");
 			//retrieve event details
-			$.getJSON( 'https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {} )
-				.done(function( data ) {
+			$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
+				.done(function (data) {
 					setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
 				})
-				.fail(function() {
-					console.log( "Request Failed. Most likely invalid event name." );
+				.fail(function () {
+					console.log("Request Failed. Most likely invalid event name.");
 				});
 			//populateEventDates(eventID);
 			filterMapData(eventID, false);
@@ -339,7 +399,7 @@ $( document ).ready(function() {
 	});
 
 	//listener for submit filters button on filters modal - sets event vars and passes event id to filterMapData function
-	$('#btnSubmitFilters').on('click', function() {
+	$('#btnSubmitFilters').on('click', function () {
 
 		if ($('#evtSelect_filterModal').val() !== null) {
 			//if event selected, hide welcome modal and begin filter process
@@ -363,33 +423,33 @@ $( document ).ready(function() {
 		}
 	});
 
-	$('#print').click(function(){
+	$('#print').click(function () {
 		printReport();
 	});
 
 	//'listener' for URL event params - sets event vars and passes event id to filterMapData function
-	if (window.location.hash){
+	if (window.location.hash) {
 		//user has arrived with an event name after the hash on the URL
 		//grab the hash value, remove the '#', leaving the event name parameter
 		var eventParam = window.location.hash.substring(1);
 		//retrieve event details
-		$.getJSON( 'https://stn.wim.usgs.gov/STNServices/events/' + eventParam + '.json', {} )
-			.done(function( data ) {
+		$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventParam + '.json', {})
+			.done(function (data) {
 				var eventID = data.event_id.toString();
 				setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
 				//call filter function, passing the eventid parameter string and 'true' for the 'isUrlParam' boolean argument
 				filterMapData(eventID, true);
 			})
-			.fail(function() {
-				console.log( "Request Failed. Most likely invalid event name." );
+			.fail(function () {
+				console.log("Request Failed. Most likely invalid event name.");
 			});
 
 	} else {
 		//show modal and set options - disallow user from bypassing
-		$('#welcomeModal').modal({backdrop: 'static', keyboard: false});
+		$('#welcomeModal').modal({ backdrop: 'static', keyboard: false });
 	}
 
-	function setEventVars (event_name, event_id, event_status_id, event_start_date, event_end_date) {
+	function setEventVars(event_name, event_id, event_status_id, event_start_date, event_end_date) {
 		//set event name in URL, using regex to remove spaces
 		history.pushState(null, null, '#' + (event_name.replace(/\s+/g, '')));
 		//set current event name
@@ -397,15 +457,15 @@ $( document ).ready(function() {
 		//set current event id string
 		fev.vars.currentEventID_str = event_id.toString();
 		//set currentEventActive boolean var based on event_status_id value
-		event_status_id == 1 ? fev.vars.currentEventActive = true :   fev.vars.currentEventActive = false;
+		event_status_id == 1 ? fev.vars.currentEventActive = true : fev.vars.currentEventActive = false;
 		//set event date string vars, cutting off time portion and storing date only; check for undefined because services do not return the property if it has no value
-		fev.vars.currentEventStartDate_str = (event_start_date == undefined ? '' : event_start_date.substr(0,10));
-		fev.vars.currentEventEndDate_str = (event_end_date == undefined ? '' : event_end_date.substr(0,10));
+		fev.vars.currentEventStartDate_str = (event_start_date == undefined ? '' : event_start_date.substr(0, 10));
+		fev.vars.currentEventEndDate_str = (event_end_date == undefined ? '' : event_end_date.substr(0, 10));
 		console.log("Selected event is " + event_name + ". START date is " + fev.vars.currentEventStartDate_str + " and END date is " + fev.vars.currentEventEndDate_str + ". Event is active = " + fev.vars.currentEventActive)
 		setEventIndicators(event_name, event_id, fev.vars.currentEventStartDate_str, fev.vars.currentEventEndDate_str);
 	}
 
-	function setEventIndicators (eventName, eventID, eventStartDateStr, eventEndDateStr) {
+	function setEventIndicators(eventName, eventID, eventStartDateStr, eventEndDateStr) {
 		$('#eventNameDisplay').html(eventName);
 		$('#largeEventNameDisplay').html(eventName);
 		//TODO: determine why this is not working, though its same code and input as in the btnSubmitEvent function above
@@ -425,21 +485,25 @@ $( document ).ready(function() {
 	}
 
 	/* create map */
-	map = L.map('mapDiv').setView([39.833333, -98.583333], 4);
+	map = L.map('mapDiv', {
+		maxZoom: 15
+	}).setView([39.833333, -98.583333], 4);
+
 	var layer = L.esri.basemapLayer('Topographic').addTo(map);
 	var layerLabels;
 	L.Icon.Default.imagePath = './images';
+	setSearchAPI();
 
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
-	map.on('popupopen', function() {
-		$('.data-disclaim').click(function(e){
+	map.on('popupopen', function () {
+		$('.data-disclaim').click(function (e) {
 			$('#aboutModal').modal('show');
 			$('.nav-tabs a[href="#disclaimerTabPane"]').tab('show');
 		});
 	});
 
 	map.on({
-		overlayadd: function(e) {
+		overlayadd: function (e) {
 			if (e.name.indexOf('Stream Gage') !== -1) {
 				if (map.getZoom() < 9) USGSrtGages.clearLayers();
 				if (map.hasLayer(USGSrtGages) && map.getZoom() >= 9) {
@@ -456,7 +520,7 @@ $( document ).ready(function() {
 				} */
 			}
 		},
-		overlayadd: function(e) {
+		overlayadd: function (e) {
 			if (e.name.indexOf('Rain Gage') !== -1) {
 				if (map.getZoom() < 9) USGSRainGages.clearLayers();
 				if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9) {
@@ -475,7 +539,7 @@ $( document ).ready(function() {
 				} */
 			}
 		},
-		overlayremove: function(e) {
+		overlayremove: function (e) {
 			if (e.name === 'Cities') alert('removed');
 		}
 	});
@@ -502,41 +566,47 @@ $( document ).ready(function() {
 	//define layer 'overlays' (overlay is a leaflet term)
 	//define the real-time overlay and manually add the NWIS RT gages to it
 	var realTimeOverlays = {
-		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage" : USGSrtGages,
-		"<img class='legendSwatch' src='images/rainIcon.png'>&nbsp;Real-time Rain Gage" : USGSRainGages
+		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
+		"<img class='legendSwatch' src='images/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
 	};
 	//define observed overlay and interpreted overlay, leave blank at first
 	var observedOverlays = {};
 	var interpretedOverlays = {};
 	var noaaOverlays = {};
 	var fwsOverlays = {};
+	var npsOverlays = {};
 
 	if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
 		div.innerHTML += "No Active Advisories";
 	} else {
 		noaaOverlays = {
-			"<img class='legendSwatch' src='images/noaa.png'>&nbsp;NOAA Tropical Cyclone Forecast Track" : noaaService
+			"<img class='legendSwatch' src='images/noaa.png'>&nbsp;NOAA Tropical Cyclone Forecast Track": noaaService
 		};
 	}
 
 	fwsOverlays = {
-		"<img class='legendSwatch' src='images/noaa.png'>&nbsp;appr" : appr,
-		"<img class='legendSwatch' src='images/noaa.png'>&nbsp;Int" : int,
+		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;appr": appr,
+		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Int": int,
 	}
-	
-	
+	npsOverlays = {
+		"<img class='legendSwatch' src='images/nps.png'>&nbsp;tracts": tracts,
+		"<img class='legendSwatch' src='images/nps.png'>&nbsp;bounds": bounds,
+	}
+
+
 	//loop thru layer list and add the legend item to the appropriate heading
-	$.each(fev.layerList, function( index, layer ) {
-		if(layer.Category == 'real-time') realTimeOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
-		if(layer.Category == 'observed') observedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
-		if(layer.Category == 'interpreted') interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-		if(layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-		if(layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+	$.each(fev.layerList, function (index, layer) {
+		if (layer.Category == 'real-time') realTimeOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
+		if (layer.Category == 'observed') observedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
+		if (layer.Category == 'interpreted') interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if (layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if (layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/usfws.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if (layer.Category == 'nps') npsOverlays["<img class='legendSwatch' src='images/nps.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
-	var realTimeToggle = L.control.layers(null, realTimeOverlays, {collapsed: false});
+	var realTimeToggle = L.control.layers(null, realTimeOverlays, { collapsed: false });
 	realTimeToggle.addTo(map);
 	$('#realTimeToggleDiv').append(realTimeToggle.onAdd(map));
 
@@ -546,26 +616,32 @@ $( document ).ready(function() {
 	$('.leaflet-top.leaflet-right').hide();
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	var observedToggle = L.control.layers(null, observedOverlays, {collapsed: false});
+	var observedToggle = L.control.layers(null, observedOverlays, { collapsed: false });
 	observedToggle.addTo(map);
 	$('#observedToggleDiv').append(observedToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
-	var interpretedToggle = L.control.layers(null, interpretedOverlays, {collapsed: false});
+	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
 	interpretedToggle.addTo(map);
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
-	var noaaToggle = L.control.layers(null, noaaOverlays, {collapsed: false});
+	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
 	noaaToggle.addTo(map);
 	$('#noaaToggleDiv').append(noaaToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	var fwsToggle = L.control.layers(null, fwsOverlays, {collapsed: false});
+	var fwsToggle = L.control.layers(null, fwsOverlays, { collapsed: false });
 	fwsToggle.addTo(map);
 	$('#fwsToggleDiv').append(fwsToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
+
+	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
+	npsToggle.addTo(map);
+	$('#npsToggleDiv').append(npsToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
 	//overlapping marker spidifier
@@ -623,19 +699,19 @@ $( document ).ready(function() {
 
 	//populate initial unfiltered download URLs
 	$('#sensorDownloadButtonCSV').attr('href', fev.urls.csvSensorsURLRoot);
-	$('#sensorDownloadButtonJSON').attr('href', fev.urls.jsonSensorsURLRoot); 
+	$('#sensorDownloadButtonJSON').attr('href', fev.urls.jsonSensorsURLRoot);
 	$('#sensorDownloadButtonXML').attr('href', fev.urls.xmlSensorsURLRoot);
 	$('#hwmDownloadButtonCSV').attr('href', fev.urls.csvHWMsURLRoot);
-	$('#hwmDownloadButtonJSON').attr('href', fev.urls.jsonHWMsURLRoot); 
+	$('#hwmDownloadButtonJSON').attr('href', fev.urls.jsonHWMsURLRoot);
 	$('#hwmDownloadButtonXML').attr('href', fev.urls.xmlHWMsURLRoot);
 	$('#peaksDownloadButtonCSV').attr('href', fev.urls.csvPeaksURLRoot);
-	$('#peaksDownloadButtonJSON').attr('href', fev.urls.jsonPeaksURLRoot); 
+	$('#peaksDownloadButtonJSON').attr('href', fev.urls.jsonPeaksURLRoot);
 	$('#peaksDownloadButtonXML').attr('href', fev.urls.xmlPeaksURLRoot);
 
 	/* sets up data type radio buttons to hide/show the respective forms*/
-	$('.dataTypeRadio').each(function(){
+	$('.dataTypeRadio').each(function () {
 		//for the clicked radio
-		$(this).on('click', function() {
+		$(this).on('click', function () {
 			var radioId = $(this).attr('id');
 			var formToShow = $('#' + radioId + 'Form');
 			formToShow.show();
@@ -643,32 +719,283 @@ $( document ).ready(function() {
 		});
 	});
 
-
-	
-
 	//toggle the appearance of the check box on click, including toggling the check icon
-	$('.check').on('click', function(){
+	$('.check').on('click', function () {
 		$(this).find('span').toggle();
 	});
 
 	function showGeosearchModal() {
 		$('#geosearchModal').modal('show');
+
+		// clearing the layers if a search has already been performed
+		if (parks !== undefined) {
+			map.removeLayer(parks);
+			map.removeLayer(refuges);
+			map.removeLayer(bufferPoly);
+		}
 	}
-	$('#geosearchNav').click(function(){
+	$('#geosearchNav').click(function () {
 		showGeosearchModal();
 	});
 
-	function showAboutModal () {
+	function showPrintModal() {
+		$('#printModal').modal('show');
+
+		/* setTimeout(() => {
+			reviewMap = L.map('reviewMap').setView([39.833333, -98.583333], 4);
+			L.esri.basemapLayer('Topographic').addTo(reviewMap);
+		}, 500); */
+	}
+	$('#printNav').click(function () {
+		showPrintModal();
+
+		// setting element to empty string incase a report has already been ran
+		document.getElementById('dataTable').innerHTML = "";
+
+		var mapPreview = document.getElementById('reviewMap');
+		/* mapPreview.innerHTML='Loading Map...'
+		mapPreview.innerHTML='Loading Map...'
+		 */
+
+		// setting up peak data for table
+		var peakTableData = [];
+		for (var i in identifiedPeaks) {
+			var peakEstimated = "";
+			if (identifiedPeaks[i].feature.properties.is_peak_stage_estimated === 0) {
+				peakEstimated = "no";
+			} else {
+				peakEstimated = "yes"
+			}
+
+			peakTableData.push({
+				"Site Number": identifiedPeaks[i].feature.properties.site_no,
+				"Description": identifiedPeaks[i].feature.properties.description,
+				"Networks": identifiedPeaks[i].feature.properties.networks,
+				"State": identifiedPeaks[i].feature.properties.state,
+				"County": identifiedPeaks[i].feature.properties.county,
+				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Estimated": peakEstimated
+			});
+		}
+		console.log(peakTableData)
+
+		// Builds the HTML Table
+		function buildHtmlTable() {
+			var columns = addAllColumnHeaders(peakTableData);
+
+			for (var i = 0; i < peakTableData.length; i++) {
+				var row$ = $('<tr/>');
+				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+					var cellValue = peakTableData[i][columns[colIndex]];
+
+					if (cellValue == null) { cellValue = ""; }
+
+					row$.append($('<td/>').html(cellValue));
+				}
+				$("#dataTable").append(row$);
+			}
+		}
+
+		function addAllColumnHeaders(peakTableData) {
+			var columnSet = [];
+			var headerTr$ = $('<tr/>');
+
+			for (var i = 0; i < peakTableData.length; i++) {
+				var rowHash = peakTableData[i];
+				for (var key in rowHash) {
+					if ($.inArray(key, columnSet) == -1) {
+						columnSet.push(key);
+						headerTr$.append($('<th/>').html(key));
+					}
+				}
+			}
+			$("#dataTable").append(headerTr$);
+
+			return columnSet;
+		}
+
+		buildHtmlTable();
+
+		setTimeout(() => {
+			let mapPane;
+			mapPane = $('.leaflet-map-pane')[0];
+			const mapTransform = mapPane.style.transform.split(',');
+			// const mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
+			let mapX;
+
+			// fix for firefox
+			if (mapTransform[0] === undefined) {
+				mapX = '';
+			} if (mapTransform[0].split('(')[1] === undefined) {
+				mapX = '';
+			} else {
+				mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
+			}
+
+			let mapY;
+			if (mapTransform[1] === undefined) {
+				mapY = '';
+			} else {
+				mapY = parseFloat(mapTransform[1].replace('px', ''));
+			}
+
+			mapPane.style.transform = '';
+			mapPane.style.left = mapX + 'px';
+			mapPane.style.top = mapY + 'px';
+
+			const myTiles = $('img.leaflet-tile');
+			const tilesLeft = [];
+			const tilesTop = [];
+			const tileMethod = [];
+			for (let i = 0; i < myTiles.length; i++) {
+				if (myTiles[i].style.left !== '') {
+					tilesLeft.push(parseFloat(myTiles[i].style.left.replace('px', '')));
+					tilesTop.push(parseFloat(myTiles[i].style.top.replace('px', '')));
+					tileMethod[i] = 'left';
+				} else if (myTiles[i].style.transform !== '') {
+					const tileTransform = myTiles[i].style.transform.split(',');
+					tilesLeft[i] = parseFloat(tileTransform[0].split('(')[1].replace('px', ''));
+					tilesTop[i] = parseFloat(tileTransform[1].replace('px', ''));
+					myTiles[i].style.transform = '';
+					tileMethod[i] = 'transform';
+				} else {
+					tilesLeft[i] = 0;
+					// tilesRight[i] = 0;
+					tileMethod[i] = 'neither';
+				}
+				myTiles[i].style.left = (tilesLeft[i]) + 'px';
+				myTiles[i].style.top = (tilesTop[i]) + 'px';
+			}
+
+			const myDivicons = $('.leaflet-marker-icon');
+			const dx = [];
+			const dy = [];
+			const mLeft = [];
+			const mTop = [];
+			for (let i = 0; i < myDivicons.length; i++) {
+				const curTransform = myDivicons[i].style.transform;
+				const splitTransform = curTransform.split(',');
+				if (splitTransform[0] === '') {
+
+				} else {
+					dx.push(parseFloat(splitTransform[0].split('(')[1].replace('px', '')));
+				}
+				if (splitTransform[0] === '') {
+
+					// when printing without reloading the style.transform property is blank
+					// but the values we need are in the style.cssText string
+					// so with the code below I'm manipulating those strings to get the values we need
+
+					dx.push(myDivicons[i].style.cssText.split(' left: ')[1].split('px')[0]);
+					dy.push(myDivicons[i].style.cssText.split('top')[1].replace('px;', ''));
+				} else {
+					dy.push(parseFloat(splitTransform[1].replace('px', '')));
+				}
+				// dx.push(parseFloat(splitTransform[0].split('(')[1].replace('px', '')));
+				// dy.push(parseFloat(splitTransform[1].replace('px', '')));
+				myDivicons[i].style.transform = '';
+				myDivicons[i].style.left = dx[i] + 'px';
+				myDivicons[i].style.top = dy[i] + 'px';
+			}
+
+			const mapWidth = parseFloat($('#mapDiv').css('width').replace('px', ''));
+			const mapHeight = parseFloat($('#mapDiv').css('height').replace('px', ''));
+
+			/* const linesLayer = $('svg.leaflet-zoom-animated')[0];
+			const oldLinesWidth = linesLayer.getAttribute('width');
+			const oldLinesHeight = linesLayer.getAttribute('height');
+			const oldViewbox = linesLayer.getAttribute('viewBox');
+			linesLayer.setAttribute('width', mapWidth.toString());
+			linesLayer.setAttribute('height', mapHeight.toString());
+			linesLayer.setAttribute('viewBox', '0 0 ' + mapWidth + ' ' + mapHeight);
+			const linesTransform = linesLayer.style.transform.split(',');
+			const linesX = parseFloat(linesTransform[0].split('(')[1].replace('px', ''));
+			const linesY = parseFloat(linesTransform[1].replace('px', ''));
+			linesLayer.style.transform = '';
+			linesLayer.style.left = '';
+			linesLayer.style.top = ''; */
+
+			const options = {
+				useCORS: true,
+			};
+
+			for (let i = 0; i < myTiles.length; i++) {
+				if (tileMethod[i] === 'left') {
+					myTiles[i].style.left = (tilesLeft[i]) + 'px';
+					myTiles[i].style.top = (tilesTop[i]) + 'px';
+				} else if (tileMethod[i] === 'transform') {
+					myTiles[i].style.left = '';
+					myTiles[i].style.top = '';
+					myTiles[i].style.transform = 'translate(' + tilesLeft[i] + 'px, ' + tilesTop[i] + 'px)';
+				} else {
+					myTiles[i].style.left = '0px';
+					myTiles[i].style.top = '0px';
+					myTiles[i].style.transform = 'translate(0px, 0px)';
+				}
+			}
+			for (let i = 0; i < myDivicons.length; i++) {
+				myDivicons[i].style.transform = 'translate(' + dx[i] + 'px, ' + dy[i] + 'px, 0)';
+				myDivicons[i].style.marginLeft = mLeft[i] + 'px';
+				myDivicons[i].style.marginTop = mTop[i] + 'px';
+			}
+			/* linesLayer.style.transform = 'translate(' + (linesX) + 'px,' + (linesY) + 'px)';
+			linesLayer.setAttribute('viewBox', oldViewbox);
+			linesLayer.setAttribute('width', oldLinesWidth);
+			linesLayer.setAttribute('height', oldLinesHeight); */
+			mapPane.style.transform = 'translate(' + (mapX) + 'px,' + (mapY) + 'px)';
+			mapPane.style.left = '';
+			mapPane.style.top = '';
+
+			var mapEvent;
+			html2canvas(document.getElementById('mapDiv'), options)
+				.then(function (canvas) {
+					mapEvent = new Event('map_ready');
+					/* canvas[0].drawImage */
+					canvas.style.width = '800px';
+					canvas.style.height = '450px';
+					mapPreview.append(canvas);
+					//mapImage = canvas.get(0).toDataUrl('image/png');
+					var test = canvas[0].toDataUrl('image/png');
+					window.dispatchEvent(mapEvent);
+
+				})
+		}, 3000);
+
+		setTimeout(() => {
+			document.getElementById('loader').remove();
+			document.getElementById('loadingMessage').remove();
+		}, 3001);
+	});
+
+	/* $('#printModal').bind('load',  function(){
+		reviewMap = L.map('reviewMap').setView([39.833333, -98.583333], 4);
+		L.esri.basemapLayer('Topographic').addTo(reviewMap);
+	}) */
+
+	// reloading the page at the moment because icons displaced when zooming after printing. 
+	//Need to figure out how to fix this, maybe just reintialize the map? we did have to fix 
+	//this in whispers too but can't remember what I did off hand
+	$("#printModal").on("hidden.bs.modal", function () {
+		//location.reload();
+		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
+
+		/* USGSrtGages.clearLayers();
+		USGSRainGages.clearLayers(); */
+		//refreshMapData(); function to reset map data
+	});
+
+
+	function showAboutModal() {
 		$('#aboutModal').modal('show');
 	}
-	$('#aboutNav').click(function(){
+	$('#aboutNav').click(function () {
 		showAboutModal();
 	});
 
-	function showFiltersModal () {
+	function showFiltersModal() {
 		$('#filtersModal').modal('show');
 	}
-	$('#btnChangeFilters').click(function(){
+	$('#btnChangeFilters').click(function () {
 		//update the event select within the filters modal to reflect current event
 		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
@@ -676,174 +1003,462 @@ $( document ).ready(function() {
 
 	/* begin basemap controller */
 	function setBasemap(basemap) {
-	    if (layer) {
-	      map.removeLayer(layer);
-	    }
-	    layer = L.esri.basemapLayer(basemap);
-	    map.addLayer(layer);
-	    if (layerLabels) {
-	      map.removeLayer(layerLabels);
-	    }
+		if (layer) {
+			map.removeLayer(layer);
+		}
+		layer = L.esri.basemapLayer(basemap);
+		map.addLayer(layer);
+		if (layerLabels) {
+			map.removeLayer(layerLabels);
+		}
 
-	    if (basemap === 'ShadedRelief' || basemap === 'Oceans' || basemap === 'Gray' || basemap === 'DarkGray' || basemap === 'Imagery' || basemap === 'Terrain') {
+		if (basemap === 'ShadedRelief' || basemap === 'Oceans' || basemap === 'Gray' || basemap === 'DarkGray' || basemap === 'Imagery' || basemap === 'Terrain') {
 
-	      layerLabels = L.esri.basemapLayer(basemap + 'Labels');
-	      map.addLayer(layerLabels);
-	    }
+			layerLabels = L.esri.basemapLayer(basemap + 'Labels');
+			map.addLayer(layerLabels);
+		}
 	}
 
-	$('.basemapBtn').on('click',function() {
-	  	var baseMap = this.id.replace('btn','');
+	$('.basemapBtn').on('click', function () {
+		var baseMap = this.id.replace('btn', '');
 
-	  	// https://github.com/Esri/esri-leaflet/issues/504 submitted issue that esri-leaflet basemaps dont match esri jsapi
+		// https://github.com/Esri/esri-leaflet/issues/504 submitted issue that esri-leaflet basemaps dont match esri jsapi
 
-	  	switch (baseMap) {
-		    case 'Streets': baseMap = 'Streets'; break;
-		    case 'Satellite': baseMap = 'Imagery'; break;
-		    case 'Topo': baseMap = 'Topographic'; break;
-		    case 'Terrain': baseMap = 'ShadedRelief'; break;
-		    case 'Gray': baseMap = 'Gray'; break;
-		    case 'NatGeo': baseMap = 'NationalGeographic'; break;
+		switch (baseMap) {
+			case 'Streets': baseMap = 'Streets'; break;
+			case 'Satellite': baseMap = 'Imagery'; break;
+			case 'Topo': baseMap = 'Topographic'; break;
+			case 'Terrain': baseMap = 'ShadedRelief'; break;
+			case 'Gray': baseMap = 'Gray'; break;
+			case 'NatGeo': baseMap = 'NationalGeographic'; break;
 		}
 
 		setBasemap(baseMap);
 
 	});
-  	/* end basemap controller */
+	/* end basemap controller */
 
 	/* geocoder control */
 	//import USGS search API
-
-	/*
-	var searchScript = document.createElement('script');
+	/* var searchScript = document.createElement('script');
 	searchScript.src = 'https://txpub.usgs.gov/DSS/search_api/1.1/api/search_api.min.js';
-	searchScript.onload = function() {
+	searchScript.onload = function () {
 		setSearchAPI();
 	};
 	document.body.appendChild(searchScript); */
 
+	function refreshMapData() {
+		displaySensorGeoJSON();
+		displayHWMGeoJSON();
+		displayPeaksGeoJSON();
+		populateEventDates();
+		checkLayerCount();
+		filterMapData();
+		queryNWISRainGages();
+		queryNWISrtGages();
+		queryNWISgraphRDG();
+		queryNWISgraph();
+		queryNWISRaingraph();
+	}
+	// setting checked values for buffer radio buttons
+	document.getElementById('tenKm').checked = false;
+	document.getElementById('twentyKm').checked = true;
+	document.getElementById('thirtyKm').checked = false;
+	// 10 kilometers
+	$('#tenKm').click(function () {
+		console.log('yes');
+		document.getElementById('twentyKm').checked = false;
+		document.getElementById('thirtyKm').checked = false;
+		fev.vars.currentBufferSelection = 10;
+	});
+	// 20 kilometers
+	$('#twentyKm').click(function () {
+		console.log('yes');
+		document.getElementById('tenKm').checked = false;
+		document.getElementById('thirtyKm').checked = false;
+		fev.vars.currentBufferSelection = 20;
+	});
+	// 30 kilometers
+	$('#thirtyKm').click(function () {
+		console.log('yes');
+		document.getElementById('twentyKm').checked = false;
+		document.getElementById('tenKm').checked = false;
+		fev.vars.currentBufferSelection = 30;
+	});
 
-setSearchAPI();
+	// add empty geojson layer that will contain suggested locations on update
+	var suggestion_layer = L.geoJson(null, {
+		pointToLayer: function (feature, latlng) {
+			return (
+				L.marker(latlng, {
+					opacity: 0.4
+				})
+					.bindPopup(
+						// popup content
+						'<div style="text-align:center;">' +
+						'<b>' + feature.properties.Label + '</b><br/>' +
+						feature.properties.Category +
+						'</div>',
+						// options
+						{ autoPan: false } // do not pan map to popup when opens
+					)
+					.on("mouseover", function () {
+						// make marker opaque and open popup when mouse is over marker
+						this.setOpacity(1.0).openPopup();
+					})
+					.on("mouseout", function () {
+						// make marker semi-transparent and close popup when mouse exits marker
+						this.setOpacity(0.4).closePopup();
+					})
+					.on("click", function () {
+						// set result with the marker feature and trigger result event to select the location when the marker is clicked
+						searchObj.result = feature;
+						searchObj.val("").trigger("result");
+					})
+			);
+		}
+	}).addTo(map);
 
 	function setSearchAPI() {
-		search_api.create( "search", {
-                
+		// create search_api widget
+		search_api.create("search", {
+
 			// appearance
-			size        : "md", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
-			width       : 250,  // width of the widget [px]
-			placeholder : "Search for a park or refuge", // text box placeholder prompt to display when no text is entered
-			tooltip     : "Search-able places are:\n" +
-				"* Major and minor GNIS locations,\n" +
-				"* U.S. States or Territories,\n" +
-				"* numeric 5-digit ZIP or 3-digit area codes," +
-				"* numeric USGS site numbers,\n" +
-				"* numeric Hydologic Unit Codes (HUCs), and\n" +
-				"* latitude-longitude coordinates (e.g. '32.4 -100.1')",
-			
+			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
+			width: 500,  // width of the widget [px]
+			placeholder: "Search for a Park or Refuge", // text box placeholder prompt to display when no text is entered
+			/* // search area
+			lat_min       : bounds.getSouth(), // minimum latitude
+			lat_max       : bounds.getNorth(), // maximum latitude
+			lon_min       : bounds.getWest(),  // minimum longitude
+			lon_max       : bounds.getEast(),  // maximum longitude
+			search_states : "tx,ok,nm",        // csv list of 1 or more U.S. States or Territories */
 
 			// suggestion menu
-			menu_min_char      : 2,     // minimum number of characters required before attempting to find menu suggestions
-			menu_max_entries   : 50,    // maximum number of menu items to display
-			menu_height        : 400,   // maximum height of menu [px]
-			
-			include_gnis_major : true,  // whether to include GNIS places as suggestions in the menu: major categories (most common)...
-			include_gnis_minor : true,  // ...minor categories (less common)
-			
-			include_state      : true,  // whether to include U.S. States and Territories as suggestions in the menu
-			include_zip_code   : true,  // whether to include 5-digit zip codes as suggestions in the menu
-			include_area_code  : true,  // whether to include 3-digit area codes as suggestions in the menu
-			
-			include_usgs_sw    : true,  // whether to include USGS site numbers as suggestions in the menu: surface water...
-			include_usgs_gw    : true,  // ...ground water
-			include_usgs_sp    : true,  // ...spring
-			include_usgs_at    : true,  // ...atmospheric
-			include_usgs_ot    : true,  // ...other
-			
-			include_huc2       : false,  // whether to include Hydrologic Unit Code (HUC) numbers as suggestions in the menu: 2-digit...
-			include_huc4       : false,  // ... 4-digit
-			include_huc6       : false,  // ... 6-digit
-			include_huc8       : false,  // ... 8-digit
-			include_huc10      : false,  // ...10-digit
-			include_huc12      : false,  // ...12-digit
-			
+			menu_min_char: 2,     // minimum number of characters required before attempting to find menu suggestions
+			menu_max_entries: 50,    // maximum number of menu items to display
+			menu_height: 400,   // maximum height of menu [px]
+
+			include_gnis_major: true,  // whether to include GNIS places as suggestions in the menu: major categories (most common)...
+			include_gnis_minor: false,  // ...minor categories (less common)
+
+			include_state: true,  // whether to include U.S. States and Territories as suggestions in the menu
+			include_zip_code: false,  // whether to include 5-digit zip codes as suggestions in the menu
+			include_area_code: false,  // whether to include 3-digit area codes as suggestions in the menu
+
+			include_usgs_sw: false,  // whether to include USGS site numbers as suggestions in the menu: surface water...
+			include_usgs_gw: false,  // ...ground water
+			include_usgs_sp: false,  // ...spring
+			include_usgs_at: false,  // ...atmospheric
+			include_usgs_ot: false,  // ...other
+
+			include_huc2: false,  // whether to include Hydrologic Unit Code (HUC) numbers as suggestions in the menu: 2-digit...
+			include_huc4: false,  // ... 4-digit
+			include_huc6: false,  // ... 6-digit
+			include_huc8: false,  // ... 8-digit
+			include_huc10: false,  // ...10-digit
+			include_huc12: false,  // ...12-digit
+
 			// event callback functions
 			// function argument "o" is widget object
 			// "o.result" is geojson point feature of search result with properties
-			
+
 			// function to execute when a search is started
 			// triggered when the search textbox text changes
-			on_search: function(o) {
-				console.warn(o.id+": my 'on_search' callback function - a search is started");
+			on_search: function (o) {
+				console.warn(o.id + ": my 'on_search' callback function - a search is started");
 				map.closePopup(); // close any previous popup when user searches for new location
 			},
-			
+
 			// function to execute when the suggestion menu is updated
-			// triggered when new items are displayed in the menu and when the menu closes
-			on_update: function(o) {
-				console.warn(o.id+": my 'on_update' callback function - the menu was updated");
+			on_update: function (o) {
+				// update geojson layer with menu suggestions
+				suggestion_layer.clearLayers().addData(o.getSuggestions());
+
+				// zoom to layer if there are any points
+				// pad left so open menu does not cover any points
+				if (suggestion_layer.getBounds().isValid()) {
+					map.fitBounds(suggestion_layer.getBounds().pad(0.4), { paddingTopLeft: [350, 0] });
+				}
+
+				// find corresponding map marker by lat-lon when mouse enters a menu item
+				// open the marker popup and set opaque
+				$(".search-api-menu-item").off("mouseenter").on("mouseenter", function () {
+					var Lat = $(this).data("properties").Lat;
+					var Lon = $(this).data("properties").Lon;
+					suggestion_layer.eachLayer(function (lyr) {
+						if (Lat === lyr.feature.properties.Lat && Lon === lyr.feature.properties.Lon) {
+							lyr.setOpacity(1.0).openPopup();
+						} else {
+							lyr.setOpacity(0.4).closePopup();
+						}
+					});
+				});
+
+				// close popups and set markers semi-transparent when mouse leaves a menu item
+				$(".search-api-menu-item").off("mouseleave").on("mouseleave", function () {
+					map.closePopup();
+					suggestion_layer.eachLayer(function (lyr) { lyr.setOpacity(0.4); });
+				});
 			},
-			
+
 			// function to execute when a suggestion is chosen
 			// triggered when a menu item is selected
-			on_result: function(o) {
-				console.warn(o.id+": my 'on_result' callback function - a menu item was selected");
+			on_result: function (o) {
+				console.warn(o.id + ": my 'on_result' callback function - a menu item was selected");
 				map
 					.fitBounds([ // zoom to location
-						[ o.result.properties.LatMin, o.result.properties.LonMin ],
-						[ o.result.properties.LatMax, o.result.properties.LonMax ]
+						[o.result.properties.LatMin, o.result.properties.LonMin],
+						[o.result.properties.LatMax, o.result.properties.LonMax]
 					])
 					.openPopup(  // open popup at location listing all properties
-						$.map( Object.keys(o.result.properties), function(property) {
+						$.map(Object.keys(o.result.properties), function (property) {
 							return "<b>" + property + ": </b>" + o.result.properties[property];
 						}).join("<br/>"),
-						[ o.result.properties.Lat, o.result.properties.Lon ]
+						[o.result.properties.Lat, o.result.properties.Lon]
 					);
+
+
+
+				// getting and setting park name from search
+				var name = o.result.properties.Name;
+
+				// setting the current Park or Refuge selected for the report
+				currentParkOrRefuge = name;
+				console.log(currentParkOrRefuge);
+
+				// formatiing park name for use in esri leaflet query
+				name = "'" + name + "'";
+
+				// setting buffer style
+				var bufferStyle = {
+					"color": "#9933ff",
+					"weight": 4,
+					"opacity": 0.65
+				};
+
+				// setting park style
+				var parkStyle = {
+					"color": "#0000cc",
+					"weight": 2,
+					"opacity": 100
+				};
+
+				// setting the where class for the query
+				// UNIT_NAME holds gnis major value of park name (I think)
+				var where = "UNIT_NAME=" + name;
+				var polys = [];
+				var buffer;
+				parks = L.esri.featureLayer({
+					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
+					simplifyFactor: 0.5,
+					precision: 4,
+					where: "UNIT_NAME=" + name,
+					onEachFeature: function (feature, latlng) {
+						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
+						latlng.bindPopup(popupContent);
+						polys = feature.geometry;
+						// flattening the geometry for use in turf
+						flattenedPoly = turf.flatten(polys);
+						console.log(flattenedPoly);
+						//test = flattenedPoly;
+					},
+					style: parkStyle
+				}).addTo(map);
+				parksLayerGroup.addLayer(parks);
+
+				refuges = L.esri.featureLayer({
+					url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
+					simplifyFactor: 0.5,
+					precision: 4,
+					where: "ORGNAME=" + name,
+					onEachFeature: function (feature, latlng) {
+						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
+						latlng.bindPopup(popupContent);
+						polys = feature.geometry;
+						// flattening the geometry for use in turf
+						flattenedPoly = turf.flatten(polys);
+						console.log(flattenedPoly);
+						//test = flattenedPoly;
+					},
+					style: parkStyle
+				}).addTo(map);
+
+				setTimeout(() => {
+					var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
+					var polysCount = flattenedPoly.features.length;
+					buffer = buffered;
+
+					// if there is more than one poly for a park we merge the buffers made for each park. can only do two at a time
+					if (polysCount >= 1) {
+						buffer = buffered.features[0];
+
+						// cycling through features
+						for (var i = 0; i < buffered.features.length; i++) {
+							// not cycling through if we're on the last one
+							if (i === (polysCount - 1)) {
+
+							} else {
+
+								// getting the index of the next feature to use in the union
+								var nextFeatureIndex = i + 1;
+								var nextFeature = buffered.features[nextFeatureIndex];
+
+								// unifying or merging the buffer
+								buffer = turf.union(buffer, nextFeature);
+							}
+						}
+					}
+
+					// adding the buffer to the map
+					bufferPoly = L.geoJson(buffer, {
+						style: bufferStyle
+					}).addTo(map);
+					map.fitBounds(bufferPoly.getBounds());
+
+					// cycling through each peak and seeing if it's inside the buffer
+					for (var i in peak._layers) {
+
+						// formatting point for turf
+						var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
+
+						var isItInside = turf.booleanPointInPolygon(cords, buffer);
+
+						// if true add it to an array containing all the 'true' peaks
+						if (isItInside) {
+							identifiedPeaks.push(peak._layers[i])
+						}
+					}
+					identifiedPeaks
+					console.log(identifiedPeaks);
+
+
+				}, 600);
+				$('#geosearchModal').modal('hide');
 			},
-			
+
 			// function to execute when no suggestions are found for the typed text
 			// triggered when services return no results or time out
-			on_failure: function(o){
-				console.warn(o.id+": my 'on_failure' callback function - the services returned no results or timed out");
+			on_failure: function (o) {
+				console.warn(o.id + ": my 'on_failure' callback function - the services returned no results or timed out");
 			},
-			
-			// miscellaneous
-			verbose : true // whether to set verbose mode on (true) or off (false)
-		});
-	
-	}
 
+			// miscellaneous
+			verbose: true // whether to set verbose mode on (true) or off (false)
+		});
+		// setup must be done after the search_api is loaded and ready ('load' event triggered)
+		/* search_api.on('load', function () {
+
+			$('#chkExtent').change(function () {
+				if ($(this).is(':checked')) {
+					console.log('Checked', map.getBounds().getSouth(), map.getBounds().getNorth(), map.getBounds().getWest(), map.getBounds().getEast());
+					var mapBounds = map.getBounds();
+
+					search_api.setOpts({
+						'LATmin': mapBounds.getSouth(),
+						'LATmax': mapBounds.getNorth(),
+						'LONmin': mapBounds.getWest(),
+						'LONmax': mapBounds.getEast()
+					});
+				}
+			});
+
+			search_api.setOpts({
+				'textboxPosition': 'user-defined',
+				'theme': 'user-defined',
+				'DbSearchIncludeState' : false,
+				'DbSearchIncludeZipCode' : false,
+				'DbSearchIncludeAreaCode' : false,
+				'DbSearchIncludeUsgsSiteSW': true,
+				'DbSearchIncludeUsgsSiteGW': true,
+				'DbSearchIncludeUsgsSiteSP': true,
+				'DbSearchIncludeUsgsSiteAT': true,
+				'DbSearchIncludeUsgsSiteOT': true
+			});
+
+			// define what to do when a location is found
+			search_api.on('location-found', function (lastLocationFound) {
+
+				$('#geosearchModal').modal('hide');
+
+				var zoomlevel = 14;
+				if (lastLocationFound.Category === 'U.S. State or Territory') zoomlevel = 9;
+
+				map.setView([lastLocationFound.y, lastLocationFound.x], zoomlevel);
+
+				L.popup()
+					.setLatLng([lastLocationFound.y, lastLocationFound.x])
+					.setContent(
+						'<p>' +
+						'<b>' + lastLocationFound.label + '</b> ' + '<br/>' +
+						'<br/>' +
+						'<b>NAME:            </b> ' + lastLocationFound.name + '<br/>' +
+						'<b>CATEGORY:        </b> ' + lastLocationFound.category + '<br/>' +
+						'<b>STATE:           </b> ' + lastLocationFound.state + '<br/>' +
+						'<b>COUNTY:          </b> ' + lastLocationFound.county + '<br/>' +
+						'<br/>' +
+						'<b>LATITUDE:        </b> ' + lastLocationFound.y + '<br/>' +
+						'<b>LONGITUDE:       </b> ' + lastLocationFound.x + '<br/>' +
+						'<b>ELEVATION (FEET):</b> ' + lastLocationFound.elevFt + '<br/>' +
+						'<br/>' +
+						'<b>PERCENT MATCH:   </b> ' + lastLocationFound.pctMatch + '<br/>' +
+						'</p>'
+					)
+					.openOn(map);
+
+			});
+
+			// define what to do when no location is found
+			search_api.on('no-result', function () {
+				// show alert dialog
+				console.error('No location matching the entered text could be found.');
+			});
+
+			// define what to do when a search times out
+			search_api.on('timeout', function () {
+				// show alert dialog
+				console.error('The search operation timed out.');
+			});
+		});
+
+
+		$('#searchSubmit').on('click', function () {
+			console.log('in search submit');
+			$('#sapi-searchTextBox').keyup();
+		}); */
+	}
 	/* geocoder control */
 
 	/* legend control */
 	$('#legendButtonNavBar, #legendButtonSidebar').on('click', function () {
-        $('#legend').toggle();
-        //return false;
-    });
-    $('#legendClose').on('click', function () {
-        $('#legend').hide();
-    });
-    /* legend control */
+		$('#legend').toggle();
+		//return false;
+	});
+	$('#legendClose').on('click', function () {
+		$('#legend').hide();
+	});
+	/* legend control */
 
-    // map.on('moveend', function(e) {
-    //     USGSrtGages.clearLayers();
-    //     if (map.hasLayer(USGSrtGages) && map.getZoom() >= 10) {
-    //         var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
-    //         queryNWISrtGages(bbox);
-    //     }
-    // });
+	// map.on('moveend', function(e) {
+	//     USGSrtGages.clearLayers();
+	//     if (map.hasLayer(USGSrtGages) && map.getZoom() >= 10) {
+	//         var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+	//         queryNWISrtGages(bbox);
+	//     }
+	// });
 
 	///fix to prevent re-rendering nwis rt gages on pan
-	map.on('load moveend zoomend', function(e) {
-		
+	map.on('load moveend zoomend', function (e) {
+
 		var foundPopup;
-		$.each(USGSrtGages.getLayers(), function( index, marker ) {
+		$.each(USGSrtGages.getLayers(), function (index, marker) {
 			var popup = marker.getPopup();
 			if (popup) {
 				foundPopup = popup._isOpen;
 			}
 		})
 
-		$.each(USGSRainGages.getLayers(), function( index, marker ) {
+		$.each(USGSRainGages.getLayers(), function (index, marker) {
 			var popup = marker.getPopup();
 			if (popup) {
 				foundPopup = popup._isOpen;
@@ -856,7 +1471,7 @@ setSearchAPI();
 			$('#rtScaleAlert').show();
 		}
 
-		if (map.getZoom() >= 9){
+		if (map.getZoom() >= 9) {
 			$('#rtScaleAlert').hide();
 		}
 		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 9 && !foundPopup) {
@@ -865,7 +1480,7 @@ setSearchAPI();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 			queryNWISrtGages(bbox);
 			queryNWISRainGages(bbox);
-			if (map.hasLayer(USGSrtGages) && map.hasLayer(USGSRainGages)){
+			if (map.hasLayer(USGSrtGages) && map.hasLayer(USGSRainGages)) {
 				USGSRainGages.bringToFront();
 			}
 		}
@@ -874,32 +1489,32 @@ setSearchAPI();
 			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 			queryNWISRainGages(bbox);
-			if (map.hasLayer(USGSRainGages) && map.hasLayer(USGSRainGages)){
+			if (map.hasLayer(USGSRainGages) && map.hasLayer(USGSRainGages)) {
 				USGSRainGages.bringToFront();
 			}
 		}
 	});
 
-	USGSrtGages.on('click', function(e) {
+	USGSrtGages.on('click', function (e) {
 		queryNWISgraph(e);
 
 	});
-	
-	USGSRainGages.on('click', function(e) {
+
+	USGSRainGages.on('click', function (e) {
 		queryNWISRaingraph(e);
 
 	});
 
-	rdg.on('click', function(e) {
+	rdg.on('click', function (e) {
 		queryNWISgraphRDG(e);
 	});
 
-    //begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
+	//begin latLngScale utility logic/////////////////////////////////////////////////////////////////////////////////////////
 
 	//displays map scale on map load
 	//map.on( 'load', function() {
-	map.whenReady( function() {
-		var mapScale =  scaleLookup(map.getZoom());
+	map.whenReady(function () {
+		var mapScale = scaleLookup(map.getZoom());
 		$('#scale')[0].innerHTML = mapScale;
 		console.log('Initial Map scale registered as ' + mapScale, map.getZoom());
 
@@ -908,24 +1523,24 @@ setSearchAPI();
 		$('#longitude').html(initMapCenter.lng.toFixed(4));
 	});
 
-//displays map scale on scale change (i.e. zoom level)
-	map.on( 'zoomend', function () {
+	//displays map scale on scale change (i.e. zoom level)
+	map.on('zoomend', function () {
 		var mapZoom = map.getZoom();
 		var mapScale = scaleLookup(mapZoom);
 		$('#scale')[0].innerHTML = mapScale;
 		$('#zoomLevel')[0].innerHTML = mapZoom;
 	});
 
-//updates lat/lng indicator on mouse move. does not apply on devices w/out mouse. removes 'map center' label
-	map.on( 'mousemove', function (cursorPosition) {
+	//updates lat/lng indicator on mouse move. does not apply on devices w/out mouse. removes 'map center' label
+	map.on('mousemove', function (cursorPosition) {
 		$('#mapCenterLabel').css('display', 'none');
 		if (cursorPosition.latlng !== null) {
 			$('#latitude').html(cursorPosition.latlng.lat.toFixed(4));
 			$('#longitude').html(cursorPosition.latlng.lng.toFixed(4));
 		}
 	});
-//updates lat/lng indicator to map center after pan and shows 'map center' label.
-	map.on( 'dragend', function () {
+	//updates lat/lng indicator to map center after pan and shows 'map center' label.
+	map.on('dragend', function () {
 		//displays latitude and longitude of map center
 		$('#mapCenterLabel').css('display', 'inline');
 		var geographicMapCenter = map.getCenter();
@@ -956,12 +1571,51 @@ setSearchAPI();
 
 			},
 			content: [
+				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + 'Kilometer Buffer', style: 'subheader' },
+				'It is of course possible to nest any other type of nodes available in pdfmake inside table cells',
 				{
-					alignment: 'justify',
-					text: 'hi'
-				}
+					style: 'tableExample',
+					table: {
+						body: [
+							['Column 1', 'Column 2', 'Column 3'],
+							[
+								{
+									stack: [
+										'Let\'s try an unordered list',
+										{
+											ul: [
+												'item 1',
+												'item 2'
+											]
+										}
+									]
+								},
+								[
+									'or a nested table',
+									{
+										table: {
+											body: [
+												['Col1', 'Col2', 'Col3'],
+												['1', '2', '3'],
+												['1', '2', '3']
+											]
+										},
+									}
+								],
+								{
+									text: [
+										'Inlines can be ',
+										{ text: 'styled\n', italics: true },
+										{ text: 'easily as everywhere else', fontSize: 10 }]
+								}
+							]
+						]
+					}
+				},
 			],
-			images: {},
+			images: {
+				map: mapImage
+			},
 			styles: {
 				header: {
 					fontSize: 15,

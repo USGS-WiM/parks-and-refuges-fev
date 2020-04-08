@@ -24,8 +24,16 @@
     "wiredep": "^1.4.4"
   },
   "dependencies": {
+    "@turf/boolean-point-in-polygon": "^6.0.1",
+    "@turf/flatten": "^5.1.5",
+    "@turf/helpers": "^6.1.4",
+    "@turf/polygon-to-line": "^6.0.3",
+    "@turf/union": "^6.0.3",
     "bootstrap-datepicker": "^1.6.4",
+    "html2canvas": "^1.0.0-rc.5",
     "moment": "^2.14.1",
-    "pdfmake": "^0.1.65"
+    "pdfmake": "^0.1.65",
+    "turf-buffer": "^3.0.12",
+    "turf-flatten": "^1.0.0"
   }
 }
