@@ -4,14 +4,15 @@
 var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     size = require('gulp-size'),
-    uglify = require('gulp-uglify'),
+    uglify = require('gulp-uglify-es').default,
     useref = require('gulp-useref'),
     cleanCSS = require('gulp-clean-css'),
     connect = require('gulp-connect'),
     autoprefixer = require('gulp-autoprefixer'),
     filter = require('gulp-filter'),
     del = require('del'),
-    open = require('open')
+    open = require('open'),
+    gutil = require('gulp-util')
 
 
 //less
@@ -53,11 +54,12 @@ gulp.task('html', ['styles', 'scripts', 'icons'], function () {
         .pipe(useref())
         .pipe(jsFilter)
         .pipe(uglify())
+        .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
         .pipe(jsFilter.restore)
         .pipe(cssFilter)
         .pipe(cleanCSS({ processImport: false }))
         .pipe(cssFilter.restore)
-        .pipe(gulp.dest('build'))
+        .pipe(gulp.dest('build/'))
         .pipe(size());
 });
 

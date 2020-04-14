@@ -564,7 +564,7 @@ $(document).ready(function () {
 	// USGSrtGages.addTo(map);
 	noaaService.addTo(map);
 
-	//define layer 'overlays' (overlay is a leaflet term)
+	//define layer 'overlays' (overlay is a leafvar term)
 	//define the real-time overlay and manually add the NWIS RT gages to it
 	var realTimeOverlays = {
 		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
@@ -818,11 +818,11 @@ $(document).ready(function () {
 		buildHtmlTable();
 
 		setTimeout(() => {
-			let mapPane;
+			var mapPane;
 			mapPane = $('.leaflet-map-pane')[0];
-			const mapTransform = mapPane.style.transform.split(',');
-			// const mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
-			let mapX;
+			var mapTransform = mapPane.style.transform.split(',');
+			// var mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
+			var mapX;
 
 			// fix for firefox
 			if (mapTransform[0] === undefined) {
@@ -833,7 +833,7 @@ $(document).ready(function () {
 				mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
 			}
 
-			let mapY;
+			var mapY;
 			if (mapTransform[1] === undefined) {
 				mapY = '';
 			} else {
@@ -844,17 +844,17 @@ $(document).ready(function () {
 			mapPane.style.left = mapX + 'px';
 			mapPane.style.top = mapY + 'px';
 
-			const myTiles = $('img.leaflet-tile');
-			const tilesLeft = [];
-			const tilesTop = [];
-			const tileMethod = [];
-			for (let i = 0; i < myTiles.length; i++) {
+			var myTiles = $('img.leaflet-tile');
+			var tilesLeft = [];
+			var tilesTop = [];
+			var tileMethod = [];
+			for (var i = 0; i < myTiles.length; i++) {
 				if (myTiles[i].style.left !== '') {
 					tilesLeft.push(parseFloat(myTiles[i].style.left.replace('px', '')));
 					tilesTop.push(parseFloat(myTiles[i].style.top.replace('px', '')));
 					tileMethod[i] = 'left';
 				} else if (myTiles[i].style.transform !== '') {
-					const tileTransform = myTiles[i].style.transform.split(',');
+					var tileTransform = myTiles[i].style.transform.split(',');
 					tilesLeft[i] = parseFloat(tileTransform[0].split('(')[1].replace('px', ''));
 					tilesTop[i] = parseFloat(tileTransform[1].replace('px', ''));
 					myTiles[i].style.transform = '';
@@ -868,14 +868,14 @@ $(document).ready(function () {
 				myTiles[i].style.top = (tilesTop[i]) + 'px';
 			}
 
-			const myDivicons = $('.leaflet-marker-icon');
-			const dx = [];
-			const dy = [];
-			const mLeft = [];
-			const mTop = [];
-			for (let i = 0; i < myDivicons.length; i++) {
-				const curTransform = myDivicons[i].style.transform;
-				const splitTransform = curTransform.split(',');
+			var myDivicons = $('.leaflet-marker-icon');
+			var dx = [];
+			var dy = [];
+			var mLeft = [];
+			var mTop = [];
+			for (var i = 0; i < myDivicons.length; i++) {
+				var curTransform = myDivicons[i].style.transform;
+				var splitTransform = curTransform.split(',');
 				if (splitTransform[0] === '') {
 
 				} else {
@@ -899,28 +899,28 @@ $(document).ready(function () {
 				myDivicons[i].style.top = dy[i] + 'px';
 			}
 
-			const mapWidth = parseFloat($('#mapDiv').css('width').replace('px', ''));
-			const mapHeight = parseFloat($('#mapDiv').css('height').replace('px', ''));
+			var mapWidth = parseFloat($('#mapDiv').css('width').replace('px', ''));
+			var mapHeight = parseFloat($('#mapDiv').css('height').replace('px', ''));
 
-			/* const linesLayer = $('svg.leaflet-zoom-animated')[0];
-			const oldLinesWidth = linesLayer.getAttribute('width');
-			const oldLinesHeight = linesLayer.getAttribute('height');
-			const oldViewbox = linesLayer.getAttribute('viewBox');
+			/* var linesLayer = $('svg.leaflet-zoom-animated')[0];
+			var oldLinesWidth = linesLayer.getAttribute('width');
+			var oldLinesHeight = linesLayer.getAttribute('height');
+			var oldViewbox = linesLayer.getAttribute('viewBox');
 			linesLayer.setAttribute('width', mapWidth.toString());
 			linesLayer.setAttribute('height', mapHeight.toString());
 			linesLayer.setAttribute('viewBox', '0 0 ' + mapWidth + ' ' + mapHeight);
-			const linesTransform = linesLayer.style.transform.split(',');
-			const linesX = parseFloat(linesTransform[0].split('(')[1].replace('px', ''));
-			const linesY = parseFloat(linesTransform[1].replace('px', ''));
+			var linesTransform = linesLayer.style.transform.split(',');
+			var linesX = parseFloat(linesTransform[0].split('(')[1].replace('px', ''));
+			var linesY = parseFloat(linesTransform[1].replace('px', ''));
 			linesLayer.style.transform = '';
 			linesLayer.style.left = '';
 			linesLayer.style.top = ''; */
 
-			const options = {
+			var options = {
 				useCORS: true,
 			};
 
-			for (let i = 0; i < myTiles.length; i++) {
+			for (var i = 0; i < myTiles.length; i++) {
 				if (tileMethod[i] === 'left') {
 					myTiles[i].style.left = (tilesLeft[i]) + 'px';
 					myTiles[i].style.top = (tilesTop[i]) + 'px';
@@ -934,7 +934,7 @@ $(document).ready(function () {
 					myTiles[i].style.transform = 'translate(0px, 0px)';
 				}
 			}
-			for (let i = 0; i < myDivicons.length; i++) {
+			for (var i = 0; i < myDivicons.length; i++) {
 				myDivicons[i].style.transform = 'translate(' + dx[i] + 'px, ' + dy[i] + 'px, 0)';
 				myDivicons[i].style.marginLeft = mLeft[i] + 'px';
 				myDivicons[i].style.marginTop = mTop[i] + 'px';
@@ -1023,7 +1023,7 @@ $(document).ready(function () {
 	$('.basemapBtn').on('click', function () {
 		var baseMap = this.id.replace('btn', '');
 
-		// https://github.com/Esri/esri-leaflet/issues/504 submitted issue that esri-leaflet basemaps dont match esri jsapi
+		// https://github.com/Esri/esri-leaflet/issues/504 submitted issue that esri-leafvar basemaps dont match esri jsapi
 
 		switch (baseMap) {
 			case 'Streets': baseMap = 'Streets'; break;
@@ -1231,7 +1231,7 @@ $(document).ready(function () {
 				currentParkOrRefuge = name;
 				console.log(currentParkOrRefuge);
 
-				// formatiing park name for use in esri leaflet query
+				// formatiing park name for use in esri leafvar query
 				name = "'" + name + "'";
 
 				// setting buffer style
@@ -1555,7 +1555,7 @@ $(document).ready(function () {
 	});
 
 	function printReport() {
-		const docDefinition = {
+		var docDefinition = {
 			pageOrientation: 'landscape',
 			pageMargins: [20, 20, 20, 35],
 			footer: function (currentPage, pageCount) {
