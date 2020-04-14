@@ -29,11 +29,23 @@
     "@turf/helpers": "^6.1.4",
     "@turf/polygon-to-line": "^6.0.3",
     "@turf/union": "^6.0.3",
-    "bootstrap-datepicker": "^1.6.4",
+    "bootstrap": "^3.1.1",
+    "bootstrap-datepicker": "^1.9.0",
+    "esri-leaflet": "github:Esri/esri-leaflet#v1.0.4",
+    "fontawesome": "^4.7.2",
+    "gulp-clean-css": "^4.3.0",
+    "highcharts": "^4.2.7",
     "html2canvas": "^1.0.0-rc.5",
-    "moment": "^2.14.1",
+    "jquery": "^2.2.4",
+    "jquery.nicescroll": "^3.6.8",
+    "leaflet": "^0.7.7",
+    "leaflet.markercluster": "^0.5.0",
+    "moment": "^2.24.0",
     "pdfmake": "^0.1.65",
+    "select2": "^4.0.13",
     "turf-buffer": "^3.0.12",
-    "turf-flatten": "^1.0.0"
+    "turf-flatten": "^1.0.0",
+    "wim-mapper-styles": "git+https://github.com/USGS-WiM/WiM-Mapper-Styles.git",
+    "wim-styles": "git+https://github.com/USGS-WiM/wim-styles.git"
   }
 }

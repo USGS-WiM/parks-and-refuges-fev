@@ -7,56 +7,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" >
     <link rel="shortcut icon" id="favicon" type="image/ico" href="images/favicon-wim.png" />
 
-    <!-- build:js scripts/vendor.js -->
-    <!-- bower:js -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/jquery.nicescroll/jquery.nicescroll.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="bower_components/bootstrap-sidebar/dist/js/sidebar.js"></script>
-    <script src="bower_components/leaflet/dist/leaflet-src.js"></script>
-    <script src="bower_components/esri-leaflet/dist/esri-leaflet.js"></script>
-    <script src="bower_components/Leaflet.label/dist/leaflet.label.css"></script>
-    <script src="bower_components/Leaflet.label/dist/leaflet.label.js"></script>
-    <script src="bower_components/select2/dist/js/select2.js"></script>
-    <script src="bower_components/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
-    <script src="bower_components/OverlappingMarkerSpiderfier-Leaflet/index.js"></script>
-    <script src="bower_components/highcharts/highcharts.js"></script>
-    <script src="bower_components/highcharts/highcharts-more.js"></script>
-    <script src="bower_components/highcharts/modules/exporting.js"></script>
-    <script src="bower_components/moment/moment.js"></script>
-    <script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-
-    <!-- build:js scripts/vendor.js -->
-    <!-- npm -->
+    <!-- build:js scripts/vendor.min.js -->
     <script src="../node_modules/turf-flatten/index.js"></script>
     <script src="../node_modules/turf-buffer/index.js"></script>
     <script src="../node_modules/turf-featurecollection/index.js"></script>
     <script src="../node_modules/turf-helpers/index.js"></script>
     <script src="../node_modules/turf-meta/index.js"></script>
     <script src="../node_modules/@turf/boolean-point-in-polygon/index.js"></script>
-
-
-    <!-- Report dependencies -->
-    <script src="bower_components/pdfmake/build/pdfmake.js"></script>
-    <script src="bower_components/pdfmake/build/vfs_fonts.js"></script>
-    <!-- <script src="bower_components/html2canvas/build/html2canvas.js"></script>
-    <script src="node_modules/html2canvas/build/html2canvas.js"></script> -->
-    <!-- endbower -->
+    <script src="../node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+    <script src="../node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="../node_modules/pdfmake/build/pdfmake.js"></script>
+    <script src="../node_modules/pdfmake/build/vfs_fonts.js"></script>
     <!-- endbuild -->
 
-    <!-- build:css styles/vendor.css -->
-    <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css" />
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="bower_components/wim-mapper-styles/css/base.css" />
-    <link rel="stylesheet" href="bower_components/wim-styles/template/css/base.css" />
-    <link rel="stylesheet" href="bower_components/bootstrap-sidebar/dist/css/sidebar.css" />
-    <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="bower_components/select2/dist/css/select2.min.css" />
-    <link rel="stylesheet" href="bower_components/leaflet.markercluster/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css" />
-    <link rel="stylesheet" href="bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css" />
-    <!-- endbower -->
+    <!-- build:css styles/vendor.min.css -->
+    <link rel="stylesheet" href="../node_modules/fontawesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="../node_modules/wim-mapper-styles/css/base.css" />
+    <link rel="stylesheet" href="../node_modules/wim-styles/template/css/base.css" />
+    <link rel="stylesheet" href="../node_modules/bootstrap-sidebar/dist/css/sidebar.css" />
+    <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="../node_modules/select2/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="../node_modules/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="../node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css" />
     <!-- endbuild -->
 
     
@@ -143,15 +117,8 @@
                 <h4 class="modal-title">USGS Flood Event Viewer</h4>
             </div>
             <div class="modal-body">
-                <h4>Welcome to the USGS Flood Event Viewer. Please select an event to get started.</h4>
+                <h4>Welcome to the DOI Flood Event Viewer for Parks and Refuges. Please select an event and Park or Refuge.</h4>
                 <br>
-                <!--<div class="form-group" id="evtNameForm_welcomeModal">-->
-                <!--&lt;!&ndash;<label for="evtSelect_welcomeModal"  class="col-sm-2 control-label filterForms">Event Name</label>&ndash;&gt;-->
-                    <!--<div class="col-sm-10 filterForms">-->
-                        <!--<select id="evtSelect_welcomeModal" class="evtSelect" style="width: 100%" multiple></select>-->
-                    <!--</div>-->
-                <!--</div>-->
-
                 <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted by start date.</span><br>
                 <div id="evtNameForm_welcomeModal" class="input-group form-group">
                       <!--<input type="text" class="form-control" placeholder="Search for...">-->
@@ -160,6 +127,36 @@
                         <button id="btnSubmitEvent" class="btn btn-secondary input-group-addon" type="button">Go</button>
                       </span>
                 </div>
+                <!-- <div class="form-group" id="bufferOptions">
+                    <label class="radio-inline" style="display: inline;">
+                        <p>Select a buffer distance:</p>
+                        <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
+                      </label>
+                    </div>
+                    <div class="form-group" align="center">
+                        <div id="search_container">
+
+                           <div id="search">
+                               
+                            </div>
+                        </div>
+                        <div class="search-help" align="center"> </br>
+                            <b>Supported Search Strings:</b> </br>
+                            <code>Geographic Names</code>
+                            <code>Zip Codes</code>
+                            <code>States</code>
+                            <code>Street Address</code>
+                            <br/>
+                            <br/> Search provided by
+                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript API</a>
+                        </div>
+                    </div> -->
                 <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose an event to proceed.</div>
 
                 <br>

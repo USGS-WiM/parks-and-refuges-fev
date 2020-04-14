@@ -5,6 +5,7 @@ var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
 var parksLayerGroup = new L.LayerGroup();
 var parks;
+var isWelcomeModalOpen;
 var refuges;
 var bufferPoly;
 var currentParkOrRefuge = "";
@@ -1172,34 +1173,37 @@ $(document).ready(function () {
 
 			// function to execute when the suggestion menu is updated
 			on_update: function (o) {
-				// update geojson layer with menu suggestions
-				suggestion_layer.clearLayers().addData(o.getSuggestions());
 
-				// zoom to layer if there are any points
-				// pad left so open menu does not cover any points
-				if (suggestion_layer.getBounds().isValid()) {
-					map.fitBounds(suggestion_layer.getBounds().pad(0.4), { paddingTopLeft: [350, 0] });
-				}
+				if ($('#evtSelect_welcomeModal')[0].hidden!== false) {
+					// update geojson layer with menu suggestions
+					suggestion_layer.clearLayers().addData(o.getSuggestions());
 
-				// find corresponding map marker by lat-lon when mouse enters a menu item
-				// open the marker popup and set opaque
-				$(".search-api-menu-item").off("mouseenter").on("mouseenter", function () {
-					var Lat = $(this).data("properties").Lat;
-					var Lon = $(this).data("properties").Lon;
-					suggestion_layer.eachLayer(function (lyr) {
-						if (Lat === lyr.feature.properties.Lat && Lon === lyr.feature.properties.Lon) {
-							lyr.setOpacity(1.0).openPopup();
-						} else {
-							lyr.setOpacity(0.4).closePopup();
-						}
+					// zoom to layer if there are any points
+					// pad left so open menu does not cover any points
+					if (suggestion_layer.getBounds().isValid()) {
+						map.fitBounds(suggestion_layer.getBounds().pad(0.4), { paddingTopLeft: [350, 0] });
+					}
+
+					// find corresponding map marker by lat-lon when mouse enters a menu item
+					// open the marker popup and set opaque
+					$(".search-api-menu-item").off("mouseenter").on("mouseenter", function () {
+						var Lat = $(this).data("properties").Lat;
+						var Lon = $(this).data("properties").Lon;
+						suggestion_layer.eachLayer(function (lyr) {
+							if (Lat === lyr.feature.properties.Lat && Lon === lyr.feature.properties.Lon) {
+								lyr.setOpacity(1.0).openPopup();
+							} else {
+								lyr.setOpacity(0.4).closePopup();
+							}
+						});
 					});
-				});
 
-				// close popups and set markers semi-transparent when mouse leaves a menu item
-				$(".search-api-menu-item").off("mouseleave").on("mouseleave", function () {
-					map.closePopup();
-					suggestion_layer.eachLayer(function (lyr) { lyr.setOpacity(0.4); });
-				});
+					// close popups and set markers semi-transparent when mouse leaves a menu item
+					$(".search-api-menu-item").off("mouseleave").on("mouseleave", function () {
+						map.closePopup();
+						suggestion_layer.eachLayer(function (lyr) { lyr.setOpacity(0.4); });
+					});
+				}
 			},
 
 			// function to execute when a suggestion is chosen
@@ -1426,6 +1430,8 @@ $(document).ready(function () {
 			console.log('in search submit');
 			$('#sapi-searchTextBox').keyup();
 		}); */
+		// destroy();
+		// setSearchAPI()
 	}
 	/* geocoder control */
 
