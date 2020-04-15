@@ -35,5 +35,8 @@
     "pdfmake": "^0.1.65",
     "turf-buffer": "^3.0.12",
     "turf-flatten": "^1.0.0"
+  },
+  "scripts": {
+    "build": "npm install && gulp build --prod --base-href"
   }
 }
