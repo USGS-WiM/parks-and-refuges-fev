@@ -8,11 +8,11 @@
     <link rel="shortcut icon" id="favicon" type="image/ico" href="images/favicon-wim.png" />
 
     <script src="scripts/vendor.js"></script>
-
+    <script src="scripts/vendor.js"></script>
 
     <link rel="stylesheet" href="styles/vendor.css">
 
-    <!--<link rel="stylesheet" href="bower_components/wim-styles/core/css/wim.css">-->
+    
 
     <link rel="stylesheet" href="styles/base.css">
 
@@ -22,16 +22,20 @@
     <link rel="shortcut icon" href="/favicon.ico">
 
     <script src="scripts/combined.js"></script>
+    <script src="https://unpkg.com/@turf/turf@5.1.6/turf.min.js"></script>
+    <script type="text/javascript" src="html2canvas.js"></script>
+    <!-- search_api 2.1 -->
+    <link rel="stylesheet" href="https://txpub.usgs.gov/DSS/search_api/2.1/api/search_api.css"/>
+    <script type="text/javascript" src="https://txpub.usgs.gov/DSS/search_api/2.1/api/search_api.min.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-<script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-61219868-14', 'auto');
-    ga('send', 'pageview');
-</script>
+        ga('create', 'UA-61219868-14', 'auto');
+        ga('send', 'pageview');
+    </script>
 
 </head>
 <body>
@@ -46,7 +50,7 @@
             </button>
             <a class="navbar-brand" href="https://www.usgs.gov">
                 <img alt="USGS logo" height="38px" src="images/USGS_ID_white.png">
-                <span class='hidden-xs' style='font-size:20px;display:inline-block;'>&nbsp;&nbsp;Flood Event Viewer</span>
+                <span class='hidden-xs' style='font-size:20px;display:inline-block;'>&nbsp;&nbsp;Flood Events at Parks and Refuges</span>
             </a>
         </div>
 
@@ -54,7 +58,10 @@
             <span class="glyphicon glyphicon-search"></span>
             <span id="geosearchButtonText"> Geosearch</span>
         </button>
-
+        <button id="printNav" type="button" class="btn btn-primary navbar-btn pull-right">
+            <span class="glyphicon glyphicon-search"></span>
+            <span id="printButtonText"> Print</span>
+        </button>
         <button id="aboutNav" class="btn btn-default navbar-btn pull-right">
             <i class="fa fa-question-circle"></i><span class="hidden-xs">&nbsp;&nbsp;About</span>
         </button>
@@ -121,24 +128,75 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                 <h4 class="modal-title">Geosearch</h4>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <div class="input-group">
-                        <div id="sapi_searchTextBoxDiv">Loading Search Bar...</div>
-                        <span class="input-group-btn">
-                        <button id="searchSubmit" class="btn btn-success" type="button">Go!</button>
-                        </span>
-                    </div><!-- /input-group -->
-                </div>
-                <form id="geosearch-form" class="form-inline">
-                    <input id="chkExtent" type="checkbox">  Search within current map extent only<br>
-                </form>
+            <div class="modal-body" style="text-align: center;">
+                <div class="form-group" id="bufferOptions">
+                    <label class="radio-inline" style="display: inline;">
+                        <p>Select a buffer distance:</p>
+                        <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
+                      </label>
+                    </div>
+                <div class="form-group" align="center">
+                        <div id="search_container">
+                            <!-- search_api widget -->
+                           <div id="search">
+                               
+                            </div>
+                        </div>
+                        <div class="search-help" align="center"> </br>
+                            <b>Supported Search Strings:</b> </br>
+                            <code>Geographic Names</code>
+                            <code>Zip Codes</code>
+                            <code>States</code>
+                            <code>Street Address</code>
+                            <br/>
+                            <br/> Search provided by
+                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript API</a>
+                        </div>
+                    </div>
             </div>
-            <div class="modal-footer">
-                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
+                <form id="geosearch-form" class="form-inline">
+                    <!--<button id="btnGeosearch" type="button" class="search-api-button; btn btn-success btn-fixed" data-dismiss="modal"> Go </button>-->
+                    <button id="btnDismiss" type="submit" class="dismissbutton btn" data-dismiss="modal">Dismiss</button>
+                </form> 
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-print"></span>Print Map</h4>
+            </div>
+            <div class="modal-body" style="text-align: center; height: 700px; overflow-y: auto;">
+                <div id="reviewMap">
+                    <div id='loader' class='imageLoader'></div><p id='loadingMessage'>loading image...</p>
+                </div>
+                <div class='reportInfo'>
+                    <table class="table" id="dataTable">
+                    </table>
+                </div>
+                <!-- <div id="reviewMapContainer">
+                    <div id="reviewMap">
+                    </div>
+                </div> -->
+            </div>
+            <div class="modal-footer">
+                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
+                    style="color:gray;" class="btn btn-default" id="print">Print</button>
+                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
+                    style="color:gray;" class="btn btn-default">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="aboutModal" class="modal fade"  tabindex="-1" role="dialog" >
@@ -575,18 +633,11 @@
             <div class="identification pull-right">powered by  <a href="https://wim.usgs.gov/" target="_blank">WiM</a></div>
         </div>
         <div id="mapContainer" class="col-md-9 col-lg-10 col-md-offset-3 col-lg-offset-2 no-col-padding keepit100">
-            <!-- legend, associated with legend buttons. to be removed if we stick with the in-map legend toggle -->
-            <!--<div id="legend" class="legend" style="display: none" >-->
-            <!--<button id="legendClose" type="button" class="close" data-dismiss="legend" aria-label="Close" aria-hidden="true">x</button>-->
-            <!--<h4><b>Explanation</b></h4>-->
-            <!--<div id="legendDiv"></div>-->
-            <!--</div>-->
-
             <div id="mapDiv">
 
                 <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"><i class="fa fa-lg fa-cog fa-spin fa-fw"></i><span>Loading Layers...</span></div>
 
-                <div id="legendElement" class="panel panel-default legendClass">
+                <div id="legendElement" class="panel panel-default legendClass" data-html2canvas-ignore>
                     <div id="legendHeading" class=" legendHeading" role="tab">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" style="text-decoration: none"  href="#legendCollapse" aria-expanded="true" aria-controls="collapseOne">
@@ -637,6 +688,12 @@
                             </div>
                             <div id="interpretedToggleDiv">
                                 <b>Interpreted Data</b>
+                            </div>
+                            <div id="npsToggleDiv">
+                                <b>USNPS Data</b>
+                            </div>
+                            <div id="fwsToggleDiv">
+                                <b>USFWS Data</b>
                             </div>
                             <div id="noaaToggleDiv">
                                 <b>Supporting Layers</b>
