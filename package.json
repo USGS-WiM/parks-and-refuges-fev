@@ -37,6 +37,6 @@
     "turf-flatten": "^1.0.0"
   },
   "scripts": {
-    "build": "npm install && gulp --prod --base-href"
+    "build": "npm install && bower install --allow-root && gulp"
   }
 }
