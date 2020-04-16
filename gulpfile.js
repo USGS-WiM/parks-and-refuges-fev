@@ -60,7 +60,8 @@ gulp.task('html', ['styles', 'scripts', 'icons'], function () {
         .pipe(cleanCSS({ processImport: false }))
         .pipe(cssFilter.restore)
         .pipe(gulp.dest('build/'))
-        .pipe(size());
+        .pipe(size())
+        .pipe(connect.reload());
 });
 
 // Images
@@ -105,7 +106,8 @@ gulp.task('watch', ['default', 'connect', 'serve'], function () {
 // Connect
 gulp.task('connect', function () {
     connect.server({
-        root: 'src',
+        root: 'build',
+        livereload: true,
         port: 9000
     });
 });
