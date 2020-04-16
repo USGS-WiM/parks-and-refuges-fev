@@ -1,11 +1,11 @@
 on: 
   push:
     branches:
-    - staging
-name: Deploy to Test
+    - 22
+name: Deploy to Test Site
 jobs:
-  pushToTest:
-    name: Push to Test
+  deployToTest:
+    name: Deploy to Test Site
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
