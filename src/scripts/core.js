@@ -1249,6 +1249,8 @@ $(document).ready(function () {
 				var where = "UNIT_NAME=" + name;
 				var polys = [];
 				var buffer;
+				var parksLabels = {};
+
 				parks = L.esri.featureLayer({
 					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
 					simplifyFactor: 0.5,
@@ -1266,6 +1268,35 @@ $(document).ready(function () {
 					style: parkStyle
 				}).addTo(map);
 				parksLayerGroup.addLayer(parks);
+
+				/* parks.on('createFeature', function (e) {
+					var id = e.feature.id;
+					var feature = earthquakes.getFeature(id);
+					var center = feature.getLatLng();
+					var label = L.marker(center, {
+						icon: L.divIcon({
+							iconSize: null,
+							className: 'label',
+							html: '<div>' + "test" + '</div>'
+						})
+					}).addTo(map);
+					parksLabels[id] = label;
+				});
+
+				parks.on('addfeature', function (e) {
+					var label = parksLabels[e.feature.id];
+					if (label) {
+					  label.addTo(map);
+					}
+				  });
+				
+				  parks.on('removefeature', function (e) {
+					var label = parksLabels[e.feature.id];
+					if (label) {
+					  map.removeLayer(label);
+					}
+				  }); */
+				
 
 				refuges = L.esri.featureLayer({
 					url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
@@ -1312,9 +1343,18 @@ $(document).ready(function () {
 
 					// adding the buffer to the map
 					bufferPoly = L.geoJson(buffer, {
-						style: bufferStyle
+						style: bufferStyle,
+						pointToLayer: function (feature, latlng) {
+							return L.circleMarker(latlng, labelMarkerOptions);
+						},
 					}).addTo(map);
 					map.fitBounds(bufferPoly.getBounds());
+
+					var label = new L.Label();
+					label.setContent("test");
+					label.setLatLng(bufferPoly.getBounds().getCenter());
+					map.showLabel(label);
+
 
 					// cycling through each peak and seeing if it's inside the buffer
 					for (var i in peak._layers) {
@@ -1334,6 +1374,7 @@ $(document).ready(function () {
 
 
 				}, 600);
+
 				$('#geosearchModal').modal('hide');
 			},
 

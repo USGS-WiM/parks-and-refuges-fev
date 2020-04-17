@@ -54,6 +54,8 @@ A graph and link will also not appear if there is an invalid response from NWIS 
 
 run `npm install` AND `bower install` to get dependencies after first cloning
 
+run `bower install pdfmake` AND `bower install Leaflet.label`
+
 `gulp watch` to run in browser with watch for debugging
 
 `gulp` to build project
