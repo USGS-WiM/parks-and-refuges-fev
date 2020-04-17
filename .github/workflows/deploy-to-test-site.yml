@@ -1,7 +1,7 @@
 on: 
   push:
     branches:
-    - 22
+    - dev
 name: Deploy to Test Site
 jobs:
   deployToTest:
