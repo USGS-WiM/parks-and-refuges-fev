@@ -1211,12 +1211,22 @@ $(document).ready(function () {
 						[o.result.properties.LatMin, o.result.properties.LonMin],
 						[o.result.properties.LatMax, o.result.properties.LonMax]
 					])
+
+					//Original popup 
+					/*
 					.openPopup(  // open popup at location listing all properties
 						$.map(Object.keys(o.result.properties), function (property) {
 							return "<b>" + property + ": </b>" + o.result.properties[property];
 						}).join("<br/>"),
-						[o.result.properties.Lat, o.result.properties.Lon]
-					);
+						[o.result.properties.Lat, o.result.properties.Lon] 
+					); */
+
+					//Revised popup
+					.openPopup(  
+						"<b>"+o.result.properties.Name+"</b><br/><i>"+
+						o.result.properties.County + ", " + o.result.properties.State + "</i>", 
+					[ o.result.properties.Lat, o.result.properties.Lon ] 
+				); 
 
 
 
@@ -1249,6 +1259,7 @@ $(document).ready(function () {
 				var where = "UNIT_NAME=" + name;
 				var polys = [];
 				var buffer;
+
 				parks = L.esri.featureLayer({
 					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
 					simplifyFactor: 0.5,
