@@ -1225,7 +1225,9 @@ $(document).ready(function () {
 					.openPopup(  
 						"<b>"+o.result.properties.Name+"</b><br/><i>"+
 						o.result.properties.County + ", " + o.result.properties.State + "</i></b><br/>" +
-						"Buffer Distance: " + fev.vars.currentBufferSelection  + "km",
+						"Buffer Distance: " + fev.vars.currentBufferSelection  + "km" + "</b><br/>",
+		
+						
 					[ o.result.properties.Lat, o.result.properties.Lon ] 
 				); 
 
