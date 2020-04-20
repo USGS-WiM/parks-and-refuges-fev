@@ -1212,7 +1212,7 @@ $(document).ready(function () {
 						[o.result.properties.LatMax, o.result.properties.LonMax]
 					])
 
-					//Original popup 
+					//Original location popup 
 					/*
 					.openPopup(  // open popup at location listing all properties
 						$.map(Object.keys(o.result.properties), function (property) {
@@ -1221,10 +1221,11 @@ $(document).ready(function () {
 						[o.result.properties.Lat, o.result.properties.Lon] 
 					); */
 
-					//Revised popup
+					//Revised location popup
 					.openPopup(  
 						"<b>"+o.result.properties.Name+"</b><br/><i>"+
-						o.result.properties.County + ", " + o.result.properties.State + "</i>", 
+						o.result.properties.County + ", " + o.result.properties.State + "</i></b><br/>" +
+						"Buffer Distance: " + fev.vars.currentBufferSelection  + "km",
 					[ o.result.properties.Lat, o.result.properties.Lon ] 
 				); 
 
