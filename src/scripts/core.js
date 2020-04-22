@@ -7,6 +7,8 @@ var parksLayerGroup = new L.LayerGroup();
 var parks;
 var refuges;
 var bufferPoly;
+var searchResults;
+var searchObject;
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var fev = fev || {
@@ -376,7 +378,7 @@ $(document).ready(function () {
 	//listener for submit event button on welcome modal - sets event vars and passes event id to filterMapData function
 	$('#btnSubmitEvent').click(function () {
 		//check if an event has been selected
-		if ($('#evtSelect_welcomeModal').val() !== null) {
+		if (($('#evtSelect_welcomeModal').val() !== null) && (searchResults !== undefined)) {
 			//if event selected, hide welcome modal and begin filter process
 			$('#welcomeModal').modal('hide');
 			var eventID = $('#evtSelect_welcomeModal').val()[0];
@@ -391,10 +393,19 @@ $(document).ready(function () {
 				});
 			//populateEventDates(eventID);
 			filterMapData(eventID, false);
+			searchComplete();
 		} else {
 			//if no event selected, warn user with alert
-			//alert("Please choose an event to proceed.")
-			$('.eventSelectAlert').show();
+			// Also accounting for having an event selected but no parkref
+			if (($('#evtSelect_welcomeModal').val() !== null)) {
+				$('.eventSelectAlert').hide();
+			} else {
+				$('.eventSelectAlert').show();
+			}
+		}
+		if (searchResults !== undefined) {
+		} else {
+			$('.parkRefSelectAlert').show();
 		}
 	});
 
@@ -726,6 +737,108 @@ $(document).ready(function () {
 
 	function showGeosearchModal() {
 		$('#geosearchModal').modal('show');
+
+		search_api.create("searchMap", {
+
+			// appearance
+			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
+			width: 500,  // width of the widget [px]
+			placeholder: "Search for a Park or Refuge", // text box placeholder prompt to display when no text is entered
+			/* // search area
+			lat_min       : bounds.getSouth(), // minimum latitude
+			lat_max       : bounds.getNorth(), // maximum latitude
+			lon_min       : bounds.getWest(),  // minimum longitude
+			lon_max       : bounds.getEast(),  // maximum longitude
+			search_states : "tx,ok,nm",        // csv list of 1 or more U.S. States or Territories */
+
+			// suggestion menu
+			menu_min_char: 2,     // minimum number of characters required before attempting to find menu suggestions
+			menu_max_entries: 50,    // maximum number of menu items to display
+			menu_height: 400,   // maximum height of menu [px]
+
+			include_gnis_major: true,  // whether to include GNIS places as suggestions in the menu: major categories (most common)...
+			include_gnis_minor: false,  // ...minor categories (less common)
+
+			include_state: true,  // whether to include U.S. States and Territories as suggestions in the menu
+			include_zip_code: false,  // whether to include 5-digit zip codes as suggestions in the menu
+			include_area_code: false,  // whether to include 3-digit area codes as suggestions in the menu
+
+			include_usgs_sw: false,  // whether to include USGS site numbers as suggestions in the menu: surface water...
+			include_usgs_gw: false,  // ...ground water
+			include_usgs_sp: false,  // ...spring
+			include_usgs_at: false,  // ...atmospheric
+			include_usgs_ot: false,  // ...other
+
+			include_huc2: false,  // whether to include Hydrologic Unit Code (HUC) numbers as suggestions in the menu: 2-digit...
+			include_huc4: false,  // ... 4-digit
+			include_huc6: false,  // ... 6-digit
+			include_huc8: false,  // ... 8-digit
+			include_huc10: false,  // ...10-digit
+			include_huc12: false,  // ...12-digit
+
+			// event callback functions
+			// function argument "o" is widget object
+			// "o.result" is geojson point feature of search result with properties
+
+			// function to execute when a search is started
+			// triggered when the search textbox text changes
+			on_search: function (o) {
+				console.warn(o.id + ": my 'on_search' callback function - a search is started");
+				map.closePopup(); // close any previous popup when user searches for new location
+			},
+
+			// function to execute when the suggestion menu is updated
+			on_update: function (o) {
+				// update geojson layer with menu suggestions
+				suggestion_layer.clearLayers().addData(o.getSuggestions());
+
+				// zoom to layer if there are any points
+				// pad left so open menu does not cover any points
+				if (suggestion_layer.getBounds().isValid()) {
+					map.fitBounds(suggestion_layer.getBounds().pad(0.4), { paddingTopLeft: [350, 0] });
+				}
+
+				// find corresponding map marker by lat-lon when mouse enters a menu item
+				// open the marker popup and set opaque
+				$(".search-api-menu-item").off("mouseenter").on("mouseenter", function () {
+					var Lat = $(this).data("properties").Lat;
+					var Lon = $(this).data("properties").Lon;
+					suggestion_layer.eachLayer(function (lyr) {
+						if (Lat === lyr.feature.properties.Lat && Lon === lyr.feature.properties.Lon) {
+							lyr.setOpacity(1.0).openPopup();
+						} else {
+							lyr.setOpacity(0.4).closePopup();
+						}
+					});
+				});
+
+				// close popups and set markers semi-transparent when mouse leaves a menu item
+				$(".search-api-menu-item").off("mouseleave").on("mouseleave", function () {
+					map.closePopup();
+					suggestion_layer.eachLayer(function (lyr) { lyr.setOpacity(0.4); });
+				});
+			},
+
+			// function to execute when a suggestion is chosen
+			// triggered when a menu item is selected
+			on_result: function (o) {
+				console.warn(o.id + ": my 'on_result' callback function - a menu item was selected");
+				searchResults = o;
+				$('#geosearchModal').modal('hide');
+				searchComplete();
+
+
+			},
+
+			// function to execute when no suggestions are found for the typed text
+			// triggered when services return no results or time out
+			on_failure: function (o) {
+				console.warn(o.id + ": my 'on_failure' callback function - the services returned no results or timed out");
+			},
+
+			// miscellaneous
+			verbose: false // whether to set verbose mode on (true) or off (false)
+		});
 
 		// clearing the layers if a search has already been performed
 		if (parks !== undefined) {
@@ -1121,7 +1234,7 @@ $(document).ready(function () {
 
 	function setSearchAPI() {
 		// create search_api widget
-		search_api.create("search", {
+		searchObject = search_api.create("search", {
 
 			// appearance
 			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
@@ -1172,14 +1285,14 @@ $(document).ready(function () {
 
 			// function to execute when the suggestion menu is updated
 			on_update: function (o) {
-				// update geojson layer with menu suggestions
+				/* // update geojson layer with menu suggestions
 				suggestion_layer.clearLayers().addData(o.getSuggestions());
 
 				// zoom to layer if there are any points
 				// pad left so open menu does not cover any points
 				if (suggestion_layer.getBounds().isValid()) {
 					map.fitBounds(suggestion_layer.getBounds().pad(0.4), { paddingTopLeft: [350, 0] });
-				}
+				} */
 
 				// find corresponding map marker by lat-lon when mouse enters a menu item
 				// open the marker popup and set opaque
@@ -1206,176 +1319,10 @@ $(document).ready(function () {
 			// triggered when a menu item is selected
 			on_result: function (o) {
 				console.warn(o.id + ": my 'on_result' callback function - a menu item was selected");
-				map
-					.fitBounds([ // zoom to location
-						[o.result.properties.LatMin, o.result.properties.LonMin],
-						[o.result.properties.LatMax, o.result.properties.LonMax]
-					])
-					.openPopup(  // open popup at location listing all properties
-						$.map(Object.keys(o.result.properties), function (property) {
-							return "<b>" + property + ": </b>" + o.result.properties[property];
-						}).join("<br/>"),
-						[o.result.properties.Lat, o.result.properties.Lon]
-					);
+				searchResults = o;
 
-
-
-				// getting and setting park name from search
-				var name = o.result.properties.Name;
-
-				// setting the current Park or Refuge selected for the report
-				currentParkOrRefuge = name;
-				console.log(currentParkOrRefuge);
-
-				// formatiing park name for use in esri leaflet query
-				name = "'" + name + "'";
-
-				// setting buffer style
-				var bufferStyle = {
-					"color": "#9933ff",
-					"weight": 4,
-					"opacity": 0.65
-				};
-
-				// setting park style
-				var parkStyle = {
-					"color": "#0000cc",
-					"weight": 2,
-					"opacity": 100
-				};
-
-				// setting the where class for the query
-				// UNIT_NAME holds gnis major value of park name (I think)
-				var where = "UNIT_NAME=" + name;
-				var polys = [];
-				var buffer;
-				var parksLabels = {};
-
-				parks = L.esri.featureLayer({
-					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
-					simplifyFactor: 0.5,
-					precision: 4,
-					where: "UNIT_NAME=" + name,
-					onEachFeature: function (feature, latlng) {
-						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
-						latlng.bindPopup(popupContent);
-						polys = feature.geometry;
-						// flattening the geometry for use in turf
-						flattenedPoly = turf.flatten(polys);
-						console.log(flattenedPoly);
-						//test = flattenedPoly;
-					},
-					style: parkStyle
-				}).addTo(map);
-				parksLayerGroup.addLayer(parks);
-
-				/* parks.on('createFeature', function (e) {
-					var id = e.feature.id;
-					var feature = earthquakes.getFeature(id);
-					var center = feature.getLatLng();
-					var label = L.marker(center, {
-						icon: L.divIcon({
-							iconSize: null,
-							className: 'label',
-							html: '<div>' + "test" + '</div>'
-						})
-					}).addTo(map);
-					parksLabels[id] = label;
-				});
-
-				parks.on('addfeature', function (e) {
-					var label = parksLabels[e.feature.id];
-					if (label) {
-					  label.addTo(map);
-					}
-				  });
-				
-				  parks.on('removefeature', function (e) {
-					var label = parksLabels[e.feature.id];
-					if (label) {
-					  map.removeLayer(label);
-					}
-				  }); */
-				
-
-				refuges = L.esri.featureLayer({
-					url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
-					simplifyFactor: 0.5,
-					precision: 4,
-					where: "ORGNAME=" + name,
-					onEachFeature: function (feature, latlng) {
-						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
-						latlng.bindPopup(popupContent);
-						polys = feature.geometry;
-						// flattening the geometry for use in turf
-						flattenedPoly = turf.flatten(polys);
-						console.log(flattenedPoly);
-						//test = flattenedPoly;
-					},
-					style: parkStyle
-				}).addTo(map);
-
-				setTimeout(() => {
-					var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
-					var polysCount = flattenedPoly.features.length;
-					buffer = buffered;
-
-					// if there is more than one poly for a park we merge the buffers made for each park. can only do two at a time
-					if (polysCount >= 1) {
-						buffer = buffered.features[0];
-
-						// cycling through features
-						for (var i = 0; i < buffered.features.length; i++) {
-							// not cycling through if we're on the last one
-							if (i === (polysCount - 1)) {
-
-							} else {
-
-								// getting the index of the next feature to use in the union
-								var nextFeatureIndex = i + 1;
-								var nextFeature = buffered.features[nextFeatureIndex];
-
-								// unifying or merging the buffer
-								buffer = turf.union(buffer, nextFeature);
-							}
-						}
-					}
-
-					// adding the buffer to the map
-					bufferPoly = L.geoJson(buffer, {
-						style: bufferStyle,
-						pointToLayer: function (feature, latlng) {
-							return L.circleMarker(latlng, labelMarkerOptions);
-						},
-					}).addTo(map);
-					map.fitBounds(bufferPoly.getBounds());
-
-					var label = new L.Label();
-					label.setContent("test");
-					label.setLatLng(bufferPoly.getBounds().getCenter());
-					map.showLabel(label);
-
-
-					// cycling through each peak and seeing if it's inside the buffer
-					for (var i in peak._layers) {
-
-						// formatting point for turf
-						var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
-
-						var isItInside = turf.booleanPointInPolygon(cords, buffer);
-
-						// if true add it to an array containing all the 'true' peaks
-						if (isItInside) {
-							identifiedPeaks.push(peak._layers[i])
-						}
-					}
-					identifiedPeaks
-					console.log(identifiedPeaks);
-
-
-				}, 600);
-
-				$('#geosearchModal').modal('hide');
+				// populates the search with the selected park
+				o.val(searchResults.result.properties.Name);
 			},
 
 			// function to execute when no suggestions are found for the typed text
@@ -1385,90 +1332,155 @@ $(document).ready(function () {
 			},
 
 			// miscellaneous
-			verbose: true // whether to set verbose mode on (true) or off (false)
+			verbose: false // whether to set verbose mode on (true) or off (false)
 		});
-		// setup must be done after the search_api is loaded and ready ('load' event triggered)
-		/* search_api.on('load', function () {
-
-			$('#chkExtent').change(function () {
-				if ($(this).is(':checked')) {
-					console.log('Checked', map.getBounds().getSouth(), map.getBounds().getNorth(), map.getBounds().getWest(), map.getBounds().getEast());
-					var mapBounds = map.getBounds();
-
-					search_api.setOpts({
-						'LATmin': mapBounds.getSouth(),
-						'LATmax': mapBounds.getNorth(),
-						'LONmin': mapBounds.getWest(),
-						'LONmax': mapBounds.getEast()
-					});
-				}
-			});
-
-			search_api.setOpts({
-				'textboxPosition': 'user-defined',
-				'theme': 'user-defined',
-				'DbSearchIncludeState' : false,
-				'DbSearchIncludeZipCode' : false,
-				'DbSearchIncludeAreaCode' : false,
-				'DbSearchIncludeUsgsSiteSW': true,
-				'DbSearchIncludeUsgsSiteGW': true,
-				'DbSearchIncludeUsgsSiteSP': true,
-				'DbSearchIncludeUsgsSiteAT': true,
-				'DbSearchIncludeUsgsSiteOT': true
-			});
-
-			// define what to do when a location is found
-			search_api.on('location-found', function (lastLocationFound) {
-
-				$('#geosearchModal').modal('hide');
-
-				var zoomlevel = 14;
-				if (lastLocationFound.Category === 'U.S. State or Territory') zoomlevel = 9;
-
-				map.setView([lastLocationFound.y, lastLocationFound.x], zoomlevel);
-
-				L.popup()
-					.setLatLng([lastLocationFound.y, lastLocationFound.x])
-					.setContent(
-						'<p>' +
-						'<b>' + lastLocationFound.label + '</b> ' + '<br/>' +
-						'<br/>' +
-						'<b>NAME:            </b> ' + lastLocationFound.name + '<br/>' +
-						'<b>CATEGORY:        </b> ' + lastLocationFound.category + '<br/>' +
-						'<b>STATE:           </b> ' + lastLocationFound.state + '<br/>' +
-						'<b>COUNTY:          </b> ' + lastLocationFound.county + '<br/>' +
-						'<br/>' +
-						'<b>LATITUDE:        </b> ' + lastLocationFound.y + '<br/>' +
-						'<b>LONGITUDE:       </b> ' + lastLocationFound.x + '<br/>' +
-						'<b>ELEVATION (FEET):</b> ' + lastLocationFound.elevFt + '<br/>' +
-						'<br/>' +
-						'<b>PERCENT MATCH:   </b> ' + lastLocationFound.pctMatch + '<br/>' +
-						'</p>'
-					)
-					.openOn(map);
-
-			});
-
-			// define what to do when no location is found
-			search_api.on('no-result', function () {
-				// show alert dialog
-				console.error('No location matching the entered text could be found.');
-			});
-
-			// define what to do when a search times out
-			search_api.on('timeout', function () {
-				// show alert dialog
-				console.error('The search operation timed out.');
-			});
-		});
-
-
-		$('#searchSubmit').on('click', function () {
-			console.log('in search submit');
-			$('#sapi-searchTextBox').keyup();
-		}); */
 	}
-	/* geocoder control */
+	
+	function searchComplete() {
+
+		map
+		.fitBounds([ // zoom to location
+			[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
+			[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
+		])
+		.openPopup(  // open popup at location listing all properties
+			$.map(Object.keys(searchResults.result.properties), function (property) {
+				return "<b>" + property + ": </b>" + searchResults.result.properties[property];
+			}).join("<br/>"),
+			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
+		);
+		// getting and setting park name from search
+		var name = searchResults.result.properties.Name;
+
+		// setting the current Park or Refuge selected for the report
+		currentParkOrRefuge = name;
+		console.log(currentParkOrRefuge);
+
+		// formatiing park name for use in esri leaflet query
+		name = "'" + name + "'";
+
+		// setting buffer style
+		var bufferStyle = {
+			"color": "#9933ff",
+			"weight": 4,
+			"opacity": 0.65
+		};
+
+		// setting park style
+		var parkStyle = {
+			"color": "#0000cc",
+			"weight": 2,
+			"opacity": 100
+		};
+
+		// setting the where class for the query
+		// UNIT_NAME holds gnis major value of park name (I think)
+		var where = "UNIT_NAME=" + name;
+		var polys = [];
+		var buffer;
+		var parksLabels = {};
+
+		parks = L.esri.featureLayer({
+			url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
+			simplifyFactor: 0.5,
+			precision: 4,
+			where: "UNIT_NAME=" + name,
+			onEachFeature: function (feature, latlng) {
+				var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
+				latlng.bindPopup(popupContent);
+				polys = feature.geometry;
+				// flattening the geometry for use in turf
+				flattenedPoly = turf.flatten(polys);
+				console.log(flattenedPoly);
+				//test = flattenedPoly;
+			},
+			style: parkStyle
+		}).addTo(map);
+		parksLayerGroup.addLayer(parks);
+
+	
+		refuges = L.esri.featureLayer({
+			url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
+			simplifyFactor: 0.5,
+			precision: 4,
+			where: "ORGNAME=" + name,
+			onEachFeature: function (feature, latlng) {
+				var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
+				latlng.bindPopup(popupContent);
+				polys = feature.geometry;
+				// flattening the geometry for use in turf
+				flattenedPoly = turf.flatten(polys);
+				console.log(flattenedPoly);
+				//test = flattenedPoly;
+			},
+			style: parkStyle
+		}).addTo(map);
+
+		setTimeout(() => {
+			var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
+			var polysCount = flattenedPoly.features.length;
+			buffer = buffered;
+
+			// if there is more than one poly for a park we merge the buffers made for each park. can only do two at a time
+			if (polysCount >= 1) {
+				buffer = buffered.features[0];
+
+				// cycling through features
+				for (var i = 0; i < buffered.features.length; i++) {
+					// not cycling through if we're on the last one
+					if (i === (polysCount - 1)) {
+
+					} else {
+
+						// getting the index of the next feature to use in the union
+						var nextFeatureIndex = i + 1;
+						var nextFeature = buffered.features[nextFeatureIndex];
+
+						// unifying or merging the buffer
+						buffer = turf.union(buffer, nextFeature);
+					}
+				}
+			}
+
+			// adding the buffer to the map
+			bufferPoly = L.geoJson(buffer, {
+				style: bufferStyle,
+				pointToLayer: function (feature, latlng) {
+					return L.circleMarker(latlng, labelMarkerOptions);
+				},
+			}).addTo(map);
+			map.fitBounds(bufferPoly.getBounds());
+
+			/* var label = new L.Label();
+			label.setContent("test");
+			label.setLatLng(bufferPoly.getBounds().getCenter());
+			map.showLabel(label); */
+
+
+			// cycling through each peak and seeing if it's inside the buffer
+			for (var i in peak._layers) {
+
+				// formatting point for turf
+				var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
+
+				var isItInside = turf.booleanPointInPolygon(cords, buffer);
+
+				// if true add it to an array containing all the 'true' peaks
+				if (isItInside) {
+					identifiedPeaks.push(peak._layers[i])
+				}
+			}
+			identifiedPeaks
+			console.log(identifiedPeaks);
+
+
+		}, 600);
+		console.log(searchObject + '1');
+		searchObject.destroy();
+		console.log(searchObject);
+		$('#geosearchModal').modal('hide');
+		
+	}
 
 	/* legend control */
 	$('#legendButtonNavBar, #legendButtonSidebar').on('click', function () {
