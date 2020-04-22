@@ -1549,7 +1549,7 @@ $(document).ready(function () {
 	});
 
 	//Begin data prep for pdf print out
-	var pdfData = [];
+		var pdfData = [];
 	function bodyData() {
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
@@ -1567,11 +1567,11 @@ $(document).ready(function () {
 				"County": identifiedPeaks[i].feature.properties.county,
 				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
 				"Peak Estimated": peakEstimated
-			});
-			
+			});	
 		}
 		return pdfData;
 	}
+
 	function buildTableBody(data, columns) {
 		var body = [];
 		body.push(columns);
@@ -1584,19 +1584,24 @@ $(document).ready(function () {
 		});
 		return body;
 	}
+
 	function table(data, columns) {
 		return {
 			table: {
 				headerRows: 1,
-				body: buildTableBody(data, columns),
-				layout: 'lightHorizontalLines'
+				body: buildTableBody(data, columns)
+			},
+			layout: 'lightHorizontalLines',
+			defaultStyle: {
+				fontFamily: 'Open Sans, sans-serif'
 			}
 		};
 	}
 
+
 	function printReport() {
 		const docDefinition = {
-			pageOrientation: 'portrait',
+			pageOrientation: 'landscape',
 			pageMargins: [20, 20, 20, 35],
 			footer: function (currentPage, pageCount) {
 				return {
@@ -1614,35 +1619,15 @@ $(document).ready(function () {
 					alignment: 'right',
 					text: 'Page ' + currentPage.toString()
 				}
+
 			},
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				table(bodyData(), ['Site Number','Description','Networks','State','County','Peak Stage','Peak Estimated']),
+				table(bodyData(), ['Site Number','Description','Networks','State','County','Peak Stage','Peak Estimated'])
 			],
-			
-			// content: [					
-			// 	{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-			// 	{
-			// 		table: {
-						//headerRows: 1,
-						// body: [
-						// 	[{text: 'Site Number'}, 
-						// 	{text: 'Description'}, 
-						// 	{text: 'Networks'},
-						// 	{text: 'State'}, 
-						// 	{text: 'County'}, 
-						// 	{text: 'Peak Stage'},
-						// 	{text: 'Peak Estimated'}],
-						// 	['Sample value 1', 'Sample value 2', 'Sample value 3', '4', '5', '6', '7'],
-						// 	['Sample value 1', 'Sample value 2', 'Sample value 3', '4', '5', '6', '7'],
-						// 	[] 
-						// ]
-		// 			},
-		// 			layout: 'lightHorizontalLines'
-		// 		},
-		// 		//{images: mapImage}
-		// 	],
-
+			images: {
+				map: mapImage
+			},
 			styles: {
 				header: {
 					fontSize: 15,
