@@ -1548,9 +1548,55 @@ $(document).ready(function () {
 		$('#longitude').html(geographicMapCenter.lng.toFixed(4));
 	});
 
+	//Begin data prep for pdf print out
+	var pdfData = [];
+	function bodyData() {
+		for (var i in identifiedPeaks) {
+			var peakEstimated = "";
+			if (identifiedPeaks[i].feature.properties.is_peak_stage_estimated === 0) {
+				peakEstimated = "no";
+			} else {
+				peakEstimated = "yes"
+			}
+	
+			pdfData.push({
+				"Site Number": identifiedPeaks[i].feature.properties.site_no,
+				"Description": identifiedPeaks[i].feature.properties.description,
+				"Networks": identifiedPeaks[i].feature.properties.networks,
+				"State": identifiedPeaks[i].feature.properties.state,
+				"County": identifiedPeaks[i].feature.properties.county,
+				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Estimated": peakEstimated
+			});
+			
+		}
+		return pdfData;
+	}
+	function buildTableBody(data, columns) {
+		var body = [];
+		body.push(columns);
+		data.forEach(function(row) {
+			var dataRow = [];
+			columns.forEach(function(column) {
+				dataRow.push(row[column].toString());
+			})
+			body.push(dataRow);
+		});
+		return body;
+	}
+	function table(data, columns) {
+		return {
+			table: {
+				headerRows: 1,
+				body: buildTableBody(data, columns),
+				layout: 'lightHorizontalLines'
+			}
+		};
+	}
+
 	function printReport() {
 		const docDefinition = {
-			pageOrientation: 'landscape',
+			pageOrientation: 'portrait',
 			pageMargins: [20, 20, 20, 35],
 			footer: function (currentPage, pageCount) {
 				return {
@@ -1568,54 +1614,35 @@ $(document).ready(function () {
 					alignment: 'right',
 					text: 'Page ' + currentPage.toString()
 				}
-
 			},
 			content: [
-				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + 'Kilometer Buffer', style: 'subheader' },
-				'It is of course possible to nest any other type of nodes available in pdfmake inside table cells',
-				{
-					style: 'tableExample',
-					table: {
-						body: [
-							['Column 1', 'Column 2', 'Column 3'],
-							[
-								{
-									stack: [
-										'Let\'s try an unordered list',
-										{
-											ul: [
-												'item 1',
-												'item 2'
-											]
-										}
-									]
-								},
-								[
-									'or a nested table',
-									{
-										table: {
-											body: [
-												['Col1', 'Col2', 'Col3'],
-												['1', '2', '3'],
-												['1', '2', '3']
-											]
-										},
-									}
-								],
-								{
-									text: [
-										'Inlines can be ',
-										{ text: 'styled\n', italics: true },
-										{ text: 'easily as everywhere else', fontSize: 10 }]
-								}
-							]
-						]
-					}
-				},
+				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
+				table(bodyData(), ['Site Number','Description','Networks','State','County','Peak Stage','Peak Estimated']),
 			],
-			images: {
-				map: mapImage
-			},
+			
+			// content: [					
+			// 	{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
+			// 	{
+			// 		table: {
+						//headerRows: 1,
+						// body: [
+						// 	[{text: 'Site Number'}, 
+						// 	{text: 'Description'}, 
+						// 	{text: 'Networks'},
+						// 	{text: 'State'}, 
+						// 	{text: 'County'}, 
+						// 	{text: 'Peak Stage'},
+						// 	{text: 'Peak Estimated'}],
+						// 	['Sample value 1', 'Sample value 2', 'Sample value 3', '4', '5', '6', '7'],
+						// 	['Sample value 1', 'Sample value 2', 'Sample value 3', '4', '5', '6', '7'],
+						// 	[] 
+						// ]
+		// 			},
+		// 			layout: 'lightHorizontalLines'
+		// 		},
+		// 		//{images: mapImage}
+		// 	],
+
 			styles: {
 				header: {
 					fontSize: 15,

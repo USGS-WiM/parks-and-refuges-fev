@@ -30,6 +30,7 @@
     "@turf/polygon-to-line": "^6.0.3",
     "@turf/union": "^6.0.3",
     "bootstrap-datepicker": "^1.6.4",
+    "bower": "^1.8.8",
     "html2canvas": "^1.0.0-rc.5",
     "moment": "^2.14.1",
     "pdfmake": "^0.1.65",
