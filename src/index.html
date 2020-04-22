@@ -216,10 +216,21 @@
                 <h4 class="modal-title">Geosearch</h4>
             </div>
             <div class="modal-body" style="text-align: center;">
-
+                <div class="form-group" id="bufferOptions" style="display: contents;">
+                    <span>Select a buffer distance: &nbsp;&nbsp;</span>
+                    <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="tenKmMap" value="option1"> 10 KM
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="twentyKmMap" value="option2"> 20 KM
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="thirtyKmMap" value="option3"> 30 KM
+                    </label>
+                </div>
                 <div class="form-group" align="center">
                     <div id="search_container">
-                        <div id="searchMap">
+                        <div style="margin-left: -120px;" id="searchMap">
 
                         </div>
                     </div>

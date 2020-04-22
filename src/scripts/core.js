@@ -1199,6 +1199,33 @@ $(document).ready(function () {
 		fev.vars.currentBufferSelection = 30;
 	});
 
+
+	// setting checked values for buffer radio buttons
+	document.getElementById('tenKmMap').checked = false;
+	document.getElementById('twentyKmMap').checked = true;
+	document.getElementById('thirtyKmMap').checked = false;
+	// 10 kilometers
+	$('#tenKmMap').click(function () {
+		console.log('yes');
+		document.getElementById('twentyKmMap').checked = false;
+		document.getElementById('thirtyKmMap').checked = false;
+		fev.vars.currentBufferSelection = 10;
+	});
+	// 20 kilometers
+	$('#twentyKmMap').click(function () {
+		console.log('yes');
+		document.getElementById('tenKmMap').checked = false;
+		document.getElementById('thirtyKmMap').checked = false;
+		fev.vars.currentBufferSelection = 20;
+	});
+	// 30 kilometers
+	$('#thirtyKmMap').click(function () {
+		console.log('yes');
+		document.getElementById('twentyKmMap').checked = false;
+		document.getElementById('tenKmMap').checked = false;
+		fev.vars.currentBufferSelection = 30;
+	});
+
 	// add empty geojson layer that will contain suggested locations on update
 	var suggestion_layer = L.geoJson(null, {
 		pointToLayer: function (feature, latlng) {
@@ -1475,9 +1502,6 @@ $(document).ready(function () {
 
 
 		}, 600);
-		console.log(searchObject + '1');
-		searchObject.destroy();
-		console.log(searchObject);
 		$('#geosearchModal').modal('hide');
 		
 	}
