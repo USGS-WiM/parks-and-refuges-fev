@@ -1246,7 +1246,6 @@ $(document).ready(function () {
 				var buffer;
 				var regionName;
 
-				/*
 				parks = L.esri.featureLayer({
 					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
 					simplifyFactor: 0.5,
@@ -1285,7 +1284,6 @@ $(document).ready(function () {
 					style: parkStyle
 				}).addTo(map);
 				parksLayerGroup.addLayer(parks);
-				*/
 
 				refuges = L.esri.featureLayer({
 					url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
@@ -1300,9 +1298,30 @@ $(document).ready(function () {
 						flattenedPoly = turf.flatten(polys);
 						console.log(flattenedPoly);
 						regionName = feature.properties.FWSREGION;
+						if (regionName == "1") {
+							regionName = "Pacific";
+						} 
+						if (regionName == "2") {
+							regionName = "Southwest";
+						} 
+						if (regionName == "3") {
+							regionName = "Midwest";
+						} 
 						if (regionName == "4") {
-							regionName = "soute";
-						}
+							regionName = "Southeast";
+						} 
+						if (regionName == "5") {
+							regionName = "Northeast";
+						} 
+						if (regionName == "6") {
+							regionName = "Mountain-Prairie";
+						} 
+						if (regionName == "7") {
+							regionName = "Alaska";
+						} 
+						if (regionName == "8") {
+							regionName = "California";
+						} 
 					},
 					style: parkStyle
 				}).addTo(map);
