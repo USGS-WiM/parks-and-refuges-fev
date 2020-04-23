@@ -1587,14 +1587,12 @@ $(document).ready(function () {
 
 	function table(data, columns) {
 		return {
-			table: {
+			table: {	
 				headerRows: 1,
+				widths: ['auto','*','auto','auto','12%','6%','10%'],
 				body: buildTableBody(data, columns)
 			},
-			layout: 'lightHorizontalLines',
-			defaultStyle: {
-				fontFamily: 'Open Sans, sans-serif'
-			}
+			layout: 'lightHorizontalLines', 
 		};
 	}
 
@@ -1616,10 +1614,9 @@ $(document).ready(function () {
 				},
 				{
 					width: 50,
-					alignment: 'right',
+					alignment: 'center',
 					text: 'Page ' + currentPage.toString()
 				}
-
 			},
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
@@ -1628,7 +1625,7 @@ $(document).ready(function () {
 			images: {
 				map: mapImage
 			},
-			styles: {
+			styles: {			
 				header: {
 					fontSize: 15,
 					bold: true
