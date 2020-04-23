@@ -1226,13 +1226,12 @@ $(document).ready(function () {
 						"<b>"+o.result.properties.Name+"</b><br/><i>"+
 						o.result.properties.County + ", " + o.result.properties.State + "</i></b><br/>" +
 						"Buffer Distance: " + fev.vars.currentBufferSelection  + "km" + "</b><br/>",
+						//"Region: feature.properties.peak_stage.toString()  + "</b><br/>",
 		
 						
 					[ o.result.properties.Lat, o.result.properties.Lon ] 
 				); 
-
-
-
+				
 				// getting and setting park name from search
 				var name = o.result.properties.Name;
 
