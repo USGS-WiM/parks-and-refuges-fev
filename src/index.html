@@ -10,13 +10,11 @@
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
-    <!--<script src="bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>-->
+    <script src="bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/bootstrap-sidebar/dist/js/sidebar.js"></script>
     <script src="bower_components/leaflet/dist/leaflet-src.js"></script>
     <script src="bower_components/esri-leaflet/dist/esri-leaflet.js"></script>
-    <script src="bower_components/Leaflet.label/dist/leaflet.label.css"></script>
-    <script src="bower_components/Leaflet.label/dist/leaflet.label.js"></script>
     <script src="bower_components/select2/dist/js/select2.js"></script>
     <script src="bower_components/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
     <script src="bower_components/OverlappingMarkerSpiderfier-Leaflet/index.js"></script>
@@ -25,25 +23,9 @@
     <script src="bower_components/highcharts/modules/exporting.js"></script>
     <script src="bower_components/moment/moment.js"></script>
     <script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="bower_components/Leaflet.label/dist/leaflet.label.js"></script>
     <script src="bower_components/pdfmake/build/pdfmake.js"></script>
     <script src="bower_components/pdfmake/build/vfs_fonts.js"></script>
-
-    <!-- build:js scripts/vendor.js -->
-    <!-- npm -->
-    <!-- <script src="../node_modules/turf-flatten/index.js"></script>
-    <script src="../node_modules/turf-buffer/index.js"></script>
-    <script src="../node_modules/turf-featurecollection/index.js"></script>
-    <script src="../node_modules/turf-helpers/index.js"></script>
-    <script src="../node_modules/turf-meta/index.js"></script>
-    <script src="../node_modules/@turf/boolean-point-in-polygon/index.js"></script> -->
-
-
-    <!-- Report dependencies -->
-    
-    <!-- <script src="bower_components/html2canvas/build/html2canvas.js"></script>
-    <script src="node_modules/html2canvas/build/html2canvas.js"></script> -->
-    <!-- endbower -->
-    <!-- endbuild -->
 
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
@@ -53,6 +35,7 @@
     <link rel="stylesheet" href="bower_components/wim-styles/template/css/base.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-sidebar/dist/css/sidebar.css" />
     <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="bower_components/Leaflet.label/dist/leaflet.label.css" />
     <link rel="stylesheet" href="bower_components/select2/dist/css/select2.min.css" />
     <link rel="stylesheet" href="bower_components/leaflet.markercluster/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css" />
@@ -77,13 +60,15 @@
     <script src="scripts/core.js"></script>
     <script src="scripts/populate.js"></script>
     <script src="scripts/util.js"></script>
-    <script type="text/javascript" src="html2canvas.js"></script>
+    <script src="scripts/html2canvas.js"></script>
     <!-- endbuild -->
-    <script src="https://unpkg.com/@turf/turf@5.1.6/turf.min.js"></script>
-    <script type="text/javascript" src="html2canvas.js"></script>
+    
     <!-- search_api 2.1 -->
     <link rel="stylesheet" href="https://txpub.usgs.gov/DSS/search_api/2.1/api/search_api.css"/>
     <script type="text/javascript" src="https://txpub.usgs.gov/DSS/search_api/2.1/api/search_api.min.js"></script>
+
+    <!-- Turf JS -->
+    <script src="https://unpkg.com/@turf/turf@5.1.6/turf.min.js"></script>
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
