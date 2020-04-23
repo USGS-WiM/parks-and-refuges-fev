@@ -1202,36 +1202,19 @@ $(document).ready(function () {
 				});
 			},
 
+			
+
 			// function to execute when a suggestion is chosen
 			// triggered when a menu item is selected
 			on_result: function (o) {
 				console.warn(o.id + ": my 'on_result' callback function - a menu item was selected");
-				map
-					.fitBounds([ // zoom to location
-						[o.result.properties.LatMin, o.result.properties.LonMin],
-						[o.result.properties.LatMax, o.result.properties.LonMax]
-					])
 
-					//Original location popup 
-					/*
-					.openPopup(  // open popup at location listing all properties
-						$.map(Object.keys(o.result.properties), function (property) {
-							return "<b>" + property + ": </b>" + o.result.properties[property];
-						}).join("<br/>"),
-						[o.result.properties.Lat, o.result.properties.Lon] 
-					); */
-
-					//Revised location popup
-					.openPopup(  
-						"<b>"+o.result.properties.Name+"</b><br/><i>"+
-						o.result.properties.County + ", " + o.result.properties.State + "</i></b><br/>" +
-						"Buffer Distance: " + fev.vars.currentBufferSelection  + "km" + "</b><br/>",
-						//"Region: feature.properties.peak_stage.toString()  + "</b><br/>",
-		
-						
-					[ o.result.properties.Lat, o.result.properties.Lon ] 
-				); 
-				
+				map					
+				.fitBounds([ // zoom to location
+					[o.result.properties.LatMin, o.result.properties.LonMin],
+					[o.result.properties.LatMax, o.result.properties.LonMax]
+				]);
+			
 				// getting and setting park name from search
 				var name = o.result.properties.Name;
 
@@ -1261,7 +1244,9 @@ $(document).ready(function () {
 				var where = "UNIT_NAME=" + name;
 				var polys = [];
 				var buffer;
+				var regionName;
 
+				/*
 				parks = L.esri.featureLayer({
 					url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
 					simplifyFactor: 0.5,
@@ -1274,11 +1259,33 @@ $(document).ready(function () {
 						// flattening the geometry for use in turf
 						flattenedPoly = turf.flatten(polys);
 						console.log(flattenedPoly);
-						//test = flattenedPoly;
+						regionName = feature.properties.REGION;
+						if (regionName == "PW") {
+							regionName = "Pacific West";
+						} 
+						if (regionName == "IM") {
+							regionName = "Intermountain";
+						} 
+						if (regionName == "MW") {
+							regionName = "Midwest";
+						} 
+						if (regionName == "NE") {
+							regionName = "Northeast";
+						} 
+						if (regionName == "SE") {
+							regionName = "Southeast";
+						} 
+						if (regionName == "AK") {
+							regionName = "Alaska";
+						}
+						if (regionName == "NC") {
+							regionName = "National Capital";
+						} 
 					},
 					style: parkStyle
 				}).addTo(map);
 				parksLayerGroup.addLayer(parks);
+				*/
 
 				refuges = L.esri.featureLayer({
 					url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
@@ -1292,11 +1299,19 @@ $(document).ready(function () {
 						// flattening the geometry for use in turf
 						flattenedPoly = turf.flatten(polys);
 						console.log(flattenedPoly);
-						//test = flattenedPoly;
+						regionName = feature.properties.FWSREGION;
+						if (regionName == "4") {
+							regionName = "soute";
+						}
 					},
 					style: parkStyle
 				}).addTo(map);
 
+				/*
+				if (regionName == SE) {
+					regionName = "Southeast";
+				} 
+*/
 				setTimeout(() => {
 					var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
 					var polysCount = flattenedPoly.features.length;
@@ -1344,7 +1359,24 @@ $(document).ready(function () {
 					}
 					identifiedPeaks
 					console.log(identifiedPeaks);
-
+	
+					//Original location popup 
+					/*
+					.openPopup(  // open popup at location listing all properties
+						$.map(Object.keys(o.result.properties), function (property) {
+							return "<b>" + property + ": </b>" + o.result.properties[property];
+						}).join("<br/>"),
+						[o.result.properties.Lat, o.result.properties.Lon] 
+					); */
+	
+					//Revised location popup
+					map.openPopup(  
+						"<b>"+o.result.properties.Name+"</b><br/>"+
+						o.result.properties.County + ", " + o.result.properties.State + "</b><br/>" +
+						"Buffer Distance: " + fev.vars.currentBufferSelection  + "km" + "</b><br/>" +
+						"Region: " + regionName  + "</b><br/>",
+					[ o.result.properties.Lat, o.result.properties.Lon ] 
+				); 
 
 				}, 600);
 				$('#geosearchModal').modal('hide');
