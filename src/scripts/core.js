@@ -1626,6 +1626,55 @@ $(document).ready(function () {
 		$('#longitude').html(geographicMapCenter.lng.toFixed(4));
 	});
 
+	//Begin data prep for pdf print out
+		var pdfData = [];
+	function bodyData() {
+		for (var i in identifiedPeaks) {
+			var peakEstimated = "";
+			if (identifiedPeaks[i].feature.properties.is_peak_stage_estimated === 0) {
+				peakEstimated = "no";
+			} else {
+				peakEstimated = "yes"
+			}
+	
+			pdfData.push({
+				"Site Number": identifiedPeaks[i].feature.properties.site_no,
+				"Description": identifiedPeaks[i].feature.properties.description,
+				"Networks": identifiedPeaks[i].feature.properties.networks,
+				"State": identifiedPeaks[i].feature.properties.state,
+				"County": identifiedPeaks[i].feature.properties.county,
+				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Estimated": peakEstimated
+			});	
+		}
+		return pdfData;
+	}
+
+	function buildTableBody(data, columns) {
+		var body = [];
+		body.push(columns);
+		data.forEach(function(row) {
+			var dataRow = [];
+			columns.forEach(function(column) {
+				dataRow.push(row[column].toString());
+			})
+			body.push(dataRow);
+		});
+		return body;
+	}
+
+	function table(data, columns) {
+		return {
+			table: {	
+				headerRows: 1,
+				widths: ['auto','*','auto','auto','12%','6%','10%'],
+				body: buildTableBody(data, columns)
+			},
+			layout: 'lightHorizontalLines', 
+		};
+	}
+
+
 	function printReport() {
 		const docDefinition = {
 			pageOrientation: 'landscape',
@@ -1643,58 +1692,18 @@ $(document).ready(function () {
 				},
 				{
 					width: 50,
-					alignment: 'right',
+					alignment: 'center',
 					text: 'Page ' + currentPage.toString()
 				}
-
 			},
 			content: [
-				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + 'Kilometer Buffer', style: 'subheader' },
-				'It is of course possible to nest any other type of nodes available in pdfmake inside table cells',
-				{
-					style: 'tableExample',
-					table: {
-						body: [
-							['Column 1', 'Column 2', 'Column 3'],
-							[
-								{
-									stack: [
-										'Let\'s try an unordered list',
-										{
-											ul: [
-												'item 1',
-												'item 2'
-											]
-										}
-									]
-								},
-								[
-									'or a nested table',
-									{
-										table: {
-											body: [
-												['Col1', 'Col2', 'Col3'],
-												['1', '2', '3'],
-												['1', '2', '3']
-											]
-										},
-									}
-								],
-								{
-									text: [
-										'Inlines can be ',
-										{ text: 'styled\n', italics: true },
-										{ text: 'easily as everywhere else', fontSize: 10 }]
-								}
-							]
-						]
-					}
-				},
+				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
+				table(bodyData(), ['Site Number','Description','Networks','State','County','Peak Stage','Peak Estimated'])
 			],
 			images: {
 				map: mapImage
 			},
-			styles: {
+			styles: {			
 				header: {
 					fontSize: 15,
 					bold: true
