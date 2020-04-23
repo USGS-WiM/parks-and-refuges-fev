@@ -38,6 +38,8 @@
     "turf-flatten": "^1.0.0"
   },
   "scripts": {
-    "build": "npm install && bower install --allow-root && gulp build"
+    "start": "ng serve -o",
+    "build": "npm install && bower install --allow-root && gulp",
+    "e2e": "ng e2e"
   }
 }
