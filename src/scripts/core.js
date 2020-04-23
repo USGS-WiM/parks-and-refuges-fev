@@ -3,7 +3,7 @@ var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
-var parksLayerGroup = new L.LayerGroup();
+
 var parks;
 var refuges;
 var bufferPoly;
@@ -159,6 +159,7 @@ var appr = L.layerGroup();
 var int = L.layerGroup();
 var tracts = L.layerGroup();
 var bounds = L.layerGroup();
+var parksLayerGroup = L.layerGroup();
 
 // refuge layer
 /* var refuges = L.esri.dynamicMapLayer({
