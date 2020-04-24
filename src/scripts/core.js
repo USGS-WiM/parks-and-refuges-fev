@@ -1404,6 +1404,7 @@ $(document).ready(function () {
 		var regionName;
 
 		parks = L.esri.featureLayer({
+			useCors: false,
 			url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
 			simplifyFactor: 0.5,
 			precision: 4,
@@ -1443,6 +1444,7 @@ $(document).ready(function () {
 		parksLayerGroup.addLayer(parks);
 
 		refuges = L.esri.featureLayer({
+			useCors: false,
 			url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
 			simplifyFactor: 0.5,
 			precision: 4,

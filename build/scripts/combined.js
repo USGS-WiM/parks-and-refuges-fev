@@ -1933,8 +1933,6 @@ $(document).ready(function () {
 				searchResults = o;
 				$('#geosearchModal').modal('hide');
 				searchComplete();
-
-
 			},
 
 			// function to execute when no suggestions are found for the typed text
@@ -2449,6 +2447,8 @@ $(document).ready(function () {
 				});
 			},
 
+			
+
 			// function to execute when a suggestion is chosen
 			// triggered when a menu item is selected
 			on_result: function (o) {
@@ -2473,16 +2473,11 @@ $(document).ready(function () {
 	function searchComplete() {
 
 		map
-		.fitBounds([ // zoom to location
-			[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
-			[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
-		])
-		.openPopup(  // open popup at location listing all properties
-			$.map(Object.keys(searchResults.result.properties), function (property) {
-				return "<b>" + property + ": </b>" + searchResults.result.properties[property];
-			}).join("<br/>"),
-			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
-		);
+			.fitBounds([ // zoom to location
+				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
+				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
+			]);
+
 		// getting and setting park name from search
 		var name = searchResults.result.properties.Name;
 
@@ -2512,9 +2507,10 @@ $(document).ready(function () {
 		var where = "UNIT_NAME=" + name;
 		var polys = [];
 		var buffer;
-		var parksLabels = {};
+		var regionName;
 
 		parks = L.esri.featureLayer({
+			useCors: false,
 			url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
 			simplifyFactor: 0.5,
 			precision: 4,
@@ -2526,13 +2522,33 @@ $(document).ready(function () {
 				// flattening the geometry for use in turf
 				flattenedPoly = turf.flatten(polys);
 				console.log(flattenedPoly);
-				//test = flattenedPoly;
+				regionName = feature.properties.REGION;
+				if (regionName == "PW") {
+					regionName = "Pacific West";
+				}
+				if (regionName == "IM") {
+					regionName = "Intermountain";
+				}
+				if (regionName == "MW") {
+					regionName = "Midwest";
+				}
+				if (regionName == "NE") {
+					regionName = "Northeast";
+				}
+				if (regionName == "SE") {
+					regionName = "Southeast";
+				}
+				if (regionName == "AK") {
+					regionName = "Alaska";
+				}
+				if (regionName == "NC") {
+					regionName = "National Capital";
+				}
 			},
 			style: parkStyle
 		}).addTo(map);
 		parksLayerGroup.addLayer(parks);
 
-	
 		refuges = L.esri.featureLayer({
 			url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
 			simplifyFactor: 0.5,
@@ -2545,7 +2561,31 @@ $(document).ready(function () {
 				// flattening the geometry for use in turf
 				flattenedPoly = turf.flatten(polys);
 				console.log(flattenedPoly);
-				//test = flattenedPoly;
+				regionName = feature.properties.FWSREGION;
+				if (regionName == "1") {
+					regionName = "Pacific";
+				}
+				if (regionName == "2") {
+					regionName = "Southwest";
+				}
+				if (regionName == "3") {
+					regionName = "Midwest";
+				}
+				if (regionName == "4") {
+					regionName = "Southeast";
+				}
+				if (regionName == "5") {
+					regionName = "Northeast";
+				}
+				if (regionName == "6") {
+					regionName = "Mountain-Prairie";
+				}
+				if (regionName == "7") {
+					regionName = "Alaska";
+				}
+				if (regionName == "8") {
+					regionName = "California";
+				}
 			},
 			style: parkStyle
 		}).addTo(map);
@@ -2585,12 +2625,6 @@ $(document).ready(function () {
 			}).addTo(map);
 			map.fitBounds(bufferPoly.getBounds());
 
-			/* var label = new L.Label();
-			label.setContent("test");
-			label.setLatLng(bufferPoly.getBounds().getCenter());
-			map.showLabel(label); */
-
-
 			// cycling through each peak and seeing if it's inside the buffer
 			for (var i in peak._layers) {
 
@@ -2604,14 +2638,30 @@ $(document).ready(function () {
 					identifiedPeaks.push(peak._layers[i])
 				}
 			}
-			identifiedPeaks
-			console.log(identifiedPeaks);
 
+			//Original location popup 
+			/*
+			.openPopup(  // open popup at location listing all properties
+				$.map(Object.keys(o.result.properties), function (property) {
+					return "<b>" + property + ": </b>" + o.result.properties[property];
+				}).join("<br/>"),
+				[o.result.properties.Lat, o.result.properties.Lon] 
+			); */
+
+			//Revised location popup
+			map.openPopup(
+				"<b>" + searchResults.result.properties.Name + "</b><br/>" +
+				searchResults.result.properties.County + ", " + searchResults.result.properties.State + "</b><br/>" +
+				"Buffer Distance: " + fev.vars.currentBufferSelection + "km" + "</b><br/>" +
+				"Region: " + regionName + "</b><br/>",
+				[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
+			);
 
 		}, 600);
 		$('#geosearchModal').modal('hide');
-		
+
 	}
+		
 
 	/* legend control */
 	$('#legendButtonNavBar, #legendButtonSidebar').on('click', function () {
