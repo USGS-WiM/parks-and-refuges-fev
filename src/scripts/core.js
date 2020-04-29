@@ -882,7 +882,6 @@ $(document).ready(function () {
 			peakTableData.push({
 				"Site Number": identifiedPeaks[i].feature.properties.site_no,
 				"Description": identifiedPeaks[i].feature.properties.description,
-				"Networks": identifiedPeaks[i].feature.properties.networks,
 				"State": identifiedPeaks[i].feature.properties.state,
 				"County": identifiedPeaks[i].feature.properties.county,
 				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
@@ -1691,7 +1690,6 @@ $(document).ready(function () {
 			pdfData.push({
 				"Site Number": identifiedPeaks[i].feature.properties.site_no,
 				"Description": identifiedPeaks[i].feature.properties.description,
-				"Networks": identifiedPeaks[i].feature.properties.networks,
 				"State": identifiedPeaks[i].feature.properties.state,
 				"County": identifiedPeaks[i].feature.properties.county,
 				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
@@ -1718,7 +1716,7 @@ $(document).ready(function () {
 		return {
 			table: {	
 				headerRows: 1,
-				widths: ['auto','*','auto','auto','12%','6%','10%'],
+				widths: ['auto','*','auto','auto','auto','auto'],
 				body: buildTableBody(data, columns)
 			},
 			layout: 'lightHorizontalLines', 
@@ -1749,7 +1747,7 @@ $(document).ready(function () {
 			},
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				table(bodyData(), ['Site Number','Description','Networks','State','County','Peak Stage','Peak Estimated'])
+				table(bodyData(), ['Site Number','Description','State','County','Peak Stage','Peak Estimated'])
 			],
 			images: {
 				map: mapImage
