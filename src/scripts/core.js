@@ -746,6 +746,8 @@ $(document).ready(function () {
 			L.esri.basemapLayer('Topographic').addTo(reviewMap);
 		}, 500); */
 	}
+	var pdfMapUrl;
+
 	$('#printNav').click(function () {
 		showPrintModal();
 
@@ -955,7 +957,7 @@ $(document).ready(function () {
 					canvas.style.height = '450px';
 					mapPreview.append(canvas);
 					//mapImage = canvas.get(0).toDataUrl('image/png');
-					var test = canvas[0].toDataUrl('image/png');
+					pdfMapUrl = canvas.toDataURL('image/png');
 					window.dispatchEvent(mapEvent);
 
 				})
@@ -1548,8 +1550,12 @@ $(document).ready(function () {
 		$('#longitude').html(geographicMapCenter.lng.toFixed(4));
 	});
 
+	//var pdfMap;
+
+
+
 	//Begin data prep for pdf print out
-		var pdfData = [];
+	var pdfData = [];	
 	function bodyData() {
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
@@ -1590,7 +1596,7 @@ $(document).ready(function () {
 			table: {	
 				headerRows: 1,
 				widths: ['auto','*','auto','auto','12%','6%','10%'],
-				body: buildTableBody(data, columns)
+				body: buildTableBody(data, columns),
 			},
 			layout: 'lightHorizontalLines', 
 		};
@@ -1620,11 +1626,9 @@ $(document).ready(function () {
 			},
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				table(bodyData(), ['Site Number','Description','Networks','State','County','Peak Stage','Peak Estimated'])
+				{ image: pdfMapUrl, width: 300, height: 200 },
+				table(bodyData(), ['Site Number','Description','Networks','State','County','Peak Stage','Peak Estimated']),
 			],
-			images: {
-				map: mapImage
-			},
 			styles: {			
 				header: {
 					fontSize: 15,
