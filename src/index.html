@@ -10,13 +10,11 @@
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
-    <!--<script src="bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>-->
+    <script src="bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/bootstrap-sidebar/dist/js/sidebar.js"></script>
     <script src="bower_components/leaflet/dist/leaflet-src.js"></script>
     <script src="bower_components/esri-leaflet/dist/esri-leaflet.js"></script>
-    <script src="bower_components/Leaflet.label/dist/leaflet.label.css"></script>
-    <script src="bower_components/Leaflet.label/dist/leaflet.label.js"></script>
     <script src="bower_components/select2/dist/js/select2.js"></script>
     <script src="bower_components/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
     <script src="bower_components/OverlappingMarkerSpiderfier-Leaflet/index.js"></script>
@@ -25,27 +23,9 @@
     <script src="bower_components/highcharts/modules/exporting.js"></script>
     <script src="bower_components/moment/moment.js"></script>
     <script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="bower_components/Leaflet.label/dist/leaflet.label.js"></script>
     <script src="bower_components/pdfmake/build/pdfmake.js"></script>
     <script src="bower_components/pdfmake/build/vfs_fonts.js"></script>
-
-    <!-- build:js scripts/vendor.js -->
-    <!-- npm -->
-    <script src="../node_modules/turf-flatten/index.js"></script>
-    <script src="../node_modules/turf-buffer/index.js"></script>
-    <script src="../node_modules/turf-featurecollection/index.js"></script>
-    <script src="../node_modules/turf-helpers/index.js"></script>
-    <script src="../node_modules/turf-meta/index.js"></script>
-    <script src="../node_modules/@turf/boolean-point-in-polygon/index.js"></script>
-
-
-    <!-- Report dependencies -->
-    <!-- <script src="../node_modules/pdfmake/build/pdfmake.js"></script>
-    <script src="../node_modules/pdfmake/build/pdfmake.js.map"></script>
-    <script src="../node_modules/pdfmake/build/pdfmake.min.js"></script>
-    <script src="../node_modules/pdfmake/build/pdfmake.min.js.map"></script>
-    <script src="../node_modules/pdfmake/build/vfs_fonts.js"></script> -->
-    <!-- <script src="bower_components/html2canvas/build/html2canvas.js"></script>
-    <script src="node_modules/html2canvas/build/html2canvas.js"></script> -->
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -57,6 +37,7 @@
     <link rel="stylesheet" href="bower_components/wim-styles/template/css/base.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-sidebar/dist/css/sidebar.css" />
     <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="bower_components/Leaflet.label/dist/leaflet.label.css" />
     <link rel="stylesheet" href="bower_components/select2/dist/css/select2.min.css" />
     <link rel="stylesheet" href="bower_components/leaflet.markercluster/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css" />
@@ -81,13 +62,15 @@
     <script src="scripts/core.js"></script>
     <script src="scripts/populate.js"></script>
     <script src="scripts/util.js"></script>
-    <script type="text/javascript" src="html2canvas.js"></script>
+    <script src="scripts/html2canvas.js"></script>
     <!-- endbuild -->
-    <script src="https://unpkg.com/@turf/turf@5.1.6/turf.min.js"></script>
-    <script type="text/javascript" src="html2canvas.js"></script>
+    
     <!-- search_api 2.1 -->
     <link rel="stylesheet" href="https://txpub.usgs.gov/DSS/search_api/2.1/api/search_api.css"/>
     <script type="text/javascript" src="https://txpub.usgs.gov/DSS/search_api/2.1/api/search_api.min.js"></script>
+
+    <!-- Turf JS -->
+    <script src="https://unpkg.com/@turf/turf@5.1.6/turf.min.js"></script>
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -152,31 +135,61 @@
                 <br>
                 <!--<div class="form-group" id="evtNameForm_welcomeModal">-->
                 <!--&lt;!&ndash;<label for="evtSelect_welcomeModal"  class="col-sm-2 control-label filterForms">Event Name</label>&ndash;&gt;-->
-                    <!--<div class="col-sm-10 filterForms">-->
-                        <!--<select id="evtSelect_welcomeModal" class="evtSelect" style="width: 100%" multiple></select>-->
-                    <!--</div>-->
+                <!--<div class="col-sm-10 filterForms">-->
+                <!--<select id="evtSelect_welcomeModal" class="evtSelect" style="width: 100%" multiple></select>-->
                 <!--</div>-->
-
-                <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted by start date.</span><br>
+                <!--</div>-->
+                
+                <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted by start
+                    date.</span><br>
                 <div id="evtNameForm_welcomeModal" class="input-group form-group">
-                      <!--<input type="text" class="form-control" placeholder="Search for...">-->
-                      <select id="evtSelect_welcomeModal" class="evtSelect form-control select" style="width: 100%" multiple></select>
-                      <span class="input-group-btn">
-                        <button id="btnSubmitEvent" class="btn btn-secondary input-group-addon" type="button">Go</button>
-                      </span>
+                    <!--<input type="text" class="form-control" placeholder="Search for...">-->
+                    <select id="evtSelect_welcomeModal" class="evtSelect form-control select" style="width: 500px" multiple></select>
+                    <span class="input-group-btn">
+                        <!-- <button id="btnSubmitEvent" class="btn btn-secondary input-group-addon" type="button">Go</button> -->
+                    </span>
                 </div>
-                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose an event to proceed.</div>
-
-                <br>
-                <!--<form id="welcome-optout-form" class="form-inline">-->
-                    <!--<input id="welcome-optout" type="checkbox">  Don't show me this again<br>-->
-                <!--</form>-->
+                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
+                        aria-hidden="true"></i> Please choose an event to proceed.</div>
+                <div id="evtNameForm_parks" class="input-group form-group">
+                    <div class="form-group" id="bufferOptions" style="display: contents;">
+                        <span>Select a buffer distance: &nbsp;&nbsp;</span>
+                        <label class="radio-inline">
+                            <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
+                        </label>
+                    </div>
+                </div>
+                <div class="input-group form-group">
+                    <span>Select a Park or Refuge:</span>
+                    <div class="form-group" align="center">
+                        <div id="search_container">
+                            <div style="left: -20px" id="search">
+                            </div>
+                        </div>
+                        <!-- <div class="search-help" align="center"> </br>
+                            <b>Supported Search Strings:</b> </br>
+                            <code>Geographic Names</code>
+                            <code>Zip Codes</code>
+                            <code>States</code>
+                            <code>Street Address</code>
+                            <br />
+                            <br /> Search provided by
+                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript
+                                API</a>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="alert alert-danger parkRefSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose a Park or Refuge.</div>
             </div>
-            <!--<div class="modal-footer">-->
-                <!--<span><div class="alert alert-danger" role="alert">Please choose an event to proceed.</div><button id="btnSubmitEvent" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Go</button></span>-->
-
-                <!--&lt;!&ndash;<button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>&ndash;&gt;-->
-            <!--</div>-->
+            <div class="modal-footer">
+                <span><button id="btnSubmitEvent" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Go</button></span>
+            </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
@@ -190,44 +203,43 @@
                 <h4 class="modal-title">Geosearch</h4>
             </div>
             <div class="modal-body" style="text-align: center;">
-                <div class="form-group" id="bufferOptions">
-                    <label class="radio-inline" style="display: inline;">
-                        <p>Select a buffer distance:</p>
-                        <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
-                      </label>
-                      <label class="radio-inline">
-                        <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
-                      </label>
-                      <label class="radio-inline">
-                        <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
-                      </label>
-                    </div>
+                <div class="form-group" id="bufferOptions" style="display: contents;">
+                    <span>Select a buffer distance: &nbsp;&nbsp;</span>
+                    <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="tenKmMap" value="option1"> 10 KM
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="twentyKmMap" value="option2"> 20 KM
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="inlineRadioOptions" id="thirtyKmMap" value="option3"> 30 KM
+                    </label>
+                </div>
                 <div class="form-group" align="center">
-                        <div id="search_container">
-                            <!-- search_api widget -->
-                           <div id="search">
-                               
-                            </div>
-                        </div>
-                        <div class="search-help" align="center"> </br>
-                            <b>Supported Search Strings:</b> </br>
-                            <code>Geographic Names</code>
-                            <code>Zip Codes</code>
-                            <code>States</code>
-                            <code>Street Address</code>
-                            <br/>
-                            <br/> Search provided by
-                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript API</a>
+                    <div id="search_container">
+                        <div style="margin-left: -120px;" id="searchMap">
+
                         </div>
                     </div>
+                    <div class="search-help" align="center"> </br>
+                        <b>Supported Search Strings:</b> </br>
+                        <code>Geographic Names</code>
+                        <code>Zip Codes</code>
+                        <code>States</code>
+                        <code>Street Address</code>
+                        <br />
+                        <br /> Search provided by
+                        <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript
+                            API</a>
+                    </div>
+                </div>
             </div>
-                <form id="geosearch-form" class="form-inline">
-                    <!--<button id="btnGeosearch" type="button" class="search-api-button; btn btn-success btn-fixed" data-dismiss="modal"> Go </button>-->
-                    <button id="btnDismiss" type="submit" class="dismissbutton btn" data-dismiss="modal">Dismiss</button>
-                </form> 
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
+            <form id="geosearch-form" class="form-inline">
+
+                <button id="btnDismiss" type="submit" class="dismissbutton btn" data-dismiss="modal">Dismiss</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" aria-hidden="true">
@@ -298,7 +310,7 @@
 
             <div class="modal-footer">
                 <p style="color:black; margin-left:35px;text-align:left">
-                    For more information about the Flood Event Viewer please contact <a href="https://wim.usgs.gov/" target="_blank"><img src="images/wimvectorxs.png" id="wim_logo"></a>
+                    For more information about the Flood Event Viewer please contact <a href="https://wim.usgs.gov/" target="_blank"><img src="images/WIM_Acronym.png" id="wim_logo"></a>
                 </p>
                 <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
             </div>
