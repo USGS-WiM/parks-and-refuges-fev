@@ -1066,7 +1066,7 @@ $(document).ready(function () {
 				.then(function (canvas) {
 					mapEvent = new Event('map_ready');
 					/* canvas[0].drawImage */
-					canvas.style.width = '600px';
+					canvas.style.width = '700px';
 					canvas.style.height = '450px';
 					mapPreview.append(canvas);
 					//mapImage = canvas.get(0).toDataUrl('image/png');
@@ -1083,8 +1083,7 @@ $(document).ready(function () {
 		}, 3001);
 
 		// Get legend for print preview
-		var body = document.getElementById('printout');
-		html2canvas(body)
+		html2canvas(document.getElementById('printout'))
 		.then(function (canvas) {
 			legendPreview.append(canvas);
 		})
