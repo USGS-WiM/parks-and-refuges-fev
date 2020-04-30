@@ -204,6 +204,8 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
     });
 }
 
+
+
 function displayPeaksGeoJSON(type, name, url, markerIcon) {
     //increment layerCount
     layerCount++;
@@ -213,9 +215,11 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             markerCoords.push(latlng);
             var marker = L.marker(latlng, {
                 icon: markerIcon
-            }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+            }).bindLabel("Peak: " + feature.properties.peak_stage.toString(), { noHide: setHide });
             return marker;
         },
+
+        
         onEachFeature: function (feature, latlng) {
             //add marker to overlapping marker spidifier
             oms.addMarker(latlng);
@@ -234,7 +238,12 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             // });
             latlng.bindPopup(popupContent);
         }
+        
     });
+    //currentMarker.bindPopup("water").openPopup();
+    //currentMarker.bindToolTip("peakflow");
+    //map.openPopup("Peak");
+
 
     $.getJSON(url, function (data) {
 
@@ -267,6 +276,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             checkLayerCount(layerCount);
         }
     });
+    //currentMarker.bindPopup("Peak");
 }
 
 ///this function sets the current event's start and end dates as global vars. may be better as a function called on demand when date compare needed for NWIS graph setup

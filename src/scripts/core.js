@@ -161,6 +161,7 @@ var tracts = L.layerGroup();
 var bounds = L.layerGroup();
 var parksLayerGroup = L.layerGroup();
 
+
 // refuge layer
 /* var refuges = L.esri.dynamicMapLayer({
 	url: "https://gis.fws.gov/arcgis/rest/services/FWS_Refuge_Boundaries/MapServer",
@@ -298,6 +299,8 @@ int.bindPopup(function (layer) {
 	return L.Util.template('<p>INTTYPE1: {INTTYPE1}', layer.properties);
 })
 
+//set to false: peak labels won't automatically appear
+var setHide = false
 
 /* $.getJSON('https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {
 	async: false,
@@ -581,12 +584,17 @@ $(document).ready(function () {
 		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
 		"<img class='legendSwatch' src='images/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
 	};
+
+	
 	//define observed overlay and interpreted overlay, leave blank at first
 	var observedOverlays = {};
 	var interpretedOverlays = {};
+	var labelOverlays = {};
 	var noaaOverlays = {};
 	var fwsOverlays = {};
 	var npsOverlays = {};
+
+	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 
 	if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
@@ -606,7 +614,7 @@ $(document).ready(function () {
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;bounds": bounds,
 	}
 
-
+	
 	//loop thru layer list and add the legend item to the appropriate heading
 	$.each(fev.layerList, function (index, layer) {
 		if (layer.Category == 'real-time') realTimeOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
@@ -633,10 +641,13 @@ $(document).ready(function () {
 	$('#observedToggleDiv').append(observedToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
+	
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
 	interpretedToggle.addTo(map);
+	var peakCheckbox = document.getElementById("peakCheckbox");
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
+	$('#interpretedToggleDiv').append(peakCheckbox, "Peak Labels");
 	$('.leaflet-top.leaflet-right').hide();
 
 	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
@@ -1533,16 +1544,8 @@ $(document).ready(function () {
 				}
 			}
 
-			//Original location popup 
-			/*
-			.openPopup(  // open popup at location listing all properties
-				$.map(Object.keys(o.result.properties), function (property) {
-					return "<b>" + property + ": </b>" + o.result.properties[property];
-				}).join("<br/>"),
-				[o.result.properties.Lat, o.result.properties.Lon] 
-			); */
 
-			//Revised location popup
+			//location popup
 			map.openPopup(
 				"<b>" + searchResults.result.properties.Name + "</b><br/>" +
 				searchResults.result.properties.County + ", " + searchResults.result.properties.State + "</b><br/>" +
