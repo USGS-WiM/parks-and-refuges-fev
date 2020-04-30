@@ -865,6 +865,7 @@ $(document).ready(function () {
 		document.getElementById('dataTable').innerHTML = "";
 
 		var mapPreview = document.getElementById('reviewMap');
+		var legendPreview = document.getElementById('legendImage');
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
 		 */
@@ -1057,18 +1058,22 @@ $(document).ready(function () {
 			mapPane.style.left = '';
 			mapPane.style.top = '';
 
+			// Hiding Legend for canvas event
+			$("#legendElement").hide();
+
 			var mapEvent;
 			html2canvas(document.getElementById('mapDiv'), options)
 				.then(function (canvas) {
 					mapEvent = new Event('map_ready');
 					/* canvas[0].drawImage */
-					canvas.style.width = '800px';
+					canvas.style.width = '600px';
 					canvas.style.height = '450px';
 					mapPreview.append(canvas);
 					//mapImage = canvas.get(0).toDataUrl('image/png');
-					var test = canvas[0].toDataUrl('image/png');
+					//var test = canvas[0].toDataUrl('image/png');
 					window.dispatchEvent(mapEvent);
-
+					// Showing Legend once canvas event complete
+					$("#legendElement").show();
 				})
 		}, 3000);
 
@@ -1076,6 +1081,13 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
+
+		// Get legend for print preview
+		var body = document.getElementById('printout');
+		html2canvas(body)
+		.then(function (canvas) {
+			legendPreview.append(canvas);
+		})
 	});
 
 	/* $('#printModal').bind('load',  function(){
