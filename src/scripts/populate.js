@@ -88,6 +88,44 @@ $( document ).ready(function() {
             console.log('Error processing the JSON. The error is:' + error);
         }
     });
+    // Register Event select as select2, retrieve values from jQuery ajax, sort, populate dropdown
+    //stores values in fev.data.events array
+    $('.evtSelectRegional').select2({
+        placeholder: 'Select event',
+        allowClear: false,
+        maximumSelectionLength: 3
+    });
+    $.ajax({
+        dataType: 'json',
+        type: 'GET',
+        url: 'https://stn.wim.usgs.gov/STNServices/events.json',
+        headers: {'Accept': '*/*'},
+        success: function (data) {
+            data.sort(function (a, b) {
+                // var eventA = a.event_name;
+                // var eventB = b.event_name;
+                var eventA = a.event_start_date;
+                var eventB = b.event_start_date;
+                if (eventA > eventB) {
+                    return -1;
+                }
+                if (eventA < eventB) {
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            });
+            for (var i = 0; i < data.length; i++) {
+                $('.evtSelectRegional').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
+                data[i].id = data[i].event_id;
+                fev.data.events.push(data[i]);
+            }
+        },
+        error: function (error) {
+            console.log('Error processing the JSON. The error is:' + error);
+        }
+    });
 
     // Register states select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.states array
