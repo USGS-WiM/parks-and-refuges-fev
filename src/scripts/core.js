@@ -3,8 +3,8 @@ var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
-var regionBoundaries;
-var regions = [];
+/* var regionBoundaries;
+var regions = []; */
 var parks;
 var refuges;
 var bufferPoly;
@@ -1442,18 +1442,6 @@ $(document).ready(function () {
 		var polys = [];
 		var buffer;
 		var regionName;
-
-		regionBoundaries = L.esri.featureLayer({
-			useCors: false,
-			where: "1=1",
-			url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0',
-			onEachFeature: function (feature, latlng) {
-				regions.push(feature.properties.REG_NAME);
-			}
-		});
-
-		console.log("regions: " + regions);
-		console.log("Region Boundaries: " + regionBoundaries);
 		
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({

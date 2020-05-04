@@ -1,54 +1,89 @@
 // setting global variables for the regional summary
-/* var regions = []; */
+var regionPoly = [];
 var selectedRegion = "";
 var selectedEvents = [];
-var regionPoly;
-//var regionBoundaries;
-/* var regionBoundaries = L.layerGroup(); */
+var regionPoly = [];
+var regionBoundaries;
+var flattenedRegionalPoly;
+var regionLayerGroup = L.layerGroup();
+var where = "";
 
 $(document).ready(function () {
-    $('#regionalReportText').click(function () {
-        // getting the regions
 
-        setTimeout(() => {
-            /* regionBoundaries = L.esri.featureLayer({
-                useCors: false,
-                url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0',
-                onEachFeature: function (feature, latlng) {
-                    regions.push(feature.properties.REG_NAME);
-                }
-            });
-            console.log(regionBoundaries); */
-        }, 1000);
-        
+    $('#regionalReportNav').click(function () {
+
+
+        // checking for region entry when region input is changed
+        $('#regionSelect_regionalModal').change(function () {
+
+            // if it has a value, we query to get the region geometry
+            if (($('#regionSelect_regionalModal').val()) !== null) {
+
+            } else {
+
+            }
+        });
+
+
+
     });
 
-    
 
 
     $('#btnSubmitSelections').click(function () {
 
-        // storing the selected events
-        selectedEvents = $('#evtSelect_regionalModal').val();
+        // getting the geometry for the selected region
+        where = "REG_NUM=" + selectedRegion,
+            selectedRegion = $('#regionSelect_regionalModal').val();
 
-        // getting the regions
-        parks = L.esri.featureLayer({
+        regionBoundaries = L.esri.featureLayer({
             useCors: false,
-            url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer',
-            simplifyFactor: 0.5,
-            precision: 4,
+            url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0',
             where: "REG_NUM=" + selectedRegion,
             onEachFeature: function (feature, latlng) {
-                polys = feature.geometry;
-                // flattening the geometry for use in turf
-                regionPoly = turf.flatten(polys);
-                regionPoly.push
+                regionPoly = feature.geometry;
+                flattenedRegionalPoly = turf.flatten(regionPoly);
             }
-        });
+        }).addTo(map); // may want to add this to preview map in future
+        regionLayerGroup.addLayer(regionBoundaries);
+
+        selectedEvents = $('#evtSelect_regionalModal').val();
+
+        // looping through each event select and getting sensor data
         for (var i = 0; i < selectedEvents.length; i++) {
-            filterMapData(selectedEvents[i], false);
+
+            // PEAKS
+            var peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.json?Event=" + selectedEvents[i];
+            getData(function (output) {
+                console.log(output);
+            });
+
+            // fucntion 
+            function getData(handleData) {
+                var data;
+                $.ajax({
+                    dataType: "json",
+                    url: peaksURL,
+                    data: data,
+                    success: function (data) {
+                        handleData(data)
+                    },
+                    error: function (error) {
+                        console.log('Error processing the JSON. The error is:' + error);
+                    }
+                });
+            }
+
+
+            // HWMS
+
+            // SENSORS & INSTRUMENTS
+
+            map.removeLayer(regionBoundaries);
         }
+
     });
+
 });
 
 

@@ -88,6 +88,9 @@ $( document ).ready(function() {
             console.log('Error processing the JSON. The error is:' + error);
         }
     });
+
+    // START REGIONAL SUMMARY
+
     // Register Event select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.events array
     $('.evtSelectRegional').select2({
@@ -118,14 +121,40 @@ $( document ).ready(function() {
             });
             for (var i = 0; i < data.length; i++) {
                 $('.evtSelectRegional').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
-                data[i].id = data[i].event_id;
-                fev.data.events.push(data[i]);
+                /* data[i].id = data[i].event_id;
+                fev.data.events.push(data[i]); */
             }
         },
         error: function (error) {
             console.log('Error processing the JSON. The error is:' + error);
         }
     });
+
+    // Register Event select as select2, retrieve values from jQuery ajax, sort, populate dropdown
+    //stores values in fev.data.events array
+    $('.regionSelect').select2({
+        placeholder: 'Select event',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
+    $.ajax({
+        dataType: 'json',
+        type: 'GET',
+        url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/ArcGIS/rest/services/DOI_Unified_Regions/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+        headers: {'Accept': '*/*'},
+        success: function (data) {
+            for (var i = 0; i < data.features.length; i++) {
+                $('.regionSelect').append('<option value="' + data.features[i].attributes.REG_NUM + '">' + data.features[i].attributes.REG_NAME + '</option>');
+                /* data[i].id = data[i].event_id;
+                fev.data.events.push(data[i]); */
+            }
+        },
+        error: function (error) {
+            console.log('Error processing the JSON. The error is:' + error);
+        }
+    });
+
+    // END REGIONAL SUMMARY
 
     // Register states select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.states array
