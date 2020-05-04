@@ -1,24 +1,24 @@
 // setting global variables for the regional summary
-var regions = [];
+/* var regions = []; */
 var selectedRegion = "";
 var selectedEvents = [];
 var regionPoly;
 //var regionBoundaries;
-var regionBoundaries = L.layerGroup();
+/* var regionBoundaries = L.layerGroup(); */
 
 $(document).ready(function () {
     $('#regionalReportText').click(function () {
         // getting the regions
 
         setTimeout(() => {
-            regionBoundaries = L.esri.featureLayer({
+            /* regionBoundaries = L.esri.featureLayer({
                 useCors: false,
                 url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0',
                 onEachFeature: function (feature, latlng) {
                     regions.push(feature.properties.REG_NAME);
                 }
             });
-            console.log(regionBoundaries);
+            console.log(regionBoundaries); */
         }, 1000);
         
     });

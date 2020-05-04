@@ -3,7 +3,8 @@ var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
-
+var regionBoundaries;
+var regions = [];
 var parks;
 var refuges;
 var bufferPoly;
@@ -1437,20 +1438,24 @@ $(document).ready(function () {
 
 		// setting the where class for the query
 		// UNIT_NAME holds gnis major value of park name (I think)
-		var where = "UNIT_NAME=" + name;
+		var where = "1=1";
 		var polys = [];
 		var buffer;
 		var regionName;
 
 		regionBoundaries = L.esri.featureLayer({
 			useCors: false,
+			where: "1=1",
 			url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0',
 			onEachFeature: function (feature, latlng) {
 				regions.push(feature.properties.REG_NAME);
 			}
 		});
-		console.log(regionBoundaries);
 
+		console.log("regions: " + regions);
+		console.log("Region Boundaries: " + regionBoundaries);
+		
+		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
 			url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
@@ -1491,6 +1496,7 @@ $(document).ready(function () {
 		}).addTo(map);
 		parksLayerGroup.addLayer(parks);
 
+		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
 			url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
