@@ -1553,6 +1553,8 @@ $(document).ready(function () {
 				}
 			}
 
+			console.log(buffer);
+
 			// adding the buffer to the map
 			bufferPoly = L.geoJson(buffer, {
 				style: bufferStyle,
