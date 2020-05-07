@@ -299,25 +299,6 @@ int.bindPopup(function (layer) {
 	return L.Util.template('<p>INTTYPE1: {INTTYPE1}', layer.properties);
 })
 
-//set to false: peak labels won't automatically appear
-var setHide;
-if (setHide == null) {
-	setHide = false;
-}
-
-//var peakCheckbox = document.getElementById("peakCheckbox");
-
-/*
-$('#interpretedToggleDiv').append(peakCheckbox, "Peak Labels");
-if (peakCheckbox.checked) {
-	var setHide = true;
-}
-else { 
-	var setHide = false; 
-}
-*/
-
-
 /* $.getJSON('https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {
 	async: false,
 })
@@ -1775,7 +1756,6 @@ $(document).ready(function () {
 		};
 	}
 
-
 	function printReport() {
 		const docDefinition = {
 			pageOrientation: 'landscape',
@@ -1860,3 +1840,17 @@ $(document).ready(function () {
 	}
 	//end latLngScale utility logic/////////
 });
+
+//function for toggling peak labels
+function clickPeakLabels() {
+	var checkBox = document.getElementById("peakCheckbox");
+	if (checkBox.checked == true) {
+		peak.eachLayer(function (myMarker) {
+			myMarker.showLabel();
+		});
+	} else {
+		peak.eachLayer(function (myMarker){
+			myMarker.hideLabel();
+		});
+	}
+  }
