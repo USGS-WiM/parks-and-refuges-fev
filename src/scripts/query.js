@@ -209,6 +209,7 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
 function displayPeaksGeoJSON(type, name, url, markerIcon) {
     //increment layerCount
     layerCount++;
+    //var maxPeak = Math.max(feature.properties.peak_stage);
     peak.clearLayers();
     var currentMarker = L.geoJson(false, {
         pointToLayer: function (feature, latlng) {
@@ -219,12 +220,11 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             return marker;
         },
 
-        
         onEachFeature: function (feature, latlng) {
             //add marker to overlapping marker spidifier
             oms.addMarker(latlng);
             //var popupContent = '';
-            var currentEvent = fev.vars.currentEventName;
+            var currentEvent = fev.vars.currentEventName;        
             //set popup content using moment js to pretty format the date value
             var popupContent =
                 '<table class="table table-condensed table-striped table-hover wim-table">' +

@@ -300,7 +300,23 @@ int.bindPopup(function (layer) {
 })
 
 //set to false: peak labels won't automatically appear
-var setHide = false
+var setHide;
+if (setHide == null) {
+	setHide = false;
+}
+
+//var peakCheckbox = document.getElementById("peakCheckbox");
+
+/*
+$('#interpretedToggleDiv').append(peakCheckbox, "Peak Labels");
+if (peakCheckbox.checked) {
+	var setHide = true;
+}
+else { 
+	var setHide = false; 
+}
+*/
+
 
 /* $.getJSON('https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {
 	async: false,
@@ -641,13 +657,37 @@ $(document).ready(function () {
 	$('#observedToggleDiv').append(observedToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
-	
+
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
 	interpretedToggle.addTo(map);
-	var peakCheckbox = document.getElementById("peakCheckbox");
+	//var peakCheckbox = document.getElementById("peakCheckbox");
+
+	/*
+	.onclick = function() {
+
+		//var peakCheckbox = document.getElementById("peakCheckbox");
+		if (peakCheckbox.checked == true) {
+			setHide = true;
+			//interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+			//interpretedToggle.addTo(map);
+			//refreshMapData();
+		}
+		else {
+			setHide = false;
+			//interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+			//interpretedToggle.addTo(map);
+			//refreshMapData();
+		}
+		}
+
+	}
+	*/
+
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
-	$('#interpretedToggleDiv').append(peakCheckbox, "Peak Labels");
+
+	//add checkbox under Peaks layer in legend to toggle labels on and off
+	$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Peak Labels");
 	$('.leaflet-top.leaflet-right').hide();
 
 	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
@@ -1181,6 +1221,8 @@ $(document).ready(function () {
 		queryNWISgraphRDG();
 		queryNWISgraph();
 		queryNWISRaingraph();
+		//clickPeakLabels();
+
 	}
 	// setting checked values for buffer radio buttons
 	document.getElementById('tenKm').checked = false;
