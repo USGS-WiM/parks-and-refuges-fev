@@ -808,13 +808,12 @@ a.lgi-zoom:hover {
     border-color: rgb(204, 204, 204);
 }
 
-/*
-#formatCheckbox {
-    margin-left: 15px;
-    display: inline-block;
-    border-color: rgba(0,0,0,0.2);
+
+#peakCheckbox {
+    margin-left: 6px;  
 }
-*/
+
+
 
 /*MAP LAYERS*/
 #legendElement{
