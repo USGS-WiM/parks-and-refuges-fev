@@ -3,7 +3,8 @@ var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
-
+/* var regionBoundaries;
+var regions = []; */
 var parks;
 var refuges;
 var bufferPoly;
@@ -225,6 +226,7 @@ $.ajax({
 
 // NPS Tracts 
 var tracts = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/1",
 	//opacity: 0.5,
 	minZoom: 9,
@@ -247,11 +249,12 @@ var tracts = L.esri.featureLayer({
 			return { color: 'black', weight: 2 };
 		}
 	}
-})
+});
 
 // NPS Boundaries 
 var bounds = L.esri.featureLayer({
-	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2",
+	useCors: false,
+	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0",
 	//opacity: 0.5,
 	minZoom: 9,
 	/* style: function (feature) {
@@ -261,16 +264,18 @@ var bounds = L.esri.featureLayer({
 
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
 	//opacity: 0.5,
 	minZoom: 9,
 	style: function (feature) {
 		return { color: 'brown', weight: 2 };
 	}
-})
+});
 
 // FWS Approved Interest Boundaries 
 var int = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1",
 	//opacity: 0.5,
 	minZoom: 9,
@@ -292,6 +297,29 @@ var int = L.esri.featureLayer({
 		} else {
 			return { color: 'black', weight: 2 };
 		}
+	}
+})
+
+// FWS Legacy Regions
+
+var fwsLegacyRegions = L.esri.featureLayer({
+	useCors: false,
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
+	//opacity: 0.5,
+	minZoom: 9,
+	style: function (feature) {
+		return { color: 'blue', weight: 2 };
+	}
+})
+
+// DOI Regions
+var doiRegions = L.esri.featureLayer({
+	useCors: false,
+	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer",
+	//opacity: 0.5,
+	minZoom: 9,
+	style: function (feature) {
+		return { color: 'green', weight: 2 };
 	}
 })
 
@@ -890,13 +918,26 @@ $(document).ready(function () {
 			L.esri.basemapLayer('Topographic').addTo(reviewMap);
 		}, 500); */
 	}
+
+	function showRegionalModal() {
+		$('#regionalModal').modal('show');
+
+		/* setTimeout(() => {
+			reviewMap = L.map('reviewMap').setView([39.833333, -98.583333], 4);
+			L.esri.basemapLayer('Topographic').addTo(reviewMap);
+		}, 500); */
+	}
+
+	$('#regionalReportNav').click(function () {
+		showRegionalModal();
+	});
 	var pdfMapUrl;
 
 	$('#printNav').click(function () {
 		showPrintModal();
 
 		// setting element to empty string incase a report has already been ran
-		document.getElementById('dataTable').innerHTML = "";
+		// document.getElementById('dataTable').innerHTML = "";
 
 		var mapPreview = document.getElementById('reviewMap');
 		/* mapPreview.innerHTML='Loading Map...'
@@ -1121,9 +1162,8 @@ $(document).ready(function () {
 	//Need to figure out how to fix this, maybe just reintialize the map? we did have to fix 
 	//this in whispers too but can't remember what I did off hand
 	$("#printModal").on("hidden.bs.modal", function () {
-		//location.reload();
+		// location.reload();
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
-
 		/* USGSrtGages.clearLayers();
 		USGSRainGages.clearLayers(); */
 		//refreshMapData(); function to reset map data
@@ -1433,11 +1473,12 @@ $(document).ready(function () {
 
 		// setting the where class for the query
 		// UNIT_NAME holds gnis major value of park name (I think)
-		var where = "UNIT_NAME=" + name;
+		var where = "1=1";
 		var polys = [];
 		var buffer;
 		var regionName;
-
+		
+		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
 			url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
@@ -1478,6 +1519,7 @@ $(document).ready(function () {
 		}).addTo(map);
 		parksLayerGroup.addLayer(parks);
 
+		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
 			url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
@@ -1545,6 +1587,8 @@ $(document).ready(function () {
 					}
 				}
 			}
+
+			console.log(buffer);
 
 			// adding the buffer to the map
 			bufferPoly = L.geoJson(buffer, {
@@ -1780,7 +1824,7 @@ $(document).ready(function () {
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
 				{ image: pdfMapUrl, width: 300, height: 200 },
-				table(bodyData(), ['Site Number','Description','Networks','State','County','Peak Stage','Peak Estimated']),
+				table(bodyData(), ['Site Number','Description', 'State','County','Peak Stage','Peak Estimated']),
 			],
 			styles: {			
 				header: {
