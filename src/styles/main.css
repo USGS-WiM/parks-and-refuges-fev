@@ -184,6 +184,8 @@ body {
     width      : 300px;
     height     : 30px;
     padding    : 25px;
+    padding-top: 5px;
+    padding-left: 18px;
 }
 #search {
     display : inline-block;
@@ -811,6 +813,13 @@ a.lgi-zoom:hover {
     font-size: 14px;
     border-color: rgb(204, 204, 204);
 }
+
+
+#peakCheckbox {
+    margin-left: 6px;  
+}
+
+
 
 /*MAP LAYERS*/
 #legendElement{

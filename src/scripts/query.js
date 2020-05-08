@@ -204,9 +204,12 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
     });
 }
 
+
+
 function displayPeaksGeoJSON(type, name, url, markerIcon) {
     //increment layerCount
     layerCount++;
+    //var maxPeak = Math.max(feature.properties.peak_stage);
     peak.clearLayers();
     var currentMarker = L.geoJson(false, {
         pointToLayer: function (feature, latlng) {
@@ -216,11 +219,12 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
             return marker;
         },
+
         onEachFeature: function (feature, latlng) {
             //add marker to overlapping marker spidifier
             oms.addMarker(latlng);
             //var popupContent = '';
-            var currentEvent = fev.vars.currentEventName;
+            var currentEvent = fev.vars.currentEventName;        
             //set popup content using moment js to pretty format the date value
             var popupContent =
                 '<table class="table table-condensed table-striped table-hover wim-table">' +
@@ -234,7 +238,12 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             // });
             latlng.bindPopup(popupContent);
         }
+        
     });
+    //currentMarker.bindPopup("water").openPopup();
+    //currentMarker.bindToolTip("peakflow");
+    //map.openPopup("Peak");
+
 
     $.getJSON(url, function (data) {
 
@@ -267,6 +276,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             checkLayerCount(layerCount);
         }
     });
+    //currentMarker.bindPopup("Peak");
 }
 
 ///this function sets the current event's start and end dates as global vars. may be better as a function called on demand when date compare needed for NWIS graph setup
