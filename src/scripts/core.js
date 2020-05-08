@@ -1130,7 +1130,7 @@ $(document).ready(function () {
 	//Need to figure out how to fix this, maybe just reintialize the map? we did have to fix 
 	//this in whispers too but can't remember what I did off hand
 	$("#printModal").on("hidden.bs.modal", function () {
-		location.reload();
+		// location.reload();
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
 		/* USGSrtGages.clearLayers();
 		USGSRainGages.clearLayers(); */
@@ -1799,7 +1799,7 @@ $(document).ready(function () {
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
 				{ image: pdfMapUrl, width: 300, height: 200 },
-				table(bodyData(), ['Site Number','Description','Networks','State','County','Peak Stage','Peak Estimated']),
+				table(bodyData(), ['Site Number','Description', 'State','County','Peak Stage','Peak Estimated']),
 			],
 			styles: {			
 				header: {
