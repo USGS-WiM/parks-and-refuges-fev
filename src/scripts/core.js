@@ -128,6 +128,12 @@ var fev = fev || {
 			"Name": "Park Boundaries",
 			"Type": "nps",
 			"Category": "nps"
+		},
+		{
+			"ID": "doiRegions",
+			"Name": "DOI Regions",
+			"Type": "doi",
+			"Category": "doi"
 		}
 	]
 };
@@ -161,6 +167,7 @@ var appr = L.layerGroup();
 var int = L.layerGroup();
 var tracts = L.layerGroup();
 var bounds = L.layerGroup();
+var doiRegions = L.layerGroup();
 var parksLayerGroup = L.layerGroup();
 
 
@@ -316,9 +323,9 @@ var fwsLegacyRegions = L.esri.featureLayer({
 // DOI Regions
 var doiRegions = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer",
+	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/ArcGIS/rest/services/DOI_Unified_Regions/FeatureServer/0",
 	//opacity: 0.5,
-	minZoom: 9,
+	minZoom: 5,
 	style: function (feature) {
 		return { color: 'green', weight: 2 };
 	}
@@ -619,6 +626,7 @@ $(document).ready(function () {
 	var noaaOverlays = {};
 	var fwsOverlays = {};
 	var npsOverlays = {};
+	var doiOverlays = {};
 
 	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 
@@ -640,6 +648,10 @@ $(document).ready(function () {
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;tracts": tracts,
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;bounds": bounds,
 	}
+	doiOverlays = {
+		"<img class='legendSwatch' src='images/doi.png'>&nbsp;DOI Regions": doiRegions,
+	}
+	
 
 	
 	//loop thru layer list and add the legend item to the appropriate heading
@@ -650,6 +662,7 @@ $(document).ready(function () {
 		if (layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if (layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/usfws.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if (layer.Category == 'nps') npsOverlays["<img class='legendSwatch' src='images/nps.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if (layer.Category == 'doi') doiOverlays["<img class='legendSwatch' src='images/doi.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
@@ -716,6 +729,12 @@ $(document).ready(function () {
 	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
 	npsToggle.addTo(map);
 	$('#npsToggleDiv').append(npsToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
+
+	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	var doiToggle = L.control.layers(null, doiOverlays, { collapsed: false });
+	doiToggle.addTo(map);
+	$('#doiToggleDiv').append(doiToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
 	//overlapping marker spidifier
