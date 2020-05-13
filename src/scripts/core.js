@@ -634,6 +634,7 @@ $(document).ready(function () {
 	fwsOverlays = {
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;appr": appr,
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Int": int,
+		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Legacy Regions": fwsLegacyRegions,
 	}
 	npsOverlays = {
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;tracts": tracts,
@@ -1570,7 +1571,6 @@ $(document).ready(function () {
 		//if there was a name match with the refuge layer, this will not run
 		setTimeout(() => {
 			if (refCount !== 1) {
-				console.log("made it", refCount);
 				where = "ORGNAME=" + name;
 				fwsInterest = L.esri.featureLayer({
 					useCors: false,
