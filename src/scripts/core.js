@@ -254,7 +254,7 @@ var tracts = L.esri.featureLayer({
 // NPS Boundaries 
 var bounds = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0",
+	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2",
 	//opacity: 0.5,
 	minZoom: 9,
 	/* style: function (feature) {
