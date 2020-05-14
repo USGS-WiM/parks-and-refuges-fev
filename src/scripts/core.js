@@ -1838,9 +1838,6 @@ $(document).ready(function () {
 			layout: 'lightHorizontalLines', 
 		};
 	}
-	const options = {
-		useCORS: true,
-	};
 	
 	//Begin legend prep to get active layers into legend table for pdf report
 	var getOverlays = [];
@@ -1848,6 +1845,9 @@ $(document).ready(function () {
 	var activeOverlays =[];
 	var imgPrep =[]
 	var imageUrls = [];
+	var legendData = [];
+	var columnOne = [];
+	var columnTwo = [];
 	function getActiveOverlays() {
 		//var result;
 		$.each($('.leaflet-control-layers-overlays'), function(index, overlayGroup) {
@@ -1867,81 +1867,69 @@ $(document).ready(function () {
 		})
 
 		for (var i in srcActiveOverlays) {
-			var dataURL;
-			
 			function imageToBase64(){
-				//var image = "images/rdg.png";
-				//var dataURL;
 				var canvas = document.createElement("canvas");
 				var ctx = canvas.getContext("2d");
 				var base_image = new Image();
 				canvas.width = 10;
 				canvas.height = 10;
 				base_image.src = srcActiveOverlays[i];
-				//ctx.drawImage(base_image, 0, 0);
-				base_image.onload = function() {
-					ctx.drawImage(base_image, 0, 0, 10, 10);
-					dataURL = canvas.toDataURL();
-					console.log(dataURL);
-					imageUrls.push(dataURL);
-					//return dataURL;
-				};
-				//var dataURL = canvas.toDataURL();
-				return imageUrls;
+				ctx.drawImage(base_image, 0, 0, 10, 10);
+				var dataURL = canvas.toDataURL();
+				console.log(dataURL);
+				imageUrls.push(dataURL);
 			};
-			//imgPrep.push(imageUrls);
 			imageToBase64();
-			//return imageUrls;
-			//console.log(imageUrls)
 		};
-		console.log(imageUrls)
+		for (var i in imageUrls) {
+			columnOne.push(imageUrls[i]);
+		};
+		for (var i in getOverlays) {
+			columnTwo.push(getOverlays[i]);
+		};
+		for (var i in getOverlays && imageUrls) {
+			legendData.push({ "Image": imageUrls[i], "Layer": getOverlays[i] })
+		}
+		console.log(columnOne);
+		console.log(columnTwo);
+		console.log(legendData);
 	}
 
-	var legendData = [];
-	var columnOne = [];
-	var columnTwo = [];
-	function buildLegend () {
-		//var dataURL;
-		// for (var i in srcActiveOverlays) {
-		// 	//function imageToBase64(){
-		// 		//var image = "images/rdg.png";
-		// 		//var dataURL;
-		// 		var canvas = document.createElement("canvas");
-		// 		var ctx = canvas.getContext("2d");
-		// 		var base_image = new Image();
-		// 		canvas.width = 10;
-		// 		canvas.height = 10;
-		// 		base_image.src = srcActiveOverlays[i];
-		// 		//ctx.drawImage(base_image, 0, 0);
-		// 		base_image.onload = async (e) => {
-		// 			ctx.drawImage(base_image, 0, 0, 10, 10);
-		// 			var dataURL = canvas.toDataURL();
-		// 			imageUrls.push(dataURL);
-		// 		};
-		// 	//};
-		// 	//imageToBase64();
-		// };
-		for (var i in imageUrls) {
-		console.log(imageUrls[i]);
-		columnOne.push(imageUrls[i]);
-	};
-	//return imageUrls;
-	for (var i in getOverlays) {
-		columnTwo.push(getOverlays[i]);
-	};
-	console.log(columnTwo);
-	// legendData.push({columnOne, columnTwo});
-	// console.log(legendData);
-	// return legendData;
-	console.log(imageUrls);
-	console.log(columnOne);
+	function legendTableBody(data) {
+		var body = [];
+		for (var i = 0; i < imageUrls.length; i++) {
+		//body.push(columns);
+		//data.forEach(function() {
+			var dataRow = [];
+			//var i = 0;
+
+			//row.forEach(function() {
+				dataRow.push({image: imageUrls[i]}, columnTwo);
+				//i++;
+			//})
+			body.push(dataRow);
+
+		//});
+	}
+		return body;
+	}
+
+	function legendTable(data, columns) {
+		return {
+			table: {	
+				//headerRows: 1,
+				//widths: ['auto','*','auto','auto','auto','auto'],
+				body: legendTableBody(data, columns),
+			},
+			layout: 'noBorders', 
+		};
 	}
 
 	function buildTable () {
 		return {
 			table: {
 				body: [
-					[{image: imageUrls}, columnTwo]
+					[{ image: columnOne }, columnTwo]
 				]
 			},
 			layout: 'noBorders'
@@ -1950,7 +1938,7 @@ $(document).ready(function () {
 
 	function printReport() {
 		getActiveOverlays();
-		buildLegend();
+		//buildLegend();
 		const docDefinition = {
 			pageOrientation: 'landscape',
 			pageMargins: [20, 20, 20, 35],
@@ -1973,8 +1961,13 @@ $(document).ready(function () {
 			},
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				{ image: pdfMapUrl, width: 300, height: 200 },
+				//{ image: pdfMapUrl, width: 300, height: 200 },
+				//{ table: { body: [ [{ image: image() }, columnTwo]]}},
 				buildTable(),
+				legendTable(legendData),
+				//buildLegend(),
+				//buildLegendBody(),
+				//legendTable(buildLegend(), ["Image", "Layer"]),
 				table(bodyData(), ['Site Number','Description', 'State','County','Peak Stage','Peak Estimated']),
 			],
 			styles: {			
