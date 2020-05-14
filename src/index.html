@@ -62,6 +62,7 @@
     <script src="scripts/core.js"></script>
     <script src="scripts/populate.js"></script>
     <script src="scripts/util.js"></script>
+    <script src="scripts/regionalSummary.js"></script>
     <script src="scripts/html2canvas.js"></script>
     <!-- endbuild -->
     
@@ -106,6 +107,10 @@
             <span class="glyphicon glyphicon-search"></span>
             <span id="printButtonText">Report</span>
         </button>
+        <button id="regionalReportNav" type="button" class="btn btn-primary navbar-btn pull-right">
+            <span style="padding-top: 5px;" class="glyphicon glyphicon-search"></span>
+            <span id="regionalReportText" style="font-size: 10px;">Regional<br>Report</span>
+        </button>
         <button id="aboutNav" class="btn btn-default navbar-btn pull-right">
             <i class="fa fa-question-circle"></i><span class="hidden-xs">&nbsp;&nbsp;About</span>
         </button>
@@ -131,7 +136,7 @@
                 <h4 class="modal-title">USGS Flood Event Viewer</h4>
             </div>
             <div class="modal-body">
-                <h4>Welcome to the USGS Flood Event Viewer. Please select an event to get started.</h4>
+                <h4>Welcome to the USGS Flood Event Viewer. Please select a Park or Refuge to get started.</h4>
                 <br>
                 <!--<div class="form-group" id="evtNameForm_welcomeModal">-->
                 <!--&lt;!&ndash;<label for="evtSelect_welcomeModal"  class="col-sm-2 control-label filterForms">Event Name</label>&ndash;&gt;-->
@@ -139,6 +144,26 @@
                 <!--<select id="evtSelect_welcomeModal" class="evtSelect" style="width: 100%" multiple></select>-->
                 <!--</div>-->
                 <!--</div>-->
+                <div class="input-group form-group">
+                    <span>Select a Park or Refuge: </span>
+                    <div class="form-group" align="center">
+                        <div id="search_container">
+                            <div style="left: -20px" id="search">
+                            </div>
+                        </div>
+                        <!-- <div class="search-help" align="center"> </br>
+                            <b>Supported Search Strings:</b> </br>
+                            <code>Geographic Names</code>
+                            <code>Zip Codes</code>
+                            <code>States</code>
+                            <code>Street Address</code>
+                            <br />
+                            <br /> Search provided by
+                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript
+                                API</a>
+                        </div> -->
+                    </div>
+                </div>           
                 
                 <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted by start
                     date.</span><br>
@@ -165,26 +190,6 @@
                         </label>
                     </div>
                 </div>
-                <div class="input-group form-group">
-                    <span>Select a Park or Refuge:</span>
-                    <div class="form-group" align="center">
-                        <div id="search_container">
-                            <div style="left: -20px" id="search">
-                            </div>
-                        </div>
-                        <!-- <div class="search-help" align="center"> </br>
-                            <b>Supported Search Strings:</b> </br>
-                            <code>Geographic Names</code>
-                            <code>Zip Codes</code>
-                            <code>States</code>
-                            <code>Street Address</code>
-                            <br />
-                            <br /> Search provided by
-                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript
-                                API</a>
-                        </div> -->
-                    </div>
-                </div>
                 <div class="alert alert-danger parkRefSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose a Park or Refuge.</div>
             </div>
             <div class="modal-footer">
@@ -193,8 +198,7 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
-
-
+    
 <div class="modal fade overflow-y-hidden" id="geosearchModal" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -271,6 +275,58 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="regionalModal" class="modal fade" style="display: none;" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <h4 class="modal-title">Filters</h4>
+            </div>
+            <div class="modal-body">
+
+                <!-- begin filter panels -->
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <!--<h4 class="formSectionHead">Event Options</h4>-->
+                        <form class="form-horizontal" role="form" id="regionalForm">
+                            <!--<div class="form-group" id="evtTypeForm">-->
+                                <!--<label for="evtTypeSelect" class="col-sm-2 control-label filterForms">Event Type</label>-->
+                                <!--<div class="col-sm-10 filterForms">-->
+                                    <!--<select id="evtTypeSelect" style="width: 100%" multiple class="clearable"></select>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <div class="form-group" id="evtNameForm_regionalModal">
+                                <label for="evtSelect_regionalModal"  class="col-sm-2 control-label filterForms">Event: </label>
+                                <div class="col-sm-10 filterForms">
+                                    <select id="evtSelect_regionalModal" class="evtSelectRegional" multiple="multiple" style="width: 100%"></select>
+                                </div>
+                            </div>
+                            <div class="form-group" id="evtNameForm_regionalModal">
+                                <label for="regionSelect_regionalModal"  class="col-sm-2 control-label filterForms">Region: </label>
+                                <div class="col-sm-10 filterForms">
+                                    <select id="regionSelect_regionalModal" class="regionSelect" multiple style="width: 100%"></select>
+                                </div>
+                            </div>
+                        </form>
+                        <div id="regionalMapContainer" style="margin: auto; width: 600px;">
+                            <div id="regionalMap" style="width: 600px; height: 400px;"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- end filter panels -->
+                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose an event to proceed.</div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnClearFilters" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Clear Selections</button>
+                <button id="btnSubmitSelections" class="btn btn-primary btn-lg" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Run</button>
+                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div>
 
 <div id="aboutModal" class="modal fade"  tabindex="-1" role="dialog" >
@@ -802,5 +858,15 @@
         <div class="col-xs-7 col-sm-3 col-md-3 sidebar sidebar-right sidebar-animate"></div>
     </div>
 </div>
+
+<!--create checkbox to toggle peak labels-->
+
+<input type = "checkbox"
+    id = "peakCheckbox"
+    value = "PeakLabels"
+    onclick= "clickPeakLabels()" />
+  <label for = "peakCheckbox">Peak Labels</label>
+
+
 </body>
 </html>

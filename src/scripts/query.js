@@ -3,6 +3,7 @@
  */
 ///function to grab all values from the inputs, form into arrays, and build query strings
 var layerCount = 0;
+var peakArr = [];
 //ajax retrieval function
 function displaySensorGeoJSON(type, name, url, markerIcon) {
     //increment layerCount
@@ -204,23 +205,61 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
     });
 }
 
+
+
 function displayPeaksGeoJSON(type, name, url, markerIcon) {
+
+    //Create variables for createPeakArray
+    var maxPeak = [];
+    var minPeak = [];
+    var lengthPeak = [];
+    var sortedPeaks = [];
+    var fifthLength = [];
+    var fifthVal = [];
+    var twoFifthVal = [];
+    var threeFifthVal = [];
+    var fourFifthVal = [];
+ 
+
+
     //increment layerCount
     layerCount++;
+    //var maxPeak = Math.max(feature.properties.peak_stage);
     peak.clearLayers();
+
+    var createPeakArray = L.geoJson(false, {
+        onEachFeature: function(feature, latlng){
+
+            //Create an array of each peak value
+            peakArr.push(feature.properties.peak_stage);
+            console.log("found peak array");
+
+            //find min and max peak values 
+            maxPeak = Math.max(...peakArr);
+            minPeak = Math.min(...peakArr);
+
+            //sort array of peak values
+            sortedPeaks = peakArr.sort();
+
+            //find number of peak values
+            lengthPeak = peakArr.length;
+
+            //divide the array into 5 equal sections
+            //find the maximum peak value of each of those sections
+            fifthLength = Math.round(lengthPeak/5);
+            fifthVal = sortedPeaks[fifthLength];
+            twoFifthVal = sortedPeaks[fifthLength*2]
+            threeFifthVal = sortedPeaks[fifthLength*3]
+            fourFifthVal = sortedPeaks[fifthLength*4]
+        }
+    });
+
     var currentMarker = L.geoJson(false, {
-        pointToLayer: function (feature, latlng) {
-            markerCoords.push(latlng);
-            var marker = L.marker(latlng, {
-                icon: markerIcon
-            }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
-            return marker;
-        },
         onEachFeature: function (feature, latlng) {
             //add marker to overlapping marker spidifier
             oms.addMarker(latlng);
             //var popupContent = '';
-            var currentEvent = fev.vars.currentEventName;
+            var currentEvent = fev.vars.currentEventName;        
             //set popup content using moment js to pretty format the date value
             var popupContent =
                 '<table class="table table-condensed table-striped table-hover wim-table">' +
@@ -233,7 +272,45 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
             // });
             latlng.bindPopup(popupContent);
+        },
+
+        pointToLayer: function (feature, latlng) {
+            markerCoords.push(latlng);
+  
+           //Create 5 categories for marker size          
+            if (feature.properties.peak_stage <= fifthVal) {
+                var marker =             
+                L.marker(latlng, {
+                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7,10] })
+                }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+            }
+            if (fifthVal < feature.properties.peak_stage <= twoFifthVal) {
+                var marker =             
+                L.marker(latlng, {
+                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [9,13] })
+                }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+            }
+            if (twoFifthVal < feature.properties.peak_stage <= threeFifthVal) {
+                var marker =             
+                L.marker(latlng, {
+                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11,16] })
+                }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+            }
+            if (threeFifthVal < feature.properties.peak_stage <= fourFifthVal) {
+                var marker =             
+                L.marker(latlng, {
+                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [13,18] })
+                }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+            }
+            if (feature.properties.peak_stage > fourFifthVal) {
+                var marker =             
+                L.marker(latlng, {
+                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15,22] })
+                }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+            }
+            return marker;
         }
+        
     });
 
     $.getJSON(url, function (data) {
@@ -259,7 +336,9 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                     data.features.splice(i, 1);
                 }
             }
+            createPeakArray.addData(data);
             currentMarker.addData(data);
+            
             currentMarker.eachLayer(function (layer) {
                 layer.addTo(peak);
             });
@@ -267,6 +346,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             checkLayerCount(layerCount);
         }
     });
+    //currentMarker.bindPopup("Peak");
 }
 
 ///this function sets the current event's start and end dates as global vars. may be better as a function called on demand when date compare needed for NWIS graph setup

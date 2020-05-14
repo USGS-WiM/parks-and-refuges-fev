@@ -1330,6 +1330,7 @@ $.ajax({
 
 // NPS Tracts 
 var tracts = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/1",
 	//opacity: 0.5,
 	minZoom: 9,
@@ -1356,6 +1357,7 @@ var tracts = L.esri.featureLayer({
 
 // NPS Boundaries 
 var bounds = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2",
 	//opacity: 0.5,
 	minZoom: 9,
@@ -1366,6 +1368,7 @@ var bounds = L.esri.featureLayer({
 
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
 	//opacity: 0.5,
 	minZoom: 9,
@@ -1376,6 +1379,7 @@ var appr = L.esri.featureLayer({
 
 // FWS Approved Interest Boundaries 
 var int = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1",
 	//opacity: 0.5,
 	minZoom: 9,
@@ -2194,9 +2198,8 @@ $(document).ready(function () {
 	//Need to figure out how to fix this, maybe just reintialize the map? we did have to fix 
 	//this in whispers too but can't remember what I did off hand
 	$("#printModal").on("hidden.bs.modal", function () {
-		//location.reload();
+		location.reload();
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
-
 		/* USGSrtGages.clearLayers();
 		USGSRainGages.clearLayers(); */
 		//refreshMapData(); function to reset map data
@@ -2550,6 +2553,7 @@ $(document).ready(function () {
 		parksLayerGroup.addLayer(parks);
 
 		refuges = L.esri.featureLayer({
+			useCors: false,
 			url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
 			simplifyFactor: 0.5,
 			precision: 4,

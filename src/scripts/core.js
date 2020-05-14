@@ -3,9 +3,11 @@ var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
-
+/* var regionBoundaries;
+var regions = []; */
 var parks;
 var refuges;
+var fwsInterest;
 var bufferPoly;
 var searchResults;
 var searchObject;
@@ -161,6 +163,7 @@ var tracts = L.layerGroup();
 var bounds = L.layerGroup();
 var parksLayerGroup = L.layerGroup();
 
+
 // refuge layer
 /* var refuges = L.esri.dynamicMapLayer({
 	url: "https://gis.fws.gov/arcgis/rest/services/FWS_Refuge_Boundaries/MapServer",
@@ -224,6 +227,7 @@ $.ajax({
 
 // NPS Tracts 
 var tracts = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/1",
 	//opacity: 0.5,
 	minZoom: 9,
@@ -246,10 +250,11 @@ var tracts = L.esri.featureLayer({
 			return { color: 'black', weight: 2 };
 		}
 	}
-})
+});
 
 // NPS Boundaries 
 var bounds = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2",
 	//opacity: 0.5,
 	minZoom: 9,
@@ -260,16 +265,18 @@ var bounds = L.esri.featureLayer({
 
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
 	//opacity: 0.5,
 	minZoom: 9,
 	style: function (feature) {
 		return { color: 'brown', weight: 2 };
 	}
-})
+});
 
 // FWS Approved Interest Boundaries 
 var int = L.esri.featureLayer({
+	useCors: false,
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1",
 	//opacity: 0.5,
 	minZoom: 9,
@@ -294,10 +301,32 @@ var int = L.esri.featureLayer({
 	}
 })
 
+// FWS Legacy Regions
+
+var fwsLegacyRegions = L.esri.featureLayer({
+	useCors: false,
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
+	//opacity: 0.5,
+	minZoom: 9,
+	style: function (feature) {
+		return { color: 'blue', weight: 2 };
+	}
+})
+
+// DOI Regions
+var doiRegions = L.esri.featureLayer({
+	useCors: false,
+	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer",
+	//opacity: 0.5,
+	minZoom: 9,
+	style: function (feature) {
+		return { color: 'green', weight: 2 };
+	}
+})
+
 int.bindPopup(function (layer) {
 	return L.Util.template('<p>INTTYPE1: {INTTYPE1}', layer.properties);
 })
-
 
 /* $.getJSON('https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {
 	async: false,
@@ -581,12 +610,17 @@ $(document).ready(function () {
 		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
 		"<img class='legendSwatch' src='images/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
 	};
+
+	
 	//define observed overlay and interpreted overlay, leave blank at first
 	var observedOverlays = {};
 	var interpretedOverlays = {};
+	var labelOverlays = {};
 	var noaaOverlays = {};
 	var fwsOverlays = {};
 	var npsOverlays = {};
+
+	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 
 	if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
@@ -606,7 +640,7 @@ $(document).ready(function () {
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;bounds": bounds,
 	}
 
-
+	
 	//loop thru layer list and add the legend item to the appropriate heading
 	$.each(fev.layerList, function (index, layer) {
 		if (layer.Category == 'real-time') realTimeOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
@@ -633,10 +667,37 @@ $(document).ready(function () {
 	$('#observedToggleDiv').append(observedToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
+
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
 	interpretedToggle.addTo(map);
+	//var peakCheckbox = document.getElementById("peakCheckbox");
+
+	/*
+	.onclick = function() {
+
+		//var peakCheckbox = document.getElementById("peakCheckbox");
+		if (peakCheckbox.checked == true) {
+			setHide = true;
+			//interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+			//interpretedToggle.addTo(map);
+			//refreshMapData();
+		}
+		else {
+			setHide = false;
+			//interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+			//interpretedToggle.addTo(map);
+			//refreshMapData();
+		}
+		}
+
+	}
+	*/
+
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
+
+	//add checkbox under Peaks layer in legend to toggle labels on and off
+	$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Peak Labels");
 	$('.leaflet-top.leaflet-right').hide();
 
 	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
@@ -843,6 +904,7 @@ $(document).ready(function () {
 		if (parks !== undefined) {
 			map.removeLayer(parks);
 			map.removeLayer(refuges);
+			map.removeLayer(fwsInterest);
 			map.removeLayer(bufferPoly);
 		}
 	}
@@ -858,13 +920,26 @@ $(document).ready(function () {
 			L.esri.basemapLayer('Topographic').addTo(reviewMap);
 		}, 500); */
 	}
+
+	function showRegionalModal() {
+		$('#regionalModal').modal('show');
+
+		/* setTimeout(() => {
+			reviewMap = L.map('reviewMap').setView([39.833333, -98.583333], 4);
+			L.esri.basemapLayer('Topographic').addTo(reviewMap);
+		}, 500); */
+	}
+
+	$('#regionalReportNav').click(function () {
+		showRegionalModal();
+	});
 	var pdfMapUrl;
 
 	$('#printNav').click(function () {
 		showPrintModal();
 
 		// setting element to empty string incase a report has already been ran
-		document.getElementById('dataTable').innerHTML = "";
+		// document.getElementById('dataTable').innerHTML = "";
 
 		var mapPreview = document.getElementById('reviewMap');
 		var legendPreview = document.getElementById('legendImage');
@@ -1100,9 +1175,8 @@ $(document).ready(function () {
 	//Need to figure out how to fix this, maybe just reintialize the map? we did have to fix 
 	//this in whispers too but can't remember what I did off hand
 	$("#printModal").on("hidden.bs.modal", function () {
-		//location.reload();
+		// location.reload();
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
-
 		/* USGSrtGages.clearLayers();
 		USGSRainGages.clearLayers(); */
 		//refreshMapData(); function to reset map data
@@ -1183,6 +1257,8 @@ $(document).ready(function () {
 		queryNWISgraphRDG();
 		queryNWISgraph();
 		queryNWISRaingraph();
+		//clickPeakLabels();
+
 	}
 	// setting checked values for buffer radio buttons
 	document.getElementById('tenKm').checked = false;
@@ -1410,11 +1486,12 @@ $(document).ready(function () {
 
 		// setting the where class for the query
 		// UNIT_NAME holds gnis major value of park name (I think)
-		var where = "UNIT_NAME=" + name;
+		var where = "1=1";
 		var polys = [];
 		var buffer;
 		var regionName;
-
+		
+		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
 			url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
@@ -1455,6 +1532,8 @@ $(document).ready(function () {
 		}).addTo(map);
 		parksLayerGroup.addLayer(parks);
 
+		var refCount = [];
+		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
 			url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
@@ -1468,6 +1547,8 @@ $(document).ready(function () {
 				// flattening the geometry for use in turf
 				flattenedPoly = turf.flatten(polys);
 				console.log(flattenedPoly);
+				refCount = 1;
+				console.log("refCount", refCount);
 				regionName = feature.properties.FWSREGION;
 				if (regionName == "1") {
 					regionName = "Pacific";
@@ -1497,6 +1578,34 @@ $(document).ready(function () {
 			style: parkStyle
 		}).addTo(map);
 
+		//if there was a name match with the refuge layer, this will not run
+		setTimeout(() => {
+			if (refCount !== 1) {
+				console.log("made it", refCount);
+				where = "ORGNAME=" + name;
+				fwsInterest = L.esri.featureLayer({
+					useCors: false,
+					url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1',
+					simplifyFactor: 0.5,
+					precision: 4,
+					where: "ORGNAME=" + name,
+					onEachFeature: function (feature, latlng) {
+						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
+						latlng.bindPopup(popupContent);
+						polys = feature.geometry;
+						// flattening the geometry for use in turf
+						flattenedPoly = turf.flatten(polys);
+						console.log(flattenedPoly);
+						refCount = 1;
+						console.log("refCount", refCount);
+						regionName = feature.properties.FWSREGION;
+					},
+					style: parkStyle
+				}).addTo(map);
+			}
+		}, 1000);
+		
+
 		setTimeout(() => {
 			var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
 			var polysCount = flattenedPoly.features.length;
@@ -1523,6 +1632,8 @@ $(document).ready(function () {
 				}
 			}
 
+			console.log(buffer);
+
 			// adding the buffer to the map
 			bufferPoly = L.geoJson(buffer, {
 				style: bufferStyle,
@@ -1546,16 +1657,8 @@ $(document).ready(function () {
 				}
 			}
 
-			//Original location popup 
-			/*
-			.openPopup(  // open popup at location listing all properties
-				$.map(Object.keys(o.result.properties), function (property) {
-					return "<b>" + property + ": </b>" + o.result.properties[property];
-				}).join("<br/>"),
-				[o.result.properties.Lat, o.result.properties.Lon] 
-			); */
 
-			//Revised location popup
+			//location popup
 			map.openPopup(
 				"<b>" + searchResults.result.properties.Name + "</b><br/>" +
 				searchResults.result.properties.County + ", " + searchResults.result.properties.State + "</b><br/>" +
@@ -1870,8 +1973,9 @@ $(document).ready(function () {
 			},
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
+				{ image: pdfMapUrl, width: 300, height: 200 },
 				buildTable(),
-				table(bodyData(), ['Site Number','Description','State','County','Peak Stage','Peak Estimated']),
+				table(bodyData(), ['Site Number','Description', 'State','County','Peak Stage','Peak Estimated']),
 			],
 			styles: {			
 				header: {
@@ -1931,3 +2035,17 @@ $(document).ready(function () {
 	}
 	//end latLngScale utility logic/////////
 });
+
+//function for toggling peak labels
+function clickPeakLabels() {
+	var checkBox = document.getElementById("peakCheckbox");
+	if (checkBox.checked == true) {
+		peak.eachLayer(function (myMarker) {
+			myMarker.showLabel();
+		});
+	} else {
+		peak.eachLayer(function (myMarker){
+			myMarker.hideLabel();
+		});
+	}
+  }
