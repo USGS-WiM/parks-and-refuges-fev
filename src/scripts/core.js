@@ -1738,7 +1738,7 @@ $(document).ready(function () {
 	const options = {
 		useCORS: true,
 	};
-
+	
 	//Begin legend prep to get active layers into legend table for pdf report
 	var getOverlays = [];
 	var srcActiveOverlays = [];
@@ -1750,125 +1750,104 @@ $(document).ready(function () {
 		$.each($('.leaflet-control-layers-overlays'), function(index, overlayGroup) {
 			//console.log(overlayGroup);
 			$.each(overlayGroup.children, function(index, overlayLabel) {
-				console.log(index, overlayLabel)
-
+				//console.log(index, overlayLabel)
 				if ($(overlayLabel.children[0]).is(":checked")) {
-					//result = true;
-					//console.log(result);
-					//console.log($(overlayLabel.children[1]).text());
-					console.log($(overlayLabel.children[1].children).attr("src"));
-					//console.log($(overlayLabel.children[1].children));
-					//imgPrep.push($(overlayLabel.children[1]));
-					//console.log(imgPrep)
-
-					var imgEvent;
-					var imgUrl;
-					html2canvas(document.getElementsByClassName('legendSwatch'), options)
-						.then(function (canvas) {
-							canvas = document.createElement("canvas");
-							imgEvent = new Event('img_ready');
-							//imgEvent.append(canvas);
-							imgUrl = canvas.toDataURL('image/png');
-							imageUrls.push(imgUrl)
-							window.dispatchEvent(imgEvent);
-							//console.log(imgUrl)
-					})	
-				
+					//imgPrep.push($(overlayLabel.children[1].children).attr("src").replace('images/',''))				
 					getOverlays.push($(overlayLabel.children[1]).text());
 					srcActiveOverlays.push($(overlayLabel.children[1].children).attr("src"));
 					activeOverlays.push({
 						"Image": $(overlayLabel.children[1].children).attr("src").replace('images/',''), 
 						"Layer": ($(overlayLabel.children[1]).text())
 					});
-				}	
+				}
 			})
 		})
-		//console.log(srcActiveOverlays)
-		return activeOverlays;			
-	}
-	
 
-	function buildLegend (data, columns) {
-		var body = [];
-		body.push(columns);
-		data.forEach(function(row) {
-			var dataRow = [];
-			columns.forEach(function(columnOne, columnTwo) {
-				dataRow.push(row[columnOne, columnTwo]);
-			})
-			body.push(dataRow);
-		});
-		return body;
-	}
-
-	function tableLegend(data, columns) {
-		return {
-			table: {	
-				//headerRows: 1,
-				//widths: ['auto', 'auto'],
-				body: buildLegend(data, columns),
-			},
-			layout: 'lightHorizontalLines', 			
+		for (var i in srcActiveOverlays) {
+			var dataURL;
+			
+			function imageToBase64(){
+				//var image = "images/rdg.png";
+				//var dataURL;
+				var canvas = document.createElement("canvas");
+				var ctx = canvas.getContext("2d");
+				var base_image = new Image();
+				canvas.width = 10;
+				canvas.height = 10;
+				base_image.src = srcActiveOverlays[i];
+				//ctx.drawImage(base_image, 0, 0);
+				base_image.onload = function() {
+					ctx.drawImage(base_image, 0, 0, 10, 10);
+					dataURL = canvas.toDataURL();
+					console.log(dataURL);
+					imageUrls.push(dataURL);
+					//return dataURL;
+				};
+				//var dataURL = canvas.toDataURL();
+				return imageUrls;
+			};
+			//imgPrep.push(imageUrls);
+			imageToBase64();
+			//return imageUrls;
+			//console.log(imageUrls)
 		};
+		console.log(imageUrls)
 	}
 
-	// for (var i in imgPrep) {
-	// 	function imageToBase64(imgPrep) {
-	// 		var canvas, ctx, dataURL;
-	// 		canvas = document.createElement("canvas");
-	// 		ctx = canvas.getContext("2d");
-	// 		canvas.width = imgPrep[i].width;
-	// 		canvas.height = imgPrep[i].height;
-	// 		ctx.drawImage(imgPrep[i], 0, 0);
-	// 		dataURL = canvas.toDataURL("image/png");
-	// 		return dataURL;
-	// 	}
-	// 	imageToBase64();
-	// 	console.log(imageToBase64());
-	// }
-	
-	function buildTable () {
-		var columnOne = [];
-		var columnTwo = [];
+	var legendData = [];
+	var columnOne = [];
+	var columnTwo = [];
+	function buildLegend () {
+		//var dataURL;
+		// for (var i in srcActiveOverlays) {
+		// 	//function imageToBase64(){
+		// 		//var image = "images/rdg.png";
+		// 		//var dataURL;
+		// 		var canvas = document.createElement("canvas");
+		// 		var ctx = canvas.getContext("2d");
+		// 		var base_image = new Image();
+		// 		canvas.width = 10;
+		// 		canvas.height = 10;
+		// 		base_image.src = srcActiveOverlays[i];
+		// 		//ctx.drawImage(base_image, 0, 0);
+		// 		base_image.onload = async (e) => {
+		// 			ctx.drawImage(base_image, 0, 0, 10, 10);
+		// 			var dataURL = canvas.toDataURL();
+		// 			imageUrls.push(dataURL);
+		// 		};
+		// 	//};
+		// 	//imageToBase64();
+		// };
 		for (var i in imageUrls) {
-			columnOne.push(imageUrls[i])
-			// function imageToBase64(i)
-			// {
-			// 	var canvas, ctx, dataURL;
-			// 	canvas = document.createElement("canvas");
-			// 	ctx = canvas.getContext("2d");
-			// 	//canvas.width = img.width;
-			// 	//canvas.height = img.height;
-			// 	ctx.drawImage(i, 0, 0);
-			// 	dataURL = canvas.toDataURL("image/png");
-			// }
-			// imageToBase64();
-			// console.log(imageToBase64())
-			// //return dataURL;
-			// columnOne.push(dataURL)
+		console.log(imageUrls[i]);
+		columnOne.push(imageUrls[i]);
+	};
+	//return imageUrls;
+	for (var i in getOverlays) {
+		columnTwo.push(getOverlays[i]);
+	};
+	console.log(columnTwo);
+	// legendData.push({columnOne, columnTwo});
+	// console.log(legendData);
+	// return legendData;
+	console.log(imageUrls);
+	console.log(columnOne);
+	}
 
-			//columnOne.push(("{"+" image: '" + srcActiveOverlays[i].replace('images/','')+"' }").toString())
-		}
-		for (var i in getOverlays) {
-			columnTwo.push(getOverlays[i])
-		}
+	function buildTable () {
 		return {
 			table: {
 				body: [
-					[columnOne, columnTwo]
+					[{image: imageUrls}, columnTwo]
 				]
 			},
 			layout: 'noBorders'
 		}
-
-
 	}
-
 
 	function printReport() {
 		getActiveOverlays();
-		console.log(imageUrls);
-		//console.log(prepLegendData());
+		buildLegend();
 		const docDefinition = {
 			pageOrientation: 'landscape',
 			pageMargins: [20, 20, 20, 35],
@@ -1891,12 +1870,6 @@ $(document).ready(function () {
 			},
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				//{ image: pdfMapUrl, width: 300, height: 200 },
-				//{ image: rdg.png },
-				//{image: rdg.png},
-
-				//{ text: 'Legend' + srcActiveOverlays + activeOverlays },
-				//tableLegend(getActiveOverlays(), ['Image', 'Layer']),
 				buildTable(),
 				table(bodyData(), ['Site Number','Description','State','County','Peak Stage','Peak Estimated']),
 			],
