@@ -7,6 +7,7 @@ var flattenedPoly;
 var regions = []; */
 var parks;
 var refuges;
+var fwsInterest;
 var bufferPoly;
 var searchResults;
 var searchObject;
@@ -903,6 +904,7 @@ $(document).ready(function () {
 		if (parks !== undefined) {
 			map.removeLayer(parks);
 			map.removeLayer(refuges);
+			map.removeLayer(fwsInterest);
 			map.removeLayer(bufferPoly);
 		}
 	}
@@ -1519,6 +1521,7 @@ $(document).ready(function () {
 		}).addTo(map);
 		parksLayerGroup.addLayer(parks);
 
+		var refCount = [];
 		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
@@ -1533,6 +1536,8 @@ $(document).ready(function () {
 				// flattening the geometry for use in turf
 				flattenedPoly = turf.flatten(polys);
 				console.log(flattenedPoly);
+				refCount = 1;
+				console.log("refCount", refCount);
 				regionName = feature.properties.FWSREGION;
 				if (regionName == "1") {
 					regionName = "Pacific";
@@ -1561,6 +1566,34 @@ $(document).ready(function () {
 			},
 			style: parkStyle
 		}).addTo(map);
+
+		//if there was a name match with the refuge layer, this will not run
+		setTimeout(() => {
+			if (refCount !== 1) {
+				console.log("made it", refCount);
+				where = "ORGNAME=" + name;
+				fwsInterest = L.esri.featureLayer({
+					useCors: false,
+					url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1',
+					simplifyFactor: 0.5,
+					precision: 4,
+					where: "ORGNAME=" + name,
+					onEachFeature: function (feature, latlng) {
+						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
+						latlng.bindPopup(popupContent);
+						polys = feature.geometry;
+						// flattening the geometry for use in turf
+						flattenedPoly = turf.flatten(polys);
+						console.log(flattenedPoly);
+						refCount = 1;
+						console.log("refCount", refCount);
+						regionName = feature.properties.FWSREGION;
+					},
+					style: parkStyle
+				}).addTo(map);
+			}
+		}, 1000);
+		
 
 		setTimeout(() => {
 			var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
