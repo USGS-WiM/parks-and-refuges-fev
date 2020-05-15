@@ -1843,19 +1843,14 @@ $(document).ready(function () {
 	var getOverlays = [];
 	var srcActiveOverlays = [];
 	var activeOverlays =[];
-	var imgPrep =[]
 	var imageUrls = [];
-	var legendData = [];
-	var columnOne = [];
-	var columnTwo = [];
+
 	function getActiveOverlays() {
-		//var result;
 		$.each($('.leaflet-control-layers-overlays'), function(index, overlayGroup) {
 			//console.log(overlayGroup);
 			$.each(overlayGroup.children, function(index, overlayLabel) {
 				//console.log(index, overlayLabel)
-				if ($(overlayLabel.children[0]).is(":checked")) {
-					//imgPrep.push($(overlayLabel.children[1].children).attr("src").replace('images/',''))				
+				if ($(overlayLabel.children[0]).is(":checked")) {			
 					getOverlays.push($(overlayLabel.children[1]).text());
 					srcActiveOverlays.push($(overlayLabel.children[1].children).attr("src"));
 					activeOverlays.push({
@@ -1881,64 +1876,31 @@ $(document).ready(function () {
 			};
 			imageToBase64();
 		};
-		for (var i in imageUrls) {
-			columnOne.push(imageUrls[i]);
-		};
-		for (var i in getOverlays) {
-			columnTwo.push(getOverlays[i]);
-		};
-		for (var i in getOverlays && imageUrls) {
-			legendData.push({ "Image": imageUrls[i], "Layer": getOverlays[i] })
-		}
-		console.log(columnOne);
-		console.log(columnTwo);
-		console.log(legendData);
 	}
 
-	function legendTableBody(data) {
+	function legendTableBody() {
+		getActiveOverlays();
 		var body = [];
-		for (var i = 0; i < imageUrls.length; i++) {
-		//body.push(columns);
-		//data.forEach(function() {
+		for (var i = 0; i < imageUrls.length && getOverlays.length; i++) {
 			var dataRow = [];
-			//var i = 0;
-
-			//row.forEach(function() {
-				dataRow.push({image: imageUrls[i]}, columnTwo);
-				//i++;
-			//})
+			dataRow.push({image: imageUrls[i]}, getOverlays[i]);
 			body.push(dataRow);
-
-		//});
-	}
+		}
 		return body;
 	}
 
-	function legendTable(data, columns) {
+	function legendTable() {
 		return {
 			table: {	
 				//headerRows: 1,
 				//widths: ['auto','*','auto','auto','auto','auto'],
-				body: legendTableBody(data, columns),
+				body: legendTableBody(),
 			},
 			layout: 'noBorders', 
 		};
 	}
 
-	function buildTable () {
-		return {
-			table: {
-				body: [
-					[{ image: columnOne }, columnTwo]
-				]
-			},
-			layout: 'noBorders'
-		}
-	}
-
 	function printReport() {
-		getActiveOverlays();
-		//buildLegend();
 		const docDefinition = {
 			pageOrientation: 'landscape',
 			pageMargins: [20, 20, 20, 35],
@@ -1961,13 +1923,8 @@ $(document).ready(function () {
 			},
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				//{ image: pdfMapUrl, width: 300, height: 200 },
-				//{ table: { body: [ [{ image: image() }, columnTwo]]}},
-				buildTable(),
-				legendTable(legendData),
-				//buildLegend(),
-				//buildLegendBody(),
-				//legendTable(buildLegend(), ["Image", "Layer"]),
+				{ image: pdfMapUrl, width: 300, height: 200 },
+				legendTable(),
 				table(bodyData(), ['Site Number','Description', 'State','County','Peak Stage','Peak Estimated']),
 			],
 			styles: {			
