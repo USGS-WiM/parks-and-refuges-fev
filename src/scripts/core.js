@@ -1043,13 +1043,13 @@ $(document).ready(function () {
 			var columns = addHwmColumnHeaders(hwmTableData);
 
 			for (var i = 0; i < hwmTableData.length; i++) {
-				var row$ = $('<tr/>');
+				var row$ = $('<td/>');
 				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
 					var cellValue = hwmTableData[i][columns[colIndex]];
 
 					if (cellValue == null) { cellValue = ""; }
 
-					row$.append($('<td/>').html(cellValue));
+					row$.append($('<tr/>').html(cellValue));
 				}
 				$("#hwmDataTable").append(row$);
 			}
@@ -1057,14 +1057,14 @@ $(document).ready(function () {
 
 		function addHwmColumnHeaders(hwmTableData) {
 			var columnSet = [];
-			var headerTr$ = $('<tr/>');
+			var headerTr$ = $('<th/>');
 
 			for (var i = 0; i < hwmTableData.length; i++) {
 				var rowHash = hwmTableData[i];
 				for (var key in rowHash) {
 					if ($.inArray(key, columnSet) == -1) {
 						columnSet.push(key);
-						headerTr$.append($('<th/>').html(key));
+						headerTr$.append($('<tr/>').html(key));
 					}
 				}
 			}
