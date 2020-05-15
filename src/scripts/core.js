@@ -1923,8 +1923,17 @@ $(document).ready(function () {
 			},
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				{ image: pdfMapUrl, width: 300, height: 200 },
-				legendTable(),
+				{
+					table: {
+						body: [
+							['', ''],
+							[{image: pdfMapUrl, width: 275, height: 275}, legendTable(),]
+						]
+					},
+					layout: 'noBorders',
+				},
+				//{ image: pdfMapUrl, width: 300, height: 200, alignment: 'right' },
+				//legendTable(),
 				table(bodyData(), ['Site Number','Description', 'State','County','Peak Stage','Peak Estimated']),
 			],
 			styles: {			
