@@ -13,6 +13,8 @@ var searchResults;
 var searchObject;
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
+var identifiedMarks = [];
+var hwmTableData = [];
 var fev = fev || {
 	data: {
 		events: [],
@@ -1004,6 +1006,75 @@ $(document).ready(function () {
 
 		buildHtmlTable();
 
+		//setting up HWM data for table
+		for (var i in identifiedMarks) {
+			hwmTableData.push({
+				"STN Site No.": identifiedMarks[i].feature.properties.site_no,
+				"HWM Label": identifiedMarks[i].feature.properties.hwm_label,
+				"Elevation(ft)": identifiedMarks[i].feature.properties.elev_ft,
+				"Vertical Datum": identifiedMarks[i].feature.properties.verticalDatumName,
+				"Vertical Method": identifiedMarks[i].feature.properties.verticalMethodName,
+				"Horizontal Datum": identifiedMarks[i].feature.properties.horizontalDatumName,
+				"Horizontal Method": identifiedMarks[i].feature.properties.horizontalMethodName,
+				//"Approval Status": identifiedMarks[i].feature.properties,
+				"Type": identifiedMarks[i].feature.properties.hwmTypeName,
+				//"Marker": identifiedMarks[i].feature.properties,
+				"Quality": identifiedMarks[i].feature.properties.hwmQualityName,
+				"Waterbody": identifiedMarks[i].feature.properties.waterbody,
+				"Permanent Housing": identifiedMarks[i].feature.properties.sitePermHousing,
+				"County": identifiedMarks[i].feature.properties.countyName,
+				"State": identifiedMarks[i].feature.properties.stateName,
+				"Latitude, Longitude(DD)": identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
+				"Site Description": identifiedMarks[i].feature.properties.siteDescription,
+				"Location Description": identifiedMarks[i].feature.properties.hwm_locationdescription,
+				"Survey Date": identifiedMarks[i].feature.properties.survey_date,
+				"Bank": identifiedMarks[i].feature.properties.bank,
+				"Environment": identifiedMarks[i].feature.properties.hwm_environment,
+				"Flag Date": identifiedMarks[i].feature.properties.flag_date,
+				"Stillwater": identifiedMarks[i].feature.properties.stillwater,
+				"Uncertainty": identifiedMarks[i].feature.properties.uncertainty,
+				"HWM Uncertainty": identifiedMarks[i].feature.properties.hwm_uncertainty
+			})
+		}
+		console.log(hwmTableData)
+
+		//build html table for HWMs
+		function buildHwmHtmlTable() {
+			var columns = addHwmColumnHeaders(hwmTableData);
+
+			for (var i = 0; i < hwmTableData.length; i++) {
+				var row$ = $('<tr/>');
+				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+					var cellValue = hwmTableData[i][columns[colIndex]];
+
+					if (cellValue == null) { cellValue = ""; }
+
+					row$.append($('<td/>').html(cellValue));
+				}
+				$("#hwmDataTable").append(row$);
+			}
+		}
+
+		function addHwmColumnHeaders(hwmTableData) {
+			var columnSet = [];
+			var headerTr$ = $('<tr/>');
+
+			for (var i = 0; i < hwmTableData.length; i++) {
+				var rowHash = hwmTableData[i];
+				for (var key in rowHash) {
+					if ($.inArray(key, columnSet) == -1) {
+						columnSet.push(key);
+						headerTr$.append($('<th/>').html(key));
+					}
+				}
+			}
+			$("#hwmDataTable").append(headerTr$);
+
+			return columnSet;
+		}
+
+		buildHwmHtmlTable();
+
 		setTimeout(() => {
 			let mapPane;
 			mapPane = $('.leaflet-map-pane')[0];
@@ -1646,6 +1717,14 @@ $(document).ready(function () {
 				}
 			}
 
+			//cycling through each HWM to see if inside the buffer
+			for (var i in hwm._layers) {
+				var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
+				var isItInside = turf.booleanPointInPolygon(cords, buffer);
+				if (isItInside) {
+					identifiedMarks.push(hwm._layers[i])
+				}
+			}
 
 			//location popup
 			map.openPopup(
