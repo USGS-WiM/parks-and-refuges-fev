@@ -962,6 +962,7 @@ $(document).ready(function () {
 		// document.getElementById('dataTable').innerHTML = "";
 
 		var mapPreview = document.getElementById('reviewMap');
+		var legendPreview = document.getElementById('legendImage');
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
 		 */
@@ -1154,18 +1155,22 @@ $(document).ready(function () {
 			mapPane.style.left = '';
 			mapPane.style.top = '';
 
+			// Hiding Legend for canvas event
+			$("#legendElement").hide();
+
 			var mapEvent;
 			html2canvas(document.getElementById('mapDiv'), options)
 				.then(function (canvas) {
 					mapEvent = new Event('map_ready');
 					/* canvas[0].drawImage */
-					canvas.style.width = '800px';
+					canvas.style.width = '700px';
 					canvas.style.height = '450px';
 					mapPreview.append(canvas);
 					//mapImage = canvas.get(0).toDataUrl('image/png');
 					pdfMapUrl = canvas.toDataURL('image/png');
 					window.dispatchEvent(mapEvent);
-
+					// Showing Legend once canvas event complete
+					$("#legendElement").show();
 				})
 		}, 3000);
 
@@ -1173,6 +1178,12 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
+
+		// // Get legend for print preview
+		// html2canvas(document.getElementById('printout'))
+		// .then(function (canvas) {
+		// 	legendPreview.append(canvas);
+		// })
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -1800,11 +1811,7 @@ $(document).ready(function () {
 		$('#longitude').html(geographicMapCenter.lng.toFixed(4));
 	});
 
-	//var pdfMap;
-
-
-
-	//Begin data prep for pdf print out
+	//Begin data prep for pdf print report
 	var pdfData = [];	
 	function bodyData() {
 		for (var i in identifiedPeaks) {
@@ -1844,11 +1851,71 @@ $(document).ready(function () {
 		return {
 			table: {	
 				headerRows: 1,
-				widths: ['auto','*','auto','auto','12%','6%','10%'],
+				widths: ['auto','*','auto','auto','auto','auto'],
 				body: buildTableBody(data, columns),
-
 			},
 			layout: 'lightHorizontalLines', 
+		};
+	}
+	
+	//Begin legend prep to get active layers into legend table for pdf report
+	var getOverlays = [];
+	var srcActiveOverlays = [];
+	var activeOverlays =[];
+	var imageUrls = [];
+
+	function getActiveOverlays() {
+		$.each($('.leaflet-control-layers-overlays'), function(index, overlayGroup) {
+			//console.log(overlayGroup);
+			$.each(overlayGroup.children, function(index, overlayLabel) {
+				//console.log(index, overlayLabel)
+				if ($(overlayLabel.children[0]).is(":checked")) {			
+					getOverlays.push($(overlayLabel.children[1]).text());
+					srcActiveOverlays.push($(overlayLabel.children[1].children).attr("src"));
+					activeOverlays.push({
+						"Image": $(overlayLabel.children[1].children).attr("src").replace('images/',''), 
+						"Layer": ($(overlayLabel.children[1]).text())
+					});
+				}
+			})
+		})
+
+		for (var i in srcActiveOverlays) {
+			function imageToBase64(){
+				var canvas = document.createElement("canvas");
+				var ctx = canvas.getContext("2d");
+				var base_image = new Image();
+				canvas.width = 10;
+				canvas.height = 10;
+				base_image.src = srcActiveOverlays[i];
+				ctx.drawImage(base_image, 0, 0, 10, 10);
+				var dataURL = canvas.toDataURL();
+				console.log(dataURL);
+				imageUrls.push(dataURL);
+			};
+			imageToBase64();
+		};
+	}
+
+	function legendTableBody() {
+		getActiveOverlays();
+		var body = [];
+		for (var i = 0; i < imageUrls.length && getOverlays.length; i++) {
+			var dataRow = [];
+			dataRow.push({image: imageUrls[i]}, getOverlays[i]);
+			body.push(dataRow);
+		}
+		return body;
+	}
+
+	function legendTable() {
+		return {
+			table: {	
+				//headerRows: 1,
+				//widths: ['auto','*','auto','auto','auto','auto'],
+				body: legendTableBody(),
+			},
+			layout: 'noBorders', 
 		};
 	}
 
@@ -1875,7 +1942,17 @@ $(document).ready(function () {
 			},
 			content: [
 				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				{ image: pdfMapUrl, width: 300, height: 200 },
+				{
+					table: {
+						body: [
+							['', ''],
+							[{image: pdfMapUrl, width: 275, height: 275}, legendTable(),]
+						]
+					},
+					layout: 'noBorders',
+				},
+				//{ image: pdfMapUrl, width: 300, height: 200, alignment: 'right' },
+				//legendTable(),
 				table(bodyData(), ['Site Number','Description', 'State','County','Peak Stage','Peak Estimated']),
 			],
 			styles: {			
