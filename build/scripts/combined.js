@@ -1761,6 +1761,12 @@ $(document).ready(function () {
 	$('.leaflet-top.leaflet-right').hide();
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	var doiToggle = L.control.layers(null, fwsOverlays, { collapsed: false });
+	doiToggle.addTo(map);
+	$('#doiToggleDiv').append(doiToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
+
+	// set up toggle for the observed layers and place within legend div, overriding default behavior
 	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
 	npsToggle.addTo(map);
 	$('#npsToggleDiv').append(npsToggle.onAdd(map));

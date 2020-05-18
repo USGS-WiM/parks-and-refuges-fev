@@ -254,8 +254,9 @@
                 <h4 class="modal-title"><span class="glyphicon glyphicon-print"></span>Print Map</h4>
             </div>
             <div class="modal-body" style="text-align: center; height: 700px; overflow-y: auto;">
-                <div id="reviewMap">
+                <div id="reviewMap" style="display: inline-flex;">
                     <div id='loader' class='imageLoader'></div><p id='loadingMessage'>loading image...</p>
+                    <div id="legendImage" style="display: inline-flex;"></div>
                 </div>
                 <div class='reportInfo' id="peakTable">
                     <table class="table" id="dataTable">
@@ -769,7 +770,7 @@
 
                 <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"><i class="fa fa-lg fa-cog fa-spin fa-fw"></i><span>Loading Layers...</span></div>
 
-                <div id="legendElement" class="panel panel-default legendClass" data-html2canvas-ignore>
+                <div id="legendElement" class="panel panel-default legendClass">
                     <div id="legendHeading" class=" legendHeading" role="tab">
                         <h4 class="panel-title">
                             <a data-toggle="collapse" style="text-decoration: none"  href="#legendCollapse" aria-expanded="true" aria-controls="collapseOne">
@@ -815,17 +816,22 @@
                                 <b>Real-Time Data</b></br>
                                 <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at <br> zoom level 9 and above. Please zoom in to view.</div>
                             </div>
+                            <div id="printout">
                             <div id="observedToggleDiv">
                                 <b>Observed Data</b>
                             </div>
                             <div id="interpretedToggleDiv">
                                 <b>Interpreted Data</b>
                             </div>
+                            </div>
                             <div id="npsToggleDiv">
                                 <b>USNPS Data</b>
                             </div>
                             <div id="fwsToggleDiv">
                                 <b>USFWS Data</b>
+                            </div>
+                            <div id="doiToggleDiv">
+                                <b>DOI Data</b>
                             </div>
                             <div id="noaaToggleDiv">
                                 <b>Supporting Layers</b>

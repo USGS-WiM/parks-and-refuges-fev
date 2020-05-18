@@ -129,6 +129,12 @@ var fev = fev || {
 			"Name": "Park Boundaries",
 			"Type": "nps",
 			"Category": "nps"
+		},
+		{
+			"ID": "doiRegions",
+			"Name": "DOI Regions",
+			"Type": "doi",
+			"Category": "doi"
 		}
 	]
 };
@@ -162,6 +168,7 @@ var appr = L.layerGroup();
 var int = L.layerGroup();
 var tracts = L.layerGroup();
 var bounds = L.layerGroup();
+var doiRegions = L.layerGroup();
 var parksLayerGroup = L.layerGroup();
 
 
@@ -306,9 +313,9 @@ var int = L.esri.featureLayer({
 
 var fwsLegacyRegions = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0",
 	//opacity: 0.5,
-	minZoom: 9,
+	minZoom: 5,
 	style: function (feature) {
 		return { color: 'blue', weight: 2 };
 	}
@@ -317,9 +324,9 @@ var fwsLegacyRegions = L.esri.featureLayer({
 // DOI Regions
 var doiRegions = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer",
+	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/ArcGIS/rest/services/DOI_Unified_Regions/FeatureServer/0",
 	//opacity: 0.5,
-	minZoom: 9,
+	minZoom: 5,
 	style: function (feature) {
 		return { color: 'green', weight: 2 };
 	}
@@ -620,6 +627,7 @@ $(document).ready(function () {
 	var noaaOverlays = {};
 	var fwsOverlays = {};
 	var npsOverlays = {};
+	var doiOverlays = {};
 
 	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 
@@ -635,11 +643,16 @@ $(document).ready(function () {
 	fwsOverlays = {
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;appr": appr,
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Int": int,
+		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Legacy Regions": fwsLegacyRegions,
 	}
 	npsOverlays = {
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;tracts": tracts,
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;bounds": bounds,
 	}
+	doiOverlays = {
+		"<img class='legendSwatch' src='images/doi.png'>&nbsp;DOI Regions": doiRegions,
+	}
+	
 
 	
 	//loop thru layer list and add the legend item to the appropriate heading
@@ -650,6 +663,7 @@ $(document).ready(function () {
 		if (layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if (layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/usfws.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if (layer.Category == 'nps') npsOverlays["<img class='legendSwatch' src='images/nps.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if (layer.Category == 'doi') doiOverlays["<img class='legendSwatch' src='images/doi.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
@@ -716,6 +730,12 @@ $(document).ready(function () {
 	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
 	npsToggle.addTo(map);
 	$('#npsToggleDiv').append(npsToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
+
+	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	var doiToggle = L.control.layers(null, doiOverlays, { collapsed: false });
+	doiToggle.addTo(map);
+	$('#doiToggleDiv').append(doiToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
 	//overlapping marker spidifier
@@ -943,6 +963,7 @@ $(document).ready(function () {
 		// document.getElementById('dataTable').innerHTML = "";
 
 		var mapPreview = document.getElementById('reviewMap');
+		var legendPreview = document.getElementById('legendImage');
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
 		 */
@@ -1223,18 +1244,22 @@ $(document).ready(function () {
 			mapPane.style.left = '';
 			mapPane.style.top = '';
 
+			// Hiding Legend for canvas event
+			$("#legendElement").hide();
+
 			var mapEvent;
 			html2canvas(document.getElementById('mapDiv'), options)
 				.then(function (canvas) {
 					mapEvent = new Event('map_ready');
 					/* canvas[0].drawImage */
-					canvas.style.width = '800px';
+					canvas.style.width = '700px';
 					canvas.style.height = '450px';
 					mapPreview.append(canvas);
 					//mapImage = canvas.get(0).toDataUrl('image/png');
 					pdfMapUrl = canvas.toDataURL('image/png');
 					window.dispatchEvent(mapEvent);
-
+					// Showing Legend once canvas event complete
+					$("#legendElement").show();
 				})
 		}, 3000);
 
@@ -1242,6 +1267,12 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
+
+		// // Get legend for print preview
+		// html2canvas(document.getElementById('printout'))
+		// .then(function (canvas) {
+		// 	legendPreview.append(canvas);
+		// })
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -1659,7 +1690,6 @@ $(document).ready(function () {
 		//if there was a name match with the refuge layer, this will not run
 		setTimeout(() => {
 			if (refCount !== 1) {
-				console.log("made it", refCount);
 				where = "ORGNAME=" + name;
 				fwsInterest = L.esri.featureLayer({
 					useCors: false,
@@ -1924,7 +1954,6 @@ $(document).ready(function () {
 				headerRows: 1,
 				widths: ['auto','*','auto','auto','auto','auto'],
 				body: buildTableBody(data, columns),
-
 			},
 			layout: 'lightHorizontalLines', 
 			margin: [0,0,0,15]
@@ -2000,6 +2029,67 @@ $(document).ready(function () {
 			margin: [0,0,0,15]
 		};
 	}
+	
+	//Begin legend prep to get active layers into legend table for pdf report
+	var getOverlays = [];
+	var srcActiveOverlays = [];
+	var activeOverlays =[];
+	var imageUrls = [];
+
+	function getActiveOverlays() {
+		$.each($('.leaflet-control-layers-overlays'), function(index, overlayGroup) {
+			//console.log(overlayGroup);
+			$.each(overlayGroup.children, function(index, overlayLabel) {
+				//console.log(index, overlayLabel)
+				if ($(overlayLabel.children[0]).is(":checked")) {			
+					getOverlays.push($(overlayLabel.children[1]).text());
+					srcActiveOverlays.push($(overlayLabel.children[1].children).attr("src"));
+					activeOverlays.push({
+						"Image": $(overlayLabel.children[1].children).attr("src").replace('images/',''), 
+						"Layer": ($(overlayLabel.children[1]).text())
+					});
+				}
+			})
+		})
+
+		for (var i in srcActiveOverlays) {
+			function imageToBase64(){
+				var canvas = document.createElement("canvas");
+				var ctx = canvas.getContext("2d");
+				var base_image = new Image();
+				canvas.width = 10;
+				canvas.height = 10;
+				base_image.src = srcActiveOverlays[i];
+				ctx.drawImage(base_image, 0, 0, 10, 10);
+				var dataURL = canvas.toDataURL();
+				console.log(dataURL);
+				imageUrls.push(dataURL);
+			};
+			imageToBase64();
+		};
+	}
+
+	function legendTableBody() {
+		getActiveOverlays();
+		var body = [];
+		for (var i = 0; i < imageUrls.length && getOverlays.length; i++) {
+			var dataRow = [];
+			dataRow.push({image: imageUrls[i]}, getOverlays[i]);
+			body.push(dataRow);
+		}
+		return body;
+	}
+
+	function legendTable() {
+		return {
+			table: {	
+				//headerRows: 1,
+				//widths: ['auto','*','auto','auto','auto','auto'],
+				body: legendTableBody(),
+			},
+			layout: 'noBorders', 
+		};
+	}
 
 	function printReport() {
 		console.log(hwmPdfData)
@@ -2025,12 +2115,22 @@ $(document).ready(function () {
 				}
 			},
 			content: [
-				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				{ image: pdfMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0,0,0,10] },
+				//{ image: pdfMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+				{
+					table: {
+						body: [
+							['', ''],
+							[{image: pdfMapUrl, width: 300, height: 200}, legendTable(),]
+						]
+					},
+					layout: 'noBorders',
+					margin: [0,0,0,15]
+				},
 				{ text: 'Peak Summary Data', style: 'subHeader', margin: [0,0,0,5], alignment: 'center' },
 				peakTable(bodyData(), ['Site Number','Description','State','County','Peak Stage','Peak Estimated']),
 				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0,0,0,5], alignment: 'center' },
-				hwmTable(hwmBodyData(), ['STN Site No.','HWM Label','Elevation(ft)','Vertical Datum','Vertical Method','Horizontal Datum','Horizontal Method','Type','Quality','Waterbody','Permanent Housing','County','State','Latitude, Longitude(DD)','Site Description','Location Description','Survey Date','Bank','Environment','Flag Date','Stillwater','Uncertainty','HWM Uncertainty'])
+				hwmTable(hwmBodyData(), ['STN Site No.','HWM Label','Elevation(ft)','Vertical Datum','Vertical Method','Horizontal Datum','Horizontal Method','Type','Quality','Waterbody','Permanent Housing','County','State','Latitude, Longitude(DD)','Site Description','Location Description','Survey Date','Bank','Environment','Flag Date','Stillwater','Uncertainty','HWM Uncertainty']),
 			],
 			styles: {			
 				header: {
