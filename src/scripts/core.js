@@ -684,35 +684,15 @@ $(document).ready(function () {
 
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
+
+	//interpretedToggle.append(document.getElementById("peakCheckbox"), "Labels");
 	interpretedToggle.addTo(map);
-	//var peakCheckbox = document.getElementById("peakCheckbox");
-
-	/*
-	.onclick = function() {
-
-		//var peakCheckbox = document.getElementById("peakCheckbox");
-		if (peakCheckbox.checked == true) {
-			setHide = true;
-			//interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-			//interpretedToggle.addTo(map);
-			//refreshMapData();
-		}
-		else {
-			setHide = false;
-			//interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-			//interpretedToggle.addTo(map);
-			//refreshMapData();
-		}
-		}
-
-	}
-	*/
 
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
 
 	//add checkbox under Peaks layer in legend to toggle labels on and off
-	$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Peak Labels");
-	$('.leaflet-top.leaflet-right').hide();
+	$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Labels");
+	//$('.leaflet-top.leaflet-right').hide();
 
 	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
 	noaaToggle.addTo(map);
