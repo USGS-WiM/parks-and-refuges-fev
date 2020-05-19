@@ -305,7 +305,7 @@ var int = L.esri.featureLayer({
 
 var fwsLegacyRegions = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0",
 	//opacity: 0.5,
 	minZoom: 9,
 	style: function (feature) {
