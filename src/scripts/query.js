@@ -282,31 +282,31 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                 var marker =             
                 L.marker(latlng, {
                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7,10] })
-                }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+                }).bindLabel("Peak: " + feature.properties.peak_stage.toString() + "<br>Site: " +feature.properties.site_no);
             }
             if (fifthVal < feature.properties.peak_stage <= twoFifthVal) {
                 var marker =             
                 L.marker(latlng, {
                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [9,13] })
-                }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+                }).bindLabel("Peak: " + feature.properties.peak_stage.toString() + "<br>Site: " +feature.properties.site_no);
             }
             if (twoFifthVal < feature.properties.peak_stage <= threeFifthVal) {
                 var marker =             
                 L.marker(latlng, {
                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11,16] })
-                }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+                }).bindLabel("Peak: " + feature.properties.peak_stage.toString() + "<br>Site: " +feature.properties.site_no);
             }
             if (threeFifthVal < feature.properties.peak_stage <= fourFifthVal) {
                 var marker =             
                 L.marker(latlng, {
                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [13,18] })
-                }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+                }).bindLabel("Peak: " + feature.properties.peak_stage.toString() + "<br>Site: " +feature.properties.site_no);
             }
             if (feature.properties.peak_stage > fourFifthVal) {
                 var marker =             
                 L.marker(latlng, {
                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15,22] })
-                }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
+                }).bindLabel("Peak: " + feature.properties.peak_stage.toString() + "<br>Site: " +feature.properties.site_no);
             }
             return marker;
         }
