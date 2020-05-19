@@ -240,7 +240,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             //find number of peak values
             lengthPeak = peakArr.length;
 
-            //divide the array into 5 equal sections
+            //divide the array into 3 equal sections
             //find the maximum peak value of each of those sections
             thirdLength = Math.round(lengthPeak/3);
             fifthVal = sortedPeaks[thirdLength];
@@ -272,7 +272,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
         pointToLayer: function (feature, latlng) {
             markerCoords.push(latlng);
   
-           //Create 5 categories for marker size          
+           //Create 3 categories for marker size          
             if (feature.properties.peak_stage <= thirdVal) {
                 var marker =             
                 L.marker(latlng, {
