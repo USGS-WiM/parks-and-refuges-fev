@@ -422,12 +422,22 @@ $(document).ready(function () {
 
 	//listener for submit event button on welcome modal - sets event vars and passes event id to filterMapData function
 	$('#btnSubmitEvent').click(function () {
+		//clear all layers
+		//parks.clearLayers();
+
+
 		//check if an event has been selected
 		if (($('#evtSelect_welcomeModal').val() !== null) && (searchResults !== undefined)) {
 			//if event selected, hide welcome modal and begin filter process
-			$('#welcomeModal').modal('hide');
+			$('#testModal').modal('hide');
 			var eventID = $('#evtSelect_welcomeModal').val()[0];
 			$('#evtSelect_filterModal').val([eventID]).trigger("change");
+			//Clear layers (removes buffer and parks/refuges selection from last search)
+			map.eachLayer(function (layer) {
+				map.removeLayer(layer);
+			});
+			//add the basemap back in 
+			L.esri.basemapLayer('Topographic').addTo(map);
 			//retrieve event details
 			$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
 				.done(function (data) {
@@ -459,7 +469,7 @@ $(document).ready(function () {
 
 		if ($('#evtSelect_filterModal').val() !== null) {
 			//if event selected, hide welcome modal and begin filter process
-			$('#welcomeModal').modal('hide');
+			$('#testModal').modal('hide');
 			var eventID = $('#evtSelect_filterModal').val()[0];
 			//$('#evtSelect_filterModal').val([eventValue]).trigger("change");
 			//retrieve event details
@@ -502,7 +512,7 @@ $(document).ready(function () {
 
 	} else {
 		//show modal and set options - disallow user from bypassing
-		$('#welcomeModal').modal({ backdrop: 'static', keyboard: false });
+		$('#testModal').modal({ backdrop: 'static', keyboard: false });
 	}
 
 	function setEventVars(event_name, event_id, event_status_id, event_start_date, event_end_date) {
@@ -1199,11 +1209,12 @@ $(document).ready(function () {
 	});
 
 	function showFiltersModal() {
-		$('#welcomeModal').modal('show');
+		$('#testModal').modal('show');
 	}
 	$('#btnChangeFilters').click(function () {
+		//parks.clearLayers();
 		//update the event select within the filters modal to reflect current event
-		$('#welcomeModal').val([fev.vars.currentEventID_str]).trigger("change");
+		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
 	});
 
