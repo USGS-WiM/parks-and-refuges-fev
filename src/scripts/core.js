@@ -282,6 +282,7 @@ var appr = L.esri.featureLayer({
 	}
 });
 
+
 // FWS Approved Interest Boundaries 
 var int = L.esri.featureLayer({
 	useCors: false,
@@ -290,46 +291,53 @@ var int = L.esri.featureLayer({
 	minZoom: 9,
 	style: function (feature) {
 		if ((feature.properties.INTTYPE1 === 'F') || (feature.properties.INTTYPE1 === 'O')) {
-			return { color: 'green', weight: 2 };
+			return { color: 'green', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'S') {
-			return { color: 'purple', weight: 2 };
+			return { color: 'purple', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'E') {
-			return { color: 'orange', weight: 2 };
+			return { color: 'orange', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'L') {
-			return { color: 'yellow', weight: 2 };
+			return { color: 'yellow', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'S') {
-			return { color: 'beige', weight: 2 };
+			return { color: 'beige', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'P') {
-			return { color: 'blue', weight: 2 };
+			return { color: 'blue', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'U') {
-			return { color: 'red', weight: 2 };
+			return { color: 'red', weight: 2, fillOpacity: 0 };
 		} else {
-			return { color: 'black', weight: 2 };
+			return { color: 'black', weight: 2, fillOpacity: 0 };
 		}
 	}
 })
 
-// FWS Legacy Regions
 
+
+// FWS Legacy Regions
 var fwsLegacyRegions = L.esri.featureLayer({
 	useCors: false,
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0",
 	//opacity: 0.5,
 	minZoom: 5,
 	style: function (feature) {
-		return { color: 'blue', weight: 2 };
+		return { color: 'blue', weight: 2, fillOpacity: 0 };
 	}
 })
+
+// Style for DOI layer
+var doiStyle = {
+	"color": "#209D64",
+	"fillOpacity": 0,
+	"opacity": 0.65,
+	"weight": 4
+};
 
 // DOI Regions
 var doiRegions = L.esri.featureLayer({
 	useCors: false,
+	style: doiStyle,
 	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/ArcGIS/rest/services/DOI_Unified_Regions/FeatureServer/0",
 	//opacity: 0.5,
-	minZoom: 5,
-	style: function (feature) {
-		return { color: 'green', weight: 2 };
-	}
+	minZoom: 5
 })
 
 int.bindPopup(function (layer) {
@@ -685,35 +693,15 @@ $(document).ready(function () {
 
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
+
+	//interpretedToggle.append(document.getElementById("peakCheckbox"), "Labels");
 	interpretedToggle.addTo(map);
-	//var peakCheckbox = document.getElementById("peakCheckbox");
-
-	/*
-	.onclick = function() {
-
-		//var peakCheckbox = document.getElementById("peakCheckbox");
-		if (peakCheckbox.checked == true) {
-			setHide = true;
-			//interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-			//interpretedToggle.addTo(map);
-			//refreshMapData();
-		}
-		else {
-			setHide = false;
-			//interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-			//interpretedToggle.addTo(map);
-			//refreshMapData();
-		}
-		}
-
-	}
-	*/
 
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
 
 	//add checkbox under Peaks layer in legend to toggle labels on and off
-	$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Peak Labels");
-	$('.leaflet-top.leaflet-right').hide();
+	$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Labels");
+	//$('.leaflet-top.leaflet-right').hide();
 
 	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
 	noaaToggle.addTo(map);
@@ -1582,9 +1570,10 @@ $(document).ready(function () {
 
 		// setting buffer style
 		var bufferStyle = {
-			"color": "#9933ff",
-			"weight": 4,
-			"opacity": 0.65
+			"color": "#0000cc",
+			"fillOpacity": 0,
+			"opacity": 0.65,
+			"weight": 4
 		};
 
 		// setting park style
