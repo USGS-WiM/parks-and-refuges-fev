@@ -1199,11 +1199,11 @@ $(document).ready(function () {
 	});
 
 	function showFiltersModal() {
-		$('#filtersModal').modal('show');
+		$('#welcomeModal').modal('show');
 	}
 	$('#btnChangeFilters').click(function () {
 		//update the event select within the filters modal to reflect current event
-		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
+		$('#welcomeModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
 	});
 
