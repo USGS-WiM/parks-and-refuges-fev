@@ -245,7 +245,6 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             thirdLength = Math.round(lengthPeak/3);
             fifthVal = sortedPeaks[thirdLength];
             twoThirdVal = sortedPeaks[thirdLength*2]
-
         }
     });
 
