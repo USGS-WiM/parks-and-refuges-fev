@@ -941,7 +941,7 @@ $(document).ready(function () {
 				console.warn(o.id + ": my 'on_result' callback function - a menu item was selected");
 				searchResults = o;
 				$('#geosearchModal').modal('hide');
-				searchComplete();
+				geosearchComplete();
 			},
 
 			// function to execute when no suggestions are found for the typed text
@@ -1723,8 +1723,24 @@ $(document).ready(function () {
 			);
 
 		}, 600);
-		$('#geosearchModalWelcome').modal('hide');
+		$('#welcomeModal').modal('hide');
 
+	}
+
+	function geosearchComplete() {
+
+		map
+			.fitBounds([ // zoom to location
+				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
+				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
+			]);
+		
+		//location popup
+		map.openPopup(
+			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
+			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
+			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
+		);
 	}
 		
 
