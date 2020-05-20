@@ -813,7 +813,7 @@ $(document).ready(function () {
 			// appearance
 			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
 			width: 500,  // width of the widget [px]
-			placeholder: "Search for a Park or Refuge", // text box placeholder prompt to display when no text is entered
+			placeholder: "Search for a location", // text box placeholder prompt to display when no text is entered
 			/* // search area
 			lat_min       : bounds.getSouth(), // minimum latitude
 			lat_max       : bounds.getNorth(), // maximum latitude
@@ -1676,7 +1676,7 @@ $(document).ready(function () {
 			);
 
 		}, 600);
-		$('#geosearchModal').modal('hide');
+		$('#geosearchModalWelcome').modal('hide');
 
 	}
 		
