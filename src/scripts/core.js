@@ -420,64 +420,52 @@ $(document).ready(function () {
 		todayHighlight: true
 	});
 
-	//listener for submit event button on welcome modal - sets event vars and passes event id to filterMapData function
-	$('#btnSubmitEvent').click(function () {
-		//check if an event has been selected
-		if (($('#evtSelect_welcomeModal').val() !== null) && (searchResults !== undefined)) {
-			//if event selected, hide welcome modal and begin filter process
-			$('#welcomeModal').modal('hide');
-			var eventID = $('#evtSelect_welcomeModal').val()[0];
-			$('#evtSelect_filterModal').val([eventID]).trigger("change");
-			//retrieve event details
-			$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
-				.done(function (data) {
-					setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
-				})
-				.fail(function () {
-					console.log("Request Failed. Most likely invalid event name.");
+	//welcomeModal: set search for 'Go' click 
+	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_filterModal');
+	//updateFiltersModal MODAL: set search for 'Go' click 
+	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal');
+	
+	//set search for 'Go' click
+	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary) {
+		submitButton.click(function () {
+			//check if an event has been selected
+			if (($(evtSelect_Modal_Primary).val() !== null) && (searchResults !== undefined)) {
+				//if event selected, hide welcome modal and begin filter process
+				$(chooseModal).modal('hide');
+				var eventID = $(evtSelect_Modal_Primary).val()[0];
+				$(evtSelect_Modal_Secondary).val([eventID]).trigger("change");
+				//Clear layers (removes buffer and parks/refuges selection from last search)
+				map.eachLayer(function (layer) {
+					map.removeLayer(layer);
 				});
-			//populateEventDates(eventID);
-			filterMapData(eventID, false);
-			searchComplete();
-		} else {
-			//if no event selected, warn user with alert
-			// Also accounting for having an event selected but no parkref
-			if (($('#evtSelect_welcomeModal').val() !== null)) {
-				$('.eventSelectAlert').hide();
+				//add the basemap back in 
+				L.esri.basemapLayer('Topographic').addTo(map);
+				//retrieve event details
+				$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
+					.done(function (data) {
+						setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
+					})
+					.fail(function () {
+						console.log("Request Failed. Most likely invalid event name.");
+					});
+				//populateEventDates(eventID);
+				filterMapData(eventID, false);
+				searchComplete();
 			} else {
-				$('.eventSelectAlert').show();
-			}
-		}
-		if (searchResults !== undefined) {
-		} else {
-			$('.parkRefSelectAlert').show();
-		}
-	});
-
-	//listener for submit filters button on filters modal - sets event vars and passes event id to filterMapData function
-	$('#btnSubmitFilters').on('click', function () {
-
-		if ($('#evtSelect_filterModal').val() !== null) {
-			//if event selected, hide welcome modal and begin filter process
-			$('#welcomeModal').modal('hide');
-			var eventID = $('#evtSelect_filterModal').val()[0];
-			//$('#evtSelect_filterModal').val([eventValue]).trigger("change");
-			//retrieve event details
-			for (var i = 0; i < fev.data.events.length; i++) {
-				if (fev.data.events[i].event_id == eventID) {
-					//set currentEventActive boolean var based on event_status_id value
-					setEventVars(fev.data.events[i].event_name, fev.data.events[i].event_id, fev.data.events[i].event_status_id, fev.data.events[i].event_start_date, fev.data.events[i].event_end_date);
+				//if no event selected, warn user with alert
+				// Also accounting for having an event selected but no parkref
+				if (($(evtSelect_Modal_Primary).val() !== null)) {
+					$('.eventSelectAlert').hide();
+				} else {
+					$('.eventSelectAlert').show();
 				}
 			}
-			filterMapData(eventID, false);
-			$('.eventSelectAlert').hide();
-			$('#filtersModal').modal('hide');
-		} else {
-			//if no event selected, warn user with alert
-			//alert("Please choose an event to proceed.")
-			$('.eventSelectAlert').show();
-		}
-	});
+			if (searchResults !== undefined) {
+			} else {
+				$('.parkRefSelectAlert').show();
+			}
+		});
+	}
 
 	$('#print').click(function () {
 		printReport();
@@ -548,7 +536,9 @@ $(document).ready(function () {
 	var layer = L.esri.basemapLayer('Topographic').addTo(map);
 	var layerLabels;
 	L.Icon.Default.imagePath = './images';
-	setSearchAPI();
+	setSearchAPI("search", '#welcomeModal');
+	setSearchAPI("search_filter", '#updateFiltersModal');
+	
 
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
 	map.on('popupopen', function () {
@@ -813,7 +803,7 @@ $(document).ready(function () {
 			// appearance
 			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
 			width: 500,  // width of the widget [px]
-			placeholder: "Search for a Park or Refuge", // text box placeholder prompt to display when no text is entered
+			placeholder: "Search for a location", // text box placeholder prompt to display when no text is entered
 			/* // search area
 			lat_min       : bounds.getSouth(), // minimum latitude
 			lat_max       : bounds.getNorth(), // maximum latitude
@@ -895,7 +885,7 @@ $(document).ready(function () {
 				console.warn(o.id + ": my 'on_result' callback function - a menu item was selected");
 				searchResults = o;
 				$('#geosearchModal').modal('hide');
-				searchComplete();
+				geosearchComplete();
 			},
 
 			// function to execute when no suggestions are found for the typed text
@@ -1199,9 +1189,10 @@ $(document).ready(function () {
 	});
 
 	function showFiltersModal() {
-		$('#filtersModal').modal('show');
+		$('#updateFiltersModal').modal('show');
 	}
 	$('#btnChangeFilters').click(function () {
+		//parks.clearLayers();
 		//update the event select within the filters modal to reflect current event
 		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
@@ -1354,9 +1345,9 @@ $(document).ready(function () {
 		}
 	}).addTo(map);
 
-	function setSearchAPI() {
+	function setSearchAPI (searchTerm, inputModal) {
 		// create search_api widget
-		searchObject = search_api.create("search", {
+		searchObject = search_api.create(searchTerm, {
 
 			// appearance
 			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
@@ -1676,9 +1667,44 @@ $(document).ready(function () {
 			);
 
 		}, 600);
-		$('#geosearchModal').modal('hide');
+		$(inputModal).modal('hide');
 
 	}
+
+	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
+	function geosearchComplete() {
+		map
+			.fitBounds([ // zoom to location
+				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
+				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
+			]);
+		
+		//location popup
+		map.openPopup(
+			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
+			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
+			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
+		);
+	}
+	//end of search api
+
+
+	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
+	function geosearchComplete() {
+		map
+			.fitBounds([ // zoom to location
+				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
+				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
+			]);
+		
+		//location popup
+		map.openPopup(
+			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
+			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
+			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
+		);
+	}
+	//end of filter search api
 		
 
 	/* legend control */

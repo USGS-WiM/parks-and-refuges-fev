@@ -57,6 +57,11 @@ $( document ).ready(function() {
         allowClear: false,
         maximumSelectionLength: 1
     });
+    $('.evtSelect_filter').select2({
+        placeholder: 'Select event',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
     $.ajax({
         dataType: 'json',
         type: 'GET',
@@ -80,6 +85,7 @@ $( document ).ready(function() {
             });
             for (var i = 0; i < data.length; i++) {
                 $('.evtSelect').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
+                $('.evtSelect_filter').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
                 data[i].id = data[i].event_id;
                 fev.data.events.push(data[i]);
             }
