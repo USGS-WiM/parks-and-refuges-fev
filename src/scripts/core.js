@@ -420,7 +420,7 @@ $(document).ready(function () {
 		todayHighlight: true
 	});
 
-	//REMADE FOR WELCOME MODAL
+	//WELCOME MODAL - listener for submit event button on welcome modal - sets event vars and passes event id to filterMapData function
 	$('#btnSubmitEvent').click(function () {
 		//check if an event has been selected
 		if (($('#evtSelect_welcomeModal').val() !== null) && (searchResults !== undefined)) {
@@ -460,7 +460,7 @@ $(document).ready(function () {
 		}
 	});
 
-	//listener for submit event button on welcome modal - sets event vars and passes event id to filterMapData function
+	//FILTER MODAL - listener for submit event button on filter modal - sets event vars and passes event id to filterMapData function
 	$('#btnSubmitEvent').click(function () {
 		//check if an event has been selected
 		if (($('#evtSelect_welcomeModal').val() !== null) && (searchResults !== undefined)) {
@@ -470,10 +470,16 @@ $(document).ready(function () {
 			$('#evtSelect_filterModal').val([eventID]).trigger("change");
 			//Clear layers (removes buffer and parks/refuges selection from last search)
 			map.eachLayer(function (layer) {
-				map.removeLayer(layer);
+				if (layer._url != "http://{s}.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}") {
+					map.removeLayer(layer);
+				}
+				/* if (layer._url == "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2/") {
+					map.removeLayer(layer);
+				} */
+				//console.log(layer);
 			});
 			//add the basemap back in 
-			L.esri.basemapLayer('Topographic').addTo(map);
+			//L.esri.basemapLayer('Topographic').addTo(map);
 			//retrieve event details
 			$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
 				.done(function (data) {
@@ -1401,7 +1407,7 @@ $(document).ready(function () {
 		}
 	}).addTo(map);
 
-	function setSearchAPI() {
+	function setSearchAPI () {
 		// create search_api widget
 		searchObject = search_api.create("search", {
 
@@ -1727,8 +1733,8 @@ $(document).ready(function () {
 
 	}
 
+	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
 	function geosearchComplete() {
-
 		map
 			.fitBounds([ // zoom to location
 				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],

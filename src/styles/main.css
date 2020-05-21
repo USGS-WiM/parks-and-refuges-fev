@@ -179,14 +179,6 @@ body {
     transition: .2s;
     color: rgba(255,255,255,.35);
 }
-#search_containerFilter {
-    display    : inline-block;
-    width      : 300px;
-    height     : 30px;
-    padding    : 25px;
-    padding-top: 5px;
-    padding-left: 18px;
-}
 #search_container {
     display    : inline-block;
     width      : 300px;
@@ -195,11 +187,15 @@ body {
     padding-top: 5px;
     padding-left: 18px;
 }
-#search {
-    display : inline-block;
-    border: #000;
+#search_container_filter {
+    display    : inline-block;
+    width      : 300px;
+    height     : 30px;
+    padding    : 25px;
+    padding-top: 5px;
+    padding-left: 18px;
 }
-#searchFilter {
+#search_filter {
     display : inline-block;
     border: #000;
 }
@@ -826,6 +822,18 @@ a.lgi-zoom:hover {
     border-color: rgb(204, 204, 204);
 }
 
+.dismissbuttonfilter {
+    float: left;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: white;
+    white-space: nowrap;
+    font-size: 14px;
+    border-color: rgb(204, 204, 204);
+}
+
 
 #peakCheckbox {
     margin-left: 6px;
@@ -879,7 +887,7 @@ a.lgi-zoom:hover {
 
 #btnSubmitEvent {
     height: 34px;
-    width: 50px;
+    width: 50px;;
     background-color: #345EBD;
     border: 1px solid transparent;
     color: white;
@@ -890,6 +898,22 @@ a.lgi-zoom:hover {
     box-sizing: border-box;
 }
 #btnSubmitEvent:hover{
+    cursor: pointer;
+    background-color: #1E3668;
+    transition: 0.2s;
+}
+#btnSubmitEvent_filter {
+    float: right;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #345EBD;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    font-size: 14px;
+}
+#btnSubmitEvent_filter:hover{
     cursor: pointer;
     background-color: #1E3668;
     transition: 0.2s;
