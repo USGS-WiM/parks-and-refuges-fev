@@ -803,18 +803,39 @@
                 <div class="panel-heading" id="downloadHeader">
                     <h4 class="panel-title">
                         <a data-toggle="collapse"  href="#downloadPanel" aria-expanded="false" aria-controls="downloadPanel">
-                            Get Data
+                            Map Layers
                         </a>
                     </h4>
                 </div>
                 <div id="downloadPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="downloadHeader">
                     <div class="panel-body collapse in">
-                        <p>Use buttons to access event-based data, reflecting the filters chosen above. See the <a href="https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level" target="_blank" style="cursor: pointer;">STN Data Dictionary</a> for field names and definitions.</p>
 
+                        <div id="realTimeToggleDiv">
+                            <b>Real-Time Data</b></br>
+                            <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at <br> zoom level 9 and above. Please zoom in to view.</div>
+                        </div>
+                        <div id="printout">
+                        <div id="observedToggleDiv">
+                            <b>Observed Data</b>
+                        </div>
+                        <div id="interpretedToggleDiv">
+                            <b>Interpreted Data</b>
+                        </div>
+                        </div>
+                        <div id="npsToggleDiv">
+                            <b>USNPS Data</b>
+                        </div>
+                        <div id="fwsToggleDiv">
+                            <b>USFWS Data</b>
+                        </div>
+                        <div id="doiToggleDiv">
+                            <b>DOI Data</b>
+                        </div>
+                        <div id="noaaToggleDiv">
+                            <b>Supporting Layers</b>
+                            <div id="noTrackAdvisory"></div>
+                        </div>
 
-
-
-                        <p>Visit the <span><a href="https://stn.wim.usgs.gov/STNDataPortal" target="_blank">STN Data Portal <i class="fa fa-external-link" aria-hidden="true"></i></a></span> for broader data retrieval capability. </p>
                     </div>
                 </div>
             </div>
@@ -840,31 +861,7 @@
                     <div id="legendCollapse" class="panel-collapse " role="tabpanel">
                         <div id="legendDiv" class="panel-body legend-panel-body">
 
-                            <div id="realTimeToggleDiv">
-                                <b>Real-Time Data</b></br>
-                                <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at <br> zoom level 9 and above. Please zoom in to view.</div>
-                            </div>
-                            <div id="printout">
-                            <div id="observedToggleDiv">
-                                <b>Observed Data</b>
-                            </div>
-                            <div id="interpretedToggleDiv">
-                                <b>Interpreted Data</b>
-                            </div>
-                            </div>
-                            <div id="npsToggleDiv">
-                                <b>USNPS Data</b>
-                            </div>
-                            <div id="fwsToggleDiv">
-                                <b>USFWS Data</b>
-                            </div>
-                            <div id="doiToggleDiv">
-                                <b>DOI Data</b>
-                            </div>
-                            <div id="noaaToggleDiv">
-                                <b>Supporting Layers</b>
-                                <div id="noTrackAdvisory"></div>
-                            </div>
+
                             <!--<div id="noaaToggleDiv">-->
                                 <!--<b>NOAA Layers</b>-->
                             <!--</div>-->
