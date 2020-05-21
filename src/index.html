@@ -810,42 +810,10 @@
                 <div id="downloadPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="downloadHeader">
                     <div class="panel-body collapse in">
                         <p>Use buttons to access event-based data, reflecting the filters chosen above. See the <a href="https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level" target="_blank" style="cursor: pointer;">STN Data Dictionary</a> for field names and definitions.</p>
-                        <div id="sensorDownloadButtons">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-                                        <span data-bind="label" value="Sensor">Sensor Data</span>&nbsp;<span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu">
-                                        <li><a id="sensorDownloadButtonCSV" href="#" value="CSV">Download CSV</a></li>
-                                        <li><a id="sensorDownloadButtonJSON" href="#" value="JSON" target="_blank">View JSON</a></li>
-                                        <!--<li><a id="sensorDownloadButtonXML" href="#" value="XML" target="_blank">View XML</a></li>-->
-                                    </ul>
-                                </div>
-                        </div>
-                        <div id="hwmrDownloadButtons">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-                                        <span data-bind="label" value="HWM">High-water Mark Data</span>&nbsp;<span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu">
-                                        <li><a id="hwmDownloadButtonCSV" href="#" value="CSV">Download CSV</a></li>
-                                        <li><a id="hwmDownloadButtonJSON" href="#" value="JSON" target="_blank">View JSON</a></li>
-                                        <!--<li><a id="hwmDownloadButtonXML" href="#" value="XML" target="_blank">View XML</a></li>-->
-                                    </ul>
-                                </div>
-                        </div>
-                        <div id="peaksDownloadButtons">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-                                        <span data-bind="label" value="Peaks">Peak Summary Data</span>&nbsp;<span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu">
-                                        <li><a id="peaksDownloadButtonCSV" href="#" value="CSV">Download CSV</a></li>
-                                        <li><a id="peaksDownloadButtonJSON" href="#" value="JSON" target="_blank">View JSON</a></li>
-                                        <!--<li><a id="peaksDownloadButtonXML" href="#" value="XML" target="_blank">View XML</a></li>-->
-                                    </ul>
-                                </div>
-                        </div>
+
+
+
+
                         <p>Visit the <span><a href="https://stn.wim.usgs.gov/STNDataPortal" target="_blank">STN Data Portal <i class="fa fa-external-link" aria-hidden="true"></i></a></span> for broader data retrieval capability. </p>
                     </div>
                 </div>
@@ -871,37 +839,7 @@
                     </div>
                     <div id="legendCollapse" class="panel-collapse " role="tabpanel">
                         <div id="legendDiv" class="panel-body legend-panel-body">
-                            <!-- collapsing panel style toggle/swatch elements -->
-                            <!--<div class="panel panel-default legend-item-panel">-->
-                                <!--<div class="panel-heading" role="tab" id="rdgSwatchHeading">-->
-                                    <!--<h4 class="panel-title">-->
-                                        <!--<input type="checkbox" aria-label="..."><a role="button" data-toggle="collapse" href="#rdgSwatchDiv" aria-expanded="true" aria-controls="collapseOne">-->
-                                        <!--&nbsp;Rapid Deployment Streamgage&nbsp;-->
-                                        <!--</a>-->
-                                    <!--</h4>-->
-                                <!--</div>-->
-                                <!--<div id="rdgSwatchDiv" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="rdgSwatchHeading">-->
-                                    <!--<div class="panel-body">-->
-                                        <!--<i class="rdgMarker"></i><span>Rapid Deployment Streamgage</span></br>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
 
-                            <!--<div class="panel panel-default legend-item-panel">-->
-                                <!--<div class="panel-heading" role="tab" id="waveHeightSwatchHeading">-->
-                                    <!--<h4 class="panel-title">-->
-                                        <!--<input type="checkbox" aria-label="..."><a role="button" data-toggle="collapse" href="#waveHeightSwatchDiv" aria-expanded="true" aria-controls="collapseOne">-->
-                                        <!--&nbsp;Wave Height Sensor&nbsp;-->
-                                    <!--</a>-->
-                                    <!--</h4>-->
-                                <!--</div>-->
-                                <!--<div id="waveHeightSwatchDiv" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="waveHeightSwatchHeading">-->
-                                    <!--<div class="panel-body">-->
-                                        <!--<i class="waveHeightMarker"></i><span>Wave Height Sensor</span></br>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!-- end collapsing panel style toggle/swatch elements -->
                             <div id="realTimeToggleDiv">
                                 <b>Real-Time Data</b></br>
                                 <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at <br> zoom level 9 and above. Please zoom in to view.</div>
