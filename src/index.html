@@ -126,60 +126,7 @@
     </div>
 </div>
 
-<!-- start updateFiltersModal -->
-<div class="modal fade overflow-y-hidden" id="updateFiltersModal" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Filters</h4>
-            </div>
-            <div class="modal-body">
-                <div class="input-group form-group">
-                    <span>Select a Park or Refuge: </span>
-                    <div class="form-group" align="center">
-                        <div id="search_container">
-                            <div style="left: -20px" id="search">
-                            </div>
-                        </div>
 
-                    </div>
-                </div>           
-                
-                <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted by start
-                    date.</span><br>
-                <div id="evtNameForm_welcomeModal" class="input-group form-group">
-                    <!--<input type="text" class="form-control" placeholder="Search for...">-->
-                    <select id="evtSelect_welcomeModal" class="evtSelect_filter form-control select" style="width: 500px" multiple></select>
-                    <span class="input-group-btn">
-                        <!-- <button id="btnSubmitEvent" class="btn btn-secondary input-group-addon" type="button">Go</button> -->
-                    </span>
-                </div>
-                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
-                        aria-hidden="true"></i> Please choose an event to proceed.</div>
-                <div id="evtNameForm_parks" class="input-group form-group">
-                    <div class="form-group" id="bufferOptions" style="display: contents;">
-                        <span>Select a buffer distance: &nbsp;&nbsp;</span>
-                        <label class="radio-inline">
-                            <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
-                        </label>
-                    </div>
-                </div>
-                <div class="alert alert-danger parkRefSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose a Park or Refuge.</div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="dismissbuttonfilter btn" data-dismiss="modal">Dismiss</button>
-                <span><button id="btnSubmitEvent_filter" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Go</button></span>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
-<!-- end updateFiltersModal -->
 
 
 <!-- Welcome modal - only displays when 1)user arrive without event in URL and 2) have not checked "don't show me this again"(preference stored in cookies)-->
@@ -257,7 +204,57 @@
 <!-- end of welcome modal -->
 
 
+<!-- start updateFiltersModal -->
+<div class="modal fade overflow-y-hidden" id="updateFiltersModal" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Filters</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group form-group">
+                    <span>Select a Park or Refuge: </span>
+                    <div class="form-group" align="center">
+                        <div id="search_container">
+                            <div style="left: -20px" id="search_filter">
+                            </div>
+                        </div>
 
+                    </div>
+                </div>           
+                <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted by start
+                    date.</span><br>
+                <div id="evtNameForm_updateFiltersModal" class="input-group form-group">
+                    <select id="evtSelect_updateFiltersModal" class="evtSelect_filter form-control select" style="width: 500px" multiple></select>
+                    <span class="input-group-btn">
+                    </span>
+                </div>
+                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
+                        aria-hidden="true"></i> Please choose an event to proceed.</div>
+                <div id="evtNameForm_parks" class="input-group form-group">
+                    <div class="form-group" id="bufferOptions" style="display: contents;">
+                        <span>Select a buffer distance: &nbsp;&nbsp;</span>
+                        <label class="radio-inline">
+                            <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
+                        </label>
+                    </div>
+                </div>
+                <div class="alert alert-danger parkRefSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose a Park or Refuge.</div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="dismissbuttonfilter btn" data-dismiss="modal">Dismiss</button>
+                <span><button id="btnSubmitEvent_filter" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Go</button></span>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- end updateFiltersModal -->
     
 <!-- Geosearch Modal - button at top right of navbar, used for a simple location search-->  
 <div class="modal fade overflow-y-hidden" id="geosearchModal" style="display: none;" aria-hidden="true">
@@ -271,7 +268,6 @@
                 <div class="form-group" align="center">
                     <div id="search_container">
                         <div style="margin-left: -120px;" id="searchMap">
-
                         </div>
                     </div>
                     <div class="search-help" align="center"> </br>
