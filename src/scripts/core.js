@@ -420,118 +420,52 @@ $(document).ready(function () {
 		todayHighlight: true
 	});
 
-	//WELCOME MODAL - listener for submit event button on welcome modal - sets event vars and passes event id to filterMapData function
-	$('#btnSubmitEvent').click(function () {
-		//check if an event has been selected
-		if (($('#evtSelect_welcomeModal').val() !== null) && (searchResults !== undefined)) {
-			//if event selected, hide welcome modal and begin filter process
-			$('#welcomeModal').modal('hide');
-			var eventID = $('#evtSelect_welcomeModal').val()[0];
-			$('#evtSelect_filterModal').val([eventID]).trigger("change");
-			//Clear layers (removes buffer and parks/refuges selection from last search)
-			map.eachLayer(function (layer) {
-				map.removeLayer(layer);
-			});
-			//add the basemap back in 
-			L.esri.basemapLayer('Topographic').addTo(map);
-			//retrieve event details
-			$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
-				.done(function (data) {
-					setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
-				})
-				.fail(function () {
-					console.log("Request Failed. Most likely invalid event name.");
-				});
-			//populateEventDates(eventID);
-			filterMapData(eventID, false);
-			searchComplete();
-		} else {
-			//if no event selected, warn user with alert
-			// Also accounting for having an event selected but no parkref
-			if (($('#evtSelect_welcomeModal').val() !== null)) {
-				$('.eventSelectAlert').hide();
-			} else {
-				$('.eventSelectAlert').show();
-			}
-		}
-		if (searchResults !== undefined) {
-		} else {
-			$('.parkRefSelectAlert').show();
-		}
-	});
-
-	//FILTER MODAL - listener for submit event button on filter modal - sets event vars and passes event id to filterMapData function
-	$('#btnSubmitEvent_filter').click(function () {
-		//check if an event has been selected
-		if (($('#evtSelect_updateFiltersModal').val() !== null) && (searchResults !== undefined)) {
-			//if event selected, hide welcome modal and begin filter process
-			$('#updateFiltersModal').modal('hide');
-			var eventID = $('#evtSelect_updateFiltersModal').val()[0];
-			$('#evtSelect_filterModal').val([eventID]).trigger("change");
-			//Clear layers (removes buffer and parks/refuges selection from last search)
-			map.eachLayer(function (layer) {
-				if (layer._url != "http://{s}.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}") {
+	//welcomeModal: set search for 'Go' click 
+	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_filterModal');
+	//updateFiltersModal MODAL: set search for 'Go' click 
+	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal');
+	
+	//set search for 'Go' click
+	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary) {
+		submitButton.click(function () {
+			//check if an event has been selected
+			if (($(evtSelect_Modal_Primary).val() !== null) && (searchResults !== undefined)) {
+				//if event selected, hide welcome modal and begin filter process
+				$(chooseModal).modal('hide');
+				var eventID = $(evtSelect_Modal_Primary).val()[0];
+				$(evtSelect_Modal_Secondary).val([eventID]).trigger("change");
+				//Clear layers (removes buffer and parks/refuges selection from last search)
+				map.eachLayer(function (layer) {
 					map.removeLayer(layer);
-				}
-				/* if (layer._url == "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2/") {
-					map.removeLayer(layer);
-				} */
-				//console.log(layer);
-			});
-			//add the basemap back in 
-			//L.esri.basemapLayer('Topographic').addTo(map);
-			//retrieve event details
-			$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
-				.done(function (data) {
-					setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
-				})
-				.fail(function () {
-					console.log("Request Failed. Most likely invalid event name.");
 				});
-			//populateEventDates(eventID);
-			filterMapData(eventID, false);
-			searchComplete();
-		} else {
-			//if no event selected, warn user with alert
-			// Also accounting for having an event selected but no parkref
-			if (($('#evtSelect_updateFiltersModal').val() !== null)) {
-				$('.eventSelectAlert').hide();
+				//add the basemap back in 
+				L.esri.basemapLayer('Topographic').addTo(map);
+				//retrieve event details
+				$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
+					.done(function (data) {
+						setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
+					})
+					.fail(function () {
+						console.log("Request Failed. Most likely invalid event name.");
+					});
+				//populateEventDates(eventID);
+				filterMapData(eventID, false);
+				searchComplete();
 			} else {
-				$('.eventSelectAlert').show();
-			}
-		}
-		if (searchResults !== undefined) {
-		} else {
-			$('.parkRefSelectAlert').show();
-		}
-	});
-
-	//listener for submit filters button on filters modal - sets event vars and passes event id to filterMapData function
-	/*
-	$('#btnSubmitFilters').on('click', function () {
-
-		if ($('#evtSelect_filterModal').val() !== null) {
-			//if event selected, hide welcome modal and begin filter process
-			$('#updateFiltersModal').modal('hide');
-			var eventID = $('#evtSelect_filterModal').val()[0];
-			//$('#evtSelect_filterModal').val([eventValue]).trigger("change");
-			//retrieve event details
-			for (var i = 0; i < fev.data.events.length; i++) {
-				if (fev.data.events[i].event_id == eventID) {
-					//set currentEventActive boolean var based on event_status_id value
-					setEventVars(fev.data.events[i].event_name, fev.data.events[i].event_id, fev.data.events[i].event_status_id, fev.data.events[i].event_start_date, fev.data.events[i].event_end_date);
+				//if no event selected, warn user with alert
+				// Also accounting for having an event selected but no parkref
+				if (($(evtSelect_Modal_Primary).val() !== null)) {
+					$('.eventSelectAlert').hide();
+				} else {
+					$('.eventSelectAlert').show();
 				}
 			}
-			filterMapData(eventID, false);
-			$('.eventSelectAlert').hide();
-			$('#filtersModal').modal('hide');
-		} else {
-			//if no event selected, warn user with alert
-			//alert("Please choose an event to proceed.")
-			$('.eventSelectAlert').show();
-		}
-	});
-	*/
+			if (searchResults !== undefined) {
+			} else {
+				$('.parkRefSelectAlert').show();
+			}
+		});
+	}
 
 	$('#print').click(function () {
 		printReport();
