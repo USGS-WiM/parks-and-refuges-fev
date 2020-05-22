@@ -685,7 +685,12 @@
                             <div id="legendCollapse" class="panel-collapse " role="tabpanel">
                                 <div id="legendDiv" class="panel-body legend-panel-body">
                                    <!-- <div id="printout"> -->
+                                    
                                     <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at <br> zoom level 9 and above. Please zoom in to view.</div>
+                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
+                                        <button id="interpertedMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#interpretedToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left">Interpreted Data<i class="chevron fa fa-chevron-right pull-right"></i></button>
+                                    </div>
+                                    <div id="interpretedToggleDiv" style="text-align: left"></div>
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="realtimeMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#realTimeToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left">Real-Time Data<i class="chevron fa fa-chevron-right pull-right"></i></button>
                                     </div>
@@ -694,16 +699,13 @@
                                         <button id="observedMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#observedToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left">Observed Data<i class="chevron fa fa-chevron-right pull-right"></i></button>
                                     </div>
                                     <div id="observedToggleDiv" class="collapse" style="text-align: left"></div>
+
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
-                                        <button id="interpertedMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#interpretedToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left">Interpreted Data<i class="chevron fa fa-chevron-right pull-right"></i></button>
-                                    </div>
-                                    <div id="interpretedToggleDiv" class="collapse" style="text-align: left"></div>
-                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
-                                        <button id="npsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#npsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left">NPS Data<i class="chevron fa fa-chevron-right pull-right"></i></button>
+                                        <button id="npsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#npsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left">USNPS Data<i class="chevron fa fa-chevron-right pull-right"></i></button>
                                     </div>
                                     <div id="npsToggleDiv" class="collapse" style="text-align: left"></div>
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
-                                        <button id="fwsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#fwsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left">FWS Data<i class="chevron fa fa-chevron-right pull-right"></i></button>
+                                        <button id="fwsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#fwsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left">USFWS Data<i class="chevron fa fa-chevron-right pull-right"></i></button>
                                     </div>
                                     <div id="fwsToggleDiv" class="collapse" style="text-align: left"></div>
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
