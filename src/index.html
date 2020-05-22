@@ -673,41 +673,76 @@
             <h4 class="event-range"><span id="largeEventDateRangeDisplay"></span></h4>
             <div class="panel panel-default wim-sidebar-panel">
                 <div class="panel panel-default wim-sidebar-panel">
-                    <div class="panel-heading" id="downloadHeader">
+                    <div class="panel-heading" id="mapLayerHeader">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse"  href="#downloadPanel" aria-expanded="false" aria-controls="downloadPanel">
+                            <a data-toggle="collapse"  href="#mapLayersPanel" aria-expanded="false" >
                                 Map Layers
                             </a>
                         </h4>
                     </div>
-                <div id="downloadPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="downloadHeader">
-                    <div class="panel-body collapse in">
-                                <div id="realTimeToggleDiv">
-                                    <b>Real-Time Data</b></br>
-                                    <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at <br> zoom level 9 and above. Please zoom in to view.</div>
-                                </div>
+                    <div id="mapLayersPanel" class="panel-collapse collapse"  aria-labelledby="mapLayerHeader">
+                         <div class="panel-body collapse in">
+                    
+                            <div id="legendCollapse" class="panel-collapse " role="tabpanel">
+                                <div id="legendDiv" class="panel-body legend-panel-body">
+                                    <div class="groupHeading" style= "font-size: 10pt; text-align: left">
+                                        <b>Real-Time Data</b></br>
+                                    </div>
+                                    <div id="realTimeToggleDiv"  class="layerName" style="font-weight: 100">
+                                        <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at <br> zoom level 9 and above. Please zoom in to view.</div>
+                                    </div>
                                 <div id="printout">
-                                <div id="observedToggleDiv">
+                                
+                                <div class="groupHeading" style= "font-size: 10pt; text-align: left">
                                     <b>Observed Data</b>
                                 </div>
-                                <div id="interpretedToggleDiv">
-                                    <b>Interpreted Data</b>
+                                <div id="observedToggleDiv" class="layerName">
+                                </div>
+
+                                <div class="groupHeading" style= "font-size: 10pt; text-align: left">
+                                <b>Interpreted Data</b>
+                                </div>
+
+                                <div id="interpretedToggleDiv" class="layerName">  
                                 </div>
                                 </div>
-                                <div id="npsToggleDiv">
-                                    <b>USNPS Data</b>
+                                <div class="groupHeading" style= "font-size: 10pt; text-align: left">
+                                <b>USNPS Data</b>
                                 </div>
-                                <div id="fwsToggleDiv">
+                                <div id="npsToggleDiv" class="layerName"  >   
+                                </div>
+                                <div class="groupHeading" style= "font-size: 10pt; text-align: left">
                                     <b>USFWS Data</b>
+                                    </div>
+                                
+
+                                <div id="fwsToggleDiv" class="layerName label">
+                                    
                                 </div>
-                                <div id="doiToggleDiv">
+
+
+                                <div class="groupHeading" style= "font-size: 10pt; text-align: left; text-transform: uppercase">
                                     <b>DOI Data</b>
+                                    </div>
+
+                                
+                                <div id="doiToggleDiv" class="layerName">
+                                    
                                 </div>
-                                <div id="noaaToggleDiv">
+
+
+                                <div class="groupHeading" style= "font-size: 10pt; text-align: left; text-transform: uppercase">
                                     <b>Supporting Layers</b>
+                                    </div>
+
+                                <div id="noaaToggleDiv" class="layerName">
+                                   
                                     <div id="noTrackAdvisory"></div>
                                 </div>
                             </div>
+                        </div>
+                        </div>
+                   
                         
 
                     </div>
