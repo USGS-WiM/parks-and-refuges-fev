@@ -685,69 +685,43 @@
                     </div>
                     <div id="mapLayersPanel" class="panel-collapse collapse"  aria-labelledby="mapLayerHeader">
                          <div class="panel-body collapse in">
-                    
                             <div id="legendCollapse" class="panel-collapse " role="tabpanel">
                                 <div id="legendDiv" class="panel-body legend-panel-body">
-                                    <div class="groupHeading" style= "font-size: 10pt; text-align: left">
-                                        <b>Real-Time Data</b></br>
-                                    </div>
-                                    <div id="realTimeToggleDiv"  class="layerName" style="font-weight: 100">
-                                        <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at <br> zoom level 9 and above. Please zoom in to view.</div>
-                                    </div>
-                                <div id="printout">
-                                
-                                <div class="groupHeading" style= "font-size: 10pt; text-align: left">
-                                    <b>Observed Data</b>
-                                </div>
-                                <div id="observedToggleDiv" class="layerName">
-                                </div>
-
-                                <div class="groupHeading" style= "font-size: 10pt; text-align: left">
-                                <b>Interpreted Data</b>
-                                </div>
-
-                                <div id="interpretedToggleDiv" class="layerName">  
-                                </div>
-                                </div>
-                                <div class="groupHeading" style= "font-size: 10pt; text-align: left">
-                                <b>USNPS Data</b>
-                                </div>
-                                <div id="npsToggleDiv" class="layerName"  >   
-                                </div>
-                                <div class="groupHeading" style= "font-size: 10pt; text-align: left">
-                                    <b>USFWS Data</b>
-                                    </div>
-                                
-
-                                <div id="fwsToggleDiv" class="layerName label">
+                                   <!-- <div id="printout"> -->
                                     
-                                </div>
-
-
-                                <div class="groupHeading" style= "font-size: 10pt; text-align: left; text-transform: uppercase">
-                                    <b>DOI Data</b>
+                                    <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at <br> zoom level 9 and above. Please zoom in to view.</div>
+                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
+                                        <button id="interpertedMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#interpretedToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Interpreted Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-
-                                
-                                <div id="doiToggleDiv" class="layerName">
-                                    
-                                </div>
-
-
-                                <div class="groupHeading" style= "font-size: 10pt; text-align: left; text-transform: uppercase">
-                                    <b>Supporting Layers</b>
+                                    <div id="interpretedToggleDiv" style="text-align: left"></div>
+                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
+                                        <button id="realtimeMapLayer" class="btn btn-default groupToggle groupHeading" type="button" data-toggle="collapse" data-target="#realTimeToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Real-Time Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-
-                                <div id="noaaToggleDiv" class="layerName">
-                                   
+                                    <div id="realTimeToggleDiv"  class="collapse" style="text-align: left"></div>
+                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
+                                        <button id="observedMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#observedToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Observed Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
+                                    </div>
+                                    <div id="observedToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
+                                        <button id="npsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#npsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">USNPS Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
+                                    </div>
+                                    <div id="npsToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
+                                        <button id="fwsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#fwsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">USFWS Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
+                                    </div>
+                                    <div id="fwsToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
+                                        <button id="doiMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#doiToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">DOI Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
+                                    </div>
+                                    <div id="doiToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
+                                        <button id="supportMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#noaaToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Supporting Layers<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
+                                    </div>
                                     <div id="noTrackAdvisory"></div>
                                 </div>
                             </div>
+                       
                         </div>
-                        </div>
-                   
-                        
-
                     </div>
                 </div>
                 <div class="panel-heading" id="basemapsHeader">

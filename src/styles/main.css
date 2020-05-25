@@ -151,10 +151,6 @@ body {
     border-left: 4px solid transparent;
 }
 
-.label {
-    font-weight: normal;
-}
-
 #noTrackAdvisory{
     top: 3px;
     margin-left: 5px;
