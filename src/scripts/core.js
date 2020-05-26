@@ -689,7 +689,7 @@ $(document).ready(function () {
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
 
 	//add checkbox under Peaks layer in legend to toggle labels on and off
-	$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Labels");
+	//$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Labels");
 	//$('.leaflet-top.leaflet-right').hide();
 
 	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
