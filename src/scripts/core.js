@@ -1846,10 +1846,13 @@ $(document).ready(function () {
 			USGSRainGages.clearLayers();
 			$('#rtScaleAlert').show();
 		}
-		if (map.getZoom() < 6){
+		//Remove peak labels and turn off/disable toggle when zoom is less than 8
+		if (map.getZoom() < 8){
+			//Remove labels
 			peak.eachLayer(function (myMarker){
 				myMarker.hideLabel();
 			var checkBox = document.getElementById("peakCheckbox");
+			//Change toggle to 'off' position
 			checkBox.checked = false;
 			});
 		}
@@ -2240,17 +2243,16 @@ $(document).ready(function () {
 //function for toggling peak labels
 function clickPeakLabels() {
 	var checkBox = document.getElementById("peakCheckbox");
-	if (map.getZoom() < 6) {
-		console.log("zoom is less than 6");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
 		checkBox.checked = false;
 	}
-	else {
-		console.log("zoom is 6 or greater");
-	}
+	//Display peak labels when toggle is on
 	if (checkBox.checked == true) {
 		peak.eachLayer(function (myMarker) {
 			myMarker.showLabel();
 		});
+	//Remove peak labels when toggle is off
 	} else {
 		peak.eachLayer(function (myMarker){
 			myMarker.hideLabel();

@@ -888,6 +888,8 @@ a.lgi-zoom:hover {
     background-color: white;
     transition: .4s;
   }
+
+
   
   input:checked + .slider {
     background-color: #2196F3;
@@ -906,7 +908,7 @@ a.lgi-zoom:hover {
   .slider.round {
     border-radius: 18px;
   }
-  
+ 
   .slider.round:before {
     border-radius: 50%;
   }
@@ -918,7 +920,7 @@ a.lgi-zoom:hover {
     height: 18px;
     margin-right: 0px;
   }
- 
+
 /*MAP LAYERS*/
 #legendElement{
     margin-top: 10px;
@@ -929,12 +931,10 @@ a.lgi-zoom:hover {
     margin-right: 5px;
     color: rgba(0,0,0,0.7) !important;
 }
-
 .esconder {
     display: none;
     /*visibility: hidden;*/
 }
-
 .nwisAlertClass {
     position:absolute;
     top:10px;
