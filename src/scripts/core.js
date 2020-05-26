@@ -1846,7 +1846,13 @@ $(document).ready(function () {
 			USGSRainGages.clearLayers();
 			$('#rtScaleAlert').show();
 		}
-
+		if (map.getZoom() < 6){
+			peak.eachLayer(function (myMarker){
+				myMarker.hideLabel();
+			var checkBox = document.getElementById("peakCheckbox");
+			checkBox.checked = false;
+			});
+		}
 		if (map.getZoom() >= 9) {
 			$('#rtScaleAlert').hide();
 		}
@@ -2234,6 +2240,13 @@ $(document).ready(function () {
 //function for toggling peak labels
 function clickPeakLabels() {
 	var checkBox = document.getElementById("peakCheckbox");
+	if (map.getZoom() < 6) {
+		console.log("zoom is less than 6");
+		checkBox.checked = false;
+	}
+	else {
+		console.log("zoom is 6 or greater");
+	}
 	if (checkBox.checked == true) {
 		peak.eachLayer(function (myMarker) {
 			myMarker.showLabel();
@@ -2244,3 +2257,4 @@ function clickPeakLabels() {
 		});
 	}
   }
+  

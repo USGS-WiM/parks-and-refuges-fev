@@ -918,11 +918,6 @@ a.lgi-zoom:hover {
     height: 18px;
     margin-right: 0px;
   }
-
-  #interpertedMapLayer
-  {
-    white-space: nowrap;
-  }
  
 /*MAP LAYERS*/
 #legendElement{
