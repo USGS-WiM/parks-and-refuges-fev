@@ -382,8 +382,16 @@ body {
     overflow-y: auto;
     /*max-height: inherit;*/
 }
+#legendDivPanel {
+    overflow-y: auto;
+    /*max-height: inherit;*/
+}
 
 #legendCollapse {
+    /*max-height: inherit;*/
+}
+
+#legendCollapsePanel {
     /*max-height: inherit;*/
 }
 
@@ -853,9 +861,74 @@ a.lgi-zoom:hover {
 
 
 #peakCheckbox {
-    margin-left: 6px;
-}
+    position: relative;
+    display: inline-block;
+    width: 0px;
+    height: 0px;
+    margin-right: 0px;
+  }
+  
+  .peakCheckbox input { 
+      
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+  }
+
+
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(13px);
+    transform: translateX(13px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 18px;
+  }
  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  
+  #peakSizeCheck {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 18px;
+    margin-right: 0px;
+  }
+
 /*MAP LAYERS*/
 #legendElement{
     margin-top: 10px;
@@ -866,12 +939,10 @@ a.lgi-zoom:hover {
     margin-right: 5px;
     color: rgba(0,0,0,0.7) !important;
 }
-
 .esconder {
     display: none;
     /*visibility: hidden;*/
 }
-
 .nwisAlertClass {
     position:absolute;
     top:10px;
@@ -1067,6 +1138,19 @@ a.lgi-zoom:hover {
     margin: 0 auto;
 }
 #legendDiv b{
+    box-sizing: border-box;
+    padding: 0 0 0 5px;
+}
+#legendDivPanel p{
+    display: block;
+    box-sizing: border-box;
+    padding: 8px 0 0 0;
+    text-align: center;
+    font-size: 8pt;
+    color: rgba(0,0,0,0.5) !important;
+    margin: 0 auto;
+}
+#legendDivPanel b{
     box-sizing: border-box;
     padding: 0 0 0 5px;
 }

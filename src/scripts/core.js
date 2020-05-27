@@ -683,15 +683,9 @@ $(document).ready(function () {
 
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
-
-	//interpretedToggle.append(document.getElementById("peakCheckbox"), "Labels");
 	interpretedToggle.addTo(map);
-
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
 
-	//add checkbox under Peaks layer in legend to toggle labels on and off
-	$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Labels");
-	//$('.leaflet-top.leaflet-right').hide();
 
 	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
 	noaaToggle.addTo(map);
@@ -1846,7 +1840,16 @@ $(document).ready(function () {
 			USGSRainGages.clearLayers();
 			$('#rtScaleAlert').show();
 		}
-
+		//Remove peak labels and turn off/disable toggle when zoom is less than 8
+		if (map.getZoom() < 8){
+			//Remove labels
+			peak.eachLayer(function (myMarker){
+				myMarker.hideLabel();
+			var checkBox = document.getElementById("peakCheckbox");
+			//Change toggle to 'off' position
+			checkBox.checked = false;
+			});
+		}
 		if (map.getZoom() >= 9) {
 			$('#rtScaleAlert').hide();
 		}
@@ -2089,6 +2092,7 @@ $(document).ready(function () {
 
 		for (var i in srcActiveOverlays) {
 			function imageToBase64(){
+				console.log("scrActiveOverlays", srcActiveOverlays);
 				var canvas = document.createElement("canvas");
 				var ctx = canvas.getContext("2d");
 				var base_image = new Image();
@@ -2234,13 +2238,20 @@ $(document).ready(function () {
 //function for toggling peak labels
 function clickPeakLabels() {
 	var checkBox = document.getElementById("peakCheckbox");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		checkBox.checked = false;
+	}
+	//Display peak labels when toggle is on
 	if (checkBox.checked == true) {
 		peak.eachLayer(function (myMarker) {
 			myMarker.showLabel();
 		});
+	//Remove peak labels when toggle is off
 	} else {
 		peak.eachLayer(function (myMarker){
 			myMarker.hideLabel();
 		});
 	}
   }
+  
