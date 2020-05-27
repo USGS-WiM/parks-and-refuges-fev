@@ -382,10 +382,18 @@ body {
     overflow-y: auto;
     /*max-height: inherit;*/
 }
+#legendDivPanel {
+    overflow-y: auto;
+    /*max-height: inherit;*/
+}
 
 #legendCollapse {
     /*max-height: inherit;*/
 }
+#legendCollapsePanel {
+    /*max-height: inherit;*/
+}
+
 
 /*#legendElement {*/
 /*position:absolute;*/
