@@ -382,8 +382,16 @@ body {
     overflow-y: auto;
     /*max-height: inherit;*/
 }
+#legendDivPanel {
+    overflow-y: auto;
+    /*max-height: inherit;*/
+}
 
 #legendCollapse {
+    /*max-height: inherit;*/
+}
+
+#legendCollapsePanel {
     /*max-height: inherit;*/
 }
 
@@ -1130,6 +1138,19 @@ a.lgi-zoom:hover {
     margin: 0 auto;
 }
 #legendDiv b{
+    box-sizing: border-box;
+    padding: 0 0 0 5px;
+}
+#legendDivPanel p{
+    display: block;
+    box-sizing: border-box;
+    padding: 8px 0 0 0;
+    text-align: center;
+    font-size: 8pt;
+    color: rgba(0,0,0,0.5) !important;
+    margin: 0 auto;
+}
+#legendDivPanel b{
     box-sizing: border-box;
     padding: 0 0 0 5px;
 }
