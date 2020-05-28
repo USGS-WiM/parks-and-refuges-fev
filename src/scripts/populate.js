@@ -57,42 +57,6 @@ $( document ).ready(function() {
         allowClear: false,
         maximumSelectionLength: 1
     });
-    $.ajax({
-        dataType: 'json',
-        type: 'GET',
-        url: 'https://stn.wim.usgs.gov/STNServices/events.json',
-        headers: {'Accept': '*/*'},
-        success: function (data) {
-            data.sort(function (a, b) {
-                // var eventA = a.event_name;
-                // var eventB = b.event_name;
-                var eventA = a.event_start_date;
-                var eventB = b.event_start_date;
-                if (eventA > eventB) {
-                    return -1;
-                }
-                if (eventA < eventB) {
-                    return 1;
-                }
-                else {
-                    return 0;
-                }
-            });
-            for (var i = 0; i < data.length; i++) {
-                $('.evtSelect').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
-                data[i].id = data[i].event_id;
-                fev.data.events.push(data[i]);
-            }
-        },
-        error: function (error) {
-            console.log('Error processing the JSON. The error is:' + error);
-        }
-    });
-
-    // START REGIONAL SUMMARY
-
-    // Register Event select as select2, retrieve values from jQuery ajax, sort, populate dropdown
-    //stores values in fev.data.events array
     $('.evtSelectRegional').select2({
         placeholder: 'Select event',
         allowClear: false,
@@ -120,9 +84,10 @@ $( document ).ready(function() {
                 }
             });
             for (var i = 0; i < data.length; i++) {
+                $('.evtSelect').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
                 $('.evtSelectRegional').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
-                /* data[i].id = data[i].event_id;
-                fev.data.events.push(data[i]); */
+                data[i].id = data[i].event_id;
+                fev.data.events.push(data[i]);
             }
         },
         error: function (error) {
@@ -130,6 +95,7 @@ $( document ).ready(function() {
         }
     });
 
+    // START REGIONAL SUMMARY
     // region type selector
     $('.regionType').select2({
         placeholder: 'Select type',
