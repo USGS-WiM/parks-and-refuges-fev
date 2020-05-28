@@ -12,6 +12,9 @@ var regionParksLayerGroup = L.layerGroup();
 var where = "";
 var identifiedParks = [];
 var peaksWithinBuffer = L.layerGroup();
+var bufferedPolys = [];
+var unbufferedPolys = [];
+var bufferSize;
 
 var regionalPeak = L.layerGroup();
 var parkPeaks = L.layerGroup();
@@ -65,13 +68,21 @@ $(document).ready(function () {
         var maxPeakStage;
         var minPeakStage;
 
-        // styles for parks and region polygons
-        var allParksStyle = {
-            "color": "#9933ff",
-            "weight": 2,
-            "opacity": 100,
-            "fillOpacity": 5
+        // setting buffer style
+		var bufferStyle = {
+			"color": "#0000cc",
+			"fillOpacity": 0,
+			"opacity": 0.65,
+			"weight": 2
+		};
+
+		// setting park style
+		var parkStyle = {
+			"color": "#0000cc",
+			"weight": 2,
+			"opacity": 100
         };
+        
         var regionStyle = {
             "color": "#9933ff",
             "weight": 2,
@@ -81,6 +92,9 @@ $(document).ready(function () {
 
         // getting array of selected events
         selectedEvents = $('#evtSelect_regionalModal').val();
+
+        // setting buffer size
+        bufferSize = $('#bufferSelect_regionalModal').val();
 
         // getting the geometry for the selected region
         where = "REG_NUM=" + selectedRegion,
@@ -118,13 +132,13 @@ $(document).ready(function () {
                 document.getElementById("demo").innerHTML += index + ":" + item + "<br>";
             }
 
-            var bufferedPolys = [];
             for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {
                 allParks.query()
                     .within(flattenedRegionalPoly.features[p])
                     .run(function (error, featureCollection, response) {
                         if (featureCollection.features.length !== 0) {
-                            regionFeatureCollection = featureCollection;
+                            regionParksFC = featureCollection;
+                            L.geoJson(regionParksFC, {style: parkStyle}).addTo(regionalMap);
                             getbuffers();
                         }
                     });
@@ -132,24 +146,24 @@ $(document).ready(function () {
             }
 
             // optional, slightly faster route for region/parks query. uses region property in esri service, jot the doi region
-            /* var regionFeatureCollection;
+            /* var regionParksFC;
             allParks.query()
                 .where("REGION='SE'")
                 .run(function (error, featureCollection, response) {
-                    regionFeatureCollection = featureCollection;
+                    regionParksFC = featureCollection;
                     getbuffers();
                 }); */
 
             function getbuffers() {
-                if (regionFeatureCollection !== undefined) {
-                    for (var p = 0; p < regionFeatureCollection.features.length; p++) {
+                if (regionParksFC !== undefined) {
+                    for (var p = 0; p < regionParksFC.features.length; p++) {
                         var options = { tolerance: 0.01, highQuality: false };
-                        var simplified = turf.simplify(regionFeatureCollection.features[p], options);
-                        var buffered = turf.buffer(simplified, 20, { units: 'kilometers' });
+                        var simplified = turf.simplify(regionParksFC.features[p], options);
+                        var buffered = turf.buffer(simplified, bufferSize, { units: 'kilometers' });
                         bufferedPolys.push(buffered);
                     }
                     console.log('buffered polys' + bufferedPolys);
-                    L.geoJson(bufferedPolys).addTo(regionalMap);
+                    L.geoJson(bufferedPolys, {style: bufferStyle}).addTo(regionalMap);
                     getEventSpecificData();
                 }
 
@@ -288,12 +302,31 @@ $(document).ready(function () {
 
                     // function to get only peaks within park buffer
                     setTimeout(() => {
-                        console.log(regionFeatureCollection);
-                        for (var p = 0; p < regionFeatureCollection.features.length; p++) {
-                            var buffer = regionFeatureCollection.features[p];
-                            if (buffer.geometry.type === "MultiPolygon") {
-                                var polysCount = buffer.geometry.coordinates.length;
+                        for (var p = 0; p < bufferedPolys.length; p++) {
+                            var buffer = bufferedPolys[p];
 
+                            // check incase there are any multipolys and convert them to simple polys
+                            if (buffer.geometry.type === "MultiPolygon") {
+                                var feat;
+
+                                buffer.geometry.coordinates.forEach(function(coords){
+                                   feat={'type':'Polygon','coordinates':coords};
+                                   if (feat !== undefined) {
+                                    var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
+                                    console.log(isItInside);
+                                    // if true add it to an array containing all the 'true' regionalPeak
+                                    if (isItInside) {
+                                        //peaksWithinBuffer.push(regionalPeak._layers[i]);
+                                        regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                    }
+                                 }
+                                    }
+                                 );
+                                
+                                 
+                                 
+
+                                /* var polysCount = buffer.geometry.coordinates.length;
                                 for (var poly = 0; poly < buffer.geometry.coordinates.length; poly++) {
                                     // not cycling through if we're on the last one
                                     if (poly === (polysCount - 1)) {
@@ -307,7 +340,7 @@ $(document).ready(function () {
                                         buffer = turf.union(buffer, nextFeature);
                                     }
 
-                                }
+                                } */
                             }
                             console.log(p);
                             for (var i in regionalPeak._layers) {
@@ -337,8 +370,8 @@ $(document).ready(function () {
         
                         // formatting point for turf
                         var cords = ([regionalPeak._layers[i]._latlng.lng, regionalPeak._layers[i]._latlng.lat]);
-                        for (var p in regionFeatureCollection.features) {
-                            var buffer = regionFeatureCollection.features[p];
+                        for (var p in regionParksFC.features) {
+                            var buffer = regionParksFC.features[p];
                             var isItInside = turf.booleanPointInPolygon(cords, buffer);
          
                             // if true add it to an array containing all the 'true' regionalPeak

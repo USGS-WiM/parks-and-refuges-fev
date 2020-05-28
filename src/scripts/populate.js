@@ -57,17 +57,15 @@ $( document ).ready(function() {
         allowClear: false,
         maximumSelectionLength: 1
     });
-<<<<<<< HEAD
     $('.evtSelectRegional').select2({
         placeholder: 'Select event',
         allowClear: false,
         maximumSelectionLength: 3
-=======
+    });
     $('.evtSelect_filter').select2({
         placeholder: 'Select event',
         allowClear: false,
         maximumSelectionLength: 1
->>>>>>> 8507e6d6a270ba457b4a9fb8b6bff8189c01f069
     });
     $.ajax({
         dataType: 'json',
@@ -187,9 +185,9 @@ $( document ).ready(function() {
         allowClear: false,
         maximumSelectionLength: 1
     });
-    $('.bufferSelect').append('<option value="regionTen">' + '10 km' + '</option>');
-    $('.bufferSelect').append('<option value="regionTwenty">' + '20 km' + '</option>');
-    $('.bufferSelect').append('<option value="regionThirty">' + '30 km' + '</option>');
+    $('.bufferSelect').append('<option value="10">' + '10 km' + '</option>');
+    $('.bufferSelect').append('<option value="20">' + '20 km' + '</option>');
+    $('.bufferSelect').append('<option value="30">' + '30 km' + '</option>');
 
     // END REGIONAL SUMMARY
 
