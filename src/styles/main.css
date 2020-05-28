@@ -134,6 +134,23 @@ body {
     height:15px;
 }
 
+.layerName {
+    text-align: left;
+    background-color: transparent;
+    border: 0px solid transparent;
+    box-shadow: none;
+    color: #333333;
+    font-weight: normal;
+    font-size: 9pt;
+    font-family: 'Open Sans', sans-serif;
+    padding: 6px 10px;
+    border-radius: 0;
+    margin: 0 auto;
+    letter-spacing: -0.45px;
+    transition: 0.15s;
+    border-left: 4px solid transparent;
+}
+
 #noTrackAdvisory{
     top: 3px;
     margin-left: 5px;
@@ -187,7 +204,15 @@ body {
     padding-top: 5px;
     padding-left: 18px;
 }
-#search {
+#search_container_filter {
+    display    : inline-block;
+    width      : 300px;
+    height     : 30px;
+    padding    : 25px;
+    padding-top: 5px;
+    padding-left: 18px;
+}
+#search_filter {
     display : inline-block;
     border: #000;
 }
@@ -357,8 +382,16 @@ body {
     overflow-y: auto;
     /*max-height: inherit;*/
 }
+#legendDivPanel {
+    overflow-y: auto;
+    /*max-height: inherit;*/
+}
 
 #legendCollapse {
+    /*max-height: inherit;*/
+}
+
+#legendCollapsePanel {
     /*max-height: inherit;*/
 }
 
@@ -814,12 +847,87 @@ a.lgi-zoom:hover {
     border-color: rgb(204, 204, 204);
 }
 
-
-#peakCheckbox {
-    margin-left: 6px;  
+.dismissbuttonfilter {
+    float: left;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: white;
+    white-space: nowrap;
+    font-size: 14px;
+    border-color: rgb(204, 204, 204);
 }
 
 
+#peakCheckbox {
+    position: relative;
+    display: inline-block;
+    width: 0px;
+    height: 0px;
+    margin-right: 0px;
+  }
+  
+  .peakCheckbox input { 
+      
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+  }
+
+
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(13px);
+    transform: translateX(13px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 18px;
+  }
+ 
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  
+  #peakSizeCheck {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 18px;
+    margin-right: 0px;
+  }
 
 /*MAP LAYERS*/
 #legendElement{
@@ -831,12 +939,10 @@ a.lgi-zoom:hover {
     margin-right: 5px;
     color: rgba(0,0,0,0.7) !important;
 }
-
 .esconder {
     display: none;
     /*visibility: hidden;*/
 }
-
 .nwisAlertClass {
     position:absolute;
     top:10px;
@@ -869,7 +975,7 @@ a.lgi-zoom:hover {
 
 #btnSubmitEvent {
     height: 34px;
-    width: 50px;
+    width: 50px;;
     background-color: #345EBD;
     border: 1px solid transparent;
     color: white;
@@ -880,6 +986,22 @@ a.lgi-zoom:hover {
     box-sizing: border-box;
 }
 #btnSubmitEvent:hover{
+    cursor: pointer;
+    background-color: #1E3668;
+    transition: 0.2s;
+}
+#btnSubmitEvent_filter {
+    float: right;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #345EBD;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    font-size: 14px;
+}
+#btnSubmitEvent_filter:hover{
     cursor: pointer;
     background-color: #1E3668;
     transition: 0.2s;
@@ -1016,6 +1138,19 @@ a.lgi-zoom:hover {
     margin: 0 auto;
 }
 #legendDiv b{
+    box-sizing: border-box;
+    padding: 0 0 0 5px;
+}
+#legendDivPanel p{
+    display: block;
+    box-sizing: border-box;
+    padding: 8px 0 0 0;
+    text-align: center;
+    font-size: 8pt;
+    color: rgba(0,0,0,0.5) !important;
+    margin: 0 auto;
+}
+#legendDivPanel b{
     box-sizing: border-box;
     padding: 0 0 0 5px;
 }

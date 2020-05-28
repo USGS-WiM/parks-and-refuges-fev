@@ -13,6 +13,7 @@ var searchResults;
 var searchObject;
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
+var identifiedMarks = [];
 var fev = fev || {
 	data: {
 		events: [],
@@ -128,6 +129,12 @@ var fev = fev || {
 			"Name": "Park Boundaries",
 			"Type": "nps",
 			"Category": "nps"
+		},
+		{
+			"ID": "doiRegions",
+			"Name": "DOI Regions",
+			"Type": "doi",
+			"Category": "doi"
 		}
 	]
 };
@@ -161,6 +168,7 @@ var appr = L.layerGroup();
 var int = L.layerGroup();
 var tracts = L.layerGroup();
 var bounds = L.layerGroup();
+var doiRegions = L.layerGroup();
 var parksLayerGroup = L.layerGroup();
 
 
@@ -274,6 +282,7 @@ var appr = L.esri.featureLayer({
 	}
 });
 
+
 // FWS Approved Interest Boundaries 
 var int = L.esri.featureLayer({
 	useCors: false,
@@ -282,46 +291,53 @@ var int = L.esri.featureLayer({
 	minZoom: 9,
 	style: function (feature) {
 		if ((feature.properties.INTTYPE1 === 'F') || (feature.properties.INTTYPE1 === 'O')) {
-			return { color: 'green', weight: 2 };
+			return { color: 'green', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'S') {
-			return { color: 'purple', weight: 2 };
+			return { color: 'purple', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'E') {
-			return { color: 'orange', weight: 2 };
+			return { color: 'orange', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'L') {
-			return { color: 'yellow', weight: 2 };
+			return { color: 'yellow', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'S') {
-			return { color: 'beige', weight: 2 };
+			return { color: 'beige', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'P') {
-			return { color: 'blue', weight: 2 };
+			return { color: 'blue', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'U') {
-			return { color: 'red', weight: 2 };
+			return { color: 'red', weight: 2, fillOpacity: 0 };
 		} else {
-			return { color: 'black', weight: 2 };
+			return { color: 'black', weight: 2, fillOpacity: 0 };
 		}
 	}
 })
 
-// FWS Legacy Regions
 
+
+// FWS Legacy Regions
 var fwsLegacyRegions = L.esri.featureLayer({
 	useCors: false,
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0",
 	//opacity: 0.5,
-	minZoom: 9,
+	minZoom: 5,
 	style: function (feature) {
-		return { color: 'blue', weight: 2 };
+		return { color: 'blue', weight: 2, fillOpacity: 0 };
 	}
 })
+
+// Style for DOI layer
+var doiStyle = {
+	"color": "#209D64",
+	"fillOpacity": 0,
+	"opacity": 0.65,
+	"weight": 4
+};
 
 // DOI Regions
 var doiRegions = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer",
+	style: doiStyle,
+	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/ArcGIS/rest/services/DOI_Unified_Regions/FeatureServer/0",
 	//opacity: 0.5,
-	minZoom: 9,
-	style: function (feature) {
-		return { color: 'green', weight: 2 };
-	}
+	minZoom: 5
 })
 
 int.bindPopup(function (layer) {
@@ -405,64 +421,52 @@ $(document).ready(function () {
 		todayHighlight: true
 	});
 
-	//listener for submit event button on welcome modal - sets event vars and passes event id to filterMapData function
-	$('#btnSubmitEvent').click(function () {
-		//check if an event has been selected
-		if (($('#evtSelect_welcomeModal').val() !== null) && (searchResults !== undefined)) {
-			//if event selected, hide welcome modal and begin filter process
-			$('#welcomeModal').modal('hide');
-			var eventID = $('#evtSelect_welcomeModal').val()[0];
-			$('#evtSelect_filterModal').val([eventID]).trigger("change");
-			//retrieve event details
-			$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
-				.done(function (data) {
-					setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
-				})
-				.fail(function () {
-					console.log("Request Failed. Most likely invalid event name.");
+	//welcomeModal: set search for 'Go' click 
+	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_filterModal');
+	//updateFiltersModal MODAL: set search for 'Go' click 
+	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal');
+	
+	//set search for 'Go' click
+	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary) {
+		submitButton.click(function () {
+			//check if an event has been selected
+			if (($(evtSelect_Modal_Primary).val() !== null) && (searchResults !== undefined)) {
+				//if event selected, hide welcome modal and begin filter process
+				$(chooseModal).modal('hide');
+				var eventID = $(evtSelect_Modal_Primary).val()[0];
+				$(evtSelect_Modal_Secondary).val([eventID]).trigger("change");
+				//Clear layers (removes buffer and parks/refuges selection from last search)
+				map.eachLayer(function (layer) {
+					map.removeLayer(layer);
 				});
-			//populateEventDates(eventID);
-			filterMapData(eventID, false);
-			searchComplete();
-		} else {
-			//if no event selected, warn user with alert
-			// Also accounting for having an event selected but no parkref
-			if (($('#evtSelect_welcomeModal').val() !== null)) {
-				$('.eventSelectAlert').hide();
+				//add the basemap back in 
+				L.esri.basemapLayer('Topographic').addTo(map);
+				//retrieve event details
+				$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
+					.done(function (data) {
+						setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
+					})
+					.fail(function () {
+						console.log("Request Failed. Most likely invalid event name.");
+					});
+				//populateEventDates(eventID);
+				filterMapData(eventID, false);
+				searchComplete();
 			} else {
-				$('.eventSelectAlert').show();
-			}
-		}
-		if (searchResults !== undefined) {
-		} else {
-			$('.parkRefSelectAlert').show();
-		}
-	});
-
-	//listener for submit filters button on filters modal - sets event vars and passes event id to filterMapData function
-	$('#btnSubmitFilters').on('click', function () {
-
-		if ($('#evtSelect_filterModal').val() !== null) {
-			//if event selected, hide welcome modal and begin filter process
-			$('#welcomeModal').modal('hide');
-			var eventID = $('#evtSelect_filterModal').val()[0];
-			//$('#evtSelect_filterModal').val([eventValue]).trigger("change");
-			//retrieve event details
-			for (var i = 0; i < fev.data.events.length; i++) {
-				if (fev.data.events[i].event_id == eventID) {
-					//set currentEventActive boolean var based on event_status_id value
-					setEventVars(fev.data.events[i].event_name, fev.data.events[i].event_id, fev.data.events[i].event_status_id, fev.data.events[i].event_start_date, fev.data.events[i].event_end_date);
+				//if no event selected, warn user with alert
+				// Also accounting for having an event selected but no parkref
+				if (($(evtSelect_Modal_Primary).val() !== null)) {
+					$('.eventSelectAlert').hide();
+				} else {
+					$('.eventSelectAlert').show();
 				}
 			}
-			filterMapData(eventID, false);
-			$('.eventSelectAlert').hide();
-			$('#filtersModal').modal('hide');
-		} else {
-			//if no event selected, warn user with alert
-			//alert("Please choose an event to proceed.")
-			$('.eventSelectAlert').show();
-		}
-	});
+			if (searchResults !== undefined) {
+			} else {
+				$('.parkRefSelectAlert').show();
+			}
+		});
+	}
 
 	$('#print').click(function () {
 		printReport();
@@ -533,7 +537,9 @@ $(document).ready(function () {
 	var layer = L.esri.basemapLayer('Topographic').addTo(map);
 	var layerLabels;
 	L.Icon.Default.imagePath = './images';
-	setSearchAPI();
+	setSearchAPI("search", '#welcomeModal');
+	setSearchAPI("search_filter", '#updateFiltersModal');
+	
 
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
 	map.on('popupopen', function () {
@@ -619,6 +625,7 @@ $(document).ready(function () {
 	var noaaOverlays = {};
 	var fwsOverlays = {};
 	var npsOverlays = {};
+	var doiOverlays = {};
 
 	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 
@@ -634,11 +641,16 @@ $(document).ready(function () {
 	fwsOverlays = {
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;appr": appr,
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Int": int,
+		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Legacy Regions": fwsLegacyRegions,
 	}
 	npsOverlays = {
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;tracts": tracts,
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;bounds": bounds,
 	}
+	doiOverlays = {
+		"<img class='legendSwatch' src='images/doi.png'>&nbsp;DOI Regions": doiRegions,
+	}
+	
 
 	
 	//loop thru layer list and add the legend item to the appropriate heading
@@ -649,6 +661,7 @@ $(document).ready(function () {
 		if (layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if (layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/usfws.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if (layer.Category == 'nps') npsOverlays["<img class='legendSwatch' src='images/nps.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if (layer.Category == 'doi') doiOverlays["<img class='legendSwatch' src='images/doi.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
@@ -671,34 +684,8 @@ $(document).ready(function () {
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
 	interpretedToggle.addTo(map);
-	//var peakCheckbox = document.getElementById("peakCheckbox");
-
-	/*
-	.onclick = function() {
-
-		//var peakCheckbox = document.getElementById("peakCheckbox");
-		if (peakCheckbox.checked == true) {
-			setHide = true;
-			//interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-			//interpretedToggle.addTo(map);
-			//refreshMapData();
-		}
-		else {
-			setHide = false;
-			//interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-			//interpretedToggle.addTo(map);
-			//refreshMapData();
-		}
-		}
-
-	}
-	*/
-
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
 
-	//add checkbox under Peaks layer in legend to toggle labels on and off
-	$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Peak Labels");
-	$('.leaflet-top.leaflet-right').hide();
 
 	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
 	noaaToggle.addTo(map);
@@ -715,6 +702,12 @@ $(document).ready(function () {
 	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
 	npsToggle.addTo(map);
 	$('#npsToggleDiv').append(npsToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
+
+	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	var doiToggle = L.control.layers(null, doiOverlays, { collapsed: false });
+	doiToggle.addTo(map);
+	$('#doiToggleDiv').append(doiToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
 	//overlapping marker spidifier
@@ -805,7 +798,7 @@ $(document).ready(function () {
 			// appearance
 			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
 			width: 500,  // width of the widget [px]
-			placeholder: "Search for a Park or Refuge", // text box placeholder prompt to display when no text is entered
+			placeholder: "Search for a location", // text box placeholder prompt to display when no text is entered
 			/* // search area
 			lat_min       : bounds.getSouth(), // minimum latitude
 			lat_max       : bounds.getNorth(), // maximum latitude
@@ -887,7 +880,7 @@ $(document).ready(function () {
 				console.warn(o.id + ": my 'on_result' callback function - a menu item was selected");
 				searchResults = o;
 				$('#geosearchModal').modal('hide');
-				searchComplete();
+				geosearchComplete();
 			},
 
 			// function to execute when no suggestions are found for the typed text
@@ -942,6 +935,7 @@ $(document).ready(function () {
 		// document.getElementById('dataTable').innerHTML = "";
 
 		var mapPreview = document.getElementById('reviewMap');
+		var legendPreview = document.getElementById('legendImage');
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
 		 */
@@ -969,6 +963,7 @@ $(document).ready(function () {
 
 		// Builds the HTML Table
 		function buildHtmlTable() {
+			$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>")
 			var columns = addAllColumnHeaders(peakTableData);
 
 			for (var i = 0; i < peakTableData.length; i++) {
@@ -1003,6 +998,94 @@ $(document).ready(function () {
 		}
 
 		buildHtmlTable();
+
+		//setting up HWM data for table
+		var hwmTableData = [];
+		var hwmCaptionData = [];
+		for (var i in identifiedMarks) {
+			hwmCaptionData.push({
+				"STN Site No.": identifiedMarks[i].feature.properties.site_no
+			})
+		}
+		for (var i in identifiedMarks) {
+			hwmTableData.push({
+				"STN Site No.": identifiedMarks[i].feature.properties.site_no,
+				"HWM Label": identifiedMarks[i].feature.properties.hwm_label,
+				"Elevation(ft)": identifiedMarks[i].feature.properties.elev_ft,
+				"Vertical Datum": identifiedMarks[i].feature.properties.verticalDatumName,
+				"Vertical Method": identifiedMarks[i].feature.properties.verticalMethodName,
+				"Horizontal Datum": identifiedMarks[i].feature.properties.horizontalDatumName,
+				"Horizontal Method": identifiedMarks[i].feature.properties.horizontalMethodName,
+				//"Approval Status": identifiedMarks[i].feature.properties,
+				"Type": identifiedMarks[i].feature.properties.hwmTypeName,
+				//"Marker": identifiedMarks[i].feature.properties,
+				"Quality": identifiedMarks[i].feature.properties.hwmQualityName,
+				"Waterbody": identifiedMarks[i].feature.properties.waterbody,
+				"Permanent Housing": identifiedMarks[i].feature.properties.sitePermHousing,
+				"County": identifiedMarks[i].feature.properties.countyName,
+				"State": identifiedMarks[i].feature.properties.stateName,
+				"Latitude, Longitude(DD)": identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
+				"Site Description": identifiedMarks[i].feature.properties.siteDescription,
+				"Location Description": identifiedMarks[i].feature.properties.hwm_locationdescription,
+				"Survey Date": identifiedMarks[i].feature.properties.survey_date,
+				"Bank": identifiedMarks[i].feature.properties.bank,
+				"Environment": identifiedMarks[i].feature.properties.hwm_environment,
+				"Flag Date": identifiedMarks[i].feature.properties.flag_date,
+				"Stillwater": identifiedMarks[i].feature.properties.stillwater,
+				"Uncertainty": identifiedMarks[i].feature.properties.uncertainty,
+				"HWM Uncertainty": identifiedMarks[i].feature.properties.hwm_uncertainty
+			})
+		}
+		console.log(hwmTableData)
+		var chunks = [];
+
+		//Messing around with taking chunks of the table data... 
+		$.each(hwmTableData, function (index, value) {
+			//console.log(value)
+			var chunkSize = 11;
+			for (var cols = Object.entries(value); cols.length;)
+			chunks.push(cols.splice(0,chunkSize).reduce( (o,[k,v]) => (o[k] = v,o), {}));
+			//console.log(chunks);
+		});
+		//$.each(chunks, function(index, value) {});
+
+		//build html table for HWMs
+		function buildHwmHtmlTable() {
+			$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>")
+			var columns = addHwmColumnHeaders(hwmTableData);
+
+			for (var i = 0; i < hwmTableData.length; i++) {
+				var row$ = $('<tr/>');
+				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+					var cellValue = hwmTableData[i][columns[colIndex]];
+
+					if (cellValue == null) { cellValue = ""; }
+
+					row$.append($('<td/>').html(cellValue));
+				}
+				$("#hwmDataTable").append(row$);
+			}
+		}
+
+		function addHwmColumnHeaders(hwmTableData) {
+			var columnSet = [];
+			var headerTr$ = $('<tr/>');
+
+			for (var i = 0; i < hwmTableData.length; i++) {
+				var rowHash = hwmTableData[i];
+				for (var key in rowHash) {
+					if ($.inArray(key, columnSet) == -1) {
+						columnSet.push(key);
+						headerTr$.append($('<th/>').html(key));
+					}
+				}
+			}
+			$("#hwmDataTable").append(headerTr$);
+
+			return columnSet;
+		}
+
+		buildHwmHtmlTable();
 
 		setTimeout(() => {
 			let mapPane;
@@ -1134,18 +1217,22 @@ $(document).ready(function () {
 			mapPane.style.left = '';
 			mapPane.style.top = '';
 
+			// Hiding Legend for canvas event
+			$("#legendElement").hide();
+
 			var mapEvent;
 			html2canvas(document.getElementById('mapDiv'), options)
 				.then(function (canvas) {
 					mapEvent = new Event('map_ready');
 					/* canvas[0].drawImage */
-					canvas.style.width = '800px';
+					canvas.style.width = '700px';
 					canvas.style.height = '450px';
 					mapPreview.append(canvas);
 					//mapImage = canvas.get(0).toDataUrl('image/png');
 					pdfMapUrl = canvas.toDataURL('image/png');
 					window.dispatchEvent(mapEvent);
-
+					// Showing Legend once canvas event complete
+					$("#legendElement").show();
 				})
 		}, 3000);
 
@@ -1153,6 +1240,12 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
+
+		// // Get legend for print preview
+		// html2canvas(document.getElementById('printout'))
+		// .then(function (canvas) {
+		// 	legendPreview.append(canvas);
+		// })
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -1180,9 +1273,10 @@ $(document).ready(function () {
 	});
 
 	function showFiltersModal() {
-		$('#filtersModal').modal('show');
+		$('#updateFiltersModal').modal('show');
 	}
 	$('#btnChangeFilters').click(function () {
+		//parks.clearLayers();
 		//update the event select within the filters modal to reflect current event
 		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
@@ -1335,9 +1429,9 @@ $(document).ready(function () {
 		}
 	}).addTo(map);
 
-	function setSearchAPI() {
+	function setSearchAPI (searchTerm, inputModal) {
 		// create search_api widget
-		searchObject = search_api.create("search", {
+		searchObject = search_api.create(searchTerm, {
 
 			// appearance
 			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
@@ -1461,9 +1555,10 @@ $(document).ready(function () {
 
 		// setting buffer style
 		var bufferStyle = {
-			"color": "#9933ff",
-			"weight": 4,
-			"opacity": 0.65
+			"color": "#0000cc",
+			"fillOpacity": 0,
+			"opacity": 0.65,
+			"weight": 4
 		};
 
 		// setting park style
@@ -1570,7 +1665,6 @@ $(document).ready(function () {
 		//if there was a name match with the refuge layer, this will not run
 		setTimeout(() => {
 			if (refCount !== 1) {
-				console.log("made it", refCount);
 				where = "ORGNAME=" + name;
 				fwsInterest = L.esri.featureLayer({
 					useCors: false,
@@ -1646,6 +1740,14 @@ $(document).ready(function () {
 				}
 			}
 
+			//cycling through each HWM to see if inside the buffer
+			for (var i in hwm._layers) {
+				var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
+				var isItInside = turf.booleanPointInPolygon(cords, buffer);
+				if (isItInside) {
+					identifiedMarks.push(hwm._layers[i])
+				}
+			}
 
 			//location popup
 			map.openPopup(
@@ -1657,9 +1759,44 @@ $(document).ready(function () {
 			);
 
 		}, 600);
-		$('#geosearchModal').modal('hide');
+		$(inputModal).modal('hide');
 
 	}
+
+	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
+	function geosearchComplete() {
+		map
+			.fitBounds([ // zoom to location
+				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
+				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
+			]);
+		
+		//location popup
+		map.openPopup(
+			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
+			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
+			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
+		);
+	}
+	//end of search api
+
+
+	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
+	function geosearchComplete() {
+		map
+			.fitBounds([ // zoom to location
+				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
+				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
+			]);
+		
+		//location popup
+		map.openPopup(
+			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
+			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
+			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
+		);
+	}
+	//end of filter search api
 		
 
 	/* legend control */
@@ -1703,7 +1840,16 @@ $(document).ready(function () {
 			USGSRainGages.clearLayers();
 			$('#rtScaleAlert').show();
 		}
-
+		//Remove peak labels and turn off/disable toggle when zoom is less than 8
+		if (map.getZoom() < 8){
+			//Remove labels
+			peak.eachLayer(function (myMarker){
+				myMarker.hideLabel();
+			var checkBox = document.getElementById("peakCheckbox");
+			//Change toggle to 'off' position
+			checkBox.checked = false;
+			});
+		}
 		if (map.getZoom() >= 9) {
 			$('#rtScaleAlert').hide();
 		}
@@ -1781,12 +1927,8 @@ $(document).ready(function () {
 		$('#longitude').html(geographicMapCenter.lng.toFixed(4));
 	});
 
-	//var pdfMap;
-
-
-
 	//Begin data prep for pdf print out
-	var pdfData = [];	
+	var peaksPdfData = [];	
 	function bodyData() {
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
@@ -1796,7 +1938,7 @@ $(document).ready(function () {
 				peakEstimated = "yes"
 			}
 	
-			pdfData.push({
+			peaksPdfData.push({
 				"Site Number": identifiedPeaks[i].feature.properties.site_no,
 				"Description": identifiedPeaks[i].feature.properties.description,
 				"State": identifiedPeaks[i].feature.properties.state,
@@ -1805,7 +1947,7 @@ $(document).ready(function () {
 				"Peak Estimated": peakEstimated
 			});	
 		}
-		return pdfData;
+		return peaksPdfData;
 	}
 
 	function buildTableBody(data, columns) {
@@ -1821,19 +1963,173 @@ $(document).ready(function () {
 		return body;
 	}
 
-	function table(data, columns) {
+	function peakTable(data, columns) {
 		return {
 			table: {	
 				headerRows: 1,
-				widths: ['auto','*','auto','auto','12%','6%','10%'],
+				widths: ['auto','*','auto','auto','auto','auto'],
 				body: buildTableBody(data, columns),
-
 			},
 			layout: 'lightHorizontalLines', 
+			style: 'smaller',
+			margin: [0,0,0,15]
+		};
+	}
+
+	//adding HWM table to pdf report
+	function buildHwmTableBody() {
+		var body = [];	
+		for (var i in identifiedMarks) {
+			var hwmUncertainty = "";
+			var uncertainty = "";
+			if (identifiedMarks[i].feature.properties.hwm_uncertainty == null) {
+				hwmUncertainty = "n/a";
+			} 
+			if (identifiedMarks[i].feature.properties.uncertainty == null) {
+				uncertainty = "n/a";
+			}
+			body.push([
+					{rowSpan:10, style: 'tableHeader', text: 'STN Site No.: ' + identifiedMarks[i].feature.properties.site_no},
+					{text:'HWM Label',style: 'tableHeader'}, identifiedMarks[i].feature.properties.hwm_label, 
+					{text:'Elevation(ft)',style: 'tableHeader'}, identifiedMarks[i].feature.properties.elev_ft
+				],
+				[
+					{},
+					{text:'Vertical Datum, Method',style: 'tableHeader'}, identifiedMarks[i].feature.properties.verticalDatumName + ", " + identifiedMarks[i].feature.properties.verticalMethodName,
+					{text:'Horizontal Datum, Method',style: 'tableHeader'}, identifiedMarks[i].feature.properties.horizontalDatumName + ", " + identifiedMarks[i].feature.properties.horizontalMethodName
+				],
+				[
+					{},
+					{text:'Type',style: 'tableHeader'}, identifiedMarks[i].feature.properties.hwmTypeName, 
+					{text:'Quality',style: 'tableHeader'}, identifiedMarks[i].feature.properties.hwmQualityName
+				],
+				[
+					{},
+					{text:'Waterbody',style: 'tableHeader'},identifiedMarks[i].feature.properties.waterbody, 
+					{text:'Permanent Housing',style: 'tableHeader'},identifiedMarks[i].feature.properties.sitePermHousing
+				],
+				[
+					{},
+					{text:'County',style: 'tableHeader'},identifiedMarks[i].feature.properties.countyName,
+					{text:'State',style: 'tableHeader'},identifiedMarks[i].feature.properties.stateName
+				],
+				[
+					{},
+					{text:'Latitude, Longitude(DD)',style: 'tableHeader'},identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
+					{text:'Site Description',style: 'tableHeader'},identifiedMarks[i].feature.properties.siteDescription
+				],
+				[
+					{},
+					{text:'Location Description',style: 'tableHeader'},identifiedMarks[i].feature.properties.hwm_locationdescription,
+					{text:'Survey Date',style: 'tableHeader'},identifiedMarks[i].feature.properties.survey_date
+				],
+				[
+					{},
+					{text:'Bank',style: 'tableHeader'},identifiedMarks[i].feature.properties.bank,
+					{text:'Environment',style: 'tableHeader'},identifiedMarks[i].feature.properties.hwm_environment
+				],
+				[
+					{},
+					{text:'Flag Date',style: 'tableHeader'},identifiedMarks[i].feature.properties.flag_date,
+					{text:'Stillwater',style: 'tableHeader'},identifiedMarks[i].feature.properties.stillwater
+				],
+				[
+					{},
+					{text:'Uncertainty',style: 'tableHeader'},uncertainty,
+					{text:'HWM Uncertainty',style: 'tableHeader'}, hwmUncertainty
+				]
+			);
+		}
+		return body;
+	}
+
+	function hwmTable() {
+		return {
+			table: {	
+				widths: ['auto','auto','*','auto','*'],
+				body: buildHwmTableBody(),
+			},
+			layout: {
+				hLineWidth: function (i, node) {
+					return (i === 0 || i === node.table.body.length) ? 1 : 1;
+				},
+				vLineWidth: function (i, node) {
+					return (i === 0 || i === node.table.widths.length) ? 1 : 1;
+				},
+				hLineColor: function (i, node) {
+					return (i === 0 || i === node.table.body.length) ? 'gray' : 'gray';
+				},
+				vLineColor: function (i, node) {
+					return (i === 0 || i === node.table.widths.length) ? 'gray' : 'gray';
+				},
+			},
+			style: 'smaller',
+			margin: [0,0,0,15],
+		};
+	}
+	
+	//Begin legend prep to get active layers into legend table for pdf report
+	var getOverlays = [];
+	var srcActiveOverlays = [];
+	var activeOverlays =[];
+	var imageUrls = [];
+
+	function getActiveOverlays() {
+		$.each($('.leaflet-control-layers-overlays'), function(index, overlayGroup) {
+			//console.log(overlayGroup);
+			$.each(overlayGroup.children, function(index, overlayLabel) {
+				//console.log(index, overlayLabel)
+				if ($(overlayLabel.children[0]).is(":checked")) {			
+					getOverlays.push($(overlayLabel.children[1]).text());
+					srcActiveOverlays.push($(overlayLabel.children[1].children).attr("src"));
+					activeOverlays.push({
+						"Image": $(overlayLabel.children[1].children).attr("src").replace('images/',''), 
+						"Layer": ($(overlayLabel.children[1]).text())
+					});
+				}
+			})
+		})
+
+		for (var i in srcActiveOverlays) {
+			function imageToBase64(){
+				console.log("scrActiveOverlays", srcActiveOverlays);
+				var canvas = document.createElement("canvas");
+				var ctx = canvas.getContext("2d");
+				var base_image = new Image();
+				canvas.width = 10;
+				canvas.height = 10;
+				base_image.src = srcActiveOverlays[i];
+				ctx.drawImage(base_image, 0, 0, 10, 10);
+				var dataURL = canvas.toDataURL();
+				//console.log(dataURL);
+				imageUrls.push(dataURL);
+			};
+			imageToBase64();
+		};
+	}
+
+	function legendTableBody() {
+		getActiveOverlays();
+		var body = [];
+		for (var i = 0; i < imageUrls.length && getOverlays.length; i++) {
+			var dataRow = [];
+			dataRow.push({image: imageUrls[i]}, getOverlays[i]);
+			body.push(dataRow);
+		}
+		return body;
+	}
+
+	function legendTable() {
+		return {
+			table: {	
+				body: legendTableBody(),
+			},
+			layout: 'noBorders', 
 		};
 	}
 
 	function printReport() {
+		console.log(buildHwmTableBody())
 		const docDefinition = {
 			pageOrientation: 'landscape',
 			pageMargins: [20, 20, 20, 35],
@@ -1855,13 +2151,34 @@ $(document).ready(function () {
 				}
 			},
 			content: [
-				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				{ image: pdfMapUrl, width: 300, height: 200 },
-				table(bodyData(), ['Site Number','Description', 'State','County','Peak Stage','Peak Estimated']),
+				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0,0,0,10] },
+				//{ image: pdfMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+				{
+					table: {
+						body: [
+							['', ''],
+							[{image: pdfMapUrl, width: 300, height: 200}, legendTable(),]
+						]
+					},
+					layout: 'noBorders',
+					margin: [0,0,0,15]
+				},
+				{ text: 'Peak Summary Data', style: 'subHeader', margin: [0,0,0,5], alignment: 'center' },
+				peakTable(bodyData(), ['Site Number','Description','State','County','Peak Stage','Peak Estimated']),
+				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0,0,0,5], alignment: 'center' },
+				hwmTable(),
 			],
 			styles: {			
 				header: {
 					fontSize: 15,
+					bold: true
+				},
+				tableHeader: {
+					fontSize: 10,
+					bold: true,
+				},
+				subHeader: {
+					fontSize: 12,
 					bold: true
 				},
 				bigger: {
@@ -1921,13 +2238,20 @@ $(document).ready(function () {
 //function for toggling peak labels
 function clickPeakLabels() {
 	var checkBox = document.getElementById("peakCheckbox");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		checkBox.checked = false;
+	}
+	//Display peak labels when toggle is on
 	if (checkBox.checked == true) {
 		peak.eachLayer(function (myMarker) {
 			myMarker.showLabel();
 		});
+	//Remove peak labels when toggle is off
 	} else {
 		peak.eachLayer(function (myMarker){
 			myMarker.hideLabel();
 		});
 	}
   }
+  

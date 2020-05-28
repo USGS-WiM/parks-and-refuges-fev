@@ -57,10 +57,17 @@ $( document ).ready(function() {
         allowClear: false,
         maximumSelectionLength: 1
     });
+<<<<<<< HEAD
     $('.evtSelectRegional').select2({
         placeholder: 'Select event',
         allowClear: false,
         maximumSelectionLength: 3
+=======
+    $('.evtSelect_filter').select2({
+        placeholder: 'Select event',
+        allowClear: false,
+        maximumSelectionLength: 1
+>>>>>>> 8507e6d6a270ba457b4a9fb8b6bff8189c01f069
     });
     $.ajax({
         dataType: 'json',
@@ -86,6 +93,7 @@ $( document ).ready(function() {
             for (var i = 0; i < data.length; i++) {
                 $('.evtSelect').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
                 $('.evtSelectRegional').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
+                $('.evtSelect_filter').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
                 data[i].id = data[i].event_id;
                 fev.data.events.push(data[i]);
             }
