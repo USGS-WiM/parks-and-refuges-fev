@@ -683,15 +683,9 @@ $(document).ready(function () {
 
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
-
-	//interpretedToggle.append(document.getElementById("peakCheckbox"), "Labels");
 	interpretedToggle.addTo(map);
-
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
 
-	//add checkbox under Peaks layer in legend to toggle labels on and off
-	//$('#interpretedToggleDiv').append(document.getElementById("peakCheckbox"), "Labels");
-	//$('.leaflet-top.leaflet-right').hide();
 
 	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
 	noaaToggle.addTo(map);
@@ -2085,6 +2079,7 @@ $(document).ready(function () {
 
 		for (var i in srcActiveOverlays) {
 			function imageToBase64(){
+				console.log("scrActiveOverlays", srcActiveOverlays);
 				var canvas = document.createElement("canvas");
 				var ctx = canvas.getContext("2d");
 				var base_image = new Image();
