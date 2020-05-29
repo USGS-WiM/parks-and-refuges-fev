@@ -269,25 +269,25 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
 
         pointToLayer: function (feature, latlng) {
             markerCoords.push(latlng);
-  
+            var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
            //Create 3 categories for marker size          
             if (feature.properties.peak_stage <= thirdVal) {
                 var marker =             
                 L.marker(latlng, {
                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7,10] })
-                }).bindLabel("Peak: " + feature.properties.peak_stage.toString() + "<br>Site: " +feature.properties.site_no);
+                }).bindLabel("Peak: " + labelText + "<br>Site: " +feature.properties.site_no);
             }
             if (thirdVal < feature.properties.peak_stage <= twoThirdVal) {
                 var marker =             
                 L.marker(latlng, {
                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11,16] })
-                }).bindLabel("Peak: " + feature.properties.peak_stage.toString() + "<br>Site: " +feature.properties.site_no);
+                }).bindLabel("Peak: " + labelText + "<br>Site: " +feature.properties.site_no);
             }
             if (feature.properties.peak_stage > twoThirdVal) {
                 var marker =             
                 L.marker(latlng, {
                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15,22] })
-                }).bindLabel("Peak: " + feature.properties.peak_stage.toString() + "<br>Site: " +feature.properties.site_no);
+                }).bindLabel("Peak: " + labelText + "<br>Site: " +feature.properties.site_no);
             }
             return marker;
         }
