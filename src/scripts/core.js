@@ -537,8 +537,8 @@ $(document).ready(function () {
 	var layer = L.esri.basemapLayer('Topographic').addTo(map);
 	var layerLabels;
 	L.Icon.Default.imagePath = './images';
-	setSearchAPI("search", '#welcomeModal');
-	setSearchAPI("search_filter", '#updateFiltersModal');
+	setSearchAPI("search");
+	setSearchAPI("search_filter");
 	
 
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
@@ -858,13 +858,13 @@ $(document).ready(function () {
 				$(".search-api-menu-item").off("mouseenter").on("mouseenter", function () {
 					var Lat = $(this).data("properties").Lat;
 					var Lon = $(this).data("properties").Lon;
-					suggestion_layer.eachLayer(function (lyr) {
+					/*suggestion_layer.eachLayer(function (lyr) {
 						if (Lat === lyr.feature.properties.Lat && Lon === lyr.feature.properties.Lon) {
 							lyr.setOpacity(1.0).openPopup();
 						} else {
 							lyr.setOpacity(0.4).closePopup();
-						}
-					});
+						} 
+					});*/
 				});
 
 				// close popups and set markers semi-transparent when mouse leaves a menu item
@@ -1349,21 +1349,18 @@ $(document).ready(function () {
 	document.getElementById('thirtyKm').checked = false;
 	// 10 kilometers
 	$('#tenKm').click(function () {
-		console.log('yes');
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
 		fev.vars.currentBufferSelection = 10;
 	});
 	// 20 kilometers
 	$('#twentyKm').click(function () {
-		console.log('yes');
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
 		fev.vars.currentBufferSelection = 20;
 	});
 	// 30 kilometers
 	$('#thirtyKm').click(function () {
-		console.log('yes');
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
 		fev.vars.currentBufferSelection = 30;
@@ -1376,21 +1373,18 @@ $(document).ready(function () {
 	document.getElementById('thirtyKmMap').checked = false;
 	// 10 kilometers
 	$('#tenKmMap').click(function () {
-		console.log('yes');
 		document.getElementById('twentyKmMap').checked = false;
 		document.getElementById('thirtyKmMap').checked = false;
 		fev.vars.currentBufferSelection = 10;
 	});
 	// 20 kilometers
 	$('#twentyKmMap').click(function () {
-		console.log('yes');
 		document.getElementById('tenKmMap').checked = false;
 		document.getElementById('thirtyKmMap').checked = false;
 		fev.vars.currentBufferSelection = 20;
 	});
 	// 30 kilometers
 	$('#thirtyKmMap').click(function () {
-		console.log('yes');
 		document.getElementById('twentyKmMap').checked = false;
 		document.getElementById('tenKmMap').checked = false;
 		fev.vars.currentBufferSelection = 30;
@@ -1429,7 +1423,7 @@ $(document).ready(function () {
 		}
 	}).addTo(map);
 
-	function setSearchAPI (searchTerm, inputModal) {
+	function setSearchAPI (searchTerm) {
 		// create search_api widget
 		searchObject = search_api.create(searchTerm, {
 
@@ -1588,7 +1582,6 @@ $(document).ready(function () {
 				polys = feature.geometry;
 				// flattening the geometry for use in turf
 				flattenedPoly = turf.flatten(polys);
-				console.log(flattenedPoly);
 				regionName = feature.properties.REGION;
 				if (regionName == "PW") {
 					regionName = "Pacific West";
@@ -1630,9 +1623,7 @@ $(document).ready(function () {
 				polys = feature.geometry;
 				// flattening the geometry for use in turf
 				flattenedPoly = turf.flatten(polys);
-				console.log(flattenedPoly);
 				refCount = 1;
-				console.log("refCount", refCount);
 				regionName = feature.properties.FWSREGION;
 				if (regionName == "1") {
 					regionName = "Pacific";
@@ -1678,9 +1669,7 @@ $(document).ready(function () {
 						polys = feature.geometry;
 						// flattening the geometry for use in turf
 						flattenedPoly = turf.flatten(polys);
-						console.log(flattenedPoly);
 						refCount = 1;
-						console.log("refCount", refCount);
 						regionName = feature.properties.FWSREGION;
 					},
 					style: parkStyle
@@ -1714,8 +1703,6 @@ $(document).ready(function () {
 					}
 				}
 			}
-
-			console.log(buffer);
 
 			// adding the buffer to the map
 			bufferPoly = L.geoJson(buffer, {
@@ -1759,7 +1746,7 @@ $(document).ready(function () {
 			);
 
 		}, 600);
-		$(inputModal).modal('hide');
+		//$(inputModal).modal('hide');
 
 	}
 
@@ -2073,10 +2060,10 @@ $(document).ready(function () {
 	var srcActiveOverlays = [];
 	var activeOverlays =[];
 	var imageUrls = [];
+	
 
 	function getActiveOverlays() {
 		$.each($('.leaflet-control-layers-overlays'), function(index, overlayGroup) {
-			//console.log(overlayGroup);
 			$.each(overlayGroup.children, function(index, overlayLabel) {
 				//console.log(index, overlayLabel)
 				if ($(overlayLabel.children[0]).is(":checked")) {			

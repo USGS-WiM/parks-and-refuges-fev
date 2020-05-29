@@ -394,15 +394,15 @@
                                 <!--</div>-->
                             <!--</div>-->
                             <div class="form-group" id="evtNameForm_regionalModal">
-                                <label for="evtSelect_regionalModal"  class="col-sm-2 control-label filterForms">Event: </label>
-                                <div class="col-sm-10 filterForms">
-                                    <select id="evtSelect_regionalModal" class="evtSelectRegional" multiple="multiple" style="width: 100%"></select>
-                                </div>
-                            </div>
-                            <div class="form-group" id="evtNameForm_regionalModal">
                                 <label for="regionSelect_regionalModal"  class="col-sm-2 control-label filterForms">Region: </label>
                                 <div class="col-sm-10 filterForms">
                                     <select id="regionSelect_regionalModal" class="regionSelect" multiple style="width: 100%"></select>
+                                </div>
+                            </div>
+                            <div class="form-group" id="evtNameForm_regionalModal">
+                                <label for="evtSelect_regionalModal"  class="col-sm-2 control-label filterForms">Event: </label>
+                                <div class="col-sm-10 filterForms">
+                                    <select id="evtSelect_regionalModal" class="evtSelectRegional" multiple="multiple" style="width: 100%"></select>
                                 </div>
                             </div>
                         </form>
@@ -685,7 +685,7 @@
                     </div>
                     <div id="mapLayersPanel" class="panel-collapse collapse"  aria-labelledby="mapLayerHeader">
                          <div class="panel-body collapse in">
-                           <div id="legendCollapsePanel" class="panel-collapse " role="tabpanel">
+                            <div id="legendCollapsePanel" class="panel-collapse" role="tabpanel">
                                 <div id="legendDivPanel" class="panel-body legend-panel-body">
                                    <!-- <div id="printout"> -->
                                     <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at zoom level 9 and above. Please zoom in to view.</div>
@@ -869,11 +869,27 @@
         </div>
         <div id="mapContainer" class="col-md-9 col-lg-10 col-md-offset-3 col-lg-offset-2 no-col-padding keepit100">
             <div id="mapDiv">
-
-                <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"><i class="fa fa-lg fa-cog fa-spin fa-fw"></i><span>Loading Layers...</span></div>
-
-                
+                <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"><i class="fa fa-lg fa-cog fa-spin fa-fw"></i><span>Loading Layers...</span></div>  
             </div>
+
+            <!--Start of Active Layers panel-->
+            <div id="legendElement" class="panel panel-default legendClass" data-html2canvas-ignore>
+                <div id="legendHeading" class=" legendHeading" role="tab">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" style="text-decoration: none"  href="#legendCollapse" aria-expanded="true" aria-controls="collapseOne">
+                            <span class="glyphicon glyphicon-list"></span>
+                            Active Layers
+                        </a>
+                    </h4>
+                </div>
+                <div id="legendCollapse" class="panel-collapse " role="tabpanel">
+                    <div id="legendDiv" class="panel-body legend-panel-body">
+                        <!--insert legend elements here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--End of Active Layers panel-->
 
             <div id="legendElement" class="panel panel-default legendClass" data-html2canvas-ignore>
                 <div id="legendHeading" class=" legendHeading" role="tab">
