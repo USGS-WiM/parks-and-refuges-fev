@@ -228,7 +228,6 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
 
             //Create an array of each peak value
             peakArr.push(feature.properties.peak_stage);
-            console.log("found peak array");
 
             //find min and max peak values 
             maxPeak = Math.max(...peakArr);
