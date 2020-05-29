@@ -69,20 +69,20 @@ $(document).ready(function () {
         var minPeakStage;
 
         // setting buffer style
-		var bufferStyle = {
-			"color": "#0000cc",
-			"fillOpacity": 0,
-			"opacity": 0.65,
-			"weight": 2
-		};
-
-		// setting park style
-		var parkStyle = {
-			"color": "#0000cc",
-			"weight": 2,
-			"opacity": 100
+        var bufferStyle = {
+            "color": "#0000cc",
+            "fillOpacity": 0,
+            "opacity": 0.65,
+            "weight": 2
         };
-        
+
+        // setting park style
+        var parkStyle = {
+            "color": "#0000cc",
+            "weight": 2,
+            "opacity": 100
+        };
+
         var regionStyle = {
             "color": "#9933ff",
             "weight": 2,
@@ -114,7 +114,7 @@ $(document).ready(function () {
         regionLayerGroup.addLayer(regionBoundaries);
 
 
-
+        // TODO: explore options to avoid this timeout. dealing with motely crew of services that is making it difficult atm
         setTimeout(() => {
             // Identify parks/refuges in event in regions
             var allParks;
@@ -126,34 +126,26 @@ $(document).ready(function () {
                 fields: ["*"]
             });
 
-            // lopping through each poly of the regional poly since esri-leaflet can't handle multipolygons at the version we're at
+
 
             function myFunction(item, index) {
                 document.getElementById("demo").innerHTML += index + ":" + item + "<br>";
             }
 
+            // lopping through each poly of the regional poly since esri-leaflet can't handle multipolygons at the version we're at
             for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {
                 allParks.query()
                     .within(flattenedRegionalPoly.features[p])
                     .run(function (error, featureCollection, response) {
                         if (featureCollection.features.length !== 0) {
                             regionParksFC = featureCollection;
-                            L.geoJson(regionParksFC, {style: parkStyle}).addTo(regionalMap);
+                            L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
                             getbuffers();
                         }
                     });
-                //regionParksLayerGroup.addLayer(identifiedParks);
             }
 
-            // optional, slightly faster route for region/parks query. uses region property in esri service, jot the doi region
-            /* var regionParksFC;
-            allParks.query()
-                .where("REGION='SE'")
-                .run(function (error, featureCollection, response) {
-                    regionParksFC = featureCollection;
-                    getbuffers();
-                }); */
-
+            // getting the park buffers base on the buffer size selection value
             function getbuffers() {
                 if (regionParksFC !== undefined) {
                     for (var p = 0; p < regionParksFC.features.length; p++) {
@@ -163,12 +155,12 @@ $(document).ready(function () {
                         bufferedPolys.push(buffered);
                     }
                     console.log('buffered polys' + bufferedPolys);
-                    L.geoJson(bufferedPolys, {style: bufferStyle}).addTo(regionalMap);
+                    L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
                     getEventSpecificData();
                 }
-
             }
 
+            // looping through each event and sensor data
             function getEventSpecificData() {
                 for (var e = 0; e < selectedEvents.length; e++) {
                     // Getting event name
@@ -184,7 +176,7 @@ $(document).ready(function () {
                         eventName = output.event_name;
                     });
 
-                    // fucntion 
+                    // function for getting the event data
                     function getEventName(handleData) {
                         var data;
                         $.ajax({
@@ -200,51 +192,18 @@ $(document).ready(function () {
                         });
                     }
 
-                    getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + peaksQueryString, regionalPeakMarkerIcon);
-
                     // PEAKS
-
-                    // resetting peak url
-                    /* peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.json?Event=";
-                    peaksURL = peaksURL + selectedEvents[i];
-     
-                    getData(function (output) {
-     
-                        // find min/max peak stage values
-                        maxPeakStage = Math.max.apply(Math, output.map(function (o) { return o.peak_stage; }));
-                        minPeakStage = Math.min.apply(Math, output.map(function (o) { return o.peak_stage; }));
-                        console.log('output:', output);
-                    });
-     
-                    // function 
-                    function getData(handleData) {
-                        var data;
-                        $.ajax({
-                            dataType: "json",
-                            url: peaksURL,
-                            async: false,
-                            data: data,
-                            success: function (data) {
-                                handleData(data)
-                            },
-                            error: function (error) {
-                                console.log('Error processing the JSON. The error is:' + error);
-                            }
-                        });
-                    } */
-
+                    getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + peaksQueryString, regionalPeakMarkerIcon);
 
                     // HWMS
 
                     // SENSORS & INSTRUMENTS
 
-                    // regionalMap.removeLayer(regionBoundaries);
                 }
             }
-            // looping through each event select and getting sensor data
         }, 600);
 
-
+        // creating markers for peaks
         function getPeaks(url, markerIcon) {
             //increment layerCount
             layerCount++;
@@ -259,19 +218,15 @@ $(document).ready(function () {
                     return marker;
                 },
 
+                // leaving cause we might need this
                 /* onEachFeature: function (feature, latlng) {
                     //add marker to overlapping marker spidifier
                     oms.addMarker(latlng);
                 } */
-
             });
-            //currentMarker.bindPopup("water").openPopup();
-            //currentMarker.bindToolTip("peakflow");
-            //map.openPopup("Peak");
 
 
             $.getJSON(url, function (data) {
-
                 if (data.length == 0) {
                     console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
                     return
@@ -302,6 +257,7 @@ $(document).ready(function () {
 
                     // function to get only peaks within park buffer
                     setTimeout(() => {
+                        // looping through each park buffer
                         for (var p = 0; p < bufferedPolys.length; p++) {
                             var buffer = bufferedPolys[p];
 
@@ -309,45 +265,23 @@ $(document).ready(function () {
                             if (buffer.geometry.type === "MultiPolygon") {
                                 var feat;
 
-                                buffer.geometry.coordinates.forEach(function(coords){
-                                   feat={'type':'Polygon','coordinates':coords};
-                                   if (feat !== undefined) {
-                                    var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
-                                    console.log(isItInside);
-                                    // if true add it to an array containing all the 'true' regionalPeak
-                                    if (isItInside) {
-                                        //peaksWithinBuffer.push(regionalPeak._layers[i]);
-                                        regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                buffer.geometry.coordinates.forEach(function (coords) {
+                                    feat = { 'type': 'Polygon', 'coordinates': coords };
+                                    if (feat !== undefined) {
+                                        var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
+                                        // if true add it to an array containing all the 'true' regionalPeaks
+                                        if (isItInside) {
+                                            regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                        }
                                     }
-                                 }
-                                    }
-                                 );
-                                
-                                 
-                                 
-
-                                /* var polysCount = buffer.geometry.coordinates.length;
-                                for (var poly = 0; poly < buffer.geometry.coordinates.length; poly++) {
-                                    // not cycling through if we're on the last one
-                                    if (poly === (polysCount - 1)) {
-
-                                    } else {
-                                        // getting the index of the next feature to use in the union
-                                        var nextFeatureIndex = poly + 1;
-                                        var nextFeature = buffer.geometry.coordinates[nextFeatureIndex];
-
-                                        // unifying or merging the buffer
-                                        buffer = turf.union(buffer, nextFeature);
-                                    }
-
-                                } */
+                                });
                             }
-                            console.log(p);
+
+                            // looping through the peaks and identifying ones that are within current park poly
                             for (var i in regionalPeak._layers) {
                                 var cords = ([regionalPeak._layers[i]._latlng.lng, regionalPeak._layers[i]._latlng.lat]);
 
                                 var isItInside = turf.booleanPointInPolygon(cords, buffer, { ignoreBoundary: true });
-                                console.log(isItInside);
                                 // if true add it to an array containing all the 'true' regionalPeak
                                 if (isItInside) {
                                     //peaksWithinBuffer.push(regionalPeak._layers[i]);
@@ -357,45 +291,12 @@ $(document).ready(function () {
                         }
                     });
 
-                    function fixMultipolys(buffer) {
-
-
-                    }
-
                     //regionalMap.removeLayer(regionalPeak);
                     peaksWithinBuffer.addTo(regionalMap);
-
-
-                    /* for (var i in regionalPeak._layers) {
-        
-                        // formatting point for turf
-                        var cords = ([regionalPeak._layers[i]._latlng.lng, regionalPeak._layers[i]._latlng.lat]);
-                        for (var p in regionParksFC.features) {
-                            var buffer = regionParksFC.features[p];
-                            var isItInside = turf.booleanPointInPolygon(cords, buffer);
-         
-                            // if true add it to an array containing all the 'true' regionalPeak
-                            if (isItInside) {
-                                //peaksWithinBuffer.push(regionalPeak._layers[i]);
-                                regionalPeak._layers[i].addTo(peaksWithinBuffer);
-                            }
-                        }      
-                    }
-                    peaksWithinBuffer.addTo(regionalMap);   */
                 }
-
-                // need to find out which parks have peaks within their buffers
-
-
-
-
             });
-
-
         }
-
     });
 
 });
 
-// will have to somehow use turf to identify park polys within the selected region poly
