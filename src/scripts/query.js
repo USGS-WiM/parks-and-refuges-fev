@@ -290,8 +290,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                 }).bindLabel("Peak: " + feature.properties.peak_stage.toString() + "<br>Site: " +feature.properties.site_no);
             }
             return marker;
-        }
-        
+        }    
     });
 
     $.getJSON(url, function (data) {
@@ -319,7 +318,6 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             }
             createPeakArray.addData(data);
             currentMarker.addData(data);
-            
             currentMarker.eachLayer(function (layer) {
                 layer.addTo(peak);
             });

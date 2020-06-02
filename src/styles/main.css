@@ -1189,6 +1189,11 @@ input[type='checkbox']{
     border: 1px solid transparent;
 }
 
+.mapSymbology{
+    text-align: left;
+    padding: 10px;
+}
+
 
 .modal-body .panel-default{
     border: none !important;

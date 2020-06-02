@@ -616,6 +616,7 @@ $(document).ready(function () {
 		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
 		"<img class='legendSwatch' src='images/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
 	};
+	
 
 	
 	//define observed overlay and interpreted overlay, leave blank at first
@@ -634,10 +635,11 @@ $(document).ready(function () {
 		div.innerHTML += "No Active Advisories";
 	} else {
 		noaaOverlays = {
-			"<img class='legendSwatch' src='images/noaa.png'>&nbsp;NOAA Tropical Cyclone Forecast Track": noaaService
+			"NOAA Tropical Cyclone Forecast Track": noaaService
 		};
 	}
 
+	/*
 	fwsOverlays = {
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;appr": appr,
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Int": int,
@@ -650,18 +652,17 @@ $(document).ready(function () {
 	doiOverlays = {
 		"<img class='legendSwatch' src='images/doi.png'>&nbsp;DOI Regions": doiRegions,
 	}
+	*/
 	
-
-	
-	//loop thru layer list and add the legend item to the appropriate heading
+	//loop thru layer list and add the map layer item to the appropriate heading
 	$.each(fev.layerList, function (index, layer) {
-		if (layer.Category == 'real-time') realTimeOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
-		if (layer.Category == 'observed') observedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
-		if (layer.Category == 'interpreted') interpretedOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-		if (layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-		if (layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/usfws.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-		if (layer.Category == 'nps') npsOverlays["<img class='legendSwatch' src='images/nps.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
-		if (layer.Category == 'doi') doiOverlays["<img class='legendSwatch' src='images/doi.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		//if (layer.Category == 'real-time') realTimeOverlays[layer.Name] = window[layer.ID];
+		if (layer.Category == 'observed') observedOverlays[layer.Name] = window[layer.ID];
+		if (layer.Category == 'interpreted') interpretedOverlays[layer.Name] = window[layer.ID];
+		if (layer.Category == 'noaa') noaaOverlays[layer.Name] = window[layer.ID];
+		if (layer.Category == 'fws') fwsOverlays[layer.Name] = window[layer.ID];
+		if (layer.Category == 'nps') npsOverlays[layer.Name] = window[layer.ID];
+		if (layer.Category == 'doi') doiOverlays[layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
@@ -709,6 +710,25 @@ $(document).ready(function () {
 	doiToggle.addTo(map);
 	$('#doiToggleDiv').append(doiToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
+
+	
+	$('#PeakSummarySymbology').append("<img class='legendSwatch' src='images/peak.png'></img>&nbsp;" + "Peak Summary");
+	$('#streamGageSymbology').append("<img class='legendSwatch' src='images/nwis.png'></img>&nbsp;" + "Real-time Stream Gage");
+	$('#rainGageSymbology').append("<img class='legendSwatch' src='images/rainIcon.png'></img>&nbsp;" + "Real-time Rain Gage");
+	$('#barometricSymbology').append("<img class='legendSwatch' src='images/baro.png'></img>&nbsp;" + "Barometric Pressure Sensor");
+	$('#stormTideSymbology').append("<img class='legendSwatch' src='images/stormtide.png'></img>&nbsp;" + "Storm Tide Sensor");
+	$('#meteorlogicalSymbology').append("<img class='legendSwatch' src='images/met.png'></img>&nbsp;" + "Meteorlogical Sensor");
+	$('#waveHeightSymbology').append("<img class='legendSwatch' src='images/waveheight.png'></img>&nbsp;" + "Wave Height Sensor");
+	$('#highWaterSymbology').append("<img class='legendSwatch' src='images/hwm.png'></img>&nbsp;" + "High Water Mark");
+	$('#parkTractsSymbology').append("Park Tracts");
+	$('#parkBoundsSymbology').append("Park Boundaries");
+	$('#approvedFWSSymbology').append("Approved Aquisition Boundaries");
+	$('#interestFWSSymbology').append("Interest Boundaries");
+	$('#doiSymbology').append("DOI Regions");
+	$('#noaaCycloneSymbology').append("NOAA Tropical Cyclone Forecast Track");
+
+	
+
 
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
@@ -1784,7 +1804,40 @@ $(document).ready(function () {
 		);
 	}
 	//end of filter search api
-		
+
+
+
+
+
+	//Start of code to delete
+	var arr = new Array ();
+
+	var layerLegend = L.control({position: 'bottomleft'});
+	
+	layerLegend.onAdd = function (map) {
+	var div = L.DomUtil.create('div', 'legend');
+	div.innerHTML +=
+	'<b>Legende</b></br>'+test();
+	return div;
+	};
+	
+	map.on('overlayadd', function (arr, eventLayer) {
+			arr.push(eventLayer.name);
+			layerLegend.addTo(map); 
+	}
+	);
+	
+	function test (arr) {
+		for (var i = 0; i < arr.length; i++) {
+		console.log(arr[i]);
+		return arr[i];
+	  }};
+	  //end of code to delete
+
+
+
+
+
 
 	/* legend control */
 	$('#legendButtonNavBar, #legendButtonSidebar').on('click', function () {
@@ -2094,6 +2147,8 @@ $(document).ready(function () {
 			imageToBase64();
 		};
 	}
+
+
 
 	function legendTableBody() {
 		getActiveOverlays();
