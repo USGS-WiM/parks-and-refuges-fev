@@ -710,11 +710,17 @@ $(document).ready(function () {
 	doiToggle.addTo(map);
 	$('#doiToggleDiv').append(doiToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
-
 	
+	//Get layer name and symbology for legend
+	// ( _____ ).onClick: if ( ________ ) is checked {
 	$('#PeakSummarySymbology').append("<img class='legendSwatch' src='images/peak.png'></img>&nbsp;" + "Peak Summary");
+
 	$('#streamGageSymbology').append("<img class='legendSwatch' src='images/nwis.png'></img>&nbsp;" + "Real-time Stream Gage");
+	
+	if (map.hasLayer(USGSrtGages)) {
 	$('#rainGageSymbology').append("<img class='legendSwatch' src='images/rainIcon.png'></img>&nbsp;" + "Real-time Rain Gage");
+	}
+
 	$('#barometricSymbology').append("<img class='legendSwatch' src='images/baro.png'></img>&nbsp;" + "Barometric Pressure Sensor");
 	$('#stormTideSymbology').append("<img class='legendSwatch' src='images/stormtide.png'></img>&nbsp;" + "Storm Tide Sensor");
 	$('#meteorlogicalSymbology').append("<img class='legendSwatch' src='images/met.png'></img>&nbsp;" + "Meteorlogical Sensor");
@@ -726,6 +732,93 @@ $(document).ready(function () {
 	$('#interestFWSSymbology').append("Interest Boundaries");
 	$('#doiSymbology').append("DOI Regions");
 	$('#noaaCycloneSymbology').append("NOAA Tropical Cyclone Forecast Track");
+	//End of - get layer name and symbology for legend
+
+	//$('.btn-group input[type="checkbox"]').prop('checked', false);
+
+/*
+	var findCheckbox1 = $("div.legendDivPanel").find("input");
+	console.log("findCheckbox1", findCheckbox1);
+
+	var findCheckbox2 = $("div.legendDivPanel").find("input");
+	console.log("findCheckbox2", findCheckbox2);
+
+	var findCheckbox3 = $("div").find("dev, input");
+	console.log("findCheckbox3", findCheckbox3);
+
+	var findCheckbox4 = $("div").find("dev, input").css("checkbox");
+	console.log("findCheckbox4", findCheckbox4);
+
+	var findCheckbox5 = $("div").find("div").css("type", "checkbox");
+	console.log("findCheckbox5", findCheckbox5);
+	*/
+
+	var findCheckbox6 = $("div#legendDivPanel").find("div");
+	console.log("findCheckbox6", findCheckbox6);
+
+	/*
+	var findCheckbox7 = $("div").find("div").css("type", "checkbox");
+	console.log("findCheckbox7", findCheckbox7);
+	
+	var findCheckbox8 = $("div#interpretedToggleDiv").find("div.leaflet-control-layers-overlays.checkbox");
+	console.log("findCheckbox8", findCheckbox8);
+
+	var findCheckbox9 = $("div#interpretedToggleDiv").find("div.leaflet-control-layers-overlays");
+	console.log("findCheckbox9", findCheckbox9);
+
+	var findCheckbox10 = $("input").find("input.leaflet-control-layers-selector");
+	console.log("findCheckbox10", findCheckbox10);
+
+	var findCheckbox11 = $("input").find("input.leaflet-control-layers-selector");
+	console.log("findCheckbox11", findCheckbox11);
+
+	var findCheckbox12 = $("input").find("input.leaflet-control-layers-selector").prevObject;
+	console.log("findCheckbox12", findCheckbox12);
+
+	var findCheckbox13 = $("input").find("input.type");
+	console.log("findCheckbox13", findCheckbox13);
+	*/
+
+	//Find code under observedToggleDiv
+	var findCheckbox14 = $("div#observedToggleDiv").find("div");
+	//console.log("findCheckbox14", findCheckbox14);
+	var findOverlays = findCheckbox14[3];
+
+
+	//ATTEMPT 1
+	var findOverlaysInput = $(findOverlays).find("input");
+	var findBaro = findOverlaysInput[0];
+	//console.log("findBaro = ", findBaro);
+	var findStorm = findOverlaysInput[1];
+	//console.log("findStorm = ", findStorm);
+	var findMet = findOverlaysInput[2];
+	//console.log("findMet = ", findMet);
+	var findWave = findOverlaysInput[3];
+	//console.log("findWave = ", findWave);
+	var findHWM = findOverlaysInput[4];
+	//console.log("findHWM = ", findHWM);
+
+	//console.log("is baro checked?", findBaro.checked);
+
+	/////////////////////////////
+
+	//ATTEMPT 2
+	var findSpan = $(findOverlays).find("span");
+	console.log("findSpan", findSpan);
+	var findSpanContext = findSpan.context;
+	console.log("findSpanContext", findSpanContext);
+	var findLabel = $(findSpanContext).find("label");
+	console.log("findLabel", findLabel);
+	var findLabel_Baro = findLabel[0];
+	console.log("findLabel_Baro", findLabel_Baro);
+	
+	
+	var findLabelInput = $(findSpanContext).find("input");
+	console.log("findLabelInput", findLabelInput);
+
+
+
+	
 
 	
 
@@ -1806,39 +1899,6 @@ $(document).ready(function () {
 	//end of filter search api
 
 
-
-
-
-	//Start of code to delete
-	var arr = new Array ();
-
-	var layerLegend = L.control({position: 'bottomleft'});
-	
-	layerLegend.onAdd = function (map) {
-	var div = L.DomUtil.create('div', 'legend');
-	div.innerHTML +=
-	'<b>Legende</b></br>'+test();
-	return div;
-	};
-	
-	map.on('overlayadd', function (arr, eventLayer) {
-			arr.push(eventLayer.name);
-			layerLegend.addTo(map); 
-	}
-	);
-	
-	function test (arr) {
-		for (var i = 0; i < arr.length; i++) {
-		console.log(arr[i]);
-		return arr[i];
-	  }};
-	  //end of code to delete
-
-
-
-
-
-
 	/* legend control */
 	$('#legendButtonNavBar, #legendButtonSidebar').on('click', function () {
 		$('#legend').toggle();
@@ -2113,12 +2173,11 @@ $(document).ready(function () {
 	var srcActiveOverlays = [];
 	var activeOverlays =[];
 	var imageUrls = [];
-	
 
 	function getActiveOverlays() {
 		$.each($('.leaflet-control-layers-overlays'), function(index, overlayGroup) {
 			$.each(overlayGroup.children, function(index, overlayLabel) {
-				//console.log(index, overlayLabel)
+				//console.log(index, overlayLabel)Y
 				if ($(overlayLabel.children[0]).is(":checked")) {			
 					getOverlays.push($(overlayLabel.children[1]).text());
 					srcActiveOverlays.push($(overlayLabel.children[1].children).attr("src"));
