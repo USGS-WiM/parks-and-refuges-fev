@@ -726,12 +726,12 @@ $(document).ready(function () {
 	$('#meteorlogicalSymbology').append("<img class='legendSwatch' src='images/met.png'></img>&nbsp;" + "Meteorlogical Sensor");
 	$('#waveHeightSymbology').append("<img class='legendSwatch' src='images/waveheight.png'></img>&nbsp;" + "Wave Height Sensor");
 	$('#highWaterSymbology').append("<img class='legendSwatch' src='images/hwm.png'></img>&nbsp;" + "High Water Mark");
-	$('#parkTractsSymbology').append("Park Tracts");
-	$('#parkBoundsSymbology').append("Park Boundaries");
-	$('#approvedFWSSymbology').append("Approved Aquisition Boundaries");
-	$('#interestFWSSymbology').append("Interest Boundaries");
-	$('#doiSymbology').append("DOI Regions");
-	$('#noaaCycloneSymbology').append("NOAA Tropical Cyclone Forecast Track");
+	$('#parkTractsSymbology').append("<img class='squareDiv parkTractsColor'></img>" + "Park Tracts");
+	$('#parkBoundsSymbology').append("<img class='squareDiv parkBoundsColor'></img>" + "Park Boundaries");
+	$('#approvedFWSSymbology').append("<img class='squareDiv approvedAquiColor'></img>" + "Approved Aquisition Boundaries");
+	$('#interestFWSSymbology').append("Interest Boundaries" + "<br>" + "<img class='squareDiv federalFeeColor'></img>" + "Federal Land (Fee)" + "<br>" + "<img class='squareDiv federalLessFeeColor'></img>" + "Federal Land (Less than Fee)" + "<br>" + "<img class='squareDiv publicColor'></img>" + "Public" + "<br>" + "<img class='squareDiv privateColor'></img>" + "Private" + "<br>" + "<img class='squareDiv otherFederalColor'></img>" + "Other Federal Land" + "<br>" + "<img class='squareDiv aquisitionColor'></img>" + "Aquisition Deferred" + "<br>" + "<img class='squareDiv noInfoColor'></img>" + "No information");
+	$('#doiSymbology').append("<img class='squareDiv doiRegionsColor'></img>" + "DOI Regions");
+	$('#noaaCycloneSymbology').append("<img class='squareDiv parksColor'></img>" + "NOAA Tropical Cyclone Forecast Track");
 	//End of - get layer name and symbology for legend
 
 	//$('.btn-group input[type="checkbox"]').prop('checked', false);
@@ -811,7 +811,6 @@ $(document).ready(function () {
 	console.log("findLabel", findLabel);
 	var findLabel_Baro = findLabel[0];
 	console.log("findLabel_Baro", findLabel_Baro);
-	
 	
 	var findLabelInput = $(findSpanContext).find("input");
 	console.log("findLabelInput", findLabelInput);
