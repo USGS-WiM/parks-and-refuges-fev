@@ -9,7 +9,8 @@ var parksInRegion = [];
 var regionBoundaries;
 var flattenedRegionalPoly;
 var regionLayerGroup = L.layerGroup();
-var regionParksLayerGroup = L.layerGroup();
+var regionParksLayerGroup = L.featureGroup();
+var regionParks = [];
 var where = "";
 var identifiedParks = [];
 var peaksWithinBuffer = L.featureGroup();
@@ -20,7 +21,12 @@ var parksWithPeaks = [];
 var executed = false;
 var regionalPeak = L.layerGroup();
 var parkPeaks = L.layerGroup();
-var regionalPeakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var regionalHWMs = L.layerGroup();
+var parkHWMs = L.layerGroup();
+var regionalPeakMarkerIcon = L.icon({ className: 'regionalPeakMarker', iconUrl: 'images/peak.png', iconAnchor: [11, 14], popupAnchor: [0, 2] });
+var regionalHWMPeakMarkerIcon = L.icon({ className: 'regionalHWMMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+
+var regionParksFC;
 
 var peakTableData = [];
 var hwmTableData = [];
@@ -190,6 +196,30 @@ $(document).ready(function () {
                 document.getElementById("demo").innerHTML += index + ":" + item + "<br>";
             }
 
+            /* function doHomework(subject, callback) {
+                if (flattenedRegionalPoly !== undefined) {
+                    for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {
+                        allSites.query()
+                            .within(flattenedRegionalPoly.features[p])
+                            .run(function (error, featureCollection, response) {
+                                if (featureCollection.features.length !== 0) {
+                                    regionParksFC = featureCollection;
+                                    regionParksLayerGroup.addLayer(featureCollection);
+                                    //L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
+                                    // getbuffers();
+                                }
+                            });
+                        }
+                }
+                callback();
+              }
+              
+              doHomework('math', function() {
+                alert('Finished my homework');
+                console.log(regionParksLayerGroup);
+                regionParksLayerGroup.addTo(regionalMap);
+              }); */
+
             // lopping through each poly of the regional poly since esri-leaflet can't handle multipolygons at the version we're at
             if (flattenedRegionalPoly !== undefined) {
                 for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {
@@ -198,12 +228,21 @@ $(document).ready(function () {
                         .run(function (error, featureCollection, response) {
                             if (featureCollection.features.length !== 0) {
                                 regionParksFC = featureCollection;
-                                L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
-                                getbuffers();
+                                regionParks.push(featureCollection);
+                                //L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
+                                // getbuffers();
                             }
                         });
-                }
+                    }
             }
+            setTimeout(() => {
+                console.log(regionParksLayerGroup);
+                regionParksLayerGroup.addLayer(regionParks[0]);
+                //L.geoJson(regionParksLayerGroup, { style: parkStyle }).addTo(regionalMap);
+                regionParksLayerGroup.addTo(regionalMap);
+                /* regionalMap.addLayer(regionParksLayerGroup); */
+            }, 5000);
+            
 
 
             // getting the park buffers base on the buffer size selection value
@@ -228,7 +267,7 @@ $(document).ready(function () {
                     }
                     console.log('buffered polys' + bufferedPolys);
                     L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
-                    getEventSpecificData();
+                    
                 }
             }
 
@@ -242,7 +281,7 @@ $(document).ready(function () {
                     eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
                     eventURL = eventURL + selectedEvents[e] + '.json';
                     parksInEvent = [];
-                    var peaksQueryString = "?Event=" + selectedEvents[e] + "&States=&County=&StartDate=undefined&EndDate=undefined";
+                    var queryString = "?Event=" + selectedEvents[e] + "&States=&County=&StartDate=undefined&EndDate=undefined";
 
                     getEventName(function (output) {
                         eventName = output.event_name;
@@ -265,9 +304,10 @@ $(document).ready(function () {
                     }
 
                     // PEAKS
-                    getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + peaksQueryString, regionalPeakMarkerIcon);
+                    getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon);
 
                     // HWMS
+                    getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalHWMPeakMarkerIcon);
 
                     // SENSORS & INSTRUMENTS
 
@@ -282,6 +322,22 @@ $(document).ready(function () {
             layerCount++;
             //var maxPeak = Math.max(feature.properties.peak_stage);
             regionalPeak.clearLayers();
+            var currentMarker = L.geoJson(false, {
+                pointToLayer: function (feature, latlng) {
+                    var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
+                    markerCoords.push(latlng);
+                    var marker = L.marker(latlng, {
+                        icon: markerIcon
+                    }).bindLabel("Peak: " + labelText);
+                    return marker;
+                },
+
+                // leaving cause we might need this
+                /* onEachFeature: function (feature, latlng) {
+                    //add marker to overlapping marker spidifier
+                    oms.addMarker(latlng);
+                } */
+            });
             var currentMarker = L.geoJson(false, {
                 pointToLayer: function (feature, latlng) {
                     var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
@@ -345,11 +401,12 @@ $(document).ready(function () {
                                         var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
                                         // if true add it to an array containing all the 'true' regionalPeaks
                                         if (isItInside) {
+                                            var landSelection = selectedLandType[0] === "refuges" ? buffer.properties.CMPXNAME : buffer.properties.PARKNAME; 
                                             regionalPeak._layers[i].addTo(peaksWithinBuffer);
                                             parksWithPeaks.push({
-                                                "park_name": buffer.properties.PARKNAME,
+                                                "site_name": landSelection,
                                                 data: {
-                                                    "park_name": buffer.properties.PARKNAME,
+                                                    "site_name": landSelection,
                                                     "peak_stage": regionalPeak._layers[i].peak_stage,
                                                     "county": regionalPeak._layers[i].county,
                                                     "height_above_gnd": regionalPeak._layers[i].height_above_gnd,
@@ -371,12 +428,13 @@ $(document).ready(function () {
                                 var isItInside = turf.booleanPointInPolygon(cords, buffer, { ignoreBoundary: true });
                                 // if true add it to an array containing all the 'true' regionalPeak
                                 if (isItInside) {
+                                    var landSelection = selectedLandType[0] === "refuges" ? buffer.properties.CMPXNAME : buffer.properties.PARKNAME; 
                                     //peaksWithinBuffer.push(regionalPeak._layers[i]);
                                     regionalPeak._layers[i].addTo(peaksWithinBuffer);
                                     parksWithPeaks.push({
-                                        "park_name": buffer.properties.PARKNAME,
+                                        "park_name": landSelection,
                                         data: {
-                                            "park_name": buffer.properties.PARKNAME,
+                                            "park_name": landSelection,
                                             "peak_stage": regionalPeak._layers[i].feature.properties.peak_stage,
                                             "county": regionalPeak._layers[i].feature.properties.county,
                                             "height_above_gnd": regionalPeak._layers[i].feature.properties.height_above_gnd,
@@ -393,8 +451,10 @@ $(document).ready(function () {
 
                     //regionalMap.removeLayer(regionalPeak);
                     peaksWithinBuffer.addTo(regionalMap);
-
-                    regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                    setTimeout(() => {
+                        regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                    }, 600);
+                    
 
                     /* peaksWithinBuffer.on('load', function (evt) {
                         // create a new empty Leaflet bounds object
@@ -419,6 +479,152 @@ $(document).ready(function () {
                 }
             });
         }
+        function getHWMs(url, markerIcon) {
+            //increment layerCount
+            layerCount++;
+            //var maxPeak = Math.max(feature.properties.elevation);
+            regionalHWMs.clearLayers();
+            var currentMarker = L.geoJson(false, {
+                pointToLayer: function (feature, latlng) {
+                    var labelText = feature.properties.elevation !== undefined ? feature.properties.elevation.toString() : 'No Value';
+                    markerCoords.push(latlng);
+                    var marker = L.marker(latlng, {
+                        icon: markerIcon
+                    }).bindLabel("Elevation: " + labelText);
+                    return marker;
+                },
+
+                // leaving cause we might need this
+                /* onEachFeature: function (feature, latlng) {
+                    //add marker to overlapping marker spidifier
+                    oms.addMarker(latlng);
+                } */
+            });
+            var currentMarker = L.geoJson(false, {
+                pointToLayer: function (feature, latlng) {
+                    var labelText = feature.properties.elevation !== undefined ? feature.properties.elevation.toString() : 'No Value';
+                    markerCoords.push(latlng);
+                    var marker = L.marker(latlng, {
+                        icon: markerIcon
+                    }).bindLabel("Elevation: " + labelText);
+                    return marker;
+                },
+
+                // leaving cause we might need this
+                /* onEachFeature: function (feature, latlng) {
+                    //add marker to overlapping marker spidifier
+                    oms.addMarker(latlng);
+                } */
+            });
+
+
+            $.getJSON(url, function (data) {
+                if (data.length == 0) {
+                    console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+                    return
+                }
+                if (data.features.length > 0) {
+                    console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+                    //check for bad lat/lon values
+                    for (var i = data.features.length - 1; i >= 0; i--) {
+                        //check that lat/lng are not NaN
+                        if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
+                            console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                            //remove it from array
+                            data.features.splice(i, 1);
+                        }
+                        //check that lat/lng are within the US and also not 0
+                        if (fev.vars.extentSouth <= data.features[i].geometry.coordinates[0] <= fev.vars.extentNorth && fev.vars.extentWest <= data.features[i].geometry.coordinates[1] <= fev.vars.extentEast || data.features[i].geometry.coordinates[0] == 0 || data.features[i].geometry.coordinates[1] == 0) {
+                            console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                            //remove it from array
+                            data.features.splice(i, 1);
+                        }
+                    }
+                    currentMarker.addData(data);
+                    currentMarker.eachLayer(function (layer) {
+                        layer.addTo(regionalHWMs);
+                    });
+                    //regionalHWMs.addTo(regionalMap);
+                    //checkLayerCount(layerCount);
+
+                    // function to get only peaks within park buffer
+                    setTimeout(() => {
+                        // looping through each park buffer
+                        for (var p = 0; p < bufferedPolys.length; p++) {
+                            var buffer = bufferedPolys[p];
+
+                            // check incase there are any multipolys and convert them to simple polys
+                            if (buffer.geometry.type === "MultiPolygon") {
+                                var feat;
+
+                                buffer.geometry.coordinates.forEach(function (coords) {
+                                    feat = { 'type': 'Polygon', 'coordinates': coords };
+                                    if (feat !== undefined) {
+                                        var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
+                                        // if true add it to an array containing all the 'true' regionalHWMs
+                                        if (isItInside) {
+                                            var landSelection = selectedLandType[0] === "refuges" ? buffer.properties.CMPXNAME : buffer.properties.PARKNAME; 
+                                            regionalHWMs._layers[i].addTo(peaksWithinBuffer);
+                                            parksWithPeaks.push({
+                                                "park_name": landSelection,
+                                                data: {
+                                                    "park_name": landSelection,
+                                                    "elevation": regionalHWMs._layers[i].elevation,
+                                                    "type": regionalHWMs._layers[i].debris,
+                                                    "county": regionalHWMs._layers[i].county,
+                                                    "state": regionalHWMs._layers[i].state,
+                                                    "longitude_dd": regionalHWMs._layers[i].longitude_dd,
+                                                    "site_no": regionalHWMs._layers[i].site_no,
+                                                    "waterbody": regionalHWMs._layers[i].waterbody
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+
+                            // looping through the peaks and identifying ones that are within current park poly
+                            for (var i in regionalHWMs._layers) {
+                                var cords = ([regionalHWMs._layers[i]._latlng.lng, regionalHWMs._layers[i]._latlng.lat]);
+
+                                var isItInside = turf.booleanPointInPolygon(cords, buffer, { ignoreBoundary: true });
+                                // if true add it to an array containing all the 'true' regionalPeak
+                                if (isItInside) {
+                                    var landSelection = selectedLandType[0] === "refuges" ? buffer.properties.CMPXNAME : buffer.properties.PARKNAME; 
+                                    regionalHWMs._layers[i].addTo(peaksWithinBuffer);
+                                    parksWithPeaks.push({
+                                        "site_name": landSelection,
+                                        data: {
+                                            "site_name": buffer.properties.landSelection,
+                                            "peak_stage": regionalHWMs._layers[i].feature.properties.peak_stage,
+                                            "county": regionalHWMs._layers[i].feature.properties.county,
+                                            "height_above_gnd": regionalHWMs._layers[i].feature.properties.height_above_gnd,
+                                            "latitude_dd": regionalHWMs._layers[i].feature.properties.latitude_dd,
+                                            "longitude_dd": regionalHWMs._layers[i].feature.properties.longitude_dd,
+                                            "site_no": regionalHWMs._layers[i].feature.properties.site_no,
+                                            "waterbody": regionalHWMs._layers[i].feature.properties.waterbody
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+
+                    //regionalMap.removeLayer(regionalPeak);
+                    peaksWithinBuffer.addTo(regionalMap);
+                    setTimeout(() => {
+                        regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                    }, 600);
+                    
+                    setTimeout(() => {
+                        processPeaks(parksWithPeaks);
+                    }, 600);
+
+
+
+                }
+            });
+        }
 
         function processPeaks(event) {
             var distinctParks = [];
@@ -433,14 +639,14 @@ $(document).ready(function () {
 
             for (var park in result) {
                 formattedPeaks.push({
-                    "park_name": result[park].park_name,
+                    "site_name": result[park].park_name,
                     data: []
                 })
                 for (var peak in parksWithPeaks) {
                     if (parksWithPeaks[peak].park_name === result[park].park_name) {
                         var data = []
                         var peakdata = {
-                            "park_name": parksWithPeaks[peak].data.park_name,
+                            "site_name": parksWithPeaks[peak].data.park_name,
                             "peak_stage": parksWithPeaks[peak].data.peak_stage,
                             "county": parksWithPeaks[peak].data.county,
                             "height_above_gnd": parksWithPeaks[peak].data.height_above_gnd,
@@ -525,14 +731,18 @@ $(document).ready(function () {
             var buildTheTable = (function () {
                 return function () {
                     if (!executed) {
-                        executed = true;
+                        executed = false;
                         // do something
-                        buildHtmlTable();
+                        setTimeout(() => {
+                            buildHtmlTable();
+                        }, 1000);
+                        
                     }
                 };
             })();
 
             buildTheTable();
+            
             // buildHtmlTable();
 
         }
