@@ -933,6 +933,10 @@ a.lgi-zoom:hover {
     margin-right: 0px;
   }
 
+  #peakDataTable {
+    margin: 15px;
+  }
+
 /*MAP LAYERS*/
 #legendElement{
     margin-top: 10px;

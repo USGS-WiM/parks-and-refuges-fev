@@ -43,6 +43,13 @@ $(document).ready(function () {
                 zoomControl: false
             }).setView([39.833333, -98.583333], 3);
 
+            regionalMap.dragging.disable();
+            regionalMap.touchZoom.disable();
+            regionalMap.doubleClickZoom.disable();
+            regionalMap.scrollWheelZoom.disable();
+            regionalMap.boxZoom.disable();
+            regionalMap.keyboard.disable();
+
             var layerfel = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         }, 600);
 
@@ -162,6 +169,21 @@ $(document).ready(function () {
             }).addTo(regionalMap);
             //regionalMap.fitBounds(regionPoly);
             regionLayerGroup.addLayer(regionBoundaries);
+
+            regionBoundaries.on('load', function (evt) {
+                // create a new empty Leaflet bounds object
+                var bounds = L.latLngBounds([]);
+                // loop through the features returned by the server
+                regionBoundaries.eachFeature(function (layer) {
+                    // get the bounds of an individual feature
+                    var layerBounds = layer.getBounds();
+                    // extend the bounds of the collection to fit the bounds of the new feature
+                    bounds.extend(layerBounds);
+                });
+
+                // once we've looped through all the features, zoom the map to the extent of the collection
+                regionalMap.fitBounds(bounds);
+            });
         }
         // TODO: explore options to avoid this timeout. dealing with motely crew of services that is making it difficult atm
 
@@ -464,7 +486,7 @@ $(document).ready(function () {
             if (formattedPeaks.length > 0) {
                 peakSum.push({ "type": "peak", "max": maxPeak, "min": minPeak });
             }
-            
+
 
             // Builds the HTML Table
             function buildHtmlTable() {
@@ -501,10 +523,21 @@ $(document).ready(function () {
 
                 return columnSet;
             }
-            if (peakSum.length > 0 ) {
-                buildHtmlTable();
-            }
-            
+
+            // ensure table build happens only once
+            var buildTheTable = (function () {
+                var executed = false;
+                return function () {
+                    if (!executed) {
+                        executed = true;
+                        // do something
+                        buildHtmlTable()
+                    }
+                };
+            })();
+
+            buildTheTable();
+
         }
 
 
