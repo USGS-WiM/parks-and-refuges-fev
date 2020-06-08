@@ -12,12 +12,12 @@ var regionLayerGroup = L.layerGroup();
 var regionParksLayerGroup = L.layerGroup();
 var where = "";
 var identifiedParks = [];
-var peaksWithinBuffer = L.layerGroup();
+var peaksWithinBuffer = L.featureGroup();
 var bufferedPolys = [];
 var unbufferedPolys = [];
 var bufferSize;
 var parksWithPeaks = [];
-
+var executed = false;
 var regionalPeak = L.layerGroup();
 var parkPeaks = L.layerGroup();
 var regionalPeakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
@@ -129,8 +129,6 @@ $(document).ready(function () {
         if ($('#regionType_regionalModal').val()[0] === "doi") {
             // getting the geometry for the selected region
             where = "REG_NUM=" + selectedRegion,
-
-
                 regionBoundaries = L.esri.featureLayer({
                     useCors: false,
                     url: regionURL,
@@ -141,7 +139,6 @@ $(document).ready(function () {
                         flattenedRegionalPoly = turf.flatten(regionPoly);
                     }
                 }).addTo(regionalMap);
-            //regionalMap.fitBounds(regionPoly);
             regionLayerGroup.addLayer(regionBoundaries);
         } else if ($('#regionType_regionalModal').val()[0] === "fws") {
             regionBoundaries = L.esri.featureLayer({
@@ -154,7 +151,6 @@ $(document).ready(function () {
                     flattenedRegionalPoly = turf.flatten(regionPoly);
                 }
             }).addTo(regionalMap);
-            //regionalMap.fitBounds(regionPoly);
             regionLayerGroup.addLayer(regionBoundaries);
         } else if ($('#regionType_regionalModal').val()[0] === "nps") {
             regionBoundaries = L.esri.featureLayer({
@@ -167,23 +163,7 @@ $(document).ready(function () {
                     flattenedRegionalPoly = turf.flatten(regionPoly);
                 }
             }).addTo(regionalMap);
-            //regionalMap.fitBounds(regionPoly);
             regionLayerGroup.addLayer(regionBoundaries);
-
-            regionBoundaries.on('load', function (evt) {
-                // create a new empty Leaflet bounds object
-                var bounds = L.latLngBounds([]);
-                // loop through the features returned by the server
-                regionBoundaries.eachFeature(function (layer) {
-                    // get the bounds of an individual feature
-                    var layerBounds = layer.getBounds();
-                    // extend the bounds of the collection to fit the bounds of the new feature
-                    bounds.extend(layerBounds);
-                });
-
-                // once we've looped through all the features, zoom the map to the extent of the collection
-                regionalMap.fitBounds(bounds);
-            });
         }
         // TODO: explore options to avoid this timeout. dealing with motely crew of services that is making it difficult atm
 
@@ -413,6 +393,23 @@ $(document).ready(function () {
 
                     //regionalMap.removeLayer(regionalPeak);
                     peaksWithinBuffer.addTo(regionalMap);
+
+                    regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+
+                    /* peaksWithinBuffer.on('load', function (evt) {
+                        // create a new empty Leaflet bounds object
+                        var bounds = L.latLngBounds([]);
+                        // loop through the features returned by the server
+                        peaksWithinBuffer.eachFeature(function (layer) {
+                            // get the bounds of an individual feature
+                            var layerBounds = layer.getBounds();
+                            // extend the bounds of the collection to fit the bounds of the new feature
+                            bounds.extend(layerBounds);
+                        });
+        
+                        // once we've looped through all the features, zoom the map to the extent of the collection
+                        regionalMap.fitBounds(bounds);
+                    }); */
                     setTimeout(() => {
                         processPeaks(parksWithPeaks);
                     }, 600);
@@ -423,7 +420,7 @@ $(document).ready(function () {
             });
         }
 
-        function processPeaks() {
+        function processPeaks(event) {
             var distinctParks = [];
             var result = Array.from(new Set(parksWithPeaks.map(s => s.park_name))).map(park_name => {
                 return {
@@ -526,17 +523,17 @@ $(document).ready(function () {
 
             // ensure table build happens only once
             var buildTheTable = (function () {
-                var executed = false;
                 return function () {
                     if (!executed) {
                         executed = true;
                         // do something
-                        buildHtmlTable()
+                        buildHtmlTable();
                     }
                 };
             })();
 
             buildTheTable();
+            // buildHtmlTable();
 
         }
 
