@@ -726,8 +726,8 @@ $(document).ready(function () {
 	$('#meteorlogicalSymbology').append("<img class='legendSwatch' src='images/met.png'></img>&nbsp;" + "Meteorlogical Sensor");
 	$('#waveHeightSymbology').append("<img class='legendSwatch' src='images/waveheight.png'></img>&nbsp;" + "Wave Height Sensor");
 	$('#highWaterSymbology').append("<img class='legendSwatch' src='images/hwm.png'></img>&nbsp;" + "High Water Mark");
-	$('#parkTractsSymbology').append("<img class='squareDiv parkTractsColor'></img>" + "Park Tracts");
-	$('#parkBoundsSymbology').append("<img class='squareDiv parkBoundsColor'></img>" + "Park Boundaries");
+	//$('#parkTractsSymbology').append("<img class='squareDiv parkTractsColor'></img>" + "Park Tracts");
+	//$('#parkBoundsSymbology').append("<img class='squareDiv parkBoundsColor'></img>" + "Park Boundaries");
 	$('#approvedFWSSymbology').append("<img class='squareDiv approvedAquiColor'></img>" + "Approved Aquisition Boundaries");
 	$('#interestFWSSymbology').append("Interest Boundaries" + "<br>" + "<img class='squareDiv federalFeeColor'></img>" + "Federal Land (Fee)" + "<br>" + "<img class='squareDiv federalLessFeeColor'></img>" + "Federal Land (Less than Fee)" + "<br>" + "<img class='squareDiv publicColor'></img>" + "Public" + "<br>" + "<img class='squareDiv privateColor'></img>" + "Private" + "<br>" + "<img class='squareDiv otherFederalColor'></img>" + "Other Federal Land" + "<br>" + "<img class='squareDiv aquisitionColor'></img>" + "Aquisition Deferred" + "<br>" + "<img class='squareDiv noInfoColor'></img>" + "No information");
 	$('#doiSymbology').append("<img class='squareDiv doiRegionsColor'></img>" + "DOI Regions");
@@ -2355,3 +2355,47 @@ function clickPeakLabels() {
 	}
   }
   
+//function for toggling tracts
+function clickTracts() {
+	var tractCheckBox = document.getElementById("tractToggle");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		tractCheckBox.checked = false;
+	}
+	//Display tracts when toggle is on
+	if (tractCheckBox.checked == true) {
+		tracts.addTo(map);
+		$('#interestFWSSymbology').append("Interest Boundaries" + "<br>" + "<img class='squareDiv federalFeeColor'></img>" + "Federal Land (Fee)" + "<br>" + "<img class='squareDiv federalLessFeeColor'></img>" + "Federal Land (Less than Fee)" + "<br>" + "<img class='squareDiv publicColor'></img>" + "Public" + "<br>" + "<img class='squareDiv privateColor'></img>" + "Private" + "<br>" + "<img class='squareDiv otherFederalColor'></img>" + "Other Federal Land" + "<br>" + "<img class='squareDiv aquisitionColor'></img>" + "Aquisition Deferred" + "<br>" + "<img class='squareDiv noInfoColor'></img>" + "No information");
+		console.log("tract box is checked");
+	}
+	//Remove tracts when toggle is off
+	if (tractCheckBox.checked == false) {
+		console.log("tract box is not checked");
+		tracts.removeFrom(map);
+		$('#interestFWSSymbology') = [];
+		//USGSrtGages.clearLayers();
+		
+	}
+  }
+
+//function for toggling bounds
+function clickBounds() {
+	var parkBoundsCheckBox = document.getElementById("parkBoundsToggle");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		parkBoundsCheckBox.checked = false;
+	}
+	//Display tracts when toggle is on
+	if (parkBoundsCheckBox.checked == true) {
+		bounds.addTo(map);
+		$('#parkBoundsSymbology').append("<img class='squareDiv parkBoundsColor'></img>" + "Park Boundaries");
+		console.log("bounds box is checked");
+	}
+	//Remove tracts when toggle is off
+	if (parkBoundsCheckBox.checked == false) {
+		console.log("bounds box is not checked");
+		bounds.removeFrom(map);
+		//$('#parkBoundsSymbology').append("<img class='squareDiv parkBoundsColor'></img>" + "Park Boundaries");
+		//USGSrtGages.clearLayers();	
+	}
+  }

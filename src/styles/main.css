@@ -129,12 +129,21 @@ body {
     /*color: black;*/
 /*}*/
 
+#tractToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#parkBoundsToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+
 .squareDiv {
     float: left;
     width: 16px;
     height: 16px;
     margin: 5px;
-    border: .1px solid rgba(0,0,0,.2);
+    border: .1px solid rgba(255, 255, 255, 0);
 }
 .parkTractsColor{
     background: #0000cc;
@@ -168,39 +177,32 @@ body {
     Border-width: .1px;
 }
 .federalFeeColor{
-    background: green;
-    border-color: #000;
-    Border-width: .1px;
+    border-color: green;
+    Border-width: 1px;
 }
 .federalLessFeeColor{
-    background: yellow;
-    border-color: #000;
-    Border-width: .1px;
+    border-color: yellow;
+    Border-width: 1px;
 }
 .publicColor{
-    background: orange;
-    border-color: #000;
-    Border-width: .1px;
+    border-color: orange;
+    Border-width: 1px;
 }
 .privateColor{
-    background: blue;
-    border-color: #000;
-    Border-width: .1px;
+    border-color: blue;
+    Border-width: 1px;
 }
 .otherFederalColor{
-    background: purple;
-    border-color: #000;
-    Border-width: .1px;
+    border-color:purple;
+    Border-width: 1px;
 }
 .aquisitionColor{
-    background: pink;
-    border-color: #000;
-    Border-width: .1px;
+    border-color: pink;
+    Border-width: 1px;
 }
 .noInfoColor{
-    background: black;
-    border-color: #000;
-    Border-width: .1px;
+    border-color: black;
+    Border-width: 1px;
 }
 
 .legendSwatch {

@@ -718,7 +718,23 @@
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="fwsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#fwsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">USFWS Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="fwsToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <!-- <div id="fwsToggleDiv" class="collapse" style="text-align: left"></div> -->
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=tractToggle
+                                            onclick= "clickTracts()" />
+                                        </label>Park Tracts
+                                         </div>
+                                         <div style="text-align: left">
+                                            <label>             
+                                                <input type = "checkbox"
+                                                id=parkBoundsToggle
+                                                onclick= "clickBounds()" />
+                                            </label>Park Boundaries
+                                        </div>
+
+
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="doiMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#doiToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">DOI Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
