@@ -129,6 +129,10 @@ body {
     /*color: black;*/
 /*}*/
 
+#noaaToggle {
+    position: relative; 
+    margin-left: 6px;
+}
 #tractToggle {
     position: relative; 
     margin-left: 6px;
@@ -145,6 +149,43 @@ body {
     position: relative; 
     margin-left: 6px;
 }
+#HWMToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#waveHeightToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#metToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#stormTideToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#baroToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#streamGageToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#streamGageToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#rainGageToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#peaksToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+
 
 .squareDiv {
     float: left;

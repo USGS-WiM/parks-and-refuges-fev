@@ -694,9 +694,16 @@
                                     </div>
                                     <div>
                                     <!--Auto-open the interpreted div-->
-                                    <div id="interpretedToggleDiv" style="text-align: left; display:inline-flex; "></div>
+                                   <!--  <div id="interpretedToggleDiv" style="text-align: left; display:inline-flex; "></div> -->
                                     <!--Add toggle for displaying peak labels-->
-                                        <label class="switch" id="peakSizeCheck">             
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=peaksToggle
+                                            onclick= "clickPeaks()" />
+                                        </label>Peak Summary
+                                    </div>    
+                                    <label class="switch" id="peakSizeCheck">             
                                             <input type = "checkbox"
                                             id="peakCheckbox"
                                             onclick= "clickPeakLabels()" />
@@ -706,11 +713,62 @@
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="realtimeMapLayer" class="btn btn-default groupToggle groupHeading" type="button" data-toggle="collapse" data-target="#realTimeToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Real-Time Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="realTimeToggleDiv"  class="collapse" style="text-align: left"></div>
+                                    <!-- <div id="realTimeToggleDiv"  class="collapse" style="text-align: left"></div> -->
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=streamGageToggle
+                                            onclick= "clickStreamGage()" />
+                                        </label>Real-time Stream Gage
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=rainGageToggle
+                                            onclick= "clickRainGage()" />
+                                        </label>Real-time Rain Gage
+                                    </div>
+
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="observedMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#observedToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Observed Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="observedToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <!-- <div id="observedToggleDiv" class="collapse" style="text-align: left"></div> -->
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=baroToggle
+                                            onclick= "clickBaro()" />
+                                        </label>Barometric Pressure Sensor
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=stormTideToggle
+                                            onclick= "clickStormTide()" />
+                                        </label>Storm Tide Sensor
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=metToggle
+                                            onclick= "clickMet()" />
+                                        </label>Meteorological Sensor
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=waveHeightToggle
+                                            onclick= "clickWaveHeight()" />
+                                        </label>Wave Height Sensor
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=HWMToggle
+                                            onclick= "clickHWM()" />
+                                        </label>High Water Mark
+                                    </div>
+
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="npsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#npsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">USNPS Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
@@ -761,6 +819,15 @@
                                         <button id="supportMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#noaaToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Supporting Layers<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
                                     <div id="noaaToggleDiv" class="collapse" style="text-align: left"></div>
+
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=noaaToggle
+                                            onclick= "clickNOAA()" />
+                                        </label>NOAA Tropical Cyclone Forecast Track
+                                    </div>
+
                                     <div id="noTrackAdvisory"></div>
                                 </div>
                             </div>

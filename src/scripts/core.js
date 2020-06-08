@@ -620,7 +620,7 @@ $(document).ready(function () {
 
 	
 	//define observed overlay and interpreted overlay, leave blank at first
-	var observedOverlays = {};
+	//var observedOverlays = {};
 	var interpretedOverlays = {};
 	var labelOverlays = {};
 	var noaaOverlays = {};
@@ -657,7 +657,7 @@ $(document).ready(function () {
 	//loop thru layer list and add the map layer item to the appropriate heading
 	$.each(fev.layerList, function (index, layer) {
 		//if (layer.Category == 'real-time') realTimeOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'observed') observedOverlays[layer.Name] = window[layer.ID];
+		//if (layer.Category == 'observed') observedOverlays[layer.Name] = window[layer.ID];
 		if (layer.Category == 'interpreted') interpretedOverlays[layer.Name] = window[layer.ID];
 		if (layer.Category == 'noaa') noaaOverlays[layer.Name] = window[layer.ID];
 		//if (layer.Category == 'fws') fwsOverlays[layer.Name] = window[layer.ID];
@@ -676,11 +676,12 @@ $(document).ready(function () {
 	$('.leaflet-top.leaflet-right').hide();
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	/*
 	var observedToggle = L.control.layers(null, observedOverlays, { collapsed: false });
 	observedToggle.addTo(map);
 	$('#observedToggleDiv').append(observedToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
-
+*/
 
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
@@ -702,16 +703,20 @@ $(document).ready(function () {
 	*/
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	/*
 	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
 	npsToggle.addTo(map);
 	$('#npsToggleDiv').append(npsToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
+*/
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	/*
 	var doiToggle = L.control.layers(null, doiOverlays, { collapsed: false });
 	doiToggle.addTo(map);
 	$('#doiToggleDiv').append(doiToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
+	*/
 	
 	//Get layer name and symbology for legend
 
@@ -2338,7 +2343,6 @@ function clickPeakLabels() {
 	}
   }
 
-
 var PeakSummarySymbologyInterior = "<div> <img class='legendSwatch' src='images/peak.png'></img> Peak Summary </div>";
 var	streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> Real-time Stream Gage </div>";	
 var	rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> Real-time Rain Gage </div>";
@@ -2354,6 +2358,143 @@ var	approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColo
 var	doiSymbologyInterior = "<div> <img class='squareDiv doiRegionsColor'></img> DOI Regions";
 var	noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></img> NOAA Tropical Cyclone Forecast Track </div>";
 
+function clickPeaks() {
+	var peaksCheckBox = document.getElementById("peaksToggle");
+	if (peaksCheckBox.checked == true) {
+		$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
+		peak.addTo(map);
+	}
+	if (peaksCheckBox.checked == false) {
+		$('#PeakSummarySymbology').children().remove();
+		peak.clearLayers(map);
+	}
+  }
+
+function clickRainGage() {
+	var raingageCheckBox = document.getElementById("rainGageToggle");
+	if (raingageCheckBox.checked == true) {
+		$('#rainGageSymbology').append(rainGageSymbologyInterior);
+		USGSRainGages.addTo(map);
+	}
+	if (raingageCheckBox.checked == false) {
+		$('#rainGageSymbology').children().remove();
+		USGSRainGages.clearLayers(map);
+	}
+  }
+
+function clickStreamGage() {
+	var streamgageCheckBox = document.getElementById("streamGageToggle");
+	if (streamgageCheckBox.checked == true) {
+		USGSrtGages.addTo(map);
+		$('#streamGageSymbology').append(streamGageSymbologyInterior);
+	}
+	if (streamgageCheckBox.checked == false) {
+		USGSrtGages.clearLayers(map);
+		$('#streamGageSymbology').children().remove();
+	}
+  }
+
+function clickBaro() {
+	var baroCheckBox = document.getElementById("baroToggle");
+	if (baroCheckBox.checked == true) {
+		baro.addTo(map);
+		$('#barometricSymbology').append(barometricSymbologyInterior);
+	}
+	if (baroCheckBox.checked == false) {
+		baro.clearLayers(map);
+		$('#barometricSymbology').children().remove();
+	}
+  }
+
+function clickStormTide() {
+	var stormTideCheckBox = document.getElementById("stormTideToggle");
+	if (stormTideCheckBox.checked == true) {
+		stormtide.addTo(map);
+		$('#stormTideSymbology').append(stormTideSymbologyInterior);
+	}
+	if (stormTideCheckBox.checked == false) {
+		stormtide.clearLayers(map);
+		$('#stormTideSymbology').children().remove();
+	}
+  }
+
+function clickMet() {
+	var metCheckBox = document.getElementById("metToggle");
+	if (metCheckBox.checked == true) {
+		met.addTo(map);
+		$('#meteorlogicalSymbology').append(meteorlogicalSymbologyInterior);
+	}
+	if (metCheckBox.checked == false) {
+		met.clearLayers(map);
+		$('#meteorlogicalSymbology').children().remove();
+	}
+  }
+
+function clickWaveHeight() {
+	var waveHeightCheckBox = document.getElementById("waveHeightToggle");
+	if (waveHeightCheckBox.checked == true) {
+		waveheight.addTo(map);
+		$('#waveHeightSymbology').append(waveHeightSymbologyInterior);
+	}
+	if (waveHeightCheckBox.checked == false) {
+		waveheight.clearLayers(map);
+		$('#waveHeightSymbology').children().remove();
+	}
+  }
+
+function clickHWM() {
+	var HWMCheckBox = document.getElementById("HWMToggle");
+	if (HWMCheckBox.checked == true) {
+		hwm.addTo(map);
+		$('#highWaterSymbology').append(highWaterSymbologyInterior);
+	}
+	if (HWMCheckBox.checked == false) {
+		hwm.clearLayers(map);
+		$('#highWaterSymbology').children().remove();
+	}
+  }
+
+function clickBounds() {
+	var parkBoundsCheckBox = document.getElementById("parkBoundsToggle");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		parkBoundsCheckBox.checked = false;
+	}
+	//Display tracts when toggle is on
+	if (parkBoundsCheckBox.checked == true) {
+		bounds.addTo(map);
+		$('#parkBoundsSymbology').append(parkBoundsSymbologyInterior);
+	}
+	//Remove tracts when toggle is off
+	if (parkBoundsCheckBox.checked == false) {
+		bounds.removeFrom(map);
+		$('#parkBoundsSymbology').children().remove();
+		//USGSrtGages.clearLayers();	
+	}
+  }
+
+//function for toggling tracts
+function clickTracts() {
+	var tractCheckBox = document.getElementById("tractToggle");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		tractCheckBox.checked = false;
+	}
+	//Display tracts when toggle is on
+	if (tractCheckBox.checked == true) {
+		tracts.addTo(map);
+		$('#parkTractsSymbology').append(parkTractsSymbologyInterior);
+		console.log("tract box is checked");
+	}
+	//Remove tracts when toggle is off
+	if (tractCheckBox.checked == false) {
+		console.log("tract box is not checked");
+		tracts.removeFrom(map);
+		$('#parkTractsSymbology').children().remove();
+		//USGSrtGages.clearLayers();
+	}
+  }
+
 //function for toggling noaa cyclones
 function clickApprovedFWS() {
 	var approvedFWSCheckBox = document.getElementById("approvedFWSToggle");
@@ -2363,16 +2504,12 @@ function clickApprovedFWS() {
 	}
 	//Display doi when toggle is on
 	if (approvedFWSCheckBox.checked == true) {
-		console.log("approved fws checked");
 		appr.addTo(map);
-		console.log("approved fws checked2");
 		$('#approvedFWSSymbology').append(approvedFWSSymbologyInterior);
 	}
 	//Remove doi when toggle is off
 	if (approvedFWSCheckBox.checked == false) {
-		console.log("approved fws not checked");
 		appr.removeFrom(map);
-		console.log("approved fws not checked2");
 		$('#approvedFWSSymbology').children().remove();
 	}
   }
@@ -2399,62 +2536,17 @@ function clickDOI() {
 //function for toggling noaa cyclones
 function clickNOAA() {
 	var noaaCheckBox = document.getElementById("noaaToggle");
-	//Prevent user from using toggle when zoom is less than 8
-	if (map.getZoom() < 8) {
-		noaaCheckBox.checked = false;
-	}
 	//Display noaa when toggle is on
 	if (noaaCheckBox.checked == true) {
-		tracts.addTo(map);
-		$('#noaaSymbology').append(noaaCycloneSymbologyInterior);
+		noaaService.addTo(map);
+		$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
 	}
 	//Remove noaa when toggle is off
 	if (noaaCheckBox.checked == false) {
-		tracts.removeFrom(map);
-		$('#noaaSymbology').children().remove();
+		noaaService.removeFrom(map);
+		$('#noaaCycloneSymbology').children().remove();
 	}
   }
 
-//function for toggling tracts
-function clickTracts() {
-	var tractCheckBox = document.getElementById("tractToggle");
-	//Prevent user from using toggle when zoom is less than 8
-	if (map.getZoom() < 8) {
-		tractCheckBox.checked = false;
-	}
-	//Display tracts when toggle is on
-	if (tractCheckBox.checked == true) {
-		tracts.addTo(map);
-		$('#parkTractsSymbology').append(parkTractsSymbologyInterior);
-		console.log("tract box is checked");
-	}
-	//Remove tracts when toggle is off
-	if (tractCheckBox.checked == false) {
-		console.log("tract box is not checked");
-		tracts.removeFrom(map);
-		$('#parkTractsSymbology').children().remove();
-		//USGSrtGages.clearLayers();
-	}
-  }
 
-//function for toggling bounds
-function clickBounds() {
-	var parkBoundsCheckBox = document.getElementById("parkBoundsToggle");
-	//Prevent user from using toggle when zoom is less than 8
-	if (map.getZoom() < 8) {
-		parkBoundsCheckBox.checked = false;
-	}
-	//Display tracts when toggle is on
-	if (parkBoundsCheckBox.checked == true) {
-		bounds.addTo(map);
-		$('#parkBoundsSymbology').append(parkBoundsSymbologyInterior);
-		console.log("bounds box is checked");
-	}
-	//Remove tracts when toggle is off
-	if (parkBoundsCheckBox.checked == false) {
-		console.log("bounds box is not checked");
-		bounds.removeFrom(map);
-		$('#parkBoundsSymbology').children().remove();
-		//USGSrtGages.clearLayers();	
-	}
-  }
+
