@@ -624,7 +624,7 @@ $(document).ready(function () {
 	var interpretedOverlays = {};
 	var labelOverlays = {};
 	var noaaOverlays = {};
-	var fwsOverlays = {};
+	//var fwsOverlays = {};
 	var npsOverlays = {};
 	var doiOverlays = {};
 
@@ -660,7 +660,7 @@ $(document).ready(function () {
 		if (layer.Category == 'observed') observedOverlays[layer.Name] = window[layer.ID];
 		if (layer.Category == 'interpreted') interpretedOverlays[layer.Name] = window[layer.ID];
 		if (layer.Category == 'noaa') noaaOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'fws') fwsOverlays[layer.Name] = window[layer.ID];
+		//if (layer.Category == 'fws') fwsOverlays[layer.Name] = window[layer.ID];
 		if (layer.Category == 'nps') npsOverlays[layer.Name] = window[layer.ID];
 		if (layer.Category == 'doi') doiOverlays[layer.Name] = window[layer.ID];
 	});
@@ -693,11 +693,13 @@ $(document).ready(function () {
 	$('#noaaToggleDiv').append(noaaToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
+	/*
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
 	var fwsToggle = L.control.layers(null, fwsOverlays, { collapsed: false });
 	fwsToggle.addTo(map);
 	$('#fwsToggleDiv').append(fwsToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
+	*/
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
 	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
@@ -712,26 +714,7 @@ $(document).ready(function () {
 	$('.leaflet-top.leaflet-right').hide();
 	
 	//Get layer name and symbology for legend
-	// ( _____ ).onClick: if ( ________ ) is checked {
-	$('#PeakSummarySymbology').append("<img class='legendSwatch' src='images/peak.png'></img>&nbsp;" + "Peak Summary");
 
-	$('#streamGageSymbology').append("<img class='legendSwatch' src='images/nwis.png'></img>&nbsp;" + "Real-time Stream Gage");
-	
-	if (map.hasLayer(USGSrtGages)) {
-	$('#rainGageSymbology').append("<img class='legendSwatch' src='images/rainIcon.png'></img>&nbsp;" + "Real-time Rain Gage");
-	}
-
-	$('#barometricSymbology').append("<img class='legendSwatch' src='images/baro.png'></img>&nbsp;" + "Barometric Pressure Sensor");
-	$('#stormTideSymbology').append("<img class='legendSwatch' src='images/stormtide.png'></img>&nbsp;" + "Storm Tide Sensor");
-	$('#meteorlogicalSymbology').append("<img class='legendSwatch' src='images/met.png'></img>&nbsp;" + "Meteorlogical Sensor");
-	$('#waveHeightSymbology').append("<img class='legendSwatch' src='images/waveheight.png'></img>&nbsp;" + "Wave Height Sensor");
-	$('#highWaterSymbology').append("<img class='legendSwatch' src='images/hwm.png'></img>&nbsp;" + "High Water Mark");
-	//$('#parkTractsSymbology').append("<img class='squareDiv parkTractsColor'></img>" + "Park Tracts");
-	//$('#parkBoundsSymbology').append("<img class='squareDiv parkBoundsColor'></img>" + "Park Boundaries");
-	$('#approvedFWSSymbology').append("<img class='squareDiv approvedAquiColor'></img>" + "Approved Aquisition Boundaries");
-	$('#interestFWSSymbology').append("Interest Boundaries" + "<br>" + "<img class='squareDiv federalFeeColor'></img>" + "Federal Land (Fee)" + "<br>" + "<img class='squareDiv federalLessFeeColor'></img>" + "Federal Land (Less than Fee)" + "<br>" + "<img class='squareDiv publicColor'></img>" + "Public" + "<br>" + "<img class='squareDiv privateColor'></img>" + "Private" + "<br>" + "<img class='squareDiv otherFederalColor'></img>" + "Other Federal Land" + "<br>" + "<img class='squareDiv aquisitionColor'></img>" + "Aquisition Deferred" + "<br>" + "<img class='squareDiv noInfoColor'></img>" + "No information");
-	$('#doiSymbology').append("<img class='squareDiv doiRegionsColor'></img>" + "DOI Regions");
-	$('#noaaCycloneSymbology').append("<img class='squareDiv parksColor'></img>" + "NOAA Tropical Cyclone Forecast Track");
 	//End of - get layer name and symbology for legend
 
 	//$('.btn-group input[type="checkbox"]').prop('checked', false);
@@ -2354,7 +2337,84 @@ function clickPeakLabels() {
 		});
 	}
   }
-  
+
+
+var PeakSummarySymbologyInterior = "<div> <img class='legendSwatch' src='images/peak.png'></img> Peak Summary </div>";
+var	streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> Real-time Stream Gage </div>";	
+var	rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> Real-time Rain Gage </div>";
+var	barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> Barometric Pressure Sensor </div>";
+var	stormTideSymbologyInterior = "<div> <img class='legendSwatch' src='images/stormtide.png'></img> Storm Tide Sensor </div>";
+var	meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='images/met.png'></img> Meteorlogical Sensor </div>";
+var	waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> Wave Height Sensor </div>";
+var	highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> High Water Mark </div>";
+var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> Park Boundaries </div>";
+var parkTractsSymbologyInterior = "<div> <img class='squareDiv parkTractsColor'></img> Park Tracts </div>";
+var	approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> Approved Aquisition Boundaries </div>";
+//var	interestFWSSymbology = "Interest Boundaries" + "<br>" + "<img class='squareDiv federalFeeColor'></img>" + "Federal Land (Fee)" + "<br>" + "<img class='squareDiv federalLessFeeColor'></img>" + "Federal Land (Less than Fee)" + "<br>" + "<img class='squareDiv publicColor'></img>" + "Public" + "<br>" + "<img class='squareDiv privateColor'></img>" + "Private" + "<br>" + "<img class='squareDiv otherFederalColor'></img>" + "Other Federal Land" + "<br>" + "<img class='squareDiv aquisitionColor'></img>" + "Aquisition Deferred" + "<br>" + "<img class='squareDiv noInfoColor'></img>" + "No information";
+var	doiSymbologyInterior = "<div> <img class='squareDiv doiRegionsColor'></img> DOI Regions";
+var	noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></img> NOAA Tropical Cyclone Forecast Track </div>";
+
+//function for toggling noaa cyclones
+function clickApprovedFWS() {
+	var approvedFWSCheckBox = document.getElementById("approvedFWSToggle");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		approvedFWSCheckBox.checked = false;
+	}
+	//Display doi when toggle is on
+	if (approvedFWSCheckBox.checked == true) {
+		console.log("approved fws checked");
+		appr.addTo(map);
+		console.log("approved fws checked2");
+		$('#approvedFWSSymbology').append(approvedFWSSymbologyInterior);
+	}
+	//Remove doi when toggle is off
+	if (approvedFWSCheckBox.checked == false) {
+		console.log("approved fws not checked");
+		appr.removeFrom(map);
+		console.log("approved fws not checked2");
+		$('#approvedFWSSymbology').children().remove();
+	}
+  }
+
+//function for toggling noaa cyclones
+function clickDOI() {
+	var doiCheckBox = document.getElementById("doiToggle");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		doiCheckBox.checked = false;
+	}
+	//Display doi when toggle is on
+	if (doiCheckBox.checked == true) {
+		doiRegions.addTo(map);
+		$('#doiSymbology').append(doiSymbologyInterior);
+	}
+	//Remove doi when toggle is off
+	if (doiCheckBox.checked == false) {
+		doiRegions.removeFrom(map);
+		$('#doiSymbology').children().remove();
+	}
+  }
+
+//function for toggling noaa cyclones
+function clickNOAA() {
+	var noaaCheckBox = document.getElementById("noaaToggle");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		noaaCheckBox.checked = false;
+	}
+	//Display noaa when toggle is on
+	if (noaaCheckBox.checked == true) {
+		tracts.addTo(map);
+		$('#noaaSymbology').append(noaaCycloneSymbologyInterior);
+	}
+	//Remove noaa when toggle is off
+	if (noaaCheckBox.checked == false) {
+		tracts.removeFrom(map);
+		$('#noaaSymbology').children().remove();
+	}
+  }
+
 //function for toggling tracts
 function clickTracts() {
 	var tractCheckBox = document.getElementById("tractToggle");
@@ -2365,16 +2425,15 @@ function clickTracts() {
 	//Display tracts when toggle is on
 	if (tractCheckBox.checked == true) {
 		tracts.addTo(map);
-		$('#interestFWSSymbology').append("Interest Boundaries" + "<br>" + "<img class='squareDiv federalFeeColor'></img>" + "Federal Land (Fee)" + "<br>" + "<img class='squareDiv federalLessFeeColor'></img>" + "Federal Land (Less than Fee)" + "<br>" + "<img class='squareDiv publicColor'></img>" + "Public" + "<br>" + "<img class='squareDiv privateColor'></img>" + "Private" + "<br>" + "<img class='squareDiv otherFederalColor'></img>" + "Other Federal Land" + "<br>" + "<img class='squareDiv aquisitionColor'></img>" + "Aquisition Deferred" + "<br>" + "<img class='squareDiv noInfoColor'></img>" + "No information");
+		$('#parkTractsSymbology').append(parkTractsSymbologyInterior);
 		console.log("tract box is checked");
 	}
 	//Remove tracts when toggle is off
 	if (tractCheckBox.checked == false) {
 		console.log("tract box is not checked");
 		tracts.removeFrom(map);
-		$('#interestFWSSymbology') = [];
+		$('#parkTractsSymbology').children().remove();
 		//USGSrtGages.clearLayers();
-		
 	}
   }
 
@@ -2388,14 +2447,14 @@ function clickBounds() {
 	//Display tracts when toggle is on
 	if (parkBoundsCheckBox.checked == true) {
 		bounds.addTo(map);
-		$('#parkBoundsSymbology').append("<img class='squareDiv parkBoundsColor'></img>" + "Park Boundaries");
+		$('#parkBoundsSymbology').append(parkBoundsSymbologyInterior);
 		console.log("bounds box is checked");
 	}
 	//Remove tracts when toggle is off
 	if (parkBoundsCheckBox.checked == false) {
 		console.log("bounds box is not checked");
 		bounds.removeFrom(map);
-		//$('#parkBoundsSymbology').append("<img class='squareDiv parkBoundsColor'></img>" + "Park Boundaries");
+		$('#parkBoundsSymbology').children().remove();
 		//USGSrtGages.clearLayers();	
 	}
   }

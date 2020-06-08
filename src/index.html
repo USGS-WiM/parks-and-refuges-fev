@@ -714,11 +714,7 @@
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="npsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#npsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">USNPS Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="npsToggleDiv" class="collapse" style="text-align: left"></div>
-                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
-                                        <button id="fwsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#fwsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">USFWS Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
-                                    </div>
-                                    <!-- <div id="fwsToggleDiv" class="collapse" style="text-align: left"></div> -->
+                                    <!-- <div id="npsToggleDiv" class="collapse" style="text-align: left"></div> -->
                                     <div style="text-align: left">
                                         <label>             
                                             <input type = "checkbox"
@@ -734,11 +730,33 @@
                                             </label>Park Boundaries
                                         </div>
 
+                                    <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
+                                        <button id="fwsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#fwsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">USFWS Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
+                                    </div>
+                                    <!-- <div id="fwsToggleDiv" class="collapse" style="text-align: left"></div> -->
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=approvedFWSToggle
+                                            onclick= "clickApprovedFWS()" />
+                                        </label>Approved Aquisition Boundaries
+                                    </div>
 
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="doiMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#doiToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">DOI Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="doiToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <!-- <div id="doiToggleDiv" class="collapse" style="text-align: left"></div> -->
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=doiToggle
+                                            onclick= "clickDOI()" />
+                                        </label>DOI Regions
+                                    </div>
+
+
+
+
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="supportMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#noaaToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Supporting Layers<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>

@@ -137,6 +137,14 @@ body {
     position: relative; 
     margin-left: 6px;
 }
+#approvedFWSToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#doiToggle {
+    position: relative; 
+    margin-left: 6px;
+}
 
 .squareDiv {
     float: left;
