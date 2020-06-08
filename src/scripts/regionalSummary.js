@@ -115,8 +115,8 @@ $(document).ready(function () {
                 regionURL = 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0';
                 whereValue = "REGNAME=" + selectedRegion;
             case 'nps':
-                regionURL = '';
-                whereValue = '';
+                regionURL = 'https://irmaservices.nps.gov/arcgis/rest/services/NPSData/NPS_MonitoringNetworks/MapServer/0';
+                whereValue = "NetworkName" + selectedRegion;
         }
 
         if ($('#regionType_regionalModal').val()[0] === "doi") {
@@ -126,7 +126,7 @@ $(document).ready(function () {
 
                 regionBoundaries = L.esri.featureLayer({
                     useCors: false,
-                    url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0',
+                    url: regionURL,
                     where: "REG_NUM=" + selectedRegion,
                     style: regionStyle,
                     onEachFeature: function (feature, latlng) {
@@ -139,7 +139,7 @@ $(document).ready(function () {
         } else if ($('#regionType_regionalModal').val()[0] === "fws") {
             regionBoundaries = L.esri.featureLayer({
                 useCors: false,
-                url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0',
+                url: regionURL,
                 where: "REG_NUM=" + selectedRegion,
                 style: regionStyle,
                 onEachFeature: function (feature, latlng) {
@@ -150,7 +150,18 @@ $(document).ready(function () {
             //regionalMap.fitBounds(regionPoly);
             regionLayerGroup.addLayer(regionBoundaries);
         } else if ($('#regionType_regionalModal').val()[0] === "nps") {
-            // need url from lisa
+            regionBoundaries = L.esri.featureLayer({
+                useCors: false,
+                url: regionURL,
+                where: "NetworkName='" + selectedRegion + "'",
+                style: regionStyle,
+                onEachFeature: function (feature, latlng) {
+                    regionPoly = feature.geometry;
+                    flattenedRegionalPoly = turf.flatten(regionPoly);
+                }
+            }).addTo(regionalMap);
+            //regionalMap.fitBounds(regionPoly);
+            regionLayerGroup.addLayer(regionBoundaries);
         }
         // TODO: explore options to avoid this timeout. dealing with motely crew of services that is making it difficult atm
 

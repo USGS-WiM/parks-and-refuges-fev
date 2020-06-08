@@ -174,7 +174,20 @@ $( document ).ready(function() {
                     }
                 });
             } else if ($('#regionType_regionalModal').val()[0] === "nps") {
-                console.log("nps");
+                $.ajax({
+                    dataType: 'json',
+                    type: 'GET',
+                    url: 'https://irmaservices.nps.gov/arcgis/rest/services/NPSData/NPS_MonitoringNetworks/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&having=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&f=pjson',
+                    headers: {'Accept': '*/*'},
+                    success: function (data) {
+                        for (var i = 0; i < data.features.length; i++) {
+                            $('.regionSelect').append('<option value="' + data.features[i].attributes.NetworkName + '">' + data.features[i].attributes.NetworkName + '</option>');
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error processing the JSON. The error is:' + error);
+                    }
+                });
             }
         }
     });
