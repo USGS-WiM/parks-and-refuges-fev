@@ -2364,12 +2364,15 @@ var	noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></im
 function clickPeaks() {
 	var peaksCheckBox = document.getElementById("peaksToggle");
 	if (peaksCheckBox.checked == true) {
-		//$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
+		if (peakStart == 0 || peakStart == 3) {
+			$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
+		}
 		displayPeaksGeoJSON("peak", "Peak Summary", fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
 	}
 	if (peaksCheckBox.checked == false) {
 		$('#PeakSummarySymbology').children().remove();
 		peak.clearLayers();
+		peakStart = 3;
 	}
   }
 
@@ -2405,13 +2408,14 @@ function clickBaro() {
 	var baroCheckBox = document.getElementById("baroToggle");
 	if (baroCheckBox.checked == true) {
 		displaySensorGeoJSON("baro", "Barometric Pressure Sensor", fev.urls["baro" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["baro" + 'MarkerIcon']);
-		if (baroStart == 0) {
+		if (baroStart == 0 || baroStart == 3) {
 			$('#barometricSymbology').append(barometricSymbologyInterior);
 		}
 	}
 	if (baroCheckBox.checked == false) {
 		baro.clearLayers(map);
 		$('#barometricSymbology').children().remove();
+		baroStart = 3;
 	}
   }
 
@@ -2419,13 +2423,14 @@ function clickStormTide() {
 	var stormTideCheckBox = document.getElementById("stormTideToggle");
 	if (stormTideCheckBox.checked == true) {
 		displaySensorGeoJSON("stormtide", "Storm Tide Sensor", fev.urls["stormtide" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["stormtide" + 'MarkerIcon']);
-		if (stormtideStart == 0) {
+		if (stormtideStart == 0 || stormtideStart == 3) {
 			$('#stormTideSymbology').append(stormTideSymbologyInterior);
 		}
 	}
 	if (stormTideCheckBox.checked == false) {
 		stormtide.clearLayers(map);
 		$('#stormTideSymbology').children().remove();
+		stormtideStart = 3;
 	}
   }
 
@@ -2433,13 +2438,14 @@ function clickMet() {
 	var metCheckBox = document.getElementById("metToggle");
 	if (metCheckBox.checked == true) {
 		displaySensorGeoJSON("met", "Meteorlogical Sensor", fev.urls["met" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["met" + 'MarkerIcon']);
-		if (metStart == 0) {
+		if (metStart == 0 || metStart == 3) {
 			$('#meteorlogicalSymbology').append(meteorlogicalSymbologyInterior);
 		}
 	}
 	if (metCheckBox.checked == false) {
 		met.clearLayers(map);
 		$('#meteorlogicalSymbology').children().remove();
+		metStart = 3;
 	}
   }
 
@@ -2447,13 +2453,14 @@ function clickWaveHeight() {
 	var waveHeightCheckBox = document.getElementById("waveHeightToggle");
 	if (waveHeightCheckBox.checked == true) {
 		displaySensorGeoJSON("waveheight", "Wave Height Sensor", fev.urls["waveheight" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["waveheight" + 'MarkerIcon']);
-		if (waveheightStart == 0) {
+		if (waveheightStart == 0 || waveheightStart == 3) {
 			$('#waveHeightSymbology').append(waveHeightSymbologyInterior);
 		}
 	}
 	if (waveHeightCheckBox.checked == false) {
 		waveheight.clearLayers(map);
 		$('#waveHeightSymbology').children().remove();
+		waveheightStart = 3;
 	}
   }
 
@@ -2461,11 +2468,14 @@ function clickHWM() {
 	var HWMCheckBox = document.getElementById("HWMToggle");
 	if (HWMCheckBox.checked == true) {
 		displayHWMGeoJSON("hwm", "High Water Mark", fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
-		//$('#highWaterSymbology').append(highWaterSymbologyInterior);
+		if (hwmStart == 0 || hwmStart == 3) {
+			$('#highWaterSymbology').append(highWaterSymbologyInterior);
+		}
 	}
 	if (HWMCheckBox.checked == false) {
 		hwm.clearLayers(map);
 		$('#highWaterSymbology').children().remove();
+		hwmStart = 3;
 	}
   }
 
@@ -2503,6 +2513,25 @@ function clickTracts() {
 	if (tractCheckBox.checked == false) {
 		console.log("tract box is not checked");
 		tracts.removeFrom(map);
+	}
+  }
+
+  //function for toggling noaa cyclones
+function clickInterestFWS() {
+	var interestFWSCheckBox = document.getElementById("interestFWSToggle");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		interestFWSCheckBox.checked = false;
+	}
+	//Display doi when toggle is on
+	if (interestFWSCheckBox.checked == true) {
+		appr.addTo(map);
+		$('#approvedFWSSymbology').append(interestFWSSymbologyInterior);
+	}
+	//Remove doi when toggle is off
+	if (interestFWSCheckBox.checked == false) {
+		appr.removeFrom(map);
+		$('#interestFWSSymbology').children().remove();
 	}
   }
 
