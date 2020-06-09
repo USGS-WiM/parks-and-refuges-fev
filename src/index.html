@@ -692,18 +692,18 @@
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="interpertedMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#interpretedToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Interpreted Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button> 
                                     </div>
-                                    <div>
+                                   
                                     <!--Auto-open the interpreted div-->
                                    <!--  <div id="interpretedToggleDiv" style="text-align: left; display:inline-flex; "></div> -->
                                     <!--Add toggle for displaying peak labels-->
-                                    <div style="text-align: left">
+                                    <div style="text-align: left; display: inline-flex">
                                         <label>             
                                             <input type = "checkbox"
                                             id=peaksToggle
                                             onclick= "clickPeaks()" />
                                         </label>Peak Summary
-                                    </div>    
-                                    <label class="switch" id="peakSizeCheck">             
+                                      
+                                    <label class="switch" id="peakSizeCheck" style= "display: inline-flex; margin-left: 2px">             
                                             <input type = "checkbox"
                                             id="peakCheckbox"
                                             onclick= "clickPeakLabels()" />
@@ -993,7 +993,6 @@
                     <div id="legendDiv" class="panel-body legend-panel-body">
                         <!--insert legend elements here -->
 
-                        
                         <div class="mapSymbology">
                         <div id=PeakSummarySymbology></div>
                         <div id=streamGageSymbology></div>

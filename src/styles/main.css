@@ -194,7 +194,7 @@ body {
     float: left;
     width: 14px;
     height: 14px;
-    margin: 5px;
+    margin: 2px;
     border: .1px solid rgba(255, 255, 255, 0);
 }
 .squareDivInterest {
@@ -209,17 +209,17 @@ body {
 .parkTractsColor{
     background: #0000cc;
     opacity: 0.65;
-    border-color: #000;
+    border-color: #0000cc;
     Border-width: .1px;
 }
 .parkBoundsColor{
     background: #bee8ff;
-    border-color: #000;
+    border-color: #bee8ff;
     Border-width: .1px;
 }
 .approvedAquiColor{
     background: brown;
-    border-color: #000;
+    border-color: brown;
     Border-width: .1px
 }
 .interestBoundsColor{
@@ -228,9 +228,8 @@ body {
     Border-width: .1px;
 }
 .doiRegionsColor{
-    background: #209D64;
-    border-color: #000;
-    Border-width: .1px;
+    border-color: #209D64;
+    Border-width: 2px;
 }
 .noaaCycloneColor{
     background: #ffffff;
@@ -265,6 +264,7 @@ body {
     border-color: black;
     Border-width: 2px;
 }
+
 
 .legendSwatch {
     width: 15px;

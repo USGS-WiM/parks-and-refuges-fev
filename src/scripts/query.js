@@ -13,6 +13,7 @@ var metStart = 0;
 var waveheightStart = 0;
 var hwmStart = 0;
 var peakStart = 0;
+var noaaStart = 0;
 
 //ajax retrieval function
 function displaySensorGeoJSON(type, name, url, markerIcon) {
@@ -117,6 +118,10 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
                 layer.addTo(currentSubGroup);
             });
             currentSubGroup.addTo(map);
+
+            //each layer that is added on initial map load/new filter search is added to the map and name and symbol are added to legend
+            //layers are then given values of 1 to indicate that they are already added to the legend
+
             if (type == "baro") {
                 if (baroStart == 0) {
                     var baroCheckBox = document.getElementById("baroToggle");

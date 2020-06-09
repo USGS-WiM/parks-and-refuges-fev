@@ -201,7 +201,10 @@ $.ajax({
 			console.log("noaa layer added");
 			var noaaCheckBox = document.getElementById("noaaToggle");
 			noaaCheckBox.checked = true;
-			$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
+			if (noaaStart == 0) {
+				$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
+				noaaStart = 1; 
+			}
 		}
 	}
 });
@@ -657,26 +660,34 @@ $(document).ready(function () {
 	}
 	*/
 	
-	//loop thru layer list and add the map layer item to the appropriate heading
+	//loop thru layer list and add the map layer item to the appropriate heading 
+	/*
 	$.each(fev.layerList, function (index, layer) {
-		//if (layer.Category == 'real-time') realTimeOverlays[layer.Name] = window[layer.ID];
-		//if (layer.Category == 'observed') observedOverlays[layer.Name] = window[layer.ID];
+		if (layer.Category == 'real-time') realTimeOverlays[layer.Name] = window[layer.ID];
+		if (layer.Category == 'observed') observedOverlays[layer.Name] = window[layer.ID];
 		if (layer.Category == 'interpreted') interpretedOverlays[layer.Name] = window[layer.ID];
 		if (layer.Category == 'noaa') noaaOverlays[layer.Name] = window[layer.ID];
-		//if (layer.Category == 'fws') fwsOverlays[layer.Name] = window[layer.ID];
+		if (layer.Category == 'fws') fwsOverlays[layer.Name] = window[layer.ID];
 		if (layer.Category == 'nps') npsOverlays[layer.Name] = window[layer.ID];
 		if (layer.Category == 'doi') doiOverlays[layer.Name] = window[layer.ID];
-	});
+	}); 
+	*/
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
+	/*
 	var realTimeToggle = L.control.layers(null, realTimeOverlays, { collapsed: false });
 	realTimeToggle.addTo(map);
 	$('#realTimeToggleDiv').append(realTimeToggle.onAdd(map));
+	*/
 
+	//alternative way to add checkboxes and map layer names to side panel	
+	//var createRTdiv = "<div style='text-align: left'> <label> <input type = 'checkbox' id=streamGageToggle onclick= 'clickStreamGage()' /> </label>Real-time Stream Gage </div> <div style='text-align: left'> <label> <input type = 'checkbox' id=rainGageToggle onclick= 'clickRainGage()' /> </label>Real-time Rain Gage </div>";
+	//$('#realtimetestdiv').append(createRTdiv);
+	
 	// var rtScaleAlertMarkup = "<div class='alert alert-warning' role='alert'>Please zoom in to refresh</div>";
 	// $('#realTimeToggleDiv').append(rtScaleAlertMarkup);
 
-	$('.leaflet-top.leaflet-right').hide();
+	//$('.leaflet-top.leaflet-right').hide();
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
 	/*
@@ -686,6 +697,7 @@ $(document).ready(function () {
 	$('.leaflet-top.leaflet-right').hide();
 */
 
+/*
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
 	interpretedToggle.addTo(map);
@@ -696,6 +708,7 @@ $(document).ready(function () {
 	noaaToggle.addTo(map);
 	$('#noaaToggleDiv').append(noaaToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
+	*/
 
 	/*
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
@@ -720,98 +733,6 @@ $(document).ready(function () {
 	$('#doiToggleDiv').append(doiToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 	*/
-	
-	//Get layer name and symbology for legend
-
-	//End of - get layer name and symbology for legend
-
-	//$('.btn-group input[type="checkbox"]').prop('checked', false);
-
-/*
-	var findCheckbox1 = $("div.legendDivPanel").find("input");
-	console.log("findCheckbox1", findCheckbox1);
-
-	var findCheckbox2 = $("div.legendDivPanel").find("input");
-	console.log("findCheckbox2", findCheckbox2);
-
-	var findCheckbox3 = $("div").find("dev, input");
-	console.log("findCheckbox3", findCheckbox3);
-
-	var findCheckbox4 = $("div").find("dev, input").css("checkbox");
-	console.log("findCheckbox4", findCheckbox4);
-
-	var findCheckbox5 = $("div").find("div").css("type", "checkbox");
-	console.log("findCheckbox5", findCheckbox5);
-	*/
-
-	var findCheckbox6 = $("div#legendDivPanel").find("div");
-	console.log("findCheckbox6", findCheckbox6);
-
-	/*
-	var findCheckbox7 = $("div").find("div").css("type", "checkbox");
-	console.log("findCheckbox7", findCheckbox7);
-	
-	var findCheckbox8 = $("div#interpretedToggleDiv").find("div.leaflet-control-layers-overlays.checkbox");
-	console.log("findCheckbox8", findCheckbox8);
-
-	var findCheckbox9 = $("div#interpretedToggleDiv").find("div.leaflet-control-layers-overlays");
-	console.log("findCheckbox9", findCheckbox9);
-
-	var findCheckbox10 = $("input").find("input.leaflet-control-layers-selector");
-	console.log("findCheckbox10", findCheckbox10);
-
-	var findCheckbox11 = $("input").find("input.leaflet-control-layers-selector");
-	console.log("findCheckbox11", findCheckbox11);
-
-	var findCheckbox12 = $("input").find("input.leaflet-control-layers-selector").prevObject;
-	console.log("findCheckbox12", findCheckbox12);
-
-	var findCheckbox13 = $("input").find("input.type");
-	console.log("findCheckbox13", findCheckbox13);
-	*/
-
-	//Find code under observedToggleDiv
-	var findCheckbox14 = $("div#observedToggleDiv").find("div");
-	//console.log("findCheckbox14", findCheckbox14);
-	var findOverlays = findCheckbox14[3];
-
-
-	//ATTEMPT 1
-	var findOverlaysInput = $(findOverlays).find("input");
-	var findBaro = findOverlaysInput[0];
-	//console.log("findBaro = ", findBaro);
-	var findStorm = findOverlaysInput[1];
-	//console.log("findStorm = ", findStorm);
-	var findMet = findOverlaysInput[2];
-	//console.log("findMet = ", findMet);
-	var findWave = findOverlaysInput[3];
-	//console.log("findWave = ", findWave);
-	var findHWM = findOverlaysInput[4];
-	//console.log("findHWM = ", findHWM);
-
-	//console.log("is baro checked?", findBaro.checked);
-
-	/////////////////////////////
-
-	//ATTEMPT 2
-	var findSpan = $(findOverlays).find("span");
-	console.log("findSpan", findSpan);
-	var findSpanContext = findSpan.context;
-	console.log("findSpanContext", findSpanContext);
-	var findLabel = $(findSpanContext).find("label");
-	console.log("findLabel", findLabel);
-	var findLabel_Baro = findLabel[0];
-	console.log("findLabel_Baro", findLabel_Baro);
-	
-	var findLabelInput = $(findSpanContext).find("input");
-	console.log("findLabelInput", findLabelInput);
-
-
-
-	
-
-	
-
 
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
@@ -2346,29 +2267,36 @@ function clickPeakLabels() {
 	}
   }
 
-var PeakSummarySymbologyInterior = "<div> <img class='legendSwatch' src='images/peak.png'></img> Peak Summary </div>";
-var	streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> Real-time Stream Gage </div>";	
-var	rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> Real-time Rain Gage </div>";
-var	barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> Barometric Pressure Sensor </div>";
-var	stormTideSymbologyInterior = "<div> <img class='legendSwatch' src='images/stormtide.png'></img> Storm Tide Sensor </div>";
-var	meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='images/met.png'></img> Meteorlogical Sensor </div>";
-var	waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> Wave Height Sensor </div>";
-var	highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> High Water Mark </div>";
-var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> Park Boundaries </div>";
-var parkTractsSymbologyInterior = "<div> <img class='squareDiv parkTractsColor'></img> Park Tracts </div>";
-var	approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> Approved Aquisition Boundaries </div>";
-var interestFWSSymbologyInterior = "Interest Boundaries" + "<br>" + "<img class='squareDivInterest federalFeeColor'></img>" + "Federal Land (Fee)" + "<br>" + "<img class='squareDivInterest federalLessFeeColor'></img>" + "Federal Land (Less than Fee)" + "<br>" + "<img class='squareDivInterest publicColor'></img>" + "Public" + "<br>" + "<img class='squareDivInterest privateColor'></img>" + "Private" + "<br>" + "<img class='squareDivInterest otherFederalColor'></img>" + "Other Federal Land" + "<br>" + "<img class='squareDivInterest aquisitionColor'></img>" + "Aquisition Deferred" + "<br>" + "<img class='squareDivInterest noInfoColor'></img>" + "No information";
-var	doiSymbologyInterior = "<div> <img class='squareDiv doiRegionsColor'></img> DOI Regions";
-var	noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></img> NOAA Tropical Cyclone Forecast Track </div>";
+var PeakSummarySymbologyInterior = "<div> <img class='legendSwatch' src='images/peak.png'></img> <b>Peak Summary</b> </div>";
+var	streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> <b>Real-time Stream Gage</b> </div>";	
+var	rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> <b>Real-time Rain Gage<b> </div>";
+var	barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> <b>Barometric Pressure Sensor</b> </div>";
+var	stormTideSymbologyInterior = "<div> <img class='legendSwatch' src='images/stormtide.png'></img> <b>Storm Tide Sensor</b> </div>";
+var	meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='images/met.png'></img> <b>Meteorlogical Sensor</b> </div>";
+var	waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> <b>Wave Height Sensor</b> </div>";
+var	highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> <b>High Water Mark</b> </div>";
+var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>Park Boundaries</b> </div>";
+var parkTractsSymbologyInterior = "<div> <img class='squareDiv parkTractsColor'></img> <b>Park Tracts</b> </div>";
+var	approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> <b>Approved Aquisition Boundaries</b> </div>";
+var interestFWSSymbologyInterior = "<div> <b>Interest Boundaries</b> <br> <img class='squareDivInterest federalFeeColor'></img> Federal Land (Fee) <br> <img class='squareDivInterest federalLessFeeColor'></img> Federal Land (Less than Fee) <br> <img class='squareDivInterest publicColor'></img> Public <br> <img class='squareDivInterest privateColor'></img> Private <br> <img class='squareDivInterest otherFederalColor'></img> Other Federal Land <br> <img class='squareDivInterest aquisitionColor'></img> Aquisition Deferred <br> <img class='squareDivInterest noInfoColor'></img> No information <div>";
+var	doiSymbologyInterior = "<div> <img class='squareDiv doiRegionsColor'></img> <b>DOI Regions</b>";
+var	noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></img> <b>NOAA Tropical Cyclone Forecast Track</b> </div>";
 
+//Display peak layer and legend item when peak box is checked
 function clickPeaks() {
 	var peaksCheckBox = document.getElementById("peaksToggle");
 	if (peaksCheckBox.checked == true) {
+		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
+		//When they are turned off, they are given a value of 3
+		//Values of 0 or 3 indicate that symbol and name in legend is off 
 		if (peakStart == 0 || peakStart == 3) {
+			//Add symbol and layer name to legend
 			$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
 		}
+		//When checkbox is checked, add layer to map
 		displayPeaksGeoJSON("peak", "Peak Summary", fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
 	}
+	//Remove symbol and layer name from legend when box is unchecked
 	if (peaksCheckBox.checked == false) {
 		$('#PeakSummarySymbology').children().remove();
 		peak.clearLayers();
@@ -2376,42 +2304,65 @@ function clickPeaks() {
 	}
   }
 
+//Display rain gage layer and legend item when rain gage box is checked
 function clickRainGage() {
 	var raingageCheckBox = document.getElementById("rainGageToggle");
+	//Prevent user from using toggle when zoom is less than 9
+	if (map.getZoom() < 9) {
+		raingageCheckBox.checked = false;
+	}
 	if (raingageCheckBox.checked == true) {
+		//Add symbol and layer name to legend
 		$('#rainGageSymbology').append(rainGageSymbologyInterior);
 		//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 		//queryNWISRainGages(bbox);
+		//When checkbox is checked, add layer to map
 		USGSRainGages.addTo(map);
 	}
+	//Remove symbol and layer name from legend when box is unchecked
 	if (raingageCheckBox.checked == false) {
 		$('#rainGageSymbology').children().remove();
 		USGSRainGages.clearLayers(map);
 	}
   }
 
+//Display stream gage layer and legend item when rain gage box is checked
 function clickStreamGage() {
 	var streamgageCheckBox = document.getElementById("streamGageToggle");
+	//Prevent user from using toggle when zoom is less than 9
+	if (map.getZoom() < 9) {
+		streamgageCheckBox.checked = false;
+	}
 	if (streamgageCheckBox.checked == true) {
 		//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 		//queryNWISrtGages(bbox);
+		//When checkbox is checked, add layer to map
 		USGSrtGages.addTo(map);
+		//Add symbol and layer name to legend
 		$('#streamGageSymbology').append(streamGageSymbologyInterior);
 	}
+	//Remove symbol and layer name from legend when box is unchecked
 	if (streamgageCheckBox.checked == false) {
 		USGSrtGages.clearLayers(map);
 		$('#streamGageSymbology').children().remove();
 	}
   }
 
+  //Display barometric pressure sensor layer and legend item when corresponding box is checked
 function clickBaro() {
 	var baroCheckBox = document.getElementById("baroToggle");
 	if (baroCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		displaySensorGeoJSON("baro", "Barometric Pressure Sensor", fev.urls["baro" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["baro" + 'MarkerIcon']);
+		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
+		//When they are turned off, they are given a value of 3
+		//Values of 0 or 3 indicate that symbol and name in legend is off 
 		if (baroStart == 0 || baroStart == 3) {
+			//Add symbol and layer name to legend
 			$('#barometricSymbology').append(barometricSymbologyInterior);
 		}
 	}
+	//Remove symbol and layer name from legend when box is unchecked
 	if (baroCheckBox.checked == false) {
 		baro.clearLayers(map);
 		$('#barometricSymbology').children().remove();
@@ -2419,14 +2370,21 @@ function clickBaro() {
 	}
   }
 
+  //Display storm tide sensor layer and legend item when corresponding box is checked
 function clickStormTide() {
 	var stormTideCheckBox = document.getElementById("stormTideToggle");
 	if (stormTideCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		displaySensorGeoJSON("stormtide", "Storm Tide Sensor", fev.urls["stormtide" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["stormtide" + 'MarkerIcon']);
+		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
+		//When they are turned off, they are given a value of 3
+		//Values of 0 or 3 indicate that symbol and name in legend is off 
 		if (stormtideStart == 0 || stormtideStart == 3) {
+			//Add symbol and layer name to legend
 			$('#stormTideSymbology').append(stormTideSymbologyInterior);
 		}
 	}
+	//Remove symbol and layer name from legend when box is unchecked
 	if (stormTideCheckBox.checked == false) {
 		stormtide.clearLayers(map);
 		$('#stormTideSymbology').children().remove();
@@ -2434,14 +2392,21 @@ function clickStormTide() {
 	}
   }
 
+  //Display meteorological layer and legend item when corresponding box is checked
 function clickMet() {
 	var metCheckBox = document.getElementById("metToggle");
 	if (metCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		displaySensorGeoJSON("met", "Meteorlogical Sensor", fev.urls["met" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["met" + 'MarkerIcon']);
+		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
+		//When they are turned off, they are given a value of 3
+		//Values of 0 or 3 indicate that symbol and name in legend is off 
 		if (metStart == 0 || metStart == 3) {
+			//Add symbol and layer name to legend
 			$('#meteorlogicalSymbology').append(meteorlogicalSymbologyInterior);
 		}
 	}
+	//Remove symbol and layer name from legend when box is unchecked
 	if (metCheckBox.checked == false) {
 		met.clearLayers(map);
 		$('#meteorlogicalSymbology').children().remove();
@@ -2449,14 +2414,21 @@ function clickMet() {
 	}
   }
 
+  //Display waveheight layer and legend item when corresponding box is checked
 function clickWaveHeight() {
 	var waveHeightCheckBox = document.getElementById("waveHeightToggle");
 	if (waveHeightCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		displaySensorGeoJSON("waveheight", "Wave Height Sensor", fev.urls["waveheight" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["waveheight" + 'MarkerIcon']);
+		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
+		//When they are turned off, they are given a value of 3
+		//Values of 0 or 3 indicate that symbol and name in legend is off 
 		if (waveheightStart == 0 || waveheightStart == 3) {
+			//Add symbol and layer name to legend
 			$('#waveHeightSymbology').append(waveHeightSymbologyInterior);
 		}
 	}
+	//Remove symbol and layer name from legend when box is unchecked
 	if (waveHeightCheckBox.checked == false) {
 		waveheight.clearLayers(map);
 		$('#waveHeightSymbology').children().remove();
@@ -2464,14 +2436,21 @@ function clickWaveHeight() {
 	}
   }
 
+  //Display high water mark layer and legend item when corresponding box is checked
 function clickHWM() {
 	var HWMCheckBox = document.getElementById("HWMToggle");
 	if (HWMCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		displayHWMGeoJSON("hwm", "High Water Mark", fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
+		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
+		//When they are turned off, they are given a value of 3
+		//Values of 0 or 3 indicate that symbol and name in legend is off 
 		if (hwmStart == 0 || hwmStart == 3) {
+			//Add symbol and layer name to legend
 			$('#highWaterSymbology').append(highWaterSymbologyInterior);
 		}
 	}
+	//Remove symbol and layer name from legend when box is unchecked
 	if (HWMCheckBox.checked == false) {
 		hwm.clearLayers(map);
 		$('#highWaterSymbology').children().remove();
@@ -2479,111 +2458,122 @@ function clickHWM() {
 	}
   }
 
+  //Display park boundaries layer and legend item when corresponding box is checked
 function clickBounds() {
 	var parkBoundsCheckBox = document.getElementById("parkBoundsToggle");
-	//Prevent user from using toggle when zoom is less than 8
-	if (map.getZoom() < 8) {
+	//Prevent user from using toggle when zoom is less than 9
+	if (map.getZoom() < 9) {
 		parkBoundsCheckBox.checked = false;
 	}
-	//Display tracts when toggle is on
 	if (parkBoundsCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		bounds.addTo(map);
+		//Add symbol and layer name to legend
 		$('#parkBoundsSymbology').append(parkBoundsSymbologyInterior);
 	}
-	//Remove tracts when toggle is off
+	//Remove symbol and layer name from legend when box is unchecked
 	if (parkBoundsCheckBox.checked == false) {
 		bounds.removeFrom(map);
 		$('#parkBoundsSymbology').children().remove();	
 	}
   }
 
-//function for toggling tracts
+//Display park tracts layer and legend item when corresponding box is checked
 function clickTracts() {
 	var tractCheckBox = document.getElementById("tractToggle");
-	//Prevent user from using toggle when zoom is less than 8
-	if (map.getZoom() < 8) {
+	//Prevent user from using toggle when zoom is less than 9
+	if (map.getZoom() < 9) {
 		tractCheckBox.checked = false;
 	}
-	//Display tracts when toggle is on
 	if (tractCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		tracts.addTo(map);
+		//Add symbol and layer name to legend
 		$('#parkTractsSymbology').append(parkTractsSymbologyInterior);
 	}
-	//Remove tracts when toggle is off
+	//Remove symbol and layer name from legend when box is unchecked
 	if (tractCheckBox.checked == false) {
 		console.log("tract box is not checked");
 		tracts.removeFrom(map);
 	}
   }
 
-  //function for toggling noaa cyclones
+//Display FWS interest boundaries layer and legend item when corresponding box is checked
 function clickInterestFWS() {
 	var interestFWSCheckBox = document.getElementById("interestFWSToggle");
-	//Prevent user from using toggle when zoom is less than 8
-	if (map.getZoom() < 8) {
+	//Prevent user from using toggle when zoom is less than 9
+	if (map.getZoom() < 9) {
 		interestFWSCheckBox.checked = false;
 	}
-	//Display doi when toggle is on
 	if (interestFWSCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		int.addTo(map);
+		//Add symbol and layer name to legend
 		$('#interestFWSSymbology').append(interestFWSSymbologyInterior);
 	}
-	//Remove doi when toggle is off
+	//Remove symbol and layer name from legend when box is unchecked
 	if (interestFWSCheckBox.checked == false) {
 		int.removeFrom(map);
 		$('#interestFWSSymbology').children().remove();
 	}
   }
 
-//function for toggling noaa cyclones
+  //Display FWS approved aquisition boundaries layer and legend item when corresponding box is checked
 function clickApprovedFWS() {
 	var approvedFWSCheckBox = document.getElementById("approvedFWSToggle");
-	//Prevent user from using toggle when zoom is less than 8
-	if (map.getZoom() < 8) {
+	//Prevent user from using toggle when zoom is less than 9
+	if (map.getZoom() < 9) {
 		approvedFWSCheckBox.checked = false;
 	}
-	//Display doi when toggle is on
 	if (approvedFWSCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		appr.addTo(map);
+		//Add symbol and layer name to legend
 		$('#approvedFWSSymbology').append(approvedFWSSymbologyInterior);
 	}
-	//Remove doi when toggle is off
+	//Remove symbol and layer name from legend when box is unchecked
 	if (approvedFWSCheckBox.checked == false) {
 		appr.removeFrom(map);
 		$('#approvedFWSSymbology').children().remove();
 	}
   }
 
-//function for toggling doi
+//Display DOI Region layer and legend item when corresponding box is checked
 function clickDOI() {
 	var doiCheckBox = document.getElementById("doiToggle");
 	//Prevent user from using toggle when zoom is less than 8
-	if (map.getZoom() < 8) {
+	if (map.getZoom() < 6) {
 		doiCheckBox.checked = false;
 	}
-	//Display doi when toggle is on
 	if (doiCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		doiRegions.addTo(map);
+		//Add symbol and layer name to legend
 		$('#doiSymbology').append(doiSymbologyInterior);
 	}
-	//Remove doi when toggle is off
+	//Remove symbol and layer name from legend when box is unchecked
 	if (doiCheckBox.checked == false) {
 		doiRegions.removeFrom(map);
 		$('#doiSymbology').children().remove();
 	}
   }
 
-//function for toggling noaa cyclones
+//Display NOAA Tropical Cyclone Forecast Track layer and legend item when corresponding box is checked
 function clickNOAA() {
 	var noaaCheckBox = document.getElementById("noaaToggle");
 	if (noaaCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
 		noaaService.addTo(map);
-		//$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
+		//Add symbol and layer name to legend
+		if (noaaStart == 0 || noaaStart == 3) {
+			$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
+		}
 	}
-	//Remove noaa when toggle is off
+	//Remove symbol and layer name from legend when box is unchecked
 	if (noaaCheckBox.checked == false) {
 		noaaService.removeFrom(map);
 		$('#noaaCycloneSymbology').children().remove();
+		noaaStart = 3; 
 	}
   }
 
