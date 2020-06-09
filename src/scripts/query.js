@@ -4,6 +4,10 @@
 ///function to grab all values from the inputs, form into arrays, and build query strings
 var layerCount = 0;
 var peakArr = [];
+var baroStart = 0;
+var stormtideStart = 0;
+var metStart = 0;
+var waveheightStart = 0;
 //ajax retrieval function
 function displaySensorGeoJSON(type, name, url, markerIcon) {
     //increment layerCount
@@ -111,21 +115,25 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
                 var baroCheckBox = document.getElementById("baroToggle");
                 baroCheckBox.checked = true;
                 $('#barometricSymbology').append(barometricSymbologyInterior);
+                baroStart = 1;
             }
             if (type == "stormtide") {
                 var stormTideCheckBox = document.getElementById("stormTideToggle");
                 stormTideCheckBox.checked = true;
                 $('#stormTideSymbology').append(stormTideSymbologyInterior);
+                stormtideStart = 1;
             }
             if (type == "met") {
                 var metCheckBox = document.getElementById("metToggle");
                 metCheckBox.checked = true;
                 $('#meteorlogicalSymbology').append(meteorlogicalSymbologyInterior);
+                metStart = 1;
             }
             if (type == "waveheight") {
                 var waveHeightCheckBox = document.getElementById("waveHeightToggle");
                 waveHeightCheckBox.checked = true;
                 $('#waveHeightSymbology').append(waveHeightSymbologyInterior);
+                waveheightStart = 1;
             }
             if (currentSubGroup == 'rdg') {
                 alert("RDG feature created");

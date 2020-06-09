@@ -2405,7 +2405,9 @@ function clickBaro() {
 	var baroCheckBox = document.getElementById("baroToggle");
 	if (baroCheckBox.checked == true) {
 		displaySensorGeoJSON("baro", "Barometric Pressure Sensor", fev.urls["baro" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["baro" + 'MarkerIcon']);
-		//$('#barometricSymbology').append(barometricSymbologyInterior);
+		if (baroStart == 0) {
+			$('#barometricSymbology').append(barometricSymbologyInterior);
+		}
 	}
 	if (baroCheckBox.checked == false) {
 		baro.clearLayers(map);
@@ -2417,7 +2419,9 @@ function clickStormTide() {
 	var stormTideCheckBox = document.getElementById("stormTideToggle");
 	if (stormTideCheckBox.checked == true) {
 		displaySensorGeoJSON("stormtide", "Storm Tide Sensor", fev.urls["stormtide" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["stormtide" + 'MarkerIcon']);
-		//$('#stormTideSymbology').append(stormTideSymbologyInterior);
+		if (stormtideStart == 0) {
+			$('#stormTideSymbology').append(stormTideSymbologyInterior);
+		}
 	}
 	if (stormTideCheckBox.checked == false) {
 		stormtide.clearLayers(map);
@@ -2429,7 +2433,9 @@ function clickMet() {
 	var metCheckBox = document.getElementById("metToggle");
 	if (metCheckBox.checked == true) {
 		displaySensorGeoJSON("met", "Meteorlogical Sensor", fev.urls["met" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["met" + 'MarkerIcon']);
-		//$('#meteorlogicalSymbology').append(meteorlogicalSymbologyInterior);
+		if (metStart == 0) {
+			$('#meteorlogicalSymbology').append(meteorlogicalSymbologyInterior);
+		}
 	}
 	if (metCheckBox.checked == false) {
 		met.clearLayers(map);
@@ -2441,7 +2447,9 @@ function clickWaveHeight() {
 	var waveHeightCheckBox = document.getElementById("waveHeightToggle");
 	if (waveHeightCheckBox.checked == true) {
 		displaySensorGeoJSON("waveheight", "Wave Height Sensor", fev.urls["waveheight" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["waveheight" + 'MarkerIcon']);
-		//$('#waveHeightSymbology').append(waveHeightSymbologyInterior);
+		if (waveheightStart == 0) {
+			$('#waveHeightSymbology').append(waveHeightSymbologyInterior);
+		}
 	}
 	if (waveHeightCheckBox.checked == false) {
 		waveheight.clearLayers(map);
