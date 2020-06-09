@@ -199,6 +199,9 @@ $.ajax({
 			//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
 			//noaaService = noaaTrack;
 			console.log("noaa layer added");
+			var noaaCheckBox = document.getElementById("noaaToggle");
+			noaaCheckBox.checked = true;
+			$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
 		}
 	}
 });
@@ -2361,12 +2364,12 @@ var	noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></im
 function clickPeaks() {
 	var peaksCheckBox = document.getElementById("peaksToggle");
 	if (peaksCheckBox.checked == true) {
-		$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
-		peak.addTo(map);
+		//$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
+		displayPeaksGeoJSON("peak", "Peak Summary", fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
 	}
 	if (peaksCheckBox.checked == false) {
 		$('#PeakSummarySymbology').children().remove();
-		peak.clearLayers(map);
+		peak.clearLayers();
 	}
   }
 
@@ -2374,6 +2377,8 @@ function clickRainGage() {
 	var raingageCheckBox = document.getElementById("rainGageToggle");
 	if (raingageCheckBox.checked == true) {
 		$('#rainGageSymbology').append(rainGageSymbologyInterior);
+		//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+		//queryNWISRainGages(bbox);
 		USGSRainGages.addTo(map);
 	}
 	if (raingageCheckBox.checked == false) {
@@ -2385,6 +2390,8 @@ function clickRainGage() {
 function clickStreamGage() {
 	var streamgageCheckBox = document.getElementById("streamGageToggle");
 	if (streamgageCheckBox.checked == true) {
+		//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+		//queryNWISrtGages(bbox);
 		USGSrtGages.addTo(map);
 		$('#streamGageSymbology').append(streamGageSymbologyInterior);
 	}
@@ -2397,8 +2404,8 @@ function clickStreamGage() {
 function clickBaro() {
 	var baroCheckBox = document.getElementById("baroToggle");
 	if (baroCheckBox.checked == true) {
-		baro.addTo(map);
-		$('#barometricSymbology').append(barometricSymbologyInterior);
+		displaySensorGeoJSON("baro", "Barometric Pressure Sensor", fev.urls["baro" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["baro" + 'MarkerIcon']);
+		//$('#barometricSymbology').append(barometricSymbologyInterior);
 	}
 	if (baroCheckBox.checked == false) {
 		baro.clearLayers(map);
@@ -2409,8 +2416,8 @@ function clickBaro() {
 function clickStormTide() {
 	var stormTideCheckBox = document.getElementById("stormTideToggle");
 	if (stormTideCheckBox.checked == true) {
-		stormtide.addTo(map);
-		$('#stormTideSymbology').append(stormTideSymbologyInterior);
+		displaySensorGeoJSON("stormtide", "Storm Tide Sensor", fev.urls["stormtide" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["stormtide" + 'MarkerIcon']);
+		//$('#stormTideSymbology').append(stormTideSymbologyInterior);
 	}
 	if (stormTideCheckBox.checked == false) {
 		stormtide.clearLayers(map);
@@ -2421,8 +2428,8 @@ function clickStormTide() {
 function clickMet() {
 	var metCheckBox = document.getElementById("metToggle");
 	if (metCheckBox.checked == true) {
-		met.addTo(map);
-		$('#meteorlogicalSymbology').append(meteorlogicalSymbologyInterior);
+		displaySensorGeoJSON("met", "Meteorlogical Sensor", fev.urls["met" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["met" + 'MarkerIcon']);
+		//$('#meteorlogicalSymbology').append(meteorlogicalSymbologyInterior);
 	}
 	if (metCheckBox.checked == false) {
 		met.clearLayers(map);
@@ -2433,8 +2440,8 @@ function clickMet() {
 function clickWaveHeight() {
 	var waveHeightCheckBox = document.getElementById("waveHeightToggle");
 	if (waveHeightCheckBox.checked == true) {
-		waveheight.addTo(map);
-		$('#waveHeightSymbology').append(waveHeightSymbologyInterior);
+		displaySensorGeoJSON("waveheight", "Wave Height Sensor", fev.urls["waveheight" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["waveheight" + 'MarkerIcon']);
+		//$('#waveHeightSymbology').append(waveHeightSymbologyInterior);
 	}
 	if (waveHeightCheckBox.checked == false) {
 		waveheight.clearLayers(map);
@@ -2445,8 +2452,8 @@ function clickWaveHeight() {
 function clickHWM() {
 	var HWMCheckBox = document.getElementById("HWMToggle");
 	if (HWMCheckBox.checked == true) {
-		hwm.addTo(map);
-		$('#highWaterSymbology').append(highWaterSymbologyInterior);
+		displayHWMGeoJSON("hwm", "High Water Mark", fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
+		//$('#highWaterSymbology').append(highWaterSymbologyInterior);
 	}
 	if (HWMCheckBox.checked == false) {
 		hwm.clearLayers(map);
@@ -2468,8 +2475,7 @@ function clickBounds() {
 	//Remove tracts when toggle is off
 	if (parkBoundsCheckBox.checked == false) {
 		bounds.removeFrom(map);
-		$('#parkBoundsSymbology').children().remove();
-		//USGSrtGages.clearLayers();	
+		$('#parkBoundsSymbology').children().remove();	
 	}
   }
 
@@ -2484,14 +2490,11 @@ function clickTracts() {
 	if (tractCheckBox.checked == true) {
 		tracts.addTo(map);
 		$('#parkTractsSymbology').append(parkTractsSymbologyInterior);
-		console.log("tract box is checked");
 	}
 	//Remove tracts when toggle is off
 	if (tractCheckBox.checked == false) {
 		console.log("tract box is not checked");
 		tracts.removeFrom(map);
-		$('#parkTractsSymbology').children().remove();
-		//USGSrtGages.clearLayers();
 	}
   }
 
@@ -2514,7 +2517,7 @@ function clickApprovedFWS() {
 	}
   }
 
-//function for toggling noaa cyclones
+//function for toggling doi
 function clickDOI() {
 	var doiCheckBox = document.getElementById("doiToggle");
 	//Prevent user from using toggle when zoom is less than 8
@@ -2536,10 +2539,9 @@ function clickDOI() {
 //function for toggling noaa cyclones
 function clickNOAA() {
 	var noaaCheckBox = document.getElementById("noaaToggle");
-	//Display noaa when toggle is on
 	if (noaaCheckBox.checked == true) {
 		noaaService.addTo(map);
-		$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
+		//$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
 	}
 	//Remove noaa when toggle is off
 	if (noaaCheckBox.checked == false) {

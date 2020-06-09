@@ -107,6 +107,26 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
                 layer.addTo(currentSubGroup);
             });
             currentSubGroup.addTo(map);
+            if (type == "baro") {
+                var baroCheckBox = document.getElementById("baroToggle");
+                baroCheckBox.checked = true;
+                $('#barometricSymbology').append(barometricSymbologyInterior);
+            }
+            if (type == "stormtide") {
+                var stormTideCheckBox = document.getElementById("stormTideToggle");
+                stormTideCheckBox.checked = true;
+                $('#stormTideSymbology').append(stormTideSymbologyInterior);
+            }
+            if (type == "met") {
+                var metCheckBox = document.getElementById("metToggle");
+                metCheckBox.checked = true;
+                $('#meteorlogicalSymbology').append(meteorlogicalSymbologyInterior);
+            }
+            if (type == "waveheight") {
+                var waveHeightCheckBox = document.getElementById("waveHeightToggle");
+                waveHeightCheckBox.checked = true;
+                $('#waveHeightSymbology').append(waveHeightSymbologyInterior);
+            }
             if (currentSubGroup == 'rdg') {
                 alert("RDG feature created");
             }
@@ -200,6 +220,9 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
                 layer.addTo(hwm);
             });
             hwm.addTo(map);
+            HWMCheckBox = document.getElementById("HWMToggle");
+            HWMCheckBox.checked = true;
+            $('#highWaterSymbology').append(highWaterSymbologyInterior);
             checkLayerCount(layerCount);
         }
     });
@@ -322,6 +345,9 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                 layer.addTo(peak);
             });
             peak.addTo(map);
+            var peaksCheckBox = document.getElementById("peaksToggle");
+            peaksCheckBox.checked = true;
+            $('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
             checkLayerCount(layerCount);
         }
     });
