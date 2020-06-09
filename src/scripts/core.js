@@ -2357,7 +2357,7 @@ var	highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hw
 var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> Park Boundaries </div>";
 var parkTractsSymbologyInterior = "<div> <img class='squareDiv parkTractsColor'></img> Park Tracts </div>";
 var	approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> Approved Aquisition Boundaries </div>";
-//var	interestFWSSymbology = "Interest Boundaries" + "<br>" + "<img class='squareDiv federalFeeColor'></img>" + "Federal Land (Fee)" + "<br>" + "<img class='squareDiv federalLessFeeColor'></img>" + "Federal Land (Less than Fee)" + "<br>" + "<img class='squareDiv publicColor'></img>" + "Public" + "<br>" + "<img class='squareDiv privateColor'></img>" + "Private" + "<br>" + "<img class='squareDiv otherFederalColor'></img>" + "Other Federal Land" + "<br>" + "<img class='squareDiv aquisitionColor'></img>" + "Aquisition Deferred" + "<br>" + "<img class='squareDiv noInfoColor'></img>" + "No information";
+var interestFWSSymbologyInterior = "Interest Boundaries" + "<br>" + "<img class='squareDivInterest federalFeeColor'></img>" + "Federal Land (Fee)" + "<br>" + "<img class='squareDivInterest federalLessFeeColor'></img>" + "Federal Land (Less than Fee)" + "<br>" + "<img class='squareDivInterest publicColor'></img>" + "Public" + "<br>" + "<img class='squareDivInterest privateColor'></img>" + "Private" + "<br>" + "<img class='squareDivInterest otherFederalColor'></img>" + "Other Federal Land" + "<br>" + "<img class='squareDivInterest aquisitionColor'></img>" + "Aquisition Deferred" + "<br>" + "<img class='squareDivInterest noInfoColor'></img>" + "No information";
 var	doiSymbologyInterior = "<div> <img class='squareDiv doiRegionsColor'></img> DOI Regions";
 var	noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></img> NOAA Tropical Cyclone Forecast Track </div>";
 
@@ -2525,12 +2525,12 @@ function clickInterestFWS() {
 	}
 	//Display doi when toggle is on
 	if (interestFWSCheckBox.checked == true) {
-		appr.addTo(map);
-		$('#approvedFWSSymbology').append(interestFWSSymbologyInterior);
+		int.addTo(map);
+		$('#interestFWSSymbology').append(interestFWSSymbologyInterior);
 	}
 	//Remove doi when toggle is off
 	if (interestFWSCheckBox.checked == false) {
-		appr.removeFrom(map);
+		int.removeFrom(map);
 		$('#interestFWSSymbology').children().remove();
 	}
   }

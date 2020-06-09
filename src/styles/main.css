@@ -197,6 +197,15 @@ body {
     margin: 5px;
     border: .1px solid rgba(255, 255, 255, 0);
 }
+.squareDivInterest {
+    float: left;
+    width: 14px;
+    height: 14px;
+    margin-right: 3px;
+    margin-top: 3px;
+    margin-left: 20px;
+    border: .1px solid rgba(255, 255, 255, 0);
+}
 .parkTractsColor{
     background: #0000cc;
     opacity: 0.65;
@@ -230,31 +239,31 @@ body {
 }
 .federalFeeColor{
     border-color: green;
-    Border-width: 1px;
+    Border-width: 2px;
 }
 .federalLessFeeColor{
     border-color: yellow;
-    Border-width: 1px;
+    Border-width: 2px;
 }
 .publicColor{
     border-color: orange;
-    Border-width: 1px;
+    Border-width: 2px;
 }
 .privateColor{
     border-color: blue;
-    Border-width: 1px;
+    Border-width: 2px;
 }
 .otherFederalColor{
     border-color:purple;
-    Border-width: 1px;
+    Border-width: 2px;
 }
 .aquisitionColor{
     border-color: pink;
-    Border-width: 1px;
+    Border-width: 2px;
 }
 .noInfoColor{
     border-color: black;
-    Border-width: 1px;
+    Border-width: 2px;
 }
 
 .legendSwatch {
