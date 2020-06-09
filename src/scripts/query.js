@@ -4,6 +4,17 @@
 ///function to grab all values from the inputs, form into arrays, and build query strings
 var layerCount = 0;
 var peakArr = [];
+
+//Variables to determine if the layer was added to map on the first map load
+//When the map initially loads, the layer box is pre-checked and the corresponding symbol is added to the legend
+var baroStart = 0;
+var stormtideStart = 0;
+var metStart = 0;
+var waveheightStart = 0;
+var hwmStart = 0;
+var peakStart = 0;
+var noaaStart = 0;
+
 //ajax retrieval function
 function displaySensorGeoJSON(type, name, url, markerIcon) {
     //increment layerCount
@@ -107,6 +118,42 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
                 layer.addTo(currentSubGroup);
             });
             currentSubGroup.addTo(map);
+
+            //each layer that is added on initial map load/new filter search is added to the map and name and symbol are added to legend
+            //layers are then given values of 1 to indicate that they are already added to the legend
+
+            if (type == "baro") {
+                if (baroStart == 0) {
+                    var baroCheckBox = document.getElementById("baroToggle");
+                    baroCheckBox.checked = true;
+                    $('#barometricSymbology').append(barometricSymbologyInterior);
+                    baroStart = 1;
+                }
+            }
+            if (type == "stormtide") {
+                if (stormtideStart == 0) {
+                    var stormTideCheckBox = document.getElementById("stormTideToggle");
+                    stormTideCheckBox.checked = true;
+                    $('#stormTideSymbology').append(stormTideSymbologyInterior);
+                    stormtideStart = 1;
+                }
+            }
+            if (type == "met") {
+                if (metStart == 0) {
+                    var metCheckBox = document.getElementById("metToggle");
+                    metCheckBox.checked = true;
+                    $('#meteorlogicalSymbology').append(meteorlogicalSymbologyInterior);
+                    metStart = 1;
+                }
+            }
+            if (type == "waveheight") {
+                if (waveheightStart == 0) {
+                    var waveHeightCheckBox = document.getElementById("waveHeightToggle");
+                    waveHeightCheckBox.checked = true;
+                    $('#waveHeightSymbology').append(waveHeightSymbologyInterior);
+                    waveheightStart = 1;
+                }
+            }
             if (currentSubGroup == 'rdg') {
                 alert("RDG feature created");
             }
@@ -200,6 +247,12 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
                 layer.addTo(hwm);
             });
             hwm.addTo(map);
+            if (hwmStart == 0) {
+                HWMCheckBox = document.getElementById("HWMToggle");
+                HWMCheckBox.checked = true;
+                $('#highWaterSymbology').append(highWaterSymbologyInterior);
+                hwmStart = 1;
+            }
             checkLayerCount(layerCount);
         }
     });
@@ -290,8 +343,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                 }).bindLabel("Peak: " + feature.properties.peak_stage.toString() + "<br>Site: " +feature.properties.site_no);
             }
             return marker;
-        }
-        
+        }    
     });
 
     $.getJSON(url, function (data) {
@@ -319,11 +371,16 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             }
             createPeakArray.addData(data);
             currentMarker.addData(data);
-            
             currentMarker.eachLayer(function (layer) {
                 layer.addTo(peak);
             });
             peak.addTo(map);
+            if (peakStart == 0) {
+                var peaksCheckBox = document.getElementById("peaksToggle");
+                peaksCheckBox.checked = true;
+                $('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
+                peakStart = 1;
+            }
             checkLayerCount(layerCount);
         }
     });
