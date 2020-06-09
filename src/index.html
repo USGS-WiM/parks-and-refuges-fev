@@ -979,6 +979,16 @@
                 <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"><i class="fa fa-lg fa-cog fa-spin fa-fw"></i><span>Loading Layers...</span></div>  
             </div>
 
+            <div id="latLngScale" class="latLngScale">
+                <span class="hover-content"> <b>Map scale </b></span>
+                1:<span id="scale"></span> | <span class="hover-content"> <b>Zoom level </b></span> <span id="zoomLevel"></span><br>
+                <span class="hover-content"><b>Latitude</b></span>
+                <span id="latitude">y</span> |
+                <span class="hover-content"> <b>Longitude</b></span>
+                <span id="longitude">x</span>
+                <span id="mapCenterLabel"  class="hover-content"> (center)</span>
+            </div>
+
             <!--Start of Active Layers panel-->
             <div id="legendElement" class="panel panel-default legendClass" data-html2canvas-ignore>
                 <div id="legendHeading" class=" legendHeading" role="tab">
@@ -1020,15 +1030,7 @@
             <div id="homeButton"></div>
             <div id="locateButton"></div>
 
-            <div id="latLngScale" class="latLngScale">
-                <span class="hover-content"> <b>Map scale </b></span>
-                1:<span id="scale"></span> | <span class="hover-content"> <b>Zoom level </b></span> <span id="zoomLevel"></span><br>
-                <span class="hover-content"><b>Latitude</b></span>
-                <span id="latitude">y</span> |
-                <span class="hover-content"> <b>Longitude</b></span>
-                <span id="longitude">x</span>
-                <span id="mapCenterLabel"  class="hover-content"> (center)</span>
-            </div>
+
 
         </div>
         <div class="col-xs-7 col-sm-3 col-md-3 sidebar sidebar-right sidebar-animate"></div>
