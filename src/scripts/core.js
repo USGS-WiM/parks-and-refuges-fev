@@ -951,7 +951,7 @@ $(document).ready(function () {
 		showRegionalModal();
 	});
 	var pdfMapUrl;
-
+	
 	$('#printNav').click(function () {
 		showPrintModal();
 
@@ -1939,6 +1939,8 @@ $(document).ready(function () {
 	});
 
 	//Begin data prep for pdf print out
+
+	//Get peak summary data into table for pdf report
 	var peaksPdfData = [];	
 	function bodyData() {
 		for (var i in identifiedPeaks) {
@@ -2080,52 +2082,46 @@ $(document).ready(function () {
 	}
 	
 	//Begin legend prep to get active layers into legend table for pdf report
-	var getOverlays = [];
-	var srcActiveOverlays = [];
-	var activeOverlays =[];
-	var imageUrls = [];
+	var srcLegendImgs = [];
+	var legendLayer = [];
+	var legendUrls = [];
 
-	function getActiveOverlays() {
-		$.each($('.leaflet-control-layers-overlays'), function(index, overlayGroup) {
-			$.each(overlayGroup.children, function(index, overlayLabel) {
-				//console.log(index, overlayLabel)Y
-				if ($(overlayLabel.children[0]).is(":checked")) {			
-					getOverlays.push($(overlayLabel.children[1]).text());
-					srcActiveOverlays.push($(overlayLabel.children[1].children).attr("src"));
-					activeOverlays.push({
-						"Image": $(overlayLabel.children[1].children).attr("src").replace('images/',''), 
-						"Layer": ($(overlayLabel.children[1]).text())
-					});
-				}
-			})
-		})
+	function getLegendItems() {
+		// Get legend images via the class "legendSwatch", and create base64 images for pdfMake
+		var legendImgs = document.getElementsByClassName('legendSwatch');
 
-		for (var i in srcActiveOverlays) {
+		for (let i = 0; i < legendImgs.length; i++) {
+			srcLegendImgs.push(legendImgs[i].getAttribute("src"));
+		}
+
+		for (var i in srcLegendImgs) {
 			function imageToBase64(){
-				console.log("scrActiveOverlays", srcActiveOverlays);
 				var canvas = document.createElement("canvas");
 				var ctx = canvas.getContext("2d");
 				var base_image = new Image();
 				canvas.width = 10;
 				canvas.height = 10;
-				base_image.src = srcActiveOverlays[i];
+				base_image.src = srcLegendImgs[i];
 				ctx.drawImage(base_image, 0, 0, 10, 10);
 				var dataURL = canvas.toDataURL();
-				//console.log(dataURL);
-				imageUrls.push(dataURL);
+				legendUrls.push(dataURL);
 			};
 			imageToBase64();
 		};
+
+		//Get legend text 
+		$.each($(".mapSymbology").find("b"), function (index, b) {
+			legendLayer.push($(b).text())
+		})
 	}
 
-
-
+	//Setting up the body of legend table for pdfMake
 	function legendTableBody() {
-		getActiveOverlays();
+		getLegendItems();
 		var body = [];
-		for (var i = 0; i < imageUrls.length && getOverlays.length; i++) {
+		for (var i = 0; i < legendUrls.length && legendLayer.length; i++) {
 			var dataRow = [];
-			dataRow.push({image: imageUrls[i]}, getOverlays[i]);
+			dataRow.push({image: legendUrls[i]}, legendLayer[i]);
 			body.push(dataRow);
 		}
 		return body;
@@ -2141,7 +2137,6 @@ $(document).ready(function () {
 	}
 
 	function printReport() {
-		console.log(buildHwmTableBody())
 		const docDefinition = {
 			pageOrientation: 'landscape',
 			pageMargins: [20, 20, 20, 35],
