@@ -244,7 +244,7 @@ var tracts = L.esri.featureLayer({
 	useCors: false,
 	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/1",
 	//opacity: 0.5,
-	minZoom: 9,
+	//minZoom: 9,
 	style: function (feature) {
 		if (feature.properties.Interest === 'Federal Land (Fee)') {
 			return { color: 'green', weight: 2 };
@@ -271,7 +271,7 @@ var bounds = L.esri.featureLayer({
 	useCors: false,
 	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2",
 	//opacity: 0.5,
-	minZoom: 9,
+	//minZoom: 9,
 	/* style: function (feature) {
 		return { color: 'brown', weight: 2 };
 	} */
@@ -282,7 +282,7 @@ var appr = L.esri.featureLayer({
 	useCors: false,
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
 	//opacity: 0.5,
-	minZoom: 9,
+	//minZoom: 9,
 	style: function (feature) {
 		return { color: 'brown', weight: 2 };
 	}
@@ -294,7 +294,7 @@ var int = L.esri.featureLayer({
 	useCors: false,
 	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1",
 	//opacity: 0.5,
-	minZoom: 9,
+	//minZoom: 9,
 	style: function (feature) {
 		if ((feature.properties.INTTYPE1 === 'F') || (feature.properties.INTTYPE1 === 'O')) {
 			return { color: 'green', weight: 2, fillOpacity: 0 };
@@ -1850,6 +1850,39 @@ $(document).ready(function () {
 			USGSrtGages.clearLayers();
 			USGSRainGages.clearLayers();
 			$('#rtScaleAlert').show();
+
+			//Remove layers from map
+			appr.removeFrom(map);
+			int.removeFrom(map);
+			tracts.removeFrom(map);
+			bounds.removeFrom(map);
+			
+			//Prevent check boxes from being checked
+			var approvedFWSCheckBox = document.getElementById("approvedFWSToggle");
+			approvedFWSCheckBox.checked = false;
+
+			var interestFWSCheckBox = document.getElementById("interestFWSToggle");
+			interestFWSCheckBox.checked = false;
+
+			var tractCheckBox = document.getElementById("tractToggle");
+			tractCheckBox.checked = false;
+
+			var parkBoundsCheckBox = document.getElementById("parkBoundsToggle");
+			parkBoundsCheckBox.checked = false;
+
+			var streamgageCheckBox = document.getElementById("streamGageToggle");
+			streamgageCheckBox.checked = false;
+
+			var raingageCheckBox = document.getElementById("rainGageToggle");
+			raingageCheckBox.checked = false;
+
+			//Remove item from legend
+			$('#approvedFWSSymbology').children().remove();
+			$('#interestFWSSymbology').children().remove();
+			$('#parkTractsSymbology').children().remove();
+			$('#parkBoundsSymbology').children().remove();	
+			$('#streamGageSymbology').children().remove();
+			$('#rainGageSymbology').children().remove();
 		}
 		//Remove peak labels and turn off/disable toggle when zoom is less than 8
 		if (map.getZoom() < 8){
@@ -2267,20 +2300,20 @@ function clickPeakLabels() {
 	}
   }
 
-var PeakSummarySymbologyInterior = "<div> <img class='legendSwatch' src='images/peak.png'></img> <b>Peak Summary</b> </div>";
-var	streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> <b>Real-time Stream Gage</b> </div>";	
-var	rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> <b>Real-time Rain Gage<b> </div>";
-var	barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> <b>Barometric Pressure Sensor</b> </div>";
-var	stormTideSymbologyInterior = "<div> <img class='legendSwatch' src='images/stormtide.png'></img> <b>Storm Tide Sensor</b> </div>";
-var	meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='images/met.png'></img> <b>Meteorlogical Sensor</b> </div>";
-var	waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> <b>Wave Height Sensor</b> </div>";
-var	highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> <b>High Water Mark</b> </div>";
-var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>Park Boundaries</b> </div>";
-var parkTractsSymbologyInterior = "<div> <img class='squareDiv parkTractsColor'></img> <b>Park Tracts</b> </div>";
-var	approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> <b>Approved Aquisition Boundaries</b> </div>";
-var interestFWSSymbologyInterior = "<div> <b>Interest Boundaries</b> <br> <img class='squareDivInterest federalFeeColor'></img> Federal Land (Fee) <br> <img class='squareDivInterest federalLessFeeColor'></img> Federal Land (Less than Fee) <br> <img class='squareDivInterest publicColor'></img> Public <br> <img class='squareDivInterest privateColor'></img> Private <br> <img class='squareDivInterest otherFederalColor'></img> Other Federal Land <br> <img class='squareDivInterest aquisitionColor'></img> Aquisition Deferred <br> <img class='squareDivInterest noInfoColor'></img> No information <div>";
-var	doiSymbologyInterior = "<div> <img class='squareDiv doiRegionsColor'></img> <b>DOI Regions</b>";
-var	noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></img> <b>NOAA Tropical Cyclone Forecast Track</b> </div>";
+  var PeakSummarySymbologyInterior = "<div> <img class='legendSwatch' src='images/peak.png'></img> <b>Peak Summary</b> </div>";
+  var	streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> <b>Real-time Stream Gage</b> </div>";	
+  var	rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> <b>Real-time Rain Gage<b> </div>";
+  var	barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> <b>Barometric Pressure Sensor</b> </div>";
+  var	stormTideSymbologyInterior = "<div> <img class='legendSwatch' src='images/stormtide.png'></img> <b>Storm Tide Sensor</b> </div>";
+  var	meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='images/met.png'></img> <b>Meteorlogical Sensor</b> </div>";
+  var	waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> <b>Wave Height Sensor</b> </div>";
+  var	highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> <b>High Water Mark</b> </div>";
+  var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>Park Boundaries</b> </div>";
+  var parkTractsSymbologyInterior = "<div> <b>Park Tracts</b> <br> <img class='squareDivInterest federalFeeColor'></img> Federal Land (Fee) <br> <img class='squareDivInterest federalLessFeeColor'></img> Federal Land (Less than Fee) <br> <img class='squareDivInterest publicColor'></img> Public <br> <img class='squareDivInterest privateColor'></img> Private <br> <img class='squareDivInterest otherFederalColor'></img> Other Federal Land <br> <img class='squareDivInterest aquisitionColor'></img> Aquisition Deferred <br> <img class='squareDivInterest noInfoColor'></img> Unknown <div>";
+  var	approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> <b>Approved Aquisition Boundaries</b> </div>";
+  var interestFWSSymbologyInterior = "<div> <b>Interest Boundaries</b> <br> <img class='squareDivInterest intFee'></img> Fee <br> <img class='squareDivInterest intSecondary'></img> Secondary <br> <img class='squareDivInterest intEasement'></img> Easement <br> <img class='squareDivInterest intLease'></img> Lease <br> <img class='squareDivInterest intAgreement'></img> Agreement <br> <img class='squareDivInterest intPartial'></img> Partial Interest <br> <img class='squareDivInterest intPermit'></img> Permit <br> <img class='squareDivInterest intUnknown'></img> Unknown <div>";
+  var	doiSymbologyInterior = "<div> <img class='squareDiv doiRegionsColor'></img> <b>DOI Regions</b>";
+  var	noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></img> <b>NOAA Tropical Cyclone Forecast Track</b> </div>";
 
 //Display peak layer and legend item when peak box is checked
 function clickPeaks() {
@@ -2493,8 +2526,8 @@ function clickTracts() {
 	}
 	//Remove symbol and layer name from legend when box is unchecked
 	if (tractCheckBox.checked == false) {
-		console.log("tract box is not checked");
 		tracts.removeFrom(map);
+		$('#parkTractsSymbology').children().remove();
 	}
   }
 

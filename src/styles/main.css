@@ -189,7 +189,6 @@ body {
     position: relative; 
     margin-left: 6px;
 }
-
 .squareDiv {
     float: left;
     width: 14px;
@@ -237,33 +236,59 @@ body {
     Border-width: .1px;
 }
 .federalFeeColor{
+    background: green;
+}
+.federalLessFeeColor{
+    background: yellow;
+}
+.publicColor{
+    background: orange;
+}
+.privateColor{
+    background: blue;
+}
+.otherFederalColor{
+    background:purple;
+}
+.aquisitionColor{
+    background: pink;   
+}
+.noInfoColor{
+    background: black;
+}
+.intFee {
     border-color: green;
     Border-width: 2px;
 }
-.federalLessFeeColor{
+.intSecondary {
+    border-color: purple;
+    Border-width: 2px; 
+}
+.intEasement {
+    border-color:orange;
+    Border-width: 2px;
+}
+.intLease {
     border-color: yellow;
     Border-width: 2px;
 }
-.publicColor{
-    border-color: orange;
+.intAgreement {
+    border-color:beige;
     Border-width: 2px;
 }
-.privateColor{
+.intPartial {
     border-color: blue;
     Border-width: 2px;
 }
-.otherFederalColor{
-    border-color:purple;
+.intPermit {
+    border-color: red;
     Border-width: 2px;
 }
-.aquisitionColor{
-    border-color: pink;
-    Border-width: 2px;
-}
-.noInfoColor{
+.intUnknown {
     border-color: black;
     Border-width: 2px;
 }
+
 
 
 .legendSwatch {
