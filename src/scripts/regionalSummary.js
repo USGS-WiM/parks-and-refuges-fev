@@ -99,8 +99,7 @@ var parksURL = "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/servic
 var peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.json?Event=";
 
 $(document).ready(function () {
-
-
+    
     $('#regionalReportNav').click(function () {
 
         // for some reason tableData loading incompletely without timeout
@@ -121,18 +120,10 @@ $(document).ready(function () {
         }, 600);
 
         // checking for region entry when region input is changed
-        $('#regionSelect_regionalModal').change(function () {
-
-
-            // if it has a value, we query to get the region geometry
-            if (($('#regionSelect_regionalModal').val()) !== null) {
-
-            } else {
-
-            }
-        });
-
-
+        
+        /* if ((($('#regionSelect_regionalModal').val() !== null)) && (($('#typeSelect_regionalModal').val() !== null)) && 
+        (($('#evtSelect_regionalModal').val() !== null)) && (($('#regionSelect_regionalModal').val() !== null)) && 
+        (($('#bufferSelect_regionalModal').val() !== null))) { */
 
     });
 
@@ -1011,9 +1002,13 @@ $(document).ready(function () {
                 return columnSet;
             }
 
-            if (allPeaks.length > 0) {
+            if (sum.length > 0) {
                 buildDataTables("#summaryDataTable", sum, "Summary Information");
+            }
+            if (allPeaks.length > 0) {
                 buildDataTables("#peakDataTableReg", allPeaks, "Peak Data");
+            }
+            if (allHWMs.length > 0) {
                 buildDataTables("#hwmDataTableReg", allHWMs, "HWM Data");
             }
         }
@@ -1166,3 +1161,14 @@ function downloadRegionalCSV(type) {
     }
 }
 
+function formReady() {
+    if (
+        (($('#regionSelect_regionalModal').val() !== null)) 
+        && (($('#typeSelect_regionalModal').val() !== null)) 
+        && (($('#evtSelect_regionalModal').val() !== null)) 
+        && (($('#regionSelect_regionalModal').val() !== null)) 
+        && (($('#regionType_regionalModal').val() !== null)) 
+        ) {
+        $('#btnSubmitSelections').removeAttr('disabled');
+    }
+}
