@@ -128,6 +128,26 @@ body {
     /*content: "▲";*/
     /*color: black;*/
 /*}*/
+.dataSection {
+    margin-top: 20px;
+}
+.progress-bar {
+    width: calc(100% - 6px);
+    height: 5px;
+    background: #e0e0e0;
+    padding: 3px;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .2);
+}
+
+.progress-bar-fill {
+    display: block;
+    height: 5px;
+    background: #659cef;
+    border-radius: 3px;
+    /*transition: width 250ms ease-in-out;*/
+    transition: width 10s ease-in-out;
+}
 
 #noaaToggle {
     position: relative; 
@@ -1089,6 +1109,10 @@ a.lgi-zoom:hover {
     width: 30px;
     height: 18px;
     margin-right: 0px;
+  }
+
+  #peakDataTable {
+    margin: 15px;
   }
 
 /*MAP LAYERS*/

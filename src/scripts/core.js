@@ -364,7 +364,7 @@ var fwsLegacyRegions = L.esri.featureLayer({
 	style: function (feature) {
 		return { color: 'blue', weight: 2, fillOpacity: 0 };
 	}
-})
+});
 
 // Style for DOI layer
 var doiStyle = {
