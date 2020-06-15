@@ -408,7 +408,6 @@
                 <h4 class="modal-title">Regional Report</h4>
             </div>
             <div class="modal-body">
-
                 <!-- begin filter panels -->
                 <div class="panel panel-default">
                     <div class="panel-body">
@@ -459,22 +458,21 @@
                                 </table>
                             </div>
                         </div>
-
                     </div>
                 </div>
                 <!-- end filter panels -->
                 <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose an event to proceed.</div>
             </div>
             <div class="modal-footer">
+                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
                 <button id="btnClearRegFilters" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Clear Selections</button>
                 <button id="btnSubmitSelections" class="btn btn-primary btn-lg" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Run</button>
-                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
+                <button id="saveRegionalPeakCSV" class="btn close" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Peak CSV</button>
+                <button id="saveRegionalHWMCSV" class="btn close" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">HWM CSV</button>
             </div>
-
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
-
     <div id="aboutModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog  modal-lg">
             <div class="modal-content">

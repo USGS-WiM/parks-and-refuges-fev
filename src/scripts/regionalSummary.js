@@ -46,6 +46,52 @@ var hwmTableData = [];
 var sensorTableData = [];
 var allHWMs = [];
 var allPeaks = [];
+var hwmRegionalCSVData = [];
+var peaksRegionalCSVData = [];
+
+var fevRegional = fevRegional || {
+    //Assign column names for the regional peak table csv download
+    csvRegionalPeaksColumns: [
+        { fieldName: 'site_name', colName: "Site Name" },
+        { fieldName: 'event', colName: "Event" },
+        { fieldName: 'peak_stage', colName: "Peak Stage" },
+        { fieldName: 'county', colName: "County" },
+        { fieldName: 'peak_stage', colName: "Peak Stage" },
+        { fieldName: 'latitude_dd', colName: "Latitude" },
+        { fieldName: 'longitude_dd', colName: "Longitude" },
+        { fieldName: 'site_no', colName: "Site Number" },
+        { fieldName: 'waterbody', colName: "Waterbody" },
+    ],
+    //Assign column names for the regional hwm table csv download
+    csvRegionalHWMColumns: [
+		{ fieldName: 'site_name', colName: "Site Name" },
+		{ fieldName: 'event', colName: "Event" },
+		{ fieldName: 'elev_ft', colName: "Elevation" },
+		{ fieldName: 'survey_date', colName: "Survey Date" },
+		{ fieldName: 'bank', colName: "Bank" },
+		{ fieldName: 'hwmQualityName', colName: "HWM Quality" },
+		{ fieldName: 'hwmTypeName', colName: "HWM Type" },
+		{ fieldName: 'verticalDatumName', colName: "Vertical Datum" },
+		{ fieldName: 'verticalMethodName', colName: "Vertical Method" },
+		{ fieldName: 'horizontalMethodName', colName: "Horizontal Method" },
+		{ fieldName: 'horizontalDatumName', colName: "Horizontal Datum" },
+		{ fieldName: 'hwm_locationdescription', colName: "HWM Location Description" },
+		{ fieldName: 'hwm_environment', colName: "HWM Environment" },
+		{ fieldName: 'stillwater', colName: "Stillwater)" },
+		{ fieldName: 'uncertainty', colName: "Uncertainty" },
+		{ fieldName: 'hwm_uncertainty', colName: "HWM Uncertainty" },
+		{ fieldName: 'hwm_label', colName: "HWM Label" },
+		{ fieldName: 'flag_date', colName: "Flag Date" },
+		{ fieldName: 'siteDescription', colName: "Site Description" },
+		{ fieldName: 'sitePermHousing', colName: "Permanent Housing Site" },
+		{ fieldName: 'county', colName: "County" },
+        { fieldName: 'state', colName: "HWM State" },
+        { fieldName: 'latitude_dd', colName: "Latitude" },
+		{ fieldName: 'longitude_dd', colName: "Longitude" },
+		{ fieldName: 'site_no', colName: "Site Number" },
+		{ fieldName: 'waterbody', colName: "Waterbody" },
+	],
+}
 
 // URLS
 var eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
@@ -413,6 +459,7 @@ $(document).ready(function () {
                                                 }
                                             });
                                             allPeaks.push(parksWithPeaks[count].data);
+                                            //peaksRegionalCSVData = parksWithPeaks;
                                             count++;
                                         }
                                     }
@@ -451,6 +498,9 @@ $(document).ready(function () {
 
                     //regionaltableData.removeLayer(regionalPeak);
 
+                    //transfer data to the peaks csv data table
+                    peaksRegionalCSVData = allPeaks;
+                    
                     peaksWithinBuffer.addTo(regionalMap);
                     if (allPeaks.length === 0) {
                         console.log("no results");
@@ -604,7 +654,6 @@ $(document).ready(function () {
                                             "hwm_uncertainty": regionalHWM._layers[i].feature.properties.hwm_uncertainty,
                                             "hwm_label": regionalHWM._layers[i].feature.properties.hwm_label,
                                             "flag_date": regionalHWM._layers[i].feature.properties.flag_date,
-                                            "site_no": regionalHWM._layers[i].feature.properties.site_no,
                                             "siteDescription": regionalHWM._layers[i].feature.properties.siteDescription,
                                             "sitePermHousing": regionalHWM._layers[i].feature.properties.sitePermHousing,
                                             "county": regionalHWM._layers[i].feature.properties.county,
@@ -627,6 +676,8 @@ $(document).ready(function () {
                 }
             });
         }
+        //Transfer data to the csv table variable
+        hwmRegionalCSVData = allHWMs;
 
         function getBaros(url, markerIcon) {
             //increment layerCount
@@ -989,6 +1040,7 @@ $(document).ready(function () {
             }
             return peaksTableData;
         }
+        //peaksRegionalCSVData = peaksDataTable;
 
         function buildTableBody(data, columns) {
             var body = [];
@@ -1058,5 +1110,59 @@ $(document).ready(function () {
     });
 
 
+    //Corresponds with the 'HWM CSV' button on the regional report modal
+    $('#saveRegionalHWMCSV').click(function () {
+        console.log("regional hwm clicked");
+        //if there is a hwm table, download as csv
+        if (hwmRegionalCSVData.length > 0) {
+            downloadRegionalCSV("hwm");
+        }
+        //if there are no hwm markers within the buffer, exit
+        else {
+            console.log("There are no hwm datapoints.")
+        }
+    });
+    //Corresponds with the 'Peak CSV' button on the regional report modal
+    $('#saveRegionalPeakCSV').click(function () {
+        console.log("regional peaks clicked");
+        //if there is a hwm table, download as csv
+        
+        if (peaksRegionalCSVData.length > 0) {
+            downloadRegionalCSV("peaks");
+        }
+        //if there are no peak markers within the buffer, exit
+        else {
+            console.log("There are no peak datapoints.")
+        }
+        
+    });
+
 });
+
+//This runs when clicking the 'Peak CSV' or 'HWM CSV' button on the Report modal
+function downloadRegionalCSV(type) {
+    //Format name of park or refuge
+    //var siteName = searchResults.result.properties.Name.split(" ").join("_");
+
+    switch (type) {
+        //If 'HWM CSV' is clicked, download the HWM table
+        case "hwm":
+            generateCSV({
+                filename: "HWM.csv",
+                data: hwmRegionalCSVData,
+                headers: fevRegional.csvRegionalHWMColumns
+            });
+            break;
+        //If 'Peak CSV' is clicked, download the Peak table
+        case "peaks":
+            generateCSV({
+                filename: "Peak.csv",
+                data: peaksRegionalCSVData,
+                headers: fevRegional.csvRegionalPeaksColumns
+            });
+            break;
+        default:
+            break;
+    }
+}
 
