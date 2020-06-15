@@ -333,19 +333,19 @@ var int = L.esri.featureLayer({
 	//opacity: 0.5,
 	//minZoom: 9,
 	style: function (feature) {
-		if ((feature.properties.INTTYPE1 === 'F') || (feature.properties.INTTYPE1 === 'O')) {
+		if ((feature.properties.INTTYPE1 == 'Fee') || (feature.properties.INTTYPE1 === 'O')) {
 			return { color: 'green', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'S') {
+		} if (feature.properties.INTTYPE1 == 'Secondary') {
 			return { color: 'purple', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'E') {
+		} if (feature.properties.INTTYPE1 == 'Easement') {
 			return { color: 'orange', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'L') {
+		} if (feature.properties.INTTYPE1 == 'Lease') {
 			return { color: 'yellow', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'S') {
+		} if (feature.properties.INTTYPE1 == 'Agreement') {
 			return { color: 'beige', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'P') {
+		} if (feature.properties.INTTYPE1 == 'Partial Interest') {
 			return { color: 'blue', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'U') {
+		} if (feature.properties.INTTYPE1 == 'Permit') {
 			return { color: 'red', weight: 2, fillOpacity: 0 };
 		} else {
 			return { color: 'black', weight: 2, fillOpacity: 0 };
