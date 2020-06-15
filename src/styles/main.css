@@ -149,6 +149,168 @@ body {
     transition: width 10s ease-in-out;
 }
 
+#noaaToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#tractToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#parkBoundsToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#approvedFWSToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#doiToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#HWMToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#waveHeightToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#metToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#stormTideToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#baroToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#streamGageToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#streamGageToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#rainGageToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#peaksToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#interestFWSToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+.squareDiv {
+    float: left;
+    width: 14px;
+    height: 14px;
+    margin: 2px;
+    border: .1px solid rgba(255, 255, 255, 0);
+}
+.squareDivInterest {
+    float: left;
+    width: 14px;
+    height: 14px;
+    margin-right: 3px;
+    margin-top: 3px;
+    margin-left: 20px;
+    border: .1px solid rgba(255, 255, 255, 0);
+}
+.parkTractsColor{
+    background: #0000cc;
+    opacity: 0.65;
+    border-color: #0000cc;
+    Border-width: .1px;
+}
+.parkBoundsColor{
+    background: #bee8ff;
+    border-color: #bee8ff;
+    Border-width: .1px;
+}
+.approvedAquiColor{
+    background: brown;
+    border-color: brown;
+    Border-width: .1px
+}
+.interestBoundsColor{
+    background: #bee8ff;
+    border-color: #000;
+    Border-width: .1px;
+}
+.doiRegionsColor{
+    border-color: #209D64;
+    Border-width: 2px;
+}
+.noaaCycloneColor{
+    background: #ffffff;
+    border-color: #000;
+    Border-width: .1px;
+}
+.federalFeeColor{
+    background: green;
+}
+.federalLessFeeColor{
+    background: yellow;
+}
+.publicColor{
+    background: orange;
+}
+.privateColor{
+    background: blue;
+}
+.otherFederalColor{
+    background:purple;
+}
+.aquisitionColor{
+    background: pink;   
+}
+.noInfoColor{
+    background: black;
+}
+.intFee {
+    border-color: green;
+    Border-width: 2px;
+}
+.intSecondary {
+    border-color: purple;
+    Border-width: 2px; 
+}
+.intEasement {
+    border-color:orange;
+    Border-width: 2px;
+}
+.intLease {
+    border-color: yellow;
+    Border-width: 2px;
+}
+.intAgreement {
+    border-color:beige;
+    Border-width: 2px;
+}
+.intPartial {
+    border-color: blue;
+    Border-width: 2px;
+}
+.intPermit {
+    border-color: red;
+    Border-width: 2px;
+}
+.intUnknown {
+    border-color: black;
+    Border-width: 2px;
+}
+
+
+
 .legendSwatch {
     width: 15px;
     height:15px;
@@ -414,10 +576,6 @@ body {
     /*max-height: inherit;*/
 }
 
-
-#legendCollapsePanel {
-    /*max-height: inherit;*/
-}
 
 /*#legendElement {*/
 /*position:absolute;*/
@@ -1215,6 +1373,11 @@ input[type='checkbox']{
     background-color: #3C69C5 !important;
     color: rgba(255,255,255,1) !important;
     border: 1px solid transparent;
+}
+
+.mapSymbology{
+    text-align: left;
+    padding: 10px;
 }
 
 

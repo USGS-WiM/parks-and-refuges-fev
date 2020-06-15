@@ -45,7 +45,7 @@
     <!-- endbower -->
     <!-- endbuild -->
 
-    
+
 
     <link rel="stylesheet" href="styles/base.css">
 
@@ -64,6 +64,7 @@
     <script src="scripts/util.js"></script>
     <script src="scripts/regionalSummary.js"></script>
     <script src="scripts/html2canvas.js"></script>
+    <script src="scripts/json2csv.js"></script>
     <!-- endbuild -->
     
     <!-- search_api 2.1 -->
@@ -364,6 +365,10 @@
                 </div> -->
             </div>
             <div class="modal-footer">
+                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
+                style="color:gray;" class="btn btn-default" id="saveHWMCSV">HWM CSV</button>
+                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
+                style="color:gray;" class="btn btn-default" id="savePeakCSV">Peak CSV</button>
                 <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
                     style="color:gray;" class="btn btn-default" id="print">Print</button>
                 <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
@@ -715,11 +720,18 @@
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="interpertedMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#interpretedToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Interpreted Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button> 
                                     </div>
-                                    <div>
+                                   
                                     <!--Auto-open the interpreted div-->
-                                    <div id="interpretedToggleDiv" style="text-align: left; display:inline-flex; "></div>
+                                   <!--  <div id="interpretedToggleDiv" style="text-align: left; display:inline-flex; "></div> -->
                                     <!--Add toggle for displaying peak labels-->
-                                        <label class="switch" id="peakSizeCheck">             
+                                    <div style="text-align: left; display: inline-flex">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=peaksToggle
+                                            onclick= "clickPeaks()" />
+                                        </label>Peak Summary
+                                      
+                                    <label class="switch" id="peakSizeCheck" style= "display: inline-flex; margin-left: 2px">             
                                             <input type = "checkbox"
                                             id="peakCheckbox"
                                             onclick= "clickPeakLabels()" />
@@ -729,27 +741,130 @@
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="realtimeMapLayer" class="btn btn-default groupToggle groupHeading" type="button" data-toggle="collapse" data-target="#realTimeToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Real-Time Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="realTimeToggleDiv"  class="collapse" style="text-align: left"></div>
+                                    <div id="realTimeToggleDiv"  class="collapse" style="text-align: left">
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=streamGageToggle
+                                            onclick= "clickStreamGage()" />
+                                        </label>Real-time Stream Gage
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=rainGageToggle
+                                            onclick= "clickRainGage()" />
+                                        </label>Real-time Rain Gage
+                                    </div>
+                                </div>
+
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="observedMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#observedToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Observed Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="observedToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <div id="observedToggleDiv" class="collapse" style="text-align: left">
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=baroToggle
+                                            onclick= "clickBaro()" />
+                                        </label>Barometric Pressure Sensor
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=stormTideToggle
+                                            onclick= "clickStormTide()" />
+                                        </label>Storm Tide Sensor
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=metToggle
+                                            onclick= "clickMet()" />
+                                        </label>Meteorological Sensor
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=waveHeightToggle
+                                            onclick= "clickWaveHeight()" />
+                                        </label>Wave Height Sensor
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=HWMToggle
+                                            onclick= "clickHWM()" />
+                                        </label>High Water Mark
+                                    </div>
+                                </div>
+
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="npsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#npsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">USNPS Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="npsToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <div id="npsToggleDiv" class="collapse" style="text-align: left">
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=tractToggle
+                                            onclick= "clickTracts()" />
+                                        </label>Park Tracts
+                                         </div>
+                                         <div style="text-align: left">
+                                            <label>             
+                                                <input type = "checkbox"
+                                                id=parkBoundsToggle
+                                                onclick= "clickBounds()" />
+                                            </label>Park Boundaries
+                                        </div>
+                                    </div>
+
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="fwsMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#fwsToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">USFWS Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="fwsToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <div id="fwsToggleDiv" class="collapse" style="text-align: left">
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=approvedFWSToggle
+                                            onclick= "clickApprovedFWS()" />
+                                        </label>Approved Aquisition Boundaries
+                                    </div>
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=interestFWSToggle
+                                            onclick= "clickInterestFWS()" />
+                                        </label>Interest Boundaries
+                                    </div>
+                                </div>
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="doiMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#doiToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">DOI Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="doiToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <div id="doiToggleDiv" class="collapse" style="text-align: left">
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=doiToggle
+                                            onclick= "clickDOI()" />
+                                        </label>DOI Regions
+                                    </div>
+                                </div>
+
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="supportMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#noaaToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Supporting Layers<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                    <div id="noaaToggleDiv" class="collapse" style="text-align: left"></div>
+                                    <div id="noaaToggleDiv" class="collapse" style="text-align: left">
+
+                                    <div style="text-align: left">
+                                        <label>             
+                                            <input type = "checkbox"
+                                            id=noaaToggle
+                                            onclick= "clickNOAA()" />
+                                        </label>NOAA Tropical Cyclone Forecast Track
+                                    </div>
+                                </div>
+
                                     <div id="noTrackAdvisory"></div>
                                 </div>
                             </div>
@@ -895,6 +1010,16 @@
                 <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"><i class="fa fa-lg fa-cog fa-spin fa-fw"></i><span>Loading Layers...</span></div>  
             </div>
 
+            <div id="latLngScale" class="latLngScale">
+                <span class="hover-content"> <b>Map scale </b></span>
+                1:<span id="scale"></span> | <span class="hover-content"> <b>Zoom level </b></span> <span id="zoomLevel"></span><br>
+                <span class="hover-content"><b>Latitude</b></span>
+                <span id="latitude">y</span> |
+                <span class="hover-content"> <b>Longitude</b></span>
+                <span id="longitude">x</span>
+                <span id="mapCenterLabel"  class="hover-content"> (center)</span>
+            </div>
+
             <!--Start of Active Layers panel-->
             <div id="legendElement" class="panel panel-default legendClass" data-html2canvas-ignore>
                 <div id="legendHeading" class=" legendHeading" role="tab">
@@ -908,41 +1033,35 @@
                 <div id="legendCollapse" class="panel-collapse " role="tabpanel">
                     <div id="legendDiv" class="panel-body legend-panel-body">
                         <!--insert legend elements here -->
+
+                        <div class="mapSymbology">
+                        <div id=PeakSummarySymbology></div>
+                        <div id=streamGageSymbology></div>
+                        <div id=rainGageSymbology></div>
+                        <div id=barometricSymbology></div>
+                        <div id=stormTideSymbology></div>
+                        <div id=meteorlogicalSymbology></div>
+                        <div id=waveHeightSymbology></div>
+                        <div id=highWaterSymbology></div>
+                        <div id=parkTractsSymbology></div>
+                        <div id=parkBoundsSymbology></div>
+                        <div id=approvedFWSSymbology></div>
+                        <div id=interestFWSSymbology></div>
+                        <div id=doiSymbology></div>
+                        <div id=noaaCycloneSymbology></div>
+                    </div>
+
                     </div>
                 </div>
             </div>
         </div>
         <!--End of Active Layers panel-->
 
-            <div id="legendElement" class="panel panel-default legendClass" data-html2canvas-ignore>
-                <div id="legendHeading" class=" legendHeading" role="tab">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" style="text-decoration: none"  href="#legendCollapse" aria-expanded="true" aria-controls="collapseOne">
-                            <span class="glyphicon glyphicon-list"></span>
-                            Active Layers
-                        </a>
-                    </h4>
-                </div>
-                <div id="legendCollapse" class="panel-collapse " role="tabpanel">
-                    <div id="legendDiv" class="panel-body legend-panel-body">
-                       
-                    </div>
-                </div>
-            </div>
-        </div>
 
             <div id="homeButton"></div>
             <div id="locateButton"></div>
 
-            <div id="latLngScale" class="latLngScale">
-                <span class="hover-content"> <b>Map scale </b></span>
-                1:<span id="scale"></span> | <span class="hover-content"> <b>Zoom level </b></span> <span id="zoomLevel"></span><br>
-                <span class="hover-content"><b>Latitude</b></span>
-                <span id="latitude">y</span> |
-                <span class="hover-content"> <b>Longitude</b></span>
-                <span id="longitude">x</span>
-                <span id="mapCenterLabel"  class="hover-content"> (center)</span>
-            </div>
+
 
         </div>
         <div class="col-xs-7 col-sm-3 col-md-3 sidebar sidebar-right sidebar-animate"></div>

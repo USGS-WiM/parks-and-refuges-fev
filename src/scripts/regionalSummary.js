@@ -857,8 +857,10 @@ $(document).ready(function () {
             // HWM Stats
 
             // reset min max variables
-            min = 0;
-            max = 0;
+            if (formattedHWMS.length !== 0) {
+                var max = formattedHWMS[0].data[0].elev_ft;
+                var min = formattedHWMS[0].data[0].elev_ft;
+            }
 
             var currentDataType = "hwm";
 
