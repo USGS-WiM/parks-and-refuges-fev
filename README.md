@@ -85,7 +85,8 @@ To push tags to remote origin: `git push origin --tags`
 ## Authors
 
 * **[Blake Draper](https://github.com/BlakeDraper)**  - *Lead Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
-Mapping](https://wim.usgs.gov/)
+
+* **[Kathy Dooley](https://github.com/09Kathy)**  - *Junior Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
 
 See also the list of [contributors](../../graphs/contributors) who participated in this project.
 
