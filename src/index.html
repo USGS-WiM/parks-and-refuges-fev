@@ -695,12 +695,10 @@
                                    <!-- <div id="printout"> -->
                                     <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass' role='alert'>Real-time stream and rain gage layers only available at zoom level 9 and above. Please zoom in to view.</div>
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
-                                        <button id="interpertedMapLayer" class="btn btn-default groupToggle" type="button" data-toggle="collapse" data-target="#interpretedToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Interpreted Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button> 
+                                        <button id="interpertedMapLayer" class="btn btn-default groupToggle groupHeading" type="button" data-toggle="collapse" data-target="#interpToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Interpreted Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
-                                   
-                                    <!--Auto-open the interpreted div-->
-                                   <!--  <div id="interpretedToggleDiv" style="text-align: left; display:inline-flex; "></div> -->
-                                    <!--Add toggle for displaying peak labels-->
+                                   <div id="interpToggleDiv" style="text-align: left">
+                           
                                     <div style="text-align: left; display: inline-flex">
                                         <label>             
                                             <input type = "checkbox"
@@ -708,13 +706,15 @@
                                             onclick= "clickPeaks()" />
                                         </label>Peak Summary
                                       
-                                    <label class="switch" id="peakSizeCheck" style= "display: inline-flex; margin-left: 2px">             
+                                    <label class="switch" id="peakSizeCheck" style= "display: inline-flex; margin-left: 20px">             
                                             <input type = "checkbox"
                                             id="peakCheckbox"
                                             onclick= "clickPeakLabels()" />
                                             <span class="slider round"></span>
                                         </label>
                                     </div>
+                                </div>
+                               
                                     <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;" data-toggle="buttons">
                                         <button id="realtimeMapLayer" class="btn btn-default groupToggle groupHeading" type="button" data-toggle="collapse" data-target="#realTimeToggleDiv"  aria-expanded="false" aria-controls="collapseExample" style="font-weight: bold;text-align: left"><b class='groupHeading' style= "font-size: 10pt; text-align: left">Real-Time Data<i class="chevron fa fa-chevron-right pull-right"></i></b></button>
                                     </div>
