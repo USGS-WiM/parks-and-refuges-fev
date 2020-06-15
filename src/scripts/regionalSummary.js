@@ -71,7 +71,7 @@ $(document).ready(function () {
             regionalMap.boxZoom.disable();
             regionalMap.keyboard.disable(); */
 
-            var layerfel = L.esri.basemapLayer('Topographic').addTo(regionalMap);
+            var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         }, 600);
 
         // checking for region entry when region input is changed
@@ -94,9 +94,10 @@ $(document).ready(function () {
 
     $('#btnSubmitSelections').click(function () {
 
-        $('.progress-bar-fill').delay(1000).queue(function () {
+        /* $('.progress-bar-fill').delay(1000).queue(function () {
             $(this).css('width', '100%')
-        });
+        }); */
+        document.querySelector('.progress-bar-fill').style.width = "100%"
 
         // setting buffer style
         var bufferStyle = {
@@ -1017,6 +1018,45 @@ $(document).ready(function () {
 
         // END TABLE FUNCTIONS
     });
+
+    $('#btnClearRegFilters').click(function () {
+
+        // removing all layers from the map regardless of type
+        regionalMap.eachLayer(function(layer) {
+            regionalMap.removeLayer(layer);
+        });
+
+        // resetting the feature groups
+        peaksWithinBuffer = L.featureGroup();
+        peaksWithinBuffer = L.featureGroup();
+        hwmsWithinBuffer = L.featureGroup();
+
+        // resetting the arrays
+        bufferedPolys = [];
+        regionParksFC = [];
+        tableData = [];
+        hwmTableData = [];
+        sensorTableData = [];
+        allHWMs = [];
+        allPeaks = [];
+
+        // clearing tables
+        document.getElementById('summaryDataTable').innerHTML = '';
+        document.getElementById('peakDataTableReg').innerHTML = '';
+        document.getElementById('hwmDataTableReg').innerHTML = '';
+
+        document.querySelector('.progress-bar-fill').style.width = "0%"
+
+        $('.clear').val('').trigger('change');
+
+        // adding the basemap back to the map
+        setTimeout(() => {
+            var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
+        }, 800);
+        
+
+    });
+
 
 });
 
