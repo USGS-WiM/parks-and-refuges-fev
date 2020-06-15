@@ -688,13 +688,9 @@ $(document).ready(function () {
 
 
 	//define observed overlay and interpreted overlay, leave blank at first
-	//var observedOverlays = {};
-	var interpretedOverlays = {};
 	var labelOverlays = {};
 	var noaaOverlays = {};
-	//var fwsOverlays = {};
-	var npsOverlays = {};
-	var doiOverlays = {};
+
 
 	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 
@@ -706,95 +702,6 @@ $(document).ready(function () {
 			"NOAA Tropical Cyclone Forecast Track": noaaService
 		};
 	}
-
-	/*
-	fwsOverlays = {
-		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;appr": appr,
-		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Int": int,
-		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Legacy Regions": fwsLegacyRegions,
-	}
-	npsOverlays = {
-		"<img class='legendSwatch' src='images/nps.png'>&nbsp;tracts": tracts,
-		"<img class='legendSwatch' src='images/nps.png'>&nbsp;bounds": bounds,
-	}
-	doiOverlays = {
-		"<img class='legendSwatch' src='images/doi.png'>&nbsp;DOI Regions": doiRegions,
-	}
-	*/
-
-	//loop thru layer list and add the map layer item to the appropriate heading 
-	/*
-	$.each(fev.layerList, function (index, layer) {
-		if (layer.Category == 'real-time') realTimeOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'observed') observedOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'interpreted') interpretedOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'noaa') noaaOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'fws') fwsOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'nps') npsOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'doi') doiOverlays[layer.Name] = window[layer.ID];
-	}); 
-	*/
-
-	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
-	/*
-	var realTimeToggle = L.control.layers(null, realTimeOverlays, { collapsed: false });
-	realTimeToggle.addTo(map);
-	$('#realTimeToggleDiv').append(realTimeToggle.onAdd(map));
-	*/
-
-	//alternative way to add checkboxes and map layer names to side panel	
-	//var createRTdiv = "<div style='text-align: left'> <label> <input type = 'checkbox' id=streamGageToggle onclick= 'clickStreamGage()' /> </label>Real-time Stream Gage </div> <div style='text-align: left'> <label> <input type = 'checkbox' id=rainGageToggle onclick= 'clickRainGage()' /> </label>Real-time Rain Gage </div>";
-	//$('#realtimetestdiv').append(createRTdiv);
-
-	// var rtScaleAlertMarkup = "<div class='alert alert-warning' role='alert'>Please zoom in to refresh</div>";
-	// $('#realTimeToggleDiv').append(rtScaleAlertMarkup);
-
-	//$('.leaflet-top.leaflet-right').hide();
-
-	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	/*
-	var observedToggle = L.control.layers(null, observedOverlays, { collapsed: false });
-	observedToggle.addTo(map);
-	$('#observedToggleDiv').append(observedToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
-*/
-
-	/*
-		// set up toggle for the interpreted layers and place within legend div, overriding default behavior
-		var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
-		interpretedToggle.addTo(map);
-		$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
-	
-	
-		var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
-		noaaToggle.addTo(map);
-		$('#noaaToggleDiv').append(noaaToggle.onAdd(map));
-		$('.leaflet-top.leaflet-right').hide();
-		*/
-
-	/*
-	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	var fwsToggle = L.control.layers(null, fwsOverlays, { collapsed: false });
-	fwsToggle.addTo(map);
-	$('#fwsToggleDiv').append(fwsToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
-	*/
-
-	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	/*
-	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
-	npsToggle.addTo(map);
-	$('#npsToggleDiv').append(npsToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
-*/
-
-	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	/*
-	var doiToggle = L.control.layers(null, doiOverlays, { collapsed: false });
-	doiToggle.addTo(map);
-	$('#doiToggleDiv').append(doiToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
-	*/
 
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
