@@ -3,6 +3,7 @@
  */
 ///function to grab all values from the inputs, form into arrays, and build query strings
 var layerCount = 0;
+var peakArr = [];
 //ajax retrieval function
 function displaySensorGeoJSON(type, name, url, markerIcon) {
     //increment layerCount
@@ -204,23 +205,54 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
     });
 }
 
+
+
 function displayPeaksGeoJSON(type, name, url, markerIcon) {
+
+    //Create variables for createPeakArray
+    var maxPeak = [];
+    var minPeak = [];
+    var lengthPeak = [];
+    var sortedPeaks = [];
+    var thirdLength = [];
+    var thirdVal = [];
+    var twoThirdVal = [];
+
     //increment layerCount
     layerCount++;
+    //var maxPeak = Math.max(feature.properties.peak_stage);
     peak.clearLayers();
+
+    var createPeakArray = L.geoJson(false, {
+        onEachFeature: function(feature, latlng){
+
+            //Create an array of each peak value
+            peakArr.push(feature.properties.peak_stage);
+
+            //find min and max peak values 
+            maxPeak = Math.max(...peakArr);
+            minPeak = Math.min(...peakArr);
+
+            //sort array of peak values
+            sortedPeaks = peakArr.sort();
+
+            //find number of peak values
+            lengthPeak = peakArr.length;
+
+            //divide the array into 3 equal sections
+            //find the maximum peak value of each of those sections
+            thirdLength = Math.round(lengthPeak/3);
+            fifthVal = sortedPeaks[thirdLength];
+            twoThirdVal = sortedPeaks[thirdLength*2]
+        }
+    });
+
     var currentMarker = L.geoJson(false, {
-        pointToLayer: function (feature, latlng) {
-            markerCoords.push(latlng);
-            var marker = L.marker(latlng, {
-                icon: markerIcon
-            }).bindLabel("Peak: " + feature.properties.peak_stage.toString());
-            return marker;
-        },
         onEachFeature: function (feature, latlng) {
             //add marker to overlapping marker spidifier
             oms.addMarker(latlng);
             //var popupContent = '';
-            var currentEvent = fev.vars.currentEventName;
+            var currentEvent = fev.vars.currentEventName;        
             //set popup content using moment js to pretty format the date value
             var popupContent =
                 '<table class="table table-condensed table-striped table-hover wim-table">' +
@@ -233,7 +265,33 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
             // });
             latlng.bindPopup(popupContent);
+        },
+
+        pointToLayer: function (feature, latlng) {
+            markerCoords.push(latlng);
+            var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
+           //Create 3 categories for marker size          
+            if (feature.properties.peak_stage <= thirdVal) {
+                var marker =             
+                L.marker(latlng, {
+                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7,10] })
+                }).bindLabel("Peak: " + labelText + "<br>Site: " +feature.properties.site_no);
+            }
+            if (thirdVal < feature.properties.peak_stage <= twoThirdVal) {
+                var marker =             
+                L.marker(latlng, {
+                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11,16] })
+                }).bindLabel("Peak: " + labelText + "<br>Site: " +feature.properties.site_no);
+            }
+            if (feature.properties.peak_stage > twoThirdVal) {
+                var marker =             
+                L.marker(latlng, {
+                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15,22] })
+                }).bindLabel("Peak: " + labelText + "<br>Site: " +feature.properties.site_no);
+            }
+            return marker;
         }
+        
     });
 
     $.getJSON(url, function (data) {
@@ -259,7 +317,9 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                     data.features.splice(i, 1);
                 }
             }
+            createPeakArray.addData(data);
             currentMarker.addData(data);
+            
             currentMarker.eachLayer(function (layer) {
                 layer.addTo(peak);
             });
@@ -267,6 +327,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             checkLayerCount(layerCount);
         }
     });
+    //currentMarker.bindPopup("Peak");
 }
 
 ///this function sets the current event's start and end dates as global vars. may be better as a function called on demand when date compare needed for NWIS graph setup
@@ -1109,14 +1170,17 @@ var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
 var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
-
+/* var regionBoundaries;
+var regions = []; */
 var parks;
 var refuges;
+var fwsInterest;
 var bufferPoly;
 var searchResults;
 var searchObject;
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
+var identifiedMarks = [];
 var fev = fev || {
 	data: {
 		events: [],
@@ -1232,6 +1296,12 @@ var fev = fev || {
 			"Name": "Park Boundaries",
 			"Type": "nps",
 			"Category": "nps"
+		},
+		{
+			"ID": "doiRegions",
+			"Name": "DOI Regions",
+			"Type": "doi",
+			"Category": "doi"
 		}
 	]
 };
@@ -1265,7 +1335,9 @@ var appr = L.layerGroup();
 var int = L.layerGroup();
 var tracts = L.layerGroup();
 var bounds = L.layerGroup();
+var doiRegions = L.layerGroup();
 var parksLayerGroup = L.layerGroup();
+
 
 // refuge layer
 /* var refuges = L.esri.dynamicMapLayer({
@@ -1353,7 +1425,7 @@ var tracts = L.esri.featureLayer({
 			return { color: 'black', weight: 2 };
 		}
 	}
-})
+});
 
 // NPS Boundaries 
 var bounds = L.esri.featureLayer({
@@ -1375,7 +1447,8 @@ var appr = L.esri.featureLayer({
 	style: function (feature) {
 		return { color: 'brown', weight: 2 };
 	}
-})
+});
+
 
 // FWS Approved Interest Boundaries 
 var int = L.esri.featureLayer({
@@ -1385,29 +1458,58 @@ var int = L.esri.featureLayer({
 	minZoom: 9,
 	style: function (feature) {
 		if ((feature.properties.INTTYPE1 === 'F') || (feature.properties.INTTYPE1 === 'O')) {
-			return { color: 'green', weight: 2 };
+			return { color: 'green', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'S') {
-			return { color: 'purple', weight: 2 };
+			return { color: 'purple', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'E') {
-			return { color: 'orange', weight: 2 };
+			return { color: 'orange', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'L') {
-			return { color: 'yellow', weight: 2 };
+			return { color: 'yellow', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'S') {
-			return { color: 'beige', weight: 2 };
+			return { color: 'beige', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'P') {
-			return { color: 'blue', weight: 2 };
+			return { color: 'blue', weight: 2, fillOpacity: 0 };
 		} if (feature.properties.INTTYPE1 === 'U') {
-			return { color: 'red', weight: 2 };
+			return { color: 'red', weight: 2, fillOpacity: 0 };
 		} else {
-			return { color: 'black', weight: 2 };
+			return { color: 'black', weight: 2, fillOpacity: 0 };
 		}
 	}
+})
+
+
+
+// FWS Legacy Regions
+var fwsLegacyRegions = L.esri.featureLayer({
+	useCors: false,
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0",
+	//opacity: 0.5,
+	minZoom: 5,
+	style: function (feature) {
+		return { color: 'blue', weight: 2, fillOpacity: 0 };
+	}
+});
+
+// Style for DOI layer
+var doiStyle = {
+	"color": "#209D64",
+	"fillOpacity": 0,
+	"opacity": 0.65,
+	"weight": 4
+};
+
+// DOI Regions
+var doiRegions = L.esri.featureLayer({
+	useCors: false,
+	style: doiStyle,
+	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/ArcGIS/rest/services/DOI_Unified_Regions/FeatureServer/0",
+	//opacity: 0.5,
+	minZoom: 5
 })
 
 int.bindPopup(function (layer) {
 	return L.Util.template('<p>INTTYPE1: {INTTYPE1}', layer.properties);
 })
-
 
 /* $.getJSON('https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {
 	async: false,
@@ -1486,64 +1588,52 @@ $(document).ready(function () {
 		todayHighlight: true
 	});
 
-	//listener for submit event button on welcome modal - sets event vars and passes event id to filterMapData function
-	$('#btnSubmitEvent').click(function () {
-		//check if an event has been selected
-		if (($('#evtSelect_welcomeModal').val() !== null) && (searchResults !== undefined)) {
-			//if event selected, hide welcome modal and begin filter process
-			$('#welcomeModal').modal('hide');
-			var eventID = $('#evtSelect_welcomeModal').val()[0];
-			$('#evtSelect_filterModal').val([eventID]).trigger("change");
-			//retrieve event details
-			$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
-				.done(function (data) {
-					setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
-				})
-				.fail(function () {
-					console.log("Request Failed. Most likely invalid event name.");
+	//welcomeModal: set search for 'Go' click 
+	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_filterModal');
+	//updateFiltersModal MODAL: set search for 'Go' click 
+	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal');
+	
+	//set search for 'Go' click
+	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary) {
+		submitButton.click(function () {
+			//check if an event has been selected
+			if (($(evtSelect_Modal_Primary).val() !== null) && (searchResults !== undefined)) {
+				//if event selected, hide welcome modal and begin filter process
+				$(chooseModal).modal('hide');
+				var eventID = $(evtSelect_Modal_Primary).val()[0];
+				$(evtSelect_Modal_Secondary).val([eventID]).trigger("change");
+				//Clear layers (removes buffer and parks/refuges selection from last search)
+				map.eachLayer(function (layer) {
+					map.removeLayer(layer);
 				});
-			//populateEventDates(eventID);
-			filterMapData(eventID, false);
-			searchComplete();
-		} else {
-			//if no event selected, warn user with alert
-			// Also accounting for having an event selected but no parkref
-			if (($('#evtSelect_welcomeModal').val() !== null)) {
-				$('.eventSelectAlert').hide();
+				//add the basemap back in 
+				L.esri.basemapLayer('Topographic').addTo(map);
+				//retrieve event details
+				$.getJSON('https://stn.wim.usgs.gov/STNServices/events/' + eventID + '.json', {})
+					.done(function (data) {
+						setEventVars(data.event_name, data.event_id, data.event_status_id, data.event_start_date, data.event_end_date);
+					})
+					.fail(function () {
+						console.log("Request Failed. Most likely invalid event name.");
+					});
+				//populateEventDates(eventID);
+				filterMapData(eventID, false);
+				searchComplete();
 			} else {
-				$('.eventSelectAlert').show();
-			}
-		}
-		if (searchResults !== undefined) {
-		} else {
-			$('.parkRefSelectAlert').show();
-		}
-	});
-
-	//listener for submit filters button on filters modal - sets event vars and passes event id to filterMapData function
-	$('#btnSubmitFilters').on('click', function () {
-
-		if ($('#evtSelect_filterModal').val() !== null) {
-			//if event selected, hide welcome modal and begin filter process
-			$('#welcomeModal').modal('hide');
-			var eventID = $('#evtSelect_filterModal').val()[0];
-			//$('#evtSelect_filterModal').val([eventValue]).trigger("change");
-			//retrieve event details
-			for (var i = 0; i < fev.data.events.length; i++) {
-				if (fev.data.events[i].event_id == eventID) {
-					//set currentEventActive boolean var based on event_status_id value
-					setEventVars(fev.data.events[i].event_name, fev.data.events[i].event_id, fev.data.events[i].event_status_id, fev.data.events[i].event_start_date, fev.data.events[i].event_end_date);
+				//if no event selected, warn user with alert
+				// Also accounting for having an event selected but no parkref
+				if (($(evtSelect_Modal_Primary).val() !== null)) {
+					$('.eventSelectAlert').hide();
+				} else {
+					$('.eventSelectAlert').show();
 				}
 			}
-			filterMapData(eventID, false);
-			$('.eventSelectAlert').hide();
-			$('#filtersModal').modal('hide');
-		} else {
-			//if no event selected, warn user with alert
-			//alert("Please choose an event to proceed.")
-			$('.eventSelectAlert').show();
-		}
-	});
+			if (searchResults !== undefined) {
+			} else {
+				$('.parkRefSelectAlert').show();
+			}
+		});
+	}
 
 	$('#print').click(function () {
 		printReport();
@@ -1614,7 +1704,9 @@ $(document).ready(function () {
 	var layer = L.esri.basemapLayer('Topographic').addTo(map);
 	var layerLabels;
 	L.Icon.Default.imagePath = './images';
-	setSearchAPI();
+	setSearchAPI("search");
+	setSearchAPI("search_filter");
+	
 
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
 	map.on('popupopen', function () {
@@ -1691,12 +1783,18 @@ $(document).ready(function () {
 		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
 		"<img class='legendSwatch' src='images/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
 	};
+
+	
 	//define observed overlay and interpreted overlay, leave blank at first
 	var observedOverlays = {};
 	var interpretedOverlays = {};
+	var labelOverlays = {};
 	var noaaOverlays = {};
 	var fwsOverlays = {};
 	var npsOverlays = {};
+	var doiOverlays = {};
+
+	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 
 	if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
@@ -1710,13 +1808,18 @@ $(document).ready(function () {
 	fwsOverlays = {
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;appr": appr,
 		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Int": int,
+		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Legacy Regions": fwsLegacyRegions,
 	}
 	npsOverlays = {
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;tracts": tracts,
 		"<img class='legendSwatch' src='images/nps.png'>&nbsp;bounds": bounds,
 	}
+	doiOverlays = {
+		"<img class='legendSwatch' src='images/doi.png'>&nbsp;DOI Regions": doiRegions,
+	}
+	
 
-
+	
 	//loop thru layer list and add the legend item to the appropriate heading
 	$.each(fev.layerList, function (index, layer) {
 		if (layer.Category == 'real-time') realTimeOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'>&nbsp;" + layer.Name] = window[layer.ID];
@@ -1725,6 +1828,7 @@ $(document).ready(function () {
 		if (layer.Category == 'noaa') noaaOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if (layer.Category == 'fws') fwsOverlays["<img class='legendSwatch' src='images/usfws.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 		if (layer.Category == 'nps') npsOverlays["<img class='legendSwatch' src='images/nps.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+		if (layer.Category == 'doi') doiOverlays["<img class='legendSwatch' src='images/doi.png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 	});
 
 	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
@@ -1743,11 +1847,12 @@ $(document).ready(function () {
 	$('#observedToggleDiv').append(observedToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
+
 	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
 	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
 	interpretedToggle.addTo(map);
 	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
+
 
 	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
 	noaaToggle.addTo(map);
@@ -1761,15 +1866,15 @@ $(document).ready(function () {
 	$('.leaflet-top.leaflet-right').hide();
 
 	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	var doiToggle = L.control.layers(null, fwsOverlays, { collapsed: false });
-	doiToggle.addTo(map);
-	$('#doiToggleDiv').append(doiToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
-
-	// set up toggle for the observed layers and place within legend div, overriding default behavior
 	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
 	npsToggle.addTo(map);
 	$('#npsToggleDiv').append(npsToggle.onAdd(map));
+	$('.leaflet-top.leaflet-right').hide();
+
+	// set up toggle for the observed layers and place within legend div, overriding default behavior
+	var doiToggle = L.control.layers(null, doiOverlays, { collapsed: false });
+	doiToggle.addTo(map);
+	$('#doiToggleDiv').append(doiToggle.onAdd(map));
 	$('.leaflet-top.leaflet-right').hide();
 
 	//overlapping marker spidifier
@@ -1860,7 +1965,7 @@ $(document).ready(function () {
 			// appearance
 			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
 			width: 500,  // width of the widget [px]
-			placeholder: "Search for a Park or Refuge", // text box placeholder prompt to display when no text is entered
+			placeholder: "Search for a location", // text box placeholder prompt to display when no text is entered
 			/* // search area
 			lat_min       : bounds.getSouth(), // minimum latitude
 			lat_max       : bounds.getNorth(), // maximum latitude
@@ -1920,13 +2025,13 @@ $(document).ready(function () {
 				$(".search-api-menu-item").off("mouseenter").on("mouseenter", function () {
 					var Lat = $(this).data("properties").Lat;
 					var Lon = $(this).data("properties").Lon;
-					suggestion_layer.eachLayer(function (lyr) {
+					/*suggestion_layer.eachLayer(function (lyr) {
 						if (Lat === lyr.feature.properties.Lat && Lon === lyr.feature.properties.Lon) {
 							lyr.setOpacity(1.0).openPopup();
 						} else {
 							lyr.setOpacity(0.4).closePopup();
-						}
-					});
+						} 
+					});*/
 				});
 
 				// close popups and set markers semi-transparent when mouse leaves a menu item
@@ -1942,7 +2047,7 @@ $(document).ready(function () {
 				console.warn(o.id + ": my 'on_result' callback function - a menu item was selected");
 				searchResults = o;
 				$('#geosearchModal').modal('hide');
-				searchComplete();
+				geosearchComplete();
 			},
 
 			// function to execute when no suggestions are found for the typed text
@@ -1959,6 +2064,7 @@ $(document).ready(function () {
 		if (parks !== undefined) {
 			map.removeLayer(parks);
 			map.removeLayer(refuges);
+			map.removeLayer(fwsInterest);
 			map.removeLayer(bufferPoly);
 		}
 	}
@@ -1974,13 +2080,29 @@ $(document).ready(function () {
 			L.esri.basemapLayer('Topographic').addTo(reviewMap);
 		}, 500); */
 	}
+
+	function showRegionalModal() {
+		$('#regionalModal').modal('show');
+
+		/* setTimeout(() => {
+			reviewMap = L.map('reviewMap').setView([39.833333, -98.583333], 4);
+			L.esri.basemapLayer('Topographic').addTo(reviewMap);
+		}, 500); */
+	}
+
+	$('#regionalReportNav').click(function () {
+		showRegionalModal();
+	});
+	var pdfMapUrl;
+
 	$('#printNav').click(function () {
 		showPrintModal();
 
 		// setting element to empty string incase a report has already been ran
-		document.getElementById('dataTable').innerHTML = "";
+		// document.getElementById('dataTable').innerHTML = "";
 
 		var mapPreview = document.getElementById('reviewMap');
+		var legendPreview = document.getElementById('legendImage');
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
 		 */
@@ -1998,7 +2120,6 @@ $(document).ready(function () {
 			peakTableData.push({
 				"Site Number": identifiedPeaks[i].feature.properties.site_no,
 				"Description": identifiedPeaks[i].feature.properties.description,
-				"Networks": identifiedPeaks[i].feature.properties.networks,
 				"State": identifiedPeaks[i].feature.properties.state,
 				"County": identifiedPeaks[i].feature.properties.county,
 				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
@@ -2009,6 +2130,7 @@ $(document).ready(function () {
 
 		// Builds the HTML Table
 		function buildHtmlTable() {
+			$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>")
 			var columns = addAllColumnHeaders(peakTableData);
 
 			for (var i = 0; i < peakTableData.length; i++) {
@@ -2043,6 +2165,94 @@ $(document).ready(function () {
 		}
 
 		buildHtmlTable();
+
+		//setting up HWM data for table
+		var hwmTableData = [];
+		var hwmCaptionData = [];
+		for (var i in identifiedMarks) {
+			hwmCaptionData.push({
+				"STN Site No.": identifiedMarks[i].feature.properties.site_no
+			})
+		}
+		for (var i in identifiedMarks) {
+			hwmTableData.push({
+				"STN Site No.": identifiedMarks[i].feature.properties.site_no,
+				"HWM Label": identifiedMarks[i].feature.properties.hwm_label,
+				"Elevation(ft)": identifiedMarks[i].feature.properties.elev_ft,
+				"Vertical Datum": identifiedMarks[i].feature.properties.verticalDatumName,
+				"Vertical Method": identifiedMarks[i].feature.properties.verticalMethodName,
+				"Horizontal Datum": identifiedMarks[i].feature.properties.horizontalDatumName,
+				"Horizontal Method": identifiedMarks[i].feature.properties.horizontalMethodName,
+				//"Approval Status": identifiedMarks[i].feature.properties,
+				"Type": identifiedMarks[i].feature.properties.hwmTypeName,
+				//"Marker": identifiedMarks[i].feature.properties,
+				"Quality": identifiedMarks[i].feature.properties.hwmQualityName,
+				"Waterbody": identifiedMarks[i].feature.properties.waterbody,
+				"Permanent Housing": identifiedMarks[i].feature.properties.sitePermHousing,
+				"County": identifiedMarks[i].feature.properties.countyName,
+				"State": identifiedMarks[i].feature.properties.stateName,
+				"Latitude, Longitude(DD)": identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
+				"Site Description": identifiedMarks[i].feature.properties.siteDescription,
+				"Location Description": identifiedMarks[i].feature.properties.hwm_locationdescription,
+				"Survey Date": identifiedMarks[i].feature.properties.survey_date,
+				"Bank": identifiedMarks[i].feature.properties.bank,
+				"Environment": identifiedMarks[i].feature.properties.hwm_environment,
+				"Flag Date": identifiedMarks[i].feature.properties.flag_date,
+				"Stillwater": identifiedMarks[i].feature.properties.stillwater,
+				"Uncertainty": identifiedMarks[i].feature.properties.uncertainty,
+				"HWM Uncertainty": identifiedMarks[i].feature.properties.hwm_uncertainty
+			})
+		}
+		console.log(hwmTableData)
+		var chunks = [];
+
+		//Messing around with taking chunks of the table data... 
+		$.each(hwmTableData, function (index, value) {
+			//console.log(value)
+			var chunkSize = 11;
+			for (var cols = Object.entries(value); cols.length;)
+			chunks.push(cols.splice(0,chunkSize).reduce( (o,[k,v]) => (o[k] = v,o), {}));
+			//console.log(chunks);
+		});
+		//$.each(chunks, function(index, value) {});
+
+		//build html table for HWMs
+		function buildHwmHtmlTable() {
+			$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>")
+			var columns = addHwmColumnHeaders(hwmTableData);
+
+			for (var i = 0; i < hwmTableData.length; i++) {
+				var row$ = $('<tr/>');
+				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+					var cellValue = hwmTableData[i][columns[colIndex]];
+
+					if (cellValue == null) { cellValue = ""; }
+
+					row$.append($('<td/>').html(cellValue));
+				}
+				$("#hwmDataTable").append(row$);
+			}
+		}
+
+		function addHwmColumnHeaders(hwmTableData) {
+			var columnSet = [];
+			var headerTr$ = $('<tr/>');
+
+			for (var i = 0; i < hwmTableData.length; i++) {
+				var rowHash = hwmTableData[i];
+				for (var key in rowHash) {
+					if ($.inArray(key, columnSet) == -1) {
+						columnSet.push(key);
+						headerTr$.append($('<th/>').html(key));
+					}
+				}
+			}
+			$("#hwmDataTable").append(headerTr$);
+
+			return columnSet;
+		}
+
+		buildHwmHtmlTable();
 
 		setTimeout(() => {
 			let mapPane;
@@ -2174,18 +2384,22 @@ $(document).ready(function () {
 			mapPane.style.left = '';
 			mapPane.style.top = '';
 
+			// Hiding Legend for canvas event
+			$("#legendElement").hide();
+
 			var mapEvent;
 			html2canvas(document.getElementById('mapDiv'), options)
 				.then(function (canvas) {
 					mapEvent = new Event('map_ready');
 					/* canvas[0].drawImage */
-					canvas.style.width = '800px';
+					canvas.style.width = '700px';
 					canvas.style.height = '450px';
 					mapPreview.append(canvas);
 					//mapImage = canvas.get(0).toDataUrl('image/png');
-					var test = canvas[0].toDataUrl('image/png');
+					pdfMapUrl = canvas.toDataURL('image/png');
 					window.dispatchEvent(mapEvent);
-
+					// Showing Legend once canvas event complete
+					$("#legendElement").show();
 				})
 		}, 3000);
 
@@ -2193,6 +2407,12 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
+
+		// // Get legend for print preview
+		// html2canvas(document.getElementById('printout'))
+		// .then(function (canvas) {
+		// 	legendPreview.append(canvas);
+		// })
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -2204,7 +2424,7 @@ $(document).ready(function () {
 	//Need to figure out how to fix this, maybe just reintialize the map? we did have to fix 
 	//this in whispers too but can't remember what I did off hand
 	$("#printModal").on("hidden.bs.modal", function () {
-		location.reload();
+		// location.reload();
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
 		/* USGSrtGages.clearLayers();
 		USGSRainGages.clearLayers(); */
@@ -2220,9 +2440,10 @@ $(document).ready(function () {
 	});
 
 	function showFiltersModal() {
-		$('#filtersModal').modal('show');
+		$('#updateFiltersModal').modal('show');
 	}
 	$('#btnChangeFilters').click(function () {
+		//parks.clearLayers();
 		//update the event select within the filters modal to reflect current event
 		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
@@ -2286,6 +2507,8 @@ $(document).ready(function () {
 		queryNWISgraphRDG();
 		queryNWISgraph();
 		queryNWISRaingraph();
+		//clickPeakLabels();
+
 	}
 	// setting checked values for buffer radio buttons
 	document.getElementById('tenKm').checked = false;
@@ -2293,21 +2516,18 @@ $(document).ready(function () {
 	document.getElementById('thirtyKm').checked = false;
 	// 10 kilometers
 	$('#tenKm').click(function () {
-		console.log('yes');
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
 		fev.vars.currentBufferSelection = 10;
 	});
 	// 20 kilometers
 	$('#twentyKm').click(function () {
-		console.log('yes');
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
 		fev.vars.currentBufferSelection = 20;
 	});
 	// 30 kilometers
 	$('#thirtyKm').click(function () {
-		console.log('yes');
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
 		fev.vars.currentBufferSelection = 30;
@@ -2320,21 +2540,18 @@ $(document).ready(function () {
 	document.getElementById('thirtyKmMap').checked = false;
 	// 10 kilometers
 	$('#tenKmMap').click(function () {
-		console.log('yes');
 		document.getElementById('twentyKmMap').checked = false;
 		document.getElementById('thirtyKmMap').checked = false;
 		fev.vars.currentBufferSelection = 10;
 	});
 	// 20 kilometers
 	$('#twentyKmMap').click(function () {
-		console.log('yes');
 		document.getElementById('tenKmMap').checked = false;
 		document.getElementById('thirtyKmMap').checked = false;
 		fev.vars.currentBufferSelection = 20;
 	});
 	// 30 kilometers
 	$('#thirtyKmMap').click(function () {
-		console.log('yes');
 		document.getElementById('twentyKmMap').checked = false;
 		document.getElementById('tenKmMap').checked = false;
 		fev.vars.currentBufferSelection = 30;
@@ -2373,9 +2590,9 @@ $(document).ready(function () {
 		}
 	}).addTo(map);
 
-	function setSearchAPI() {
+	function setSearchAPI (searchTerm) {
 		// create search_api widget
-		searchObject = search_api.create("search", {
+		searchObject = search_api.create(searchTerm, {
 
 			// appearance
 			size: "lg", // sizing option, one of "lg" (large), "md" (medium), "sm" (small), "xs" (extra small)
@@ -2499,9 +2716,10 @@ $(document).ready(function () {
 
 		// setting buffer style
 		var bufferStyle = {
-			"color": "#9933ff",
-			"weight": 4,
-			"opacity": 0.65
+			"color": "#0000cc",
+			"fillOpacity": 0,
+			"opacity": 0.65,
+			"weight": 4
 		};
 
 		// setting park style
@@ -2513,11 +2731,12 @@ $(document).ready(function () {
 
 		// setting the where class for the query
 		// UNIT_NAME holds gnis major value of park name (I think)
-		var where = "UNIT_NAME=" + name;
+		var where = "1=1";
 		var polys = [];
 		var buffer;
 		var regionName;
-
+		
+		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
 			url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
@@ -2530,7 +2749,6 @@ $(document).ready(function () {
 				polys = feature.geometry;
 				// flattening the geometry for use in turf
 				flattenedPoly = turf.flatten(polys);
-				console.log(flattenedPoly);
 				regionName = feature.properties.REGION;
 				if (regionName == "PW") {
 					regionName = "Pacific West";
@@ -2558,6 +2776,8 @@ $(document).ready(function () {
 		}).addTo(map);
 		parksLayerGroup.addLayer(parks);
 
+		var refCount = [];
+		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
 			url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
@@ -2570,7 +2790,7 @@ $(document).ready(function () {
 				polys = feature.geometry;
 				// flattening the geometry for use in turf
 				flattenedPoly = turf.flatten(polys);
-				console.log(flattenedPoly);
+				refCount = 1;
 				regionName = feature.properties.FWSREGION;
 				if (regionName == "1") {
 					regionName = "Pacific";
@@ -2599,6 +2819,31 @@ $(document).ready(function () {
 			},
 			style: parkStyle
 		}).addTo(map);
+
+		//if there was a name match with the refuge layer, this will not run
+		setTimeout(() => {
+			if (refCount !== 1) {
+				where = "ORGNAME=" + name;
+				fwsInterest = L.esri.featureLayer({
+					useCors: false,
+					url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1',
+					simplifyFactor: 0.5,
+					precision: 4,
+					where: "ORGNAME=" + name,
+					onEachFeature: function (feature, latlng) {
+						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
+						latlng.bindPopup(popupContent);
+						polys = feature.geometry;
+						// flattening the geometry for use in turf
+						flattenedPoly = turf.flatten(polys);
+						refCount = 1;
+						regionName = feature.properties.FWSREGION;
+					},
+					style: parkStyle
+				}).addTo(map);
+			}
+		}, 1000);
+		
 
 		setTimeout(() => {
 			var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
@@ -2649,16 +2894,16 @@ $(document).ready(function () {
 				}
 			}
 
-			//Original location popup 
-			/*
-			.openPopup(  // open popup at location listing all properties
-				$.map(Object.keys(o.result.properties), function (property) {
-					return "<b>" + property + ": </b>" + o.result.properties[property];
-				}).join("<br/>"),
-				[o.result.properties.Lat, o.result.properties.Lon] 
-			); */
+			//cycling through each HWM to see if inside the buffer
+			for (var i in hwm._layers) {
+				var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
+				var isItInside = turf.booleanPointInPolygon(cords, buffer);
+				if (isItInside) {
+					identifiedMarks.push(hwm._layers[i])
+				}
+			}
 
-			//Revised location popup
+			//location popup
 			map.openPopup(
 				"<b>" + searchResults.result.properties.Name + "</b><br/>" +
 				searchResults.result.properties.County + ", " + searchResults.result.properties.State + "</b><br/>" +
@@ -2668,9 +2913,44 @@ $(document).ready(function () {
 			);
 
 		}, 600);
-		$('#geosearchModal').modal('hide');
+		//$(inputModal).modal('hide');
 
 	}
+
+	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
+	function geosearchComplete() {
+		map
+			.fitBounds([ // zoom to location
+				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
+				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
+			]);
+		
+		//location popup
+		map.openPopup(
+			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
+			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
+			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
+		);
+	}
+	//end of search api
+
+
+	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
+	function geosearchComplete() {
+		map
+			.fitBounds([ // zoom to location
+				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
+				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
+			]);
+		
+		//location popup
+		map.openPopup(
+			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
+			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
+			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
+		);
+	}
+	//end of filter search api
 		
 
 	/* legend control */
@@ -2714,7 +2994,16 @@ $(document).ready(function () {
 			USGSRainGages.clearLayers();
 			$('#rtScaleAlert').show();
 		}
-
+		//Remove peak labels and turn off/disable toggle when zoom is less than 8
+		if (map.getZoom() < 8){
+			//Remove labels
+			peak.eachLayer(function (myMarker){
+				myMarker.hideLabel();
+			var checkBox = document.getElementById("peakCheckbox");
+			//Change toggle to 'off' position
+			checkBox.checked = false;
+			});
+		}
 		if (map.getZoom() >= 9) {
 			$('#rtScaleAlert').hide();
 		}
@@ -2793,7 +3082,7 @@ $(document).ready(function () {
 	});
 
 	//Begin data prep for pdf print out
-		var pdfData = [];
+	var peaksPdfData = [];	
 	function bodyData() {
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
@@ -2803,17 +3092,16 @@ $(document).ready(function () {
 				peakEstimated = "yes"
 			}
 	
-			pdfData.push({
+			peaksPdfData.push({
 				"Site Number": identifiedPeaks[i].feature.properties.site_no,
 				"Description": identifiedPeaks[i].feature.properties.description,
-				"Networks": identifiedPeaks[i].feature.properties.networks,
 				"State": identifiedPeaks[i].feature.properties.state,
 				"County": identifiedPeaks[i].feature.properties.county,
 				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
 				"Peak Estimated": peakEstimated
 			});	
 		}
-		return pdfData;
+		return peaksPdfData;
 	}
 
 	function buildTableBody(data, columns) {
@@ -2829,19 +3117,173 @@ $(document).ready(function () {
 		return body;
 	}
 
-	function table(data, columns) {
+	function peakTable(data, columns) {
 		return {
 			table: {	
 				headerRows: 1,
-				widths: ['auto','*','auto','auto','12%','6%','10%'],
-				body: buildTableBody(data, columns)
+				widths: ['auto','*','auto','auto','auto','auto'],
+				body: buildTableBody(data, columns),
 			},
 			layout: 'lightHorizontalLines', 
+			style: 'smaller',
+			margin: [0,0,0,15]
 		};
 	}
 
+	//adding HWM table to pdf report
+	function buildHwmTableBody() {
+		var body = [];	
+		for (var i in identifiedMarks) {
+			var hwmUncertainty = "";
+			var uncertainty = "";
+			if (identifiedMarks[i].feature.properties.hwm_uncertainty == null) {
+				hwmUncertainty = "n/a";
+			} 
+			if (identifiedMarks[i].feature.properties.uncertainty == null) {
+				uncertainty = "n/a";
+			}
+			body.push([
+					{rowSpan:10, style: 'tableHeader', text: 'STN Site No.: ' + identifiedMarks[i].feature.properties.site_no},
+					{text:'HWM Label',style: 'tableHeader'}, identifiedMarks[i].feature.properties.hwm_label, 
+					{text:'Elevation(ft)',style: 'tableHeader'}, identifiedMarks[i].feature.properties.elev_ft
+				],
+				[
+					{},
+					{text:'Vertical Datum, Method',style: 'tableHeader'}, identifiedMarks[i].feature.properties.verticalDatumName + ", " + identifiedMarks[i].feature.properties.verticalMethodName,
+					{text:'Horizontal Datum, Method',style: 'tableHeader'}, identifiedMarks[i].feature.properties.horizontalDatumName + ", " + identifiedMarks[i].feature.properties.horizontalMethodName
+				],
+				[
+					{},
+					{text:'Type',style: 'tableHeader'}, identifiedMarks[i].feature.properties.hwmTypeName, 
+					{text:'Quality',style: 'tableHeader'}, identifiedMarks[i].feature.properties.hwmQualityName
+				],
+				[
+					{},
+					{text:'Waterbody',style: 'tableHeader'},identifiedMarks[i].feature.properties.waterbody, 
+					{text:'Permanent Housing',style: 'tableHeader'},identifiedMarks[i].feature.properties.sitePermHousing
+				],
+				[
+					{},
+					{text:'County',style: 'tableHeader'},identifiedMarks[i].feature.properties.countyName,
+					{text:'State',style: 'tableHeader'},identifiedMarks[i].feature.properties.stateName
+				],
+				[
+					{},
+					{text:'Latitude, Longitude(DD)',style: 'tableHeader'},identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
+					{text:'Site Description',style: 'tableHeader'},identifiedMarks[i].feature.properties.siteDescription
+				],
+				[
+					{},
+					{text:'Location Description',style: 'tableHeader'},identifiedMarks[i].feature.properties.hwm_locationdescription,
+					{text:'Survey Date',style: 'tableHeader'},identifiedMarks[i].feature.properties.survey_date
+				],
+				[
+					{},
+					{text:'Bank',style: 'tableHeader'},identifiedMarks[i].feature.properties.bank,
+					{text:'Environment',style: 'tableHeader'},identifiedMarks[i].feature.properties.hwm_environment
+				],
+				[
+					{},
+					{text:'Flag Date',style: 'tableHeader'},identifiedMarks[i].feature.properties.flag_date,
+					{text:'Stillwater',style: 'tableHeader'},identifiedMarks[i].feature.properties.stillwater
+				],
+				[
+					{},
+					{text:'Uncertainty',style: 'tableHeader'},uncertainty,
+					{text:'HWM Uncertainty',style: 'tableHeader'}, hwmUncertainty
+				]
+			);
+		}
+		return body;
+	}
+
+	function hwmTable() {
+		return {
+			table: {	
+				widths: ['auto','auto','*','auto','*'],
+				body: buildHwmTableBody(),
+			},
+			layout: {
+				hLineWidth: function (i, node) {
+					return (i === 0 || i === node.table.body.length) ? 1 : 1;
+				},
+				vLineWidth: function (i, node) {
+					return (i === 0 || i === node.table.widths.length) ? 1 : 1;
+				},
+				hLineColor: function (i, node) {
+					return (i === 0 || i === node.table.body.length) ? 'gray' : 'gray';
+				},
+				vLineColor: function (i, node) {
+					return (i === 0 || i === node.table.widths.length) ? 'gray' : 'gray';
+				},
+			},
+			style: 'smaller',
+			margin: [0,0,0,15],
+		};
+	}
+	
+	//Begin legend prep to get active layers into legend table for pdf report
+	var getOverlays = [];
+	var srcActiveOverlays = [];
+	var activeOverlays =[];
+	var imageUrls = [];
+	
+
+	function getActiveOverlays() {
+		$.each($('.leaflet-control-layers-overlays'), function(index, overlayGroup) {
+			$.each(overlayGroup.children, function(index, overlayLabel) {
+				//console.log(index, overlayLabel)
+				if ($(overlayLabel.children[0]).is(":checked")) {			
+					getOverlays.push($(overlayLabel.children[1]).text());
+					srcActiveOverlays.push($(overlayLabel.children[1].children).attr("src"));
+					activeOverlays.push({
+						"Image": $(overlayLabel.children[1].children).attr("src").replace('images/',''), 
+						"Layer": ($(overlayLabel.children[1]).text())
+					});
+				}
+			})
+		})
+
+		for (var i in srcActiveOverlays) {
+			function imageToBase64(){
+				console.log("scrActiveOverlays", srcActiveOverlays);
+				var canvas = document.createElement("canvas");
+				var ctx = canvas.getContext("2d");
+				var base_image = new Image();
+				canvas.width = 10;
+				canvas.height = 10;
+				base_image.src = srcActiveOverlays[i];
+				ctx.drawImage(base_image, 0, 0, 10, 10);
+				var dataURL = canvas.toDataURL();
+				//console.log(dataURL);
+				imageUrls.push(dataURL);
+			};
+			imageToBase64();
+		};
+	}
+
+	function legendTableBody() {
+		getActiveOverlays();
+		var body = [];
+		for (var i = 0; i < imageUrls.length && getOverlays.length; i++) {
+			var dataRow = [];
+			dataRow.push({image: imageUrls[i]}, getOverlays[i]);
+			body.push(dataRow);
+		}
+		return body;
+	}
+
+	function legendTable() {
+		return {
+			table: {	
+				body: legendTableBody(),
+			},
+			layout: 'noBorders', 
+		};
+	}
 
 	function printReport() {
+		console.log(buildHwmTableBody())
 		const docDefinition = {
 			pageOrientation: 'landscape',
 			pageMargins: [20, 20, 20, 35],
@@ -2863,15 +3305,34 @@ $(document).ready(function () {
 				}
 			},
 			content: [
-				{ text: 'Peak Summaries for ' + currentParkOrRefuge + ' with ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header' },
-				table(bodyData(), ['Site Number','Description','Networks','State','County','Peak Stage','Peak Estimated'])
+				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0,0,0,10] },
+				//{ image: pdfMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+				{
+					table: {
+						body: [
+							['', ''],
+							[{image: pdfMapUrl, width: 300, height: 200}, legendTable(),]
+						]
+					},
+					layout: 'noBorders',
+					margin: [0,0,0,15]
+				},
+				{ text: 'Peak Summary Data', style: 'subHeader', margin: [0,0,0,5], alignment: 'center' },
+				peakTable(bodyData(), ['Site Number','Description','State','County','Peak Stage','Peak Estimated']),
+				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0,0,0,5], alignment: 'center' },
+				hwmTable(),
 			],
-			images: {
-				map: mapImage
-			},
 			styles: {			
 				header: {
 					fontSize: 15,
+					bold: true
+				},
+				tableHeader: {
+					fontSize: 10,
+					bold: true,
+				},
+				subHeader: {
+					fontSize: 12,
 					bold: true
 				},
 				bigger: {
@@ -2927,6 +3388,27 @@ $(document).ready(function () {
 	}
 	//end latLngScale utility logic/////////
 });
+
+//function for toggling peak labels
+function clickPeakLabels() {
+	var checkBox = document.getElementById("peakCheckbox");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		checkBox.checked = false;
+	}
+	//Display peak labels when toggle is on
+	if (checkBox.checked == true) {
+		peak.eachLayer(function (myMarker) {
+			myMarker.showLabel();
+		});
+	//Remove peak labels when toggle is off
+	} else {
+		peak.eachLayer(function (myMarker){
+			myMarker.hideLabel();
+		});
+	}
+  }
+  
 /**
  * Created by bdraper on 8/2/2016.
  */
@@ -2986,6 +3468,16 @@ $( document ).ready(function() {
         allowClear: false,
         maximumSelectionLength: 1
     });
+    $('.evtSelectRegional').select2({
+        placeholder: 'Select event',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
+    $('.evtSelect_filter').select2({
+        placeholder: 'Select event',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
     $.ajax({
         dataType: 'json',
         type: 'GET',
@@ -3009,6 +3501,8 @@ $( document ).ready(function() {
             });
             for (var i = 0; i < data.length; i++) {
                 $('.evtSelect').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
+                $('.evtSelectRegional').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
+                $('.evtSelect_filter').append('<option value="' + data[i].event_id + '">' + data[i].event_name + '</option>');
                 data[i].id = data[i].event_id;
                 fev.data.events.push(data[i]);
             }
@@ -3017,6 +3511,109 @@ $( document ).ready(function() {
             console.log('Error processing the JSON. The error is:' + error);
         }
     });
+
+    // START REGIONAL SUMMARY
+    // region type selector
+    $('.regionType').select2({
+        placeholder: 'Select type',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
+    $('.regionType').append('<option value="doi">' + 'DOI Regions' + '</option>');
+    $('.regionType').append('<option value="fws">' + 'FWS Legacy Regions' + '</option>');
+    $('.regionType').append('<option value="nps">' + 'NPS Networks' + '</option>');
+
+     // Lands type selector
+     $('.typeSelect').select2({
+        placeholder: 'Select type',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
+    $('.typeSelect').append('<option value="parks">' + 'Parks' + '</option>');
+    $('.typeSelect').append('<option value="refuges">' + 'Refuges' + '</option>');
+
+    $('.regionSelect').select2({
+        placeholder: 'Select a region type',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
+
+    // region based on region type
+    $('#regionType_regionalModal').change(function () {
+
+        // clearing out the results incase region type 
+        $('.regionSelect').empty();
+
+        // if it has a value, we query to get the region geometry
+        if (($('#regionType_regionalModal').val()) === null) {
+           
+        } else {
+            if ($('#regionType_regionalModal').val()[0] === "doi") {
+                $.ajax({
+                    dataType: 'json',
+                    type: 'GET',
+                    url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/ArcGIS/rest/services/DOI_Unified_Regions/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    headers: {'Accept': '*/*'},
+                    success: function (data) {
+                        for (var i = 0; i < data.features.length; i++) {
+                            $('.regionSelect').append('<option value="' + data.features[i].attributes.REG_NUM + '">' + data.features[i].attributes.REG_NAME + '</option>');
+                            /* data[i].id = data[i].event_id;
+                            fev.data.events.push(data[i]); */
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error processing the JSON. The error is:' + error);
+                    }
+                });
+                
+                
+            } else if ($('#regionType_regionalModal').val()[0] === "fws") {
+                $.ajax({
+                    dataType: 'json',
+                    type: 'GET',
+                    url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    headers: {'Accept': '*/*'},
+                    success: function (data) {
+                        for (var i = 0; i < data.features.length; i++) {
+                            $('.regionSelect').append('<option value="' + data.features[i].attributes.REGNAME + '">' + data.features[i].attributes.REGNAME + '</option>');
+                            /* data[i].id = data[i].event_id;
+                            fev.data.events.push(data[i]); */
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error processing the JSON. The error is:' + error);
+                    }
+                });
+            } else if ($('#regionType_regionalModal').val()[0] === "nps") {
+                $.ajax({
+                    dataType: 'json',
+                    type: 'GET',
+                    url: 'https://irmaservices.nps.gov/arcgis/rest/services/NPSData/NPS_MonitoringNetworks/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&having=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&f=pjson',
+                    headers: {'Accept': '*/*'},
+                    success: function (data) {
+                        for (var i = 0; i < data.features.length; i++) {
+                            $('.regionSelect').append('<option value="' + data.features[i].attributes.NetworkName + '">' + data.features[i].attributes.NetworkName + '</option>');
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error processing the JSON. The error is:' + error);
+                    }
+                });
+            }
+        }
+    });
+
+    // buffer size selector
+    $('.bufferSelect').select2({
+        placeholder: 'Select size',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
+    $('.bufferSelect').append('<option value="10">' + '10 km' + '</option>');
+    $('.bufferSelect').append('<option value="20">' + '20 km' + '</option>');
+    $('.bufferSelect').append('<option value="30">' + '30 km' + '</option>');
+
+    // END REGIONAL SUMMARY
 
     // Register states select as select2, retrieve values from jQuery ajax, sort, populate dropdown
     //stores values in fev.data.states array
@@ -3413,6 +4010,997 @@ $( document ).ready(function() {
 //         case 0: return '591,657,550';
 //     }
 // }
+
+// setting global variables for the regional summary
+var regionalMap;
+var layerCountReg = 0;
+var regionPoly = [];
+var selectedRegion = "";
+var selectedEvents = [];
+var selectedLandType;
+var regionPoly = [];
+var regionBoundaries;
+var flattenedRegionalPoly;
+var regionLayerGroup = L.layerGroup();
+var where = "";
+var eventName;
+var identifiedParks = [];
+var peaksWithinBuffer = L.featureGroup();
+var hwmsWithinBuffer = L.featureGroup();
+var barosWithinBuffer = L.featureGroup();
+var sensorsWithinBuffer = L.featureGroup();
+var bufferedPolys = [];
+var unbufferedPolys = [];
+var bufferSize;
+var parksWithPeaks = [];
+var parksWithHWMs = [];
+var parksWithBaros = [];
+var executed = false;
+var regionalPeak = L.layerGroup();
+var parkPeaks = L.layerGroup();
+var regionalHWM = L.layerGroup();
+var regionalBaro = L.layerGroup();
+var parkHWM = L.layerGroup();
+var regionalbaro = L.layerGroup();
+var regionalbaroQueried = L.layerGroup();
+var regionalstormtide = L.layerGroup();
+var regionalmet = L.layerGroup();
+var regionalwaveheight = L.layerGroup();
+var regionalPeakMarkerIcon = L.icon({ className: 'regionalpeakMarker', iconUrl: 'images/peak.png', iconAnchor: [12, 16], popupAnchor: [0, 2] });
+var regionalhwmIcon = L.icon({ className: 'regionalhwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var regionalbaroMarkerIcon = L.icon({ className: 'regionalbaroMarker', iconUrl: 'images/baro.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var regionalmetMarkerIcon = L.icon({ className: 'regionalmetMarker', iconUrl: 'images/met.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var regionalrdgMarkerIcon = L.icon({ className: 'regionalrdgMarker', iconUrl: 'images/rdg.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var regionalstormtideMarkerIcon = L.icon({ className: 'regionalstormtideMarker', iconUrl: 'images/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var regionalwaveheightMarkerIcon = L.icon({ className: 'regionalwaveheightMarker', iconUrl: 'images/waveheight.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12, 12] });
+var regionParksFC = [];
+var tableData = [];
+var hwmTableData = [];
+var sensorTableData = [];
+var allHWMs = [];
+var allPeaks = [];
+
+// URLS
+var eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
+var parksURL = "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
+var peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.json?Event=";
+
+$(document).ready(function () {
+
+
+    $('#regionalReportNav').click(function () {
+
+        // for some reason tableData loading incompletely without timeout
+        setTimeout(() => {
+            regionalMap = L.map('regionalMap', {
+                maxZoom: 15,
+                zoomControl: false
+            }).setView([39.833333, -98.583333], 3);
+
+            /* regionalMap.dragging.disable();
+            regionalMap.touchZoom.disable();
+            regionalMap.doubleClickZoom.disable();
+            regionalMap.scrollWheelZoom.disable();
+            regionalMap.boxZoom.disable();
+            regionalMap.keyboard.disable(); */
+
+            var layerfel = L.esri.basemapLayer('Topographic').addTo(regionalMap);
+        }, 600);
+
+        // checking for region entry when region input is changed
+        $('#regionSelect_regionalModal').change(function () {
+
+
+            // if it has a value, we query to get the region geometry
+            if (($('#regionSelect_regionalModal').val()) !== null) {
+
+            } else {
+
+            }
+        });
+
+
+
+    });
+
+
+
+    $('#btnSubmitSelections').click(function () {
+
+        $('.progress-bar-fill').delay(1000).queue(function () {
+            $(this).css('width', '100%')
+        });
+
+        // setting buffer style
+        var bufferStyle = {
+            "color": "#0000cc",
+            "fillOpacity": 0,
+            "opacity": 0.65,
+            "weight": 2
+        };
+
+        // setting park style
+        var parkStyle = {
+            "color": "#0000cc",
+            "weight": 2,
+            "opacity": 100
+        };
+
+        var regionStyle = {
+            "color": "#9933ff",
+            "weight": 2,
+            "opacity": 100,
+            "fillOpacity": 0
+        };
+
+        // selectedLandType
+        selectedLandType = $('#typeSelect_regionalModal').val();
+        // setting array of selected events
+        selectedEvents = $('#evtSelect_regionalModal').val();
+
+        // setting selected region
+        selectedRegion = $('#regionSelect_regionalModal').val();
+
+        // setting buffer size
+        bufferSize = $('#bufferSelect_regionalModal').val();
+
+        // setting region variables based on service selection
+        var regionURL;
+        var whereValue;
+
+        switch ($('#regionType_regionalModal').val()[0]) {
+            case 'doi':
+                regionURL = 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/DOI_Unified_Regions/FeatureServer/0';
+                whereValue = "REG_NUM=" + selectedRegion;
+                break;
+            case 'fws':
+                regionURL = 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0';
+                whereValue = "REGNAME=" + selectedRegion;
+                break;
+            case 'nps':
+                regionURL = 'https://irmaservices.nps.gov/arcgis/rest/services/NPSData/NPS_MonitoringNetworks/MapServer/0';
+                whereValue = "NetworkName" + selectedRegion;
+                break;
+        }
+
+        if ($('#regionType_regionalModal').val()[0] === "doi") {
+            // getting the geometry for the selected region
+            where = "REG_NUM=" + selectedRegion,
+                regionBoundaries = L.esri.featureLayer({
+                    useCors: false,
+                    url: regionURL,
+                    where: "REG_NUM=" + selectedRegion,
+                    style: regionStyle,
+                    onEachFeature: function (feature, latlng) {
+                        regionPoly = feature.geometry;
+                        flattenedRegionalPoly = turf.flatten(regionPoly);
+                    }
+                }).addTo(regionalMap);
+            regionLayerGroup.addLayer(regionBoundaries);
+        } else if ($('#regionType_regionalModal').val()[0] === "fws") {
+            regionBoundaries = L.esri.featureLayer({
+                useCors: false,
+                url: regionURL,
+                where: "REGNAME='" + selectedRegion + "'",
+                style: regionStyle,
+                onEachFeature: function (feature, latlng) {
+                    regionPoly = feature.geometry;
+                    flattenedRegionalPoly = turf.flatten(regionPoly);
+                }
+            }).addTo(regionalMap);
+            regionLayerGroup.addLayer(regionBoundaries);
+        } else if ($('#regionType_regionalModal').val()[0] === "nps") {
+            regionBoundaries = L.esri.featureLayer({
+                useCors: false,
+                url: regionURL,
+                where: "NetworkName='" + selectedRegion + "'",
+                style: regionStyle,
+                onEachFeature: function (feature, latlng) {
+                    regionPoly = feature.geometry;
+                    flattenedRegionalPoly = turf.flatten(regionPoly);
+                }
+            }).addTo(regionalMap);
+            regionLayerGroup.addLayer(regionBoundaries);
+        }
+        // TODO: explore options to avoid this timeout. dealing with motely crew of services that is making it difficult atm
+        setTimeout(() => {
+
+            // Identify parks/refuges in event in regions
+            var allSites;
+            if (selectedLandType[0] === "parks") {
+                allSites = L.esri.featureLayer({
+                    // useCors: false,
+                    url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
+                    where: "1=1",
+                    fields: ["*"]
+                });
+            } else if (selectedLandType[0] === "refuges") {
+                allSites = L.esri.featureLayer({
+                    // useCors: false,
+                    url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
+                    where: "1=1",
+                    fields: ["*"]
+                });
+            }
+
+            function myFunction(item, index) {
+                document.getElementById("demo").innerHTML += index + ":" + item + "<br>";
+            }
+
+            // lopping through each poly of the regional poly since esri-leaflet can't handle multipolygons at the version we're at
+            if (flattenedRegionalPoly !== undefined) {
+                for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {
+                    allSites.query()
+                        .within(flattenedRegionalPoly.features[p])
+                        .run(function (error, featureCollection, response) {
+                            if (featureCollection.features.length !== 0) {
+                                regionParksFC = featureCollection;
+                                L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
+                                getbuffers();
+                            }
+                        });
+                }
+            }
+
+            /* setTimeout(() => {
+                L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
+                console.log(regionParksFC);
+                getbuffers();
+            }, 7000); */
+
+            //getbuffers();
+            // getting the park buffers base on the buffer size selection value
+            function getbuffers() {
+                if (regionParksFC !== undefined) {
+                    for (var p = 0; p < regionParksFC.features.length; p++) {
+                        var feature = regionParksFC.features[p];
+                        var options = { tolerance: 0.01, highQuality: false };
+                        // check incase there are any multipolys and convert them to simple polys
+                        if (regionParksFC.features[p].geometry.type === "MultiPolygon") {
+                            regionParksFC.features[p].geometry.coordinates.forEach(function (coords) {
+                                feature = { 'type': 'Polygon', 'coordinates': coords };
+                                var simplified = turf.simplify(feature, options);
+                                var buffered = turf.buffer(simplified, bufferSize, { units: 'kilometers' });
+                                // bufferedPolys.push(buffered);
+                            });
+                        } else {
+                            var simplified = turf.simplify(feature, options);
+                            var buffered = turf.buffer(simplified, bufferSize, { units: 'kilometers' });
+                            bufferedPolys.push(buffered);
+                        }
+                    }
+                    console.log('buffered polys' + bufferedPolys);
+                    L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
+                    getEventSpecificData();
+                }
+            }
+
+            // looping through each event and sensor data
+            function getEventSpecificData() {
+                for (var e = 0; e < selectedEvents.length; e++) {
+                    // Getting event name
+
+                    // resetting event url
+
+                    eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
+                    eventURL = eventURL + selectedEvents[e] + '.json';
+                    parksInEvent = [];
+                    var queryString = "?Event=" + selectedEvents[e] + "&States=&County=&StartDate=undefined&EndDate=undefined";
+                    var sensorQueryString = "?Event=" + selectedEvents[e] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
+                    getEventName(function (output) {
+                        eventName = output.event_name;
+                    });
+
+                    // function for getting the event data
+                    function getEventName(handleData) {
+                        var data;
+                        $.ajax({
+                            dataType: "json",
+                            url: eventURL,
+                            data: data,
+                            success: function (data) {
+                                handleData(data)
+                            },
+                            error: function (error) {
+                                console.log('Error processing the JSON. The error is:' + error);
+                            }
+                        });
+                    }
+                    // PEAKS
+                    getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
+
+                    // HWMS
+                    getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
+
+                    // BARO
+                    //getBaros(fev.urls.baroGeoJSONViewURL + sensorQueryString, regionalbaroMarkerIcon);
+
+                    /* // STORMTIDE
+                    getStormtides(fev.urls.stormtideGeoJSONViewURL + sensorQueryString, regionalstormtideMarkerIcon);
+
+                    // MET
+                    getMets(fev.urls.metGeoJSONViewURL + sensorQueryString, regionalmetMarkerIcon);
+
+                    // WAVEHEIGHT
+                    getWaveheights(fev.urls.waveheightGeoJSONViewURL + sensorQueryString, regionalwaveheightMarkerIcon);
+
+                    // RDG
+                    getRDGs(fev.urls.rdgGeoJSONViewURL + sensorQueryString, regionalrdgMarkerIcon); */
+
+                    setTimeout(() => {
+                        //regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                        processData();
+                    }, 1000);
+
+
+                }
+            }
+        }, 800);
+
+
+        // creating markers for peaks
+        function getPeaks(url, markerIcon, eventName) {
+            //increment layerCount
+            layerCountReg++;
+            //var maxPeak = Math.max(feature.properties.peak_stage);
+            regionalPeak.clearLayers();
+            var currentMarkerReg = L.geoJson(false, {
+                pointToLayer: function (feature, latlng) {
+                    var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
+                    markerCoords.push(latlng);
+                    var marker = L.marker(latlng, {
+                        icon: markerIcon
+                    }).bindLabel("Peak: " + labelText);
+                    return marker;
+                },
+
+                // leaving cause we might need this
+                /* onEachFeature: function (feature, latlng) {
+                    //add marker to overlapping marker spidifier
+                    oms.addMarker(latlng);
+                } */
+            });
+
+
+            $.getJSON(url, function (data) {
+                if (data.length == 0) {
+                    console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+                    return
+                }
+                if (data.features.length > 0) {
+                    console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+                    //check for bad lat/lon values
+                    for (var i = data.features.length - 1; i >= 0; i--) {
+                        //check that lat/lng are not NaN
+                        if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
+                            console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                            //remove it from array
+                            data.features.splice(i, 1);
+                        }
+                        //check that lat/lng are within the US and also not 0
+                        if (fev.vars.extentSouth <= data.features[i].geometry.coordinates[0] <= fev.vars.extentNorth && fev.vars.extentWest <= data.features[i].geometry.coordinates[1] <= fev.vars.extentEast || data.features[i].geometry.coordinates[0] == 0 || data.features[i].geometry.coordinates[1] == 0) {
+                            console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                            //remove it from array
+                            data.features.splice(i, 1);
+                        }
+                    }
+                    currentMarkerReg.addData(data);
+                    currentMarkerReg.eachLayer(function (layer) {
+                        layer.addTo(regionalPeak);
+                    });
+                    //regionalPeak.addTo(regionaltableData);
+                    //checkLayerCount(layerCount);
+
+                    // function to get only peaks within park buffer
+                    setTimeout(() => {
+                        var count = 0;
+                        // looping through each park buffer
+                        for (var p = 0; p < bufferedPolys.length; p++) {
+                            var buffer = bufferedPolys[p];
+
+                            // check incase there are any multipolys and convert them to simple polys
+                            if (buffer.geometry.type === "MultiPolygon") {
+                                var feat;
+
+                                buffer.geometry.coordinates.forEach(function (coords) {
+                                    feat = { 'type': 'Polygon', 'coordinates': coords };
+                                    if (feat !== undefined) {
+                                        var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
+                                        // if true add it to an array containing all the 'true' regionalPeaks
+                                        if (isItInside) {
+                                            var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                            regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                            parksWithPeaks.push({
+                                                "site_name": landsitetype,
+                                                data: {
+                                                    "site_name": landsitetype,
+                                                    "event": eventName,
+                                                    "peak_stage": regionalPeak._layers[i].peak_stage,
+                                                    "county": regionalPeak._layers[i].county,
+                                                    "peak_stage": regionalPeak._layers[i].peak_stage,
+                                                    "latitude_dd": regionalPeak._layers[i].latitude_dd,
+                                                    "longitude_dd": regionalPeak._layers[i].longitude_dd,
+                                                    "site_no": regionalPeak._layers[i].site_no,
+                                                    "waterbody": regionalPeak._layers[i].waterbody
+                                                }
+                                            });
+                                            allPeaks.push(parksWithPeaks[count].data);
+                                            count++;
+                                        }
+                                    }
+                                });
+                            }
+
+                            // looping through the peaks and identifying ones that are within current park poly
+                            for (var i in regionalPeak._layers) {
+                                var cords = ([regionalPeak._layers[i]._latlng.lng, regionalPeak._layers[i]._latlng.lat]);
+                                var isItInside = turf.booleanPointInPolygon(cords, buffer, { ignoreBoundary: true });
+                                // if true add it to an array containing all the 'true' regionalPeak
+                                if (isItInside) {
+                                    //peaksWithinBuffer.push(regionalPeak._layers[i]);
+                                    var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                    regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                    parksWithPeaks.push({
+                                        "site_name": landsitetype,
+                                        data: {
+                                            "site_name": landsitetype,
+                                            "event": eventName,
+                                            "peak_stage": regionalPeak._layers[i].feature.properties.peak_stage,
+                                            "county": regionalPeak._layers[i].feature.properties.county,
+                                            "peak_stage": regionalPeak._layers[i].feature.properties.peak_stage,
+                                            "latitude_dd": regionalPeak._layers[i].feature.properties.latitude_dd,
+                                            "longitude_dd": regionalPeak._layers[i].feature.properties.longitude_dd,
+                                            "site_no": regionalPeak._layers[i].feature.properties.site_no,
+                                            "waterbody": regionalPeak._layers[i].feature.properties.waterbody
+                                        }
+                                    });
+                                    allPeaks.push(parksWithPeaks[count].data);
+                                    count++;
+                                }
+                            }
+                        }
+                    });
+
+                    //regionaltableData.removeLayer(regionalPeak);
+
+                    peaksWithinBuffer.addTo(regionalMap);
+                    if (allPeaks.length === 0) {
+                        console.log("no results");
+                    } else {
+
+                    }
+
+
+                }
+            });
+        }
+
+        function getHWMs(url, markerIcon, eventName) {
+            //increment layerCount
+            layerCountReg++;
+            //var maxPeak = Math.max(feature.properties.peak_stage);
+            regionalHWM.clearLayers();
+            var currentMarkerReg = L.geoJson(false, {
+                pointToLayer: function (feature, latlng) {
+                    var labelText = feature.properties.elev_ft !== undefined ? feature.properties.elev_ft.toString() : 'No Value';
+                    markerCoords.push(latlng);
+                    var marker = L.marker(latlng, {
+                        icon: markerIcon
+                    }).bindLabel("elev_ft: " + labelText);
+                    return marker;
+                },
+
+                // leaving cause we might need this
+                /* onEachFeature: function (feature, latlng) {
+                    //add marker to overlapping marker spidifier
+                    oms.addMarker(latlng);
+                } */
+            });
+
+
+            $.getJSON(url, function (data) {
+                if (data.length == 0) {
+                    console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+                    return
+                }
+                if (data.features.length > 0) {
+                    console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+                    //check for bad lat/lon values
+                    for (var i = data.features.length - 1; i >= 0; i--) {
+                        //check that lat/lng are not NaN
+                        if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
+                            console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                            //remove it from array
+                            data.features.splice(i, 1);
+                        }
+                        //check that lat/lng are within the US and also not 0
+                        if (fev.vars.extentSouth <= data.features[i].geometry.coordinates[0] <= fev.vars.extentNorth && fev.vars.extentWest <= data.features[i].geometry.coordinates[1] <= fev.vars.extentEast || data.features[i].geometry.coordinates[0] == 0 || data.features[i].geometry.coordinates[1] == 0) {
+                            console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                            //remove it from array
+                            data.features.splice(i, 1);
+                        }
+                    }
+                    currentMarkerReg.addData(data);
+                    currentMarkerReg.eachLayer(function (layer) {
+                        layer.addTo(regionalHWM);
+                    });
+                    //regionalHWM.addTo(regionaltableData);
+                    //checkLayerCount(layerCount);
+
+                    // function to get only peaks within park buffer
+                    setTimeout(() => {
+                        var count = 0;
+                        // looping through each park buffer
+                        for (var p = 0; p < bufferedPolys.length; p++) {
+                            var buffer = bufferedPolys[p];
+
+                            // check incase there are any multipolys and convert them to simple polys
+                            if (buffer.geometry.type === "MultiPolygon") {
+                                var feat;
+
+                                buffer.geometry.coordinates.forEach(function (coords) {
+                                    feat = { 'type': 'Polygon', 'coordinates': coords };
+                                    if (feat !== undefined) {
+                                        var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
+                                        // if true add it to an array containing all the 'true' regionalHWM
+                                        if (isItInside) {
+                                            regionalHWM._layers[i].addTo(hwmsWithinBuffer);
+                                            var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                            parksWithHWMs.push({
+                                                "site_name": landsitetype,
+                                                data: {
+                                                    "site_name": landsitetype,
+                                                    "event": eventName,
+                                                    "elev_ft": regionalHWM._layers[i].feature.properties.elev_ft,
+                                                    "hwmQualityName": regionalHWM._layers[i].feature.properties.hwmQualityName,
+                                                    "hwmTypeName": regionalHWM._layers[i].feature.properties.hwmTypeName,
+                                                    "hwm_environment": regionalHWM._layers[i].feature.properties.hwm_environment,
+                                                    "county": regionalHWM._layers[i].feature.properties.county,
+                                                    "state": regionalHWM._layers[i].feature.properties.stateName,
+                                                    "latitude_dd": regionalHWM._layers[i].feature.properties.latitude_dd,
+                                                    "longitude_dd": regionalHWM._layers[i].feature.properties.longitude_dd,
+                                                    "site_no": regionalHWM._layers[i].feature.properties.site_no,
+                                                    "waterbody": regionalHWM._layers[i].feature.properties.waterbody
+                                                }
+                                            });
+                                            allHWMs.push(parksWithHWMs[count].data);
+                                            count++;
+                                        }
+                                    }
+                                });
+                            }
+
+                            // looping through the peaks and identifying ones that are within current park poly
+                            for (var i in regionalHWM._layers) {
+                                var cords = ([regionalHWM._layers[i]._latlng.lng, regionalHWM._layers[i]._latlng.lat]);
+
+                                var isItInside = turf.booleanPointInPolygon(cords, buffer, { ignoreBoundary: true });
+                                // if true add it to an array containing all the 'true' regionalHWM
+                                if (isItInside) {
+                                    //peaksWithinBuffer.push(regionalHWM._layers[i]);
+                                    var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                    regionalHWM._layers[i].addTo(hwmsWithinBuffer);
+                                    parksWithHWMs.push({
+                                        "site_name": landsitetype,
+                                        data: {
+                                            "site_name": landsitetype,
+                                            "event": eventName,
+                                            "elev_ft": regionalHWM._layers[i].feature.properties.elev_ft,
+                                            "hwmQualityName": regionalHWM._layers[i].feature.properties.hwmQualityName,
+                                            "hwmTypeName": regionalHWM._layers[i].feature.properties.hwmTypeName,
+                                            "hwm_environment": regionalHWM._layers[i].feature.properties.hwm_environment,
+                                            "county": regionalHWM._layers[i].feature.properties.county,
+                                            "state": regionalHWM._layers[i].feature.properties.stateName,
+                                            "latitude_dd": regionalHWM._layers[i].feature.properties.latitude_dd,
+                                            "longitude_dd": regionalHWM._layers[i].feature.properties.longitude_dd,
+                                            "site_no": regionalHWM._layers[i].feature.properties.site_no,
+                                            "waterbody": regionalHWM._layers[i].feature.properties.waterbody
+                                        }
+                                    });
+                                    allHWMs.push(parksWithHWMs[count].data);
+                                    count++;
+                                }
+                            }
+                        }
+                    });
+
+                    //regionaltableData.removeLayer(regionalPeak);
+                    hwmsWithinBuffer.addTo(regionalMap);
+                }
+            });
+        }
+
+        function getBaros(url, markerIcon) {
+            //increment layerCount
+            layerCountReg++;
+            //var maxPeak = Math.max(feature.properties.peak_stage);
+            var barosData;
+            regionalBaro.clearLayers();
+            var currentMarkerReg = L.geoJson(false, {
+                pointToLayer: function (feature, latlng) {
+                    //var labelText = feature.properties.elev_ft !== undefined ? feature.properties.elev_ft.toString() : 'No Value';
+                    markerCoords.push(latlng);
+                    var marker = L.marker(latlng, {
+                        icon: markerIcon
+                    }).bindLabel("elev_ft: " + "labelText");
+                    return marker;
+                },
+
+                // leaving cause we might need this
+                /* onEachFeature: function (feature, latlng) {
+                    //add marker to overlapping marker spidifier
+                    oms.addMarker(latlng);
+                } */
+            });
+            var fullMarkerReg = L.geoJson(false, {
+                pointToLayer: function (feature, latlng) {
+                    //var labelText = feature.properties.elev_ft !== undefined ? feature.properties.elev_ft.toString() : 'No Value';
+                    markerCoords.push(latlng);
+                    var marker = L.marker(latlng, {
+                        icon: markerIcon
+                    }).bindLabel("elev_ft: " + "labelText");
+                    return marker;
+                },
+
+                // leaving cause we might need this
+                /* onEachFeature: function (feature, latlng) {
+                    //add marker to overlapping marker spidifier
+                    oms.addMarker(latlng);
+                } */
+            });
+
+
+            $.getJSON(url, function (data) {
+                if (data.length == 0) {
+                    console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+                    return
+                }
+                if (data.features.length > 0) {
+                    console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+                    //check for bad lat/lon values
+                    for (var i = data.features.length - 1; i >= 0; i--) {
+                        //check that lat/lng are not NaN
+                        if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
+                            console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                            //remove it from array
+                            data.features.splice(i, 1);
+                        }
+                        //check that lat/lng are within the US and also not 0
+                        if (fev.vars.extentSouth <= data.features[i].geometry.coordinates[0] <= fev.vars.extentNorth && fev.vars.extentWest <= data.features[i].geometry.coordinates[1] <= fev.vars.extentEast || data.features[i].geometry.coordinates[0] == 0 || data.features[i].geometry.coordinates[1] == 0) {
+                            console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                            //remove it from array
+                            data.features.splice(i, 1);
+                        }
+                    }
+
+                    //barosData.push(data);
+                    currentMarkerReg.addData(data);
+                    currentMarkerReg.eachLayer(function (layer) {
+                        layer.addTo(regionalBaro);
+                    });
+                    //regionalBaro.addTo(regionaltableData);
+                    //checkLayerCount(layerCount);
+
+                    // function to get only peaks within park buffer
+                    setTimeout(() => {
+                        // looping through each park buffer
+                        for (var p = 0; p < bufferedPolys.length; p++) {
+                            var buffer = bufferedPolys[p];
+
+                            // check incase there are any multipolys and convert them to simple polys
+                            if (buffer.geometry.type === "MultiPolygon") {
+                                var feat;
+
+                                buffer.geometry.coordinates.forEach(function (coords) {
+                                    feat = { 'type': 'Polygon', 'coordinates': coords };
+                                    if (feat !== undefined) {
+                                        var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
+                                        // if true add it to an array containing all the 'true' regionalHWM
+                                        if (isItInside) {
+                                            regionalBaro._layers[i].addTo(barosWithinBuffer);
+                                            var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                            parksWithBaros.push({
+                                                "site_name": landsitetype,
+                                                data: {
+                                                    "site_name": landsitetype,
+                                                    "event": eventName,
+                                                    "county": regionalBaro._layers[i].county,
+                                                    "latitude_dd": regionalBaro._layers[i].latitude_dd,
+                                                    "longitude_dd": regionalBaro._layers[i].longitude_dd,
+                                                    "site_no": regionalBaro._layers[i].site_no,
+                                                    "instrument_id": regionalBaro._layers[i].feature.properties.instrument_id
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+
+                            // looping through the peaks and identifying ones that are within current park poly
+                            for (var i in regionalBaro._layers) {
+                                var cords = ([regionalBaro._layers[i]._latlng.lng, regionalBaro._layers[i]._latlng.lat]);
+
+                                var isItInside = turf.booleanPointInPolygon(cords, buffer, { ignoreBoundary: true });
+                                // if true add it to an array containing all the 'true' regionalBaro
+                                if (isItInside) {
+                                    //peaksWithinBuffer.push(regionalBaro._layers[i]);
+                                    var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                    //regionalBaro._layers[i].addTo(barosWithinBuffer);
+                                    parksWithBaros.push({
+                                        "site_name": landsitetype,
+                                        data: {
+                                            "site_name": landsitetype,
+                                            "event": eventName,
+                                            "county": regionalBaro._layers[i].feature.properties.county,
+                                            "state": regionalBaro._layers[i].feature.properties.state,
+                                            "latitude_dd": regionalBaro._layers[i].feature.properties.latitude_dd,
+                                            "longitude_dd": regionalBaro._layers[i].feature.properties.longitude_dd,
+                                            "site_no": regionalBaro._layers[i].feature.properties.site_no,
+                                            "instrument_id": regionalBaro._layers[i].feature.properties.instrument_id
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                    var test = [];
+                    //regionaltableData.removeLayer(regionalPeak);
+                    for (var baro in parksWithBaros) {
+                        var fullSensorURL = "https://stn.wim.usgs.gov/STNServices/Instruments/" + parksWithBaros[baro].data.instrument_id + "/FullInstrument.json";
+                        $.getJSON(fullSensorURL, function (instrument) {
+                            fullMarkerReg.addData(instrument);
+                            fullMarkerReg.eachLayer(function (layer) {
+                                layer.addTo(regionalbaroQueried);
+                            });
+                            // regionalbaroQueried._layers[baro].addTo(barosWithinBuffer);
+                            test.push({
+                                "site_name": parksWithBaros[baro].site_name,
+                                data: {
+                                    "site_name": parksWithBaros[baro].data.site_name,
+                                    "county": parksWithBaros[baro].data.county,
+                                    "state": parksWithBaros[baro].data.state,
+                                    "latitude_dd": parksWithBaros[baro].data.latitude_dd,
+                                    "longitude_dd": parksWithBaros[baro].data.longitude_dd,
+                                    "site_no": parksWithBaros[baro].data.site_no,
+                                    "sensorType": regionalbaroQueried[baro].data.sensorType
+                                }
+                            });
+                        });
+
+                    }
+                    barosWithinBuffer.addTo(regionalMap);
+                }
+            });
+        }
+
+        // MAKE bulk function to build table once all data has loaded
+        function processData() {
+            var formattedPeaks = [];
+            var formattedHWMS = [];
+            var formattedSensors = [];
+            /* var result = Array.from(new Set(parksWithPeaks.tableData(s => s.site_name))).tableData(site_name => {
+                return {
+                    site_name: site_name
+                }
+            }); */
+
+            function filterResults(array) {
+                var result = Array.from(new Set(array.map(s => s.site_name))).map(site_name => {
+                    return {
+                        site_name: site_name
+                    }
+                });
+                return result;
+            };
+
+            distinctPeaksByPark = filterResults(parksWithPeaks);
+            distincthwmsByPark = filterResults(parksWithHWMs);
+
+            for (var site in distinctPeaksByPark) {
+                formattedPeaks.push({
+                    "site_name": distinctPeaksByPark[site].site_name,
+                    data: []
+                })
+                for (var peak in parksWithPeaks) {
+                    if (parksWithPeaks[peak].site_name === distinctPeaksByPark[site].site_name) {
+                        var data = []
+                        var peakdata = {
+                            "site_name": parksWithPeaks[peak].data.site_name,
+                            "peak_stage": parksWithPeaks[peak].data.peak_stage,
+                            "county": parksWithPeaks[peak].data.county,
+                            "height_above_gnd": parksWithPeaks[peak].data.height_above_gnd,
+                            "latitude_dd": parksWithPeaks[peak].data.latitude_dd,
+                            "longitude_dd": parksWithPeaks[peak].data.longitude_dd,
+                            "site_no": parksWithPeaks[peak].data.site_no,
+                            "waterbody": parksWithPeaks[peak].data.waterbody
+                        };
+                        formattedPeaks[site].data.push(peakdata);
+                    }
+                    if (parksWithPeaks[peak].site_name !== distinctPeaksByPark[site].site_name) {
+
+                    }
+                }
+            }
+            for (var site in distincthwmsByPark) {
+                formattedHWMS.push({
+                    "site_name": distincthwmsByPark[site].site_name,
+                    data: []
+                })
+                for (var hwm in parksWithHWMs) {
+                    if (parksWithHWMs[hwm].site_name === distincthwmsByPark[site].site_name) {
+                        var data = []
+                        var hwmdata = {
+                            "site_name": parksWithHWMs[hwm].data.site_name,
+                            "elev_ft": parksWithHWMs[hwm].data.elev_ft,
+                            "county": parksWithHWMs[hwm].data.county,
+                            "latitude_dd": parksWithHWMs[hwm].data.latitude_dd,
+                            "longitude_dd": parksWithHWMs[hwm].data.longitude_dd,
+                            "site_no": parksWithHWMs[hwm].data.site_no,
+                            "waterbody": parksWithHWMs[hwm].data.waterbody
+                        };
+                        formattedHWMS[site].data.push(hwmdata);
+                    }
+                    if (parksWithHWMs[hwm].site_name !== distincthwmsByPark[site].site_name) {
+
+                    }
+                }
+            }
+
+            var sum = []
+            var peakSum = {};
+            var hwmSum = {};
+            var max;
+            var min;
+
+            // PEAK stats
+            var currentDataType = "peak";
+
+            if (formattedPeaks.length !== 0) {
+                var max = formattedPeaks[0].data[0].peak_stage;
+                var min = formattedPeaks[0].data[0].peak_stage;
+            }
+
+            getMinMax(formattedPeaks);
+
+            if (formattedPeaks.length > 0) {
+                peakSum = { "Type": "Peak", "Max": max, "Min": min };
+                sum.push(peakSum);
+            }
+
+            // HWM Stats
+
+            // reset min max variables
+            min = 0;
+            max = 0;
+
+            var currentDataType = "hwm";
+
+            getMinMax(formattedHWMS);
+
+            if (formattedHWMS.length > 0) {
+                hwmSum = { "Type": "HWM", "Max": max, "Min": min };
+                sum.push(hwmSum);
+            }
+
+            console.log(sum)
+
+            // getting stats for summary table
+            function getMinMax(data) {
+                var current;
+                for (var p in data) {
+                    for (var d in data[p].data) {
+                        if (currentDataType === "peak") {
+                            current = data[p].data[d].peak_stage;
+                        } else if (currentDataType === "hwm") {
+                            current = data[p].data[d].elev_ft;
+                        }
+                        if (max < current) {
+                            max = current;
+                        }
+                        if (min > current) {
+                            min = current;
+                        }
+                    }
+                }
+            }
+
+            // Builds the HTML Table
+            function buildDataTables(table, data, type) {
+                $(table).prepend("<p>" + "<b>" + type + "</b>" + "</p>")
+                var columns = addAllDataColumnHeaders(table, data);
+
+                for (var i = 0; i < data.length; i++) {
+                    var row$ = $('<tr/>');
+                    for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+                        var cellValue = data[i][columns[colIndex]];
+
+                        if (cellValue == null) { cellValue = ""; }
+
+                        row$.append($('<td/>').html(cellValue));
+                    }
+                    $(table).append(row$);
+                }
+            }
+
+            function addAllDataColumnHeaders(table, data) {
+                var columnSet = [];
+                var headerTr$ = $('<tr/>');
+
+                for (var i = 0; i < data.length; i++) {
+                    var rowHash = data[i];
+                    for (var key in rowHash) {
+                        if ($.inArray(key, columnSet) == -1) {
+                            columnSet.push(key);
+                            headerTr$.append($('<th/>').html(key));
+                        }
+                    }
+                }
+                $(table).append(headerTr$);
+
+                return columnSet;
+            }
+
+            if (allPeaks.length > 0) {
+                buildDataTables("#summaryDataTable", sum, "Summary Information");
+                buildDataTables("#peakDataTableReg", allPeaks, "Peak Data");
+                buildDataTables("#hwmDataTableReg", allHWMs, "HWM Data");
+            }
+        }
+
+        // PEAK FUNCTIONS
+        var peaksTableData = [];
+        function bodyData() {
+            for (var i in identifiedPeaks) {
+                var peakEstimated = "";
+                if (identifiedPeaks[i].feature.properties.is_peak_stage_estimated === 0) {
+                    peakEstimated = "no";
+                } else {
+                    peakEstimated = "yes"
+                }
+
+                peaksTableData.push({
+                    "Site Number": identifiedPeaks[i].feature.properties.site_no,
+                    "Description": identifiedPeaks[i].feature.properties.description,
+                    "State": identifiedPeaks[i].feature.properties.state,
+                    "County": identifiedPeaks[i].feature.properties.county,
+                    "Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+                    "Peak Estimated": peakEstimated
+                });
+            }
+            return peaksTableData;
+        }
+
+        function buildTableBody(data, columns) {
+            var body = [];
+            body.push(columns);
+            data.forEach(function (row) {
+                var dataRow = [];
+                columns.forEach(function (column) {
+                    dataRow.push(row[column].toString());
+                })
+                body.push(dataRow);
+            });
+            return body;
+        }
+
+        function peakTable(data, columns) {
+            return {
+                table: {
+                    headerRows: 1,
+                    widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto'],
+                    body: buildTableBody(data, columns),
+                },
+                layout: 'lightHorizontalLines',
+                style: 'smaller',
+                margin: [0, 0, 0, 15]
+            };
+        }
+
+        // END TABLE FUNCTIONS
+    });
+
+});
+
 
 /*!
  * html2canvas 1.0.0-rc.1 <https://html2canvas.hertzen.com>

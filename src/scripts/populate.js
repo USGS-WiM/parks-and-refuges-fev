@@ -60,7 +60,7 @@ $( document ).ready(function() {
     $('.evtSelectRegional').select2({
         placeholder: 'Select event',
         allowClear: false,
-        maximumSelectionLength: 3
+        maximumSelectionLength: 1
     });
     $('.evtSelect_filter').select2({
         placeholder: 'Select event',

@@ -420,10 +420,15 @@
                         </form>
                         <div id="regionalMapContainer" style="margin: auto; width: 600px;">
                             <div id="regionalMap" style="width: 600px; height: 400px;"></div>
+                            <span class="progress-bar-fill" style="width: 0%"></span>
                         </div>
                         <div id="data">
-                            <div class='dataSection' id="regionalPeakTable">
-                                <table class="table" id="peakDataTable">
+                            <div class='dataSection' id="regionalPeakTable" style="width: 850px; overflow-x: scroll;">
+                                <table class="table" id="summaryDataTable">
+                                </table>
+                                <table class="table" id="peakDataTableReg">
+                                </table>
+                                <table class="table" id="hwmDataTableReg">
                                 </table>
                             </div>
                         </div>
