@@ -34,6 +34,7 @@
     "html2canvas": "^1.0.0-rc.5",
     "moment": "^2.24.0",
     "pdfmake": "^0.1.65",
+    "table2csv": "^1.1.4",
     "turf-buffer": "^3.0.12",
     "turf-flatten": "^1.0.0"
   }

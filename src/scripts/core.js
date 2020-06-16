@@ -136,7 +136,41 @@ var fev = fev || {
 			"Type": "doi",
 			"Category": "doi"
 		}
-	]
+	],
+	csvHWMColumns: [
+		{ fieldName: 'STN Site No.', colName: "STN Site No." },
+		{ fieldName: 'HWM Label', colName: "HWM Label" },
+		{ fieldName: 'Elevation(ft)', colName: "Elevation(ft)" },
+		{ fieldName: 'Vertical Datum', colName: "Vertical Datum" },
+		{ fieldName: 'Vertical Method', colName: "Vertical Method" },
+		{ fieldName: 'Horizontal Datum', colName: "Horizontal Datum" },
+		{ fieldName: 'Horizontal Method', colName: "Horizontal Method" },
+		{ fieldName: 'Type', colName: "Type" },
+		{ fieldName: 'Quality', colName: "Quality" },
+		{ fieldName: 'Waterbody', colName: "Waterbody" },
+		{ fieldName: 'Permanent Housing', colName: "Permanent Housing" },
+		{ fieldName: 'County', colName: "County" },
+		{ fieldName: 'State', colName: "State" },
+		{ fieldName: 'Latitude, Longitude(DD)', colName: "Latitude, Longitude(DD)" },
+		{ fieldName: 'Site Description', colName: "Site Description" },
+		{ fieldName: 'Location Description', colName: "Location Description" },
+		{ fieldName: 'Survey Date', colName: "Survey Date" },
+		{ fieldName: 'Bank', colName: "Bank" },
+		{ fieldName: 'Environment', colName: "Environment" },
+		{ fieldName: 'Flag Date', colName: "Flag Date" },
+		{ fieldName: 'Stillwater', colName: "Stillwater" },
+		{ fieldName: 'Uncertainty', colName: "Uncertainty" },
+		{ fieldName: 'HWM Uncertainty', colName: "HWM Uncertainty" },
+	],
+	csvPeaksColumns: [
+		{ fieldName: 'Site Number', colName: "Site Number" },
+		{ fieldName: 'Description', colName: "Description" },
+		{ fieldName: 'State', colName: "State" },
+		{ fieldName: 'County', colName: "County" },
+		{ fieldName: 'Peak Stage', colName: "Peak Stage" },
+		{ fieldName: 'Peak Estimated', colName: "Peak Estimated" },
+	],
+
 };
 
 //L.esri.Support.cors = true;
@@ -171,6 +205,9 @@ var bounds = L.layerGroup();
 var doiRegions = L.layerGroup();
 var parksLayerGroup = L.layerGroup();
 
+var hwmCSVData = [];
+var peaksCSVData = [];
+
 
 // refuge layer
 /* var refuges = L.esri.dynamicMapLayer({
@@ -203,7 +240,7 @@ $.ajax({
 			noaaCheckBox.checked = true;
 			if (noaaStart == 0) {
 				$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
-				noaaStart = 1; 
+				noaaStart = 1;
 			}
 		}
 	}
@@ -296,19 +333,19 @@ var int = L.esri.featureLayer({
 	//opacity: 0.5,
 	//minZoom: 9,
 	style: function (feature) {
-		if ((feature.properties.INTTYPE1 === 'F') || (feature.properties.INTTYPE1 === 'O')) {
+		if ((feature.properties.INTTYPE1 == 'Fee') || (feature.properties.INTTYPE1 === 'O')) {
 			return { color: 'green', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'S') {
+		} if (feature.properties.INTTYPE1 == 'Secondary') {
 			return { color: 'purple', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'E') {
+		} if (feature.properties.INTTYPE1 == 'Easement') {
 			return { color: 'orange', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'L') {
+		} if (feature.properties.INTTYPE1 == 'Lease') {
 			return { color: 'yellow', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'S') {
+		} if (feature.properties.INTTYPE1 == 'Agreement') {
 			return { color: 'beige', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'P') {
+		} if (feature.properties.INTTYPE1 == 'Partial Interest') {
 			return { color: 'blue', weight: 2, fillOpacity: 0 };
-		} if (feature.properties.INTTYPE1 === 'U') {
+		} if (feature.properties.INTTYPE1 == 'Permit') {
 			return { color: 'red', weight: 2, fillOpacity: 0 };
 		} else {
 			return { color: 'black', weight: 2, fillOpacity: 0 };
@@ -327,7 +364,7 @@ var fwsLegacyRegions = L.esri.featureLayer({
 	style: function (feature) {
 		return { color: 'blue', weight: 2, fillOpacity: 0 };
 	}
-})
+});
 
 // Style for DOI layer
 var doiStyle = {
@@ -431,7 +468,7 @@ $(document).ready(function () {
 	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_filterModal');
 	//updateFiltersModal MODAL: set search for 'Go' click 
 	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal');
-	
+
 	//set search for 'Go' click
 	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary) {
 		submitButton.click(function () {
@@ -477,6 +514,31 @@ $(document).ready(function () {
 	$('#print').click(function () {
 		printReport();
 	});
+
+	//Corresponds with the 'HWM CSV' button on the report modal
+	$('#saveHWMCSV').click(function () {
+		//if there is a hwm table, download as csv
+		if (hwmCSVData.length > 0) {
+			downloadCSV("hwm");
+		}
+		//if there are no hwm markers within the buffer, exit
+		else {
+			console.log("There are no hwm datapoints.")
+		}
+	});
+
+	$('#savePeakCSV').click(function () 
+	{
+		//if there is a hwm table, download as csv
+		if (peaksCSVData.length > 0) {
+			downloadCSV("peaks");
+		}
+		//if there are no peak markers within the buffer, exit
+		else {
+			console.log("There are no peak datapoints.")
+		}
+	});
+
 
 	//'listener' for URL event params - sets event vars and passes event id to filterMapData function
 	if (window.location.hash) {
@@ -545,7 +607,7 @@ $(document).ready(function () {
 	L.Icon.Default.imagePath = './images';
 	setSearchAPI("search");
 	setSearchAPI("search_filter");
-	
+
 
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
 	map.on('popupopen', function () {
@@ -622,17 +684,13 @@ $(document).ready(function () {
 		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
 		"<img class='legendSwatch' src='images/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
 	};
-	
 
-	
+
+
 	//define observed overlay and interpreted overlay, leave blank at first
-	//var observedOverlays = {};
-	var interpretedOverlays = {};
 	var labelOverlays = {};
 	var noaaOverlays = {};
-	//var fwsOverlays = {};
-	var npsOverlays = {};
-	var doiOverlays = {};
+
 
 	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 
@@ -644,95 +702,6 @@ $(document).ready(function () {
 			"NOAA Tropical Cyclone Forecast Track": noaaService
 		};
 	}
-
-	/*
-	fwsOverlays = {
-		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;appr": appr,
-		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Int": int,
-		"<img class='legendSwatch' src='images/usfws.png'>&nbsp;Legacy Regions": fwsLegacyRegions,
-	}
-	npsOverlays = {
-		"<img class='legendSwatch' src='images/nps.png'>&nbsp;tracts": tracts,
-		"<img class='legendSwatch' src='images/nps.png'>&nbsp;bounds": bounds,
-	}
-	doiOverlays = {
-		"<img class='legendSwatch' src='images/doi.png'>&nbsp;DOI Regions": doiRegions,
-	}
-	*/
-	
-	//loop thru layer list and add the map layer item to the appropriate heading 
-	/*
-	$.each(fev.layerList, function (index, layer) {
-		if (layer.Category == 'real-time') realTimeOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'observed') observedOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'interpreted') interpretedOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'noaa') noaaOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'fws') fwsOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'nps') npsOverlays[layer.Name] = window[layer.ID];
-		if (layer.Category == 'doi') doiOverlays[layer.Name] = window[layer.ID];
-	}); 
-	*/
-
-	// set up a toggle for the sensors layers and place within legend div, overriding default behavior
-	/*
-	var realTimeToggle = L.control.layers(null, realTimeOverlays, { collapsed: false });
-	realTimeToggle.addTo(map);
-	$('#realTimeToggleDiv').append(realTimeToggle.onAdd(map));
-	*/
-
-	//alternative way to add checkboxes and map layer names to side panel	
-	//var createRTdiv = "<div style='text-align: left'> <label> <input type = 'checkbox' id=streamGageToggle onclick= 'clickStreamGage()' /> </label>Real-time Stream Gage </div> <div style='text-align: left'> <label> <input type = 'checkbox' id=rainGageToggle onclick= 'clickRainGage()' /> </label>Real-time Rain Gage </div>";
-	//$('#realtimetestdiv').append(createRTdiv);
-	
-	// var rtScaleAlertMarkup = "<div class='alert alert-warning' role='alert'>Please zoom in to refresh</div>";
-	// $('#realTimeToggleDiv').append(rtScaleAlertMarkup);
-
-	//$('.leaflet-top.leaflet-right').hide();
-
-	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	/*
-	var observedToggle = L.control.layers(null, observedOverlays, { collapsed: false });
-	observedToggle.addTo(map);
-	$('#observedToggleDiv').append(observedToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
-*/
-
-/*
-	// set up toggle for the interpreted layers and place within legend div, overriding default behavior
-	var interpretedToggle = L.control.layers(null, interpretedOverlays, { collapsed: false });
-	interpretedToggle.addTo(map);
-	$('#interpretedToggleDiv').append(interpretedToggle.onAdd(map));
-
-
-	var noaaToggle = L.control.layers(null, noaaOverlays, { collapsed: false });
-	noaaToggle.addTo(map);
-	$('#noaaToggleDiv').append(noaaToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
-	*/
-
-	/*
-	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	var fwsToggle = L.control.layers(null, fwsOverlays, { collapsed: false });
-	fwsToggle.addTo(map);
-	$('#fwsToggleDiv').append(fwsToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
-	*/
-
-	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	/*
-	var npsToggle = L.control.layers(null, npsOverlays, { collapsed: false });
-	npsToggle.addTo(map);
-	$('#npsToggleDiv').append(npsToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
-*/
-
-	// set up toggle for the observed layers and place within legend div, overriding default behavior
-	/*
-	var doiToggle = L.control.layers(null, doiOverlays, { collapsed: false });
-	doiToggle.addTo(map);
-	$('#doiToggleDiv').append(doiToggle.onAdd(map));
-	$('.leaflet-top.leaflet-right').hide();
-	*/
 
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
@@ -984,7 +953,8 @@ $(document).ready(function () {
 				"Peak Estimated": peakEstimated
 			});
 		}
-		console.log(peakTableData)
+		peaksCSVData = peakTableData;
+
 
 		// Builds the HTML Table
 		function buildHtmlTable() {
@@ -1018,7 +988,6 @@ $(document).ready(function () {
 				}
 			}
 			$("#dataTable").append(headerTr$);
-
 			return columnSet;
 		}
 
@@ -1061,15 +1030,17 @@ $(document).ready(function () {
 				"HWM Uncertainty": identifiedMarks[i].feature.properties.hwm_uncertainty
 			})
 		}
-		console.log(hwmTableData)
 		var chunks = [];
+		hwmCSVData = hwmTableData;
+		//console.log("hwmTableData", hwmCSVData);
+		//console.log("length of hwm data", hwmCSVData.length);
 
 		//Messing around with taking chunks of the table data... 
 		$.each(hwmTableData, function (index, value) {
 			//console.log(value)
 			var chunkSize = 11;
 			for (var cols = Object.entries(value); cols.length;)
-			chunks.push(cols.splice(0,chunkSize).reduce( (o,[k,v]) => (o[k] = v,o), {}));
+				chunks.push(cols.splice(0, chunkSize).reduce((o, [k, v]) => (o[k] = v, o), {}));
 			//console.log(chunks);
 		});
 		//$.each(chunks, function(index, value) {});
@@ -1111,6 +1082,39 @@ $(document).ready(function () {
 		}
 
 		buildHwmHtmlTable();
+
+		//test function 
+		function export_table_to_csv() {
+			var csv = [];
+			var rows = hwmDataTable.querySelectorAll("table tr");
+			console.log("rows here:", rows);
+			/*
+			console.log("here are the rows:", rows);
+			var cols = hwmDataTable.querySelectorAll("tr td");
+			console.log("here are the cols:", cols);
+		*/
+			for (var i = 0; i < rows.length; i++) {
+				var row = [];
+				var cols = rows[i].querySelectorAll("tr td");
+				console.log("cols here:", cols);
+				/*
+				for (var j = 0; j < cols.length; j++) 
+					row.push(cols[j].innerText);
+					console.log("new line", row );
+					*/
+
+				//csv.push(row.join(","));
+
+			}
+
+			//console.log("csv in table:", csv);
+		}
+		export_table_to_csv();
+
+
+		var hwmCSV = hwmDataTable.table2csv;
+		console.log("hwmDataTable", hwmDataTable);
+		console.log("hwmCSV", hwmCSV);
 
 		setTimeout(() => {
 			let mapPane;
@@ -1449,7 +1453,7 @@ $(document).ready(function () {
 		}
 	}).addTo(map);
 
-	function setSearchAPI (searchTerm) {
+	function setSearchAPI(searchTerm) {
 		// create search_api widget
 		searchObject = search_api.create(searchTerm, {
 
@@ -1532,7 +1536,7 @@ $(document).ready(function () {
 				});
 			},
 
-			
+
 
 			// function to execute when a suggestion is chosen
 			// triggered when a menu item is selected
@@ -1554,7 +1558,7 @@ $(document).ready(function () {
 			verbose: false // whether to set verbose mode on (true) or off (false)
 		});
 	}
-	
+
 	function searchComplete() {
 
 		map
@@ -1594,7 +1598,7 @@ $(document).ready(function () {
 		var polys = [];
 		var buffer;
 		var regionName;
-		
+
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
@@ -1702,7 +1706,7 @@ $(document).ready(function () {
 				}).addTo(map);
 			}
 		}, 1000);
-		
+
 
 		setTimeout(() => {
 			var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
@@ -1783,7 +1787,7 @@ $(document).ready(function () {
 				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
 				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
 			]);
-		
+
 		//location popup
 		map.openPopup(
 			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
@@ -1801,7 +1805,7 @@ $(document).ready(function () {
 				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
 				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
 			]);
-		
+
 		//location popup
 		map.openPopup(
 			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
@@ -1858,7 +1862,7 @@ $(document).ready(function () {
 			int.removeFrom(map);
 			tracts.removeFrom(map);
 			bounds.removeFrom(map);
-			
+
 			//Prevent check boxes from being checked
 			var approvedFWSCheckBox = document.getElementById("approvedFWSToggle");
 			approvedFWSCheckBox.checked = false;
@@ -1882,18 +1886,18 @@ $(document).ready(function () {
 			$('#approvedFWSSymbology').children().remove();
 			$('#interestFWSSymbology').children().remove();
 			$('#parkTractsSymbology').children().remove();
-			$('#parkBoundsSymbology').children().remove();	
+			$('#parkBoundsSymbology').children().remove();
 			$('#streamGageSymbology').children().remove();
 			$('#rainGageSymbology').children().remove();
 		}
 		//Remove peak labels and turn off/disable toggle when zoom is less than 8
-		if (map.getZoom() < 8){
+		if (map.getZoom() < 8) {
 			//Remove labels
-			peak.eachLayer(function (myMarker){
+			peak.eachLayer(function (myMarker) {
 				myMarker.hideLabel();
-			var checkBox = document.getElementById("peakCheckbox");
-			//Change toggle to 'off' position
-			checkBox.checked = false;
+				var checkBox = document.getElementById("peakCheckbox");
+				//Change toggle to 'off' position
+				checkBox.checked = false;
 			});
 		}
 		if (map.getZoom() >= 9) {
@@ -1985,7 +1989,7 @@ $(document).ready(function () {
 			} else {
 				peakEstimated = "yes"
 			}
-	
+
 			peaksPdfData.push({
 				"Site Number": identifiedPeaks[i].feature.properties.site_no,
 				"Description": identifiedPeaks[i].feature.properties.description,
@@ -1993,17 +1997,18 @@ $(document).ready(function () {
 				"County": identifiedPeaks[i].feature.properties.county,
 				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
 				"Peak Estimated": peakEstimated
-			});	
+			});
 		}
 		return peaksPdfData;
 	}
+	
 
 	function buildTableBody(data, columns) {
 		var body = [];
 		body.push(columns);
-		data.forEach(function(row) {
+		data.forEach(function (row) {
 			var dataRow = [];
-			columns.forEach(function(column) {
+			columns.forEach(function (column) {
 				dataRow.push(row[column].toString());
 			})
 			body.push(dataRow);
@@ -2013,78 +2018,78 @@ $(document).ready(function () {
 
 	function peakTable(data, columns) {
 		return {
-			table: {	
+			table: {
 				headerRows: 1,
-				widths: ['auto','*','auto','auto','auto','auto'],
+				widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto'],
 				body: buildTableBody(data, columns),
 			},
-			layout: 'lightHorizontalLines', 
+			layout: 'lightHorizontalLines',
 			style: 'smaller',
-			margin: [0,0,0,15]
+			margin: [0, 0, 0, 15]
 		};
 	}
 
 	//adding HWM table to pdf report
 	function buildHwmTableBody() {
-		var body = [];	
+		var body = [];
 		for (var i in identifiedMarks) {
 			var hwmUncertainty = "";
 			var uncertainty = "";
 			if (identifiedMarks[i].feature.properties.hwm_uncertainty == null) {
 				hwmUncertainty = "n/a";
-			} 
+			}
 			if (identifiedMarks[i].feature.properties.uncertainty == null) {
 				uncertainty = "n/a";
 			}
 			body.push([
-					{rowSpan:10, style: 'tableHeader', text: 'STN Site No.: ' + identifiedMarks[i].feature.properties.site_no},
-					{text:'HWM Label',style: 'tableHeader'}, identifiedMarks[i].feature.properties.hwm_label, 
-					{text:'Elevation(ft)',style: 'tableHeader'}, identifiedMarks[i].feature.properties.elev_ft
+				{ rowSpan: 10, style: 'tableHeader', text: 'STN Site No.: ' + identifiedMarks[i].feature.properties.site_no },
+				{ text: 'HWM Label', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_label,
+				{ text: 'Elevation(ft)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.elev_ft
+			],
+				[
+					{},
+					{ text: 'Vertical Datum, Method', style: 'tableHeader' }, identifiedMarks[i].feature.properties.verticalDatumName + ", " + identifiedMarks[i].feature.properties.verticalMethodName,
+					{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, identifiedMarks[i].feature.properties.horizontalDatumName + ", " + identifiedMarks[i].feature.properties.horizontalMethodName
 				],
 				[
 					{},
-					{text:'Vertical Datum, Method',style: 'tableHeader'}, identifiedMarks[i].feature.properties.verticalDatumName + ", " + identifiedMarks[i].feature.properties.verticalMethodName,
-					{text:'Horizontal Datum, Method',style: 'tableHeader'}, identifiedMarks[i].feature.properties.horizontalDatumName + ", " + identifiedMarks[i].feature.properties.horizontalMethodName
+					{ text: 'Type', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwmTypeName,
+					{ text: 'Quality', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwmQualityName
 				],
 				[
 					{},
-					{text:'Type',style: 'tableHeader'}, identifiedMarks[i].feature.properties.hwmTypeName, 
-					{text:'Quality',style: 'tableHeader'}, identifiedMarks[i].feature.properties.hwmQualityName
+					{ text: 'Waterbody', style: 'tableHeader' }, identifiedMarks[i].feature.properties.waterbody,
+					{ text: 'Permanent Housing', style: 'tableHeader' }, identifiedMarks[i].feature.properties.sitePermHousing
 				],
 				[
 					{},
-					{text:'Waterbody',style: 'tableHeader'},identifiedMarks[i].feature.properties.waterbody, 
-					{text:'Permanent Housing',style: 'tableHeader'},identifiedMarks[i].feature.properties.sitePermHousing
+					{ text: 'County', style: 'tableHeader' }, identifiedMarks[i].feature.properties.countyName,
+					{ text: 'State', style: 'tableHeader' }, identifiedMarks[i].feature.properties.stateName
 				],
 				[
 					{},
-					{text:'County',style: 'tableHeader'},identifiedMarks[i].feature.properties.countyName,
-					{text:'State',style: 'tableHeader'},identifiedMarks[i].feature.properties.stateName
+					{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
+					{ text: 'Site Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.siteDescription
 				],
 				[
 					{},
-					{text:'Latitude, Longitude(DD)',style: 'tableHeader'},identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
-					{text:'Site Description',style: 'tableHeader'},identifiedMarks[i].feature.properties.siteDescription
+					{ text: 'Location Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_locationdescription,
+					{ text: 'Survey Date', style: 'tableHeader' }, identifiedMarks[i].feature.properties.survey_date
 				],
 				[
 					{},
-					{text:'Location Description',style: 'tableHeader'},identifiedMarks[i].feature.properties.hwm_locationdescription,
-					{text:'Survey Date',style: 'tableHeader'},identifiedMarks[i].feature.properties.survey_date
+					{ text: 'Bank', style: 'tableHeader' }, identifiedMarks[i].feature.properties.bank,
+					{ text: 'Environment', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_environment
 				],
 				[
 					{},
-					{text:'Bank',style: 'tableHeader'},identifiedMarks[i].feature.properties.bank,
-					{text:'Environment',style: 'tableHeader'},identifiedMarks[i].feature.properties.hwm_environment
+					{ text: 'Flag Date', style: 'tableHeader' }, identifiedMarks[i].feature.properties.flag_date,
+					{ text: 'Stillwater', style: 'tableHeader' }, identifiedMarks[i].feature.properties.stillwater
 				],
 				[
 					{},
-					{text:'Flag Date',style: 'tableHeader'},identifiedMarks[i].feature.properties.flag_date,
-					{text:'Stillwater',style: 'tableHeader'},identifiedMarks[i].feature.properties.stillwater
-				],
-				[
-					{},
-					{text:'Uncertainty',style: 'tableHeader'},uncertainty,
-					{text:'HWM Uncertainty',style: 'tableHeader'}, hwmUncertainty
+					{ text: 'Uncertainty', style: 'tableHeader' }, uncertainty,
+					{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmUncertainty
 				]
 			);
 		}
@@ -2093,8 +2098,8 @@ $(document).ready(function () {
 
 	function hwmTable() {
 		return {
-			table: {	
-				widths: ['auto','auto','*','auto','*'],
+			table: {
+				widths: ['auto', 'auto', '*', 'auto', '*'],
 				body: buildHwmTableBody(),
 			},
 			layout: {
@@ -2112,8 +2117,35 @@ $(document).ready(function () {
 				},
 			},
 			style: 'smaller',
-			margin: [0,0,0,15],
+			margin: [0, 0, 0, 15],
 		};
+	}
+
+	//This runs when clicking the 'Peak CSV' or 'HWM CSV' button on the Report modal
+	function downloadCSV(type) {
+		//Format name of park or refuge
+		var siteName = searchResults.result.properties.Name.split(" ").join("_");
+	
+		switch (type) {
+			//If 'HWM CSV' is clicked, download the HWM table
+			case "hwm":
+				generateCSV({
+					filename: siteName + "_HWM.csv",
+					data: hwmCSVData,
+					headers: fev.csvHWMColumns
+				});
+				break;
+			//If 'Peak CSV' is clicked, download the Peak table
+			case "peaks":
+				generateCSV({
+					filename: siteName + "_Peak.csv",
+					data: peaksCSVData,
+					headers: fev.csvPeaksColumns
+				});
+				break;
+			default:
+				break;
+		}
 	}
 
 	function printReport() {
@@ -2138,7 +2170,7 @@ $(document).ready(function () {
 				}
 			},
 			content: [
-				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0,0,0,10] },
+				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
 				//{ image: pdfMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
 				//{ image: legendUrl, width: 200, height: 200 },
 				{
@@ -2149,14 +2181,14 @@ $(document).ready(function () {
 						]
 					},
 					layout: 'noBorders',
-					margin: [0,0,0,15]
+					margin: [0, 0, 0, 15]
 				},
-				{ text: 'Peak Summary Data', style: 'subHeader', margin: [0,0,0,5], alignment: 'center' },
-				peakTable(bodyData(), ['Site Number','Description','State','County','Peak Stage','Peak Estimated']),
-				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0,0,0,5], alignment: 'center' },
+				{ text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+				peakTable(bodyData(), ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
+				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
 				hwmTable(),
 			],
-			styles: {			
+			styles: {
 				header: {
 					fontSize: 15,
 					bold: true
@@ -2235,28 +2267,29 @@ function clickPeakLabels() {
 		peak.eachLayer(function (myMarker) {
 			myMarker.showLabel();
 		});
-	//Remove peak labels when toggle is off
+		//Remove peak labels when toggle is off
 	} else {
-		peak.eachLayer(function (myMarker){
+		peak.eachLayer(function (myMarker) {
 			myMarker.hideLabel();
 		});
 	}
-  }
+}
 
-  var PeakSummarySymbologyInterior = "<div> <img class='legendSwatch' src='images/peak.png'></img> <b>Peak Summary</b> </div>";
-  var	streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> <b>Real-time Stream Gage</b> </div>";	
-  var	rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> <b>Real-time Rain Gage<b> </div>";
-  var	barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> <b>Barometric Pressure Sensor</b> </div>";
-  var	stormTideSymbologyInterior = "<div> <img class='legendSwatch' src='images/stormtide.png'></img> <b>Storm Tide Sensor</b> </div>";
-  var	meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='images/met.png'></img> <b>Meteorlogical Sensor</b> </div>";
-  var	waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> <b>Wave Height Sensor</b> </div>";
-  var	highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> <b>High Water Mark</b> </div>";
-  var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>Park Boundaries</b> </div>";
-  var parkTractsSymbologyInterior = "<div> <b>Park Tracts</b> <br> <img class='squareDivInterest federalFeeColor'></img> Federal Land (Fee) <br> <img class='squareDivInterest federalLessFeeColor'></img> Federal Land (Less than Fee) <br> <img class='squareDivInterest publicColor'></img> Public <br> <img class='squareDivInterest privateColor'></img> Private <br> <img class='squareDivInterest otherFederalColor'></img> Other Federal Land <br> <img class='squareDivInterest aquisitionColor'></img> Aquisition Deferred <br> <img class='squareDivInterest noInfoColor'></img> Unknown <div>";
-  var	approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> <b>Approved Aquisition Boundaries</b> </div>";
-  var interestFWSSymbologyInterior = "<div> <b>Interest Boundaries</b> <br> <img class='squareDivInterest intFee'></img> Fee <br> <img class='squareDivInterest intSecondary'></img> Secondary <br> <img class='squareDivInterest intEasement'></img> Easement <br> <img class='squareDivInterest intLease'></img> Lease <br> <img class='squareDivInterest intAgreement'></img> Agreement <br> <img class='squareDivInterest intPartial'></img> Partial Interest <br> <img class='squareDivInterest intPermit'></img> Permit <br> <img class='squareDivInterest intUnknown'></img> Unknown <div>";
-  var	doiSymbologyInterior = "<div> <img class='squareDiv doiRegionsColor'></img> <b>DOI Regions</b>";
-  var	noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></img> <b>NOAA Tropical Cyclone Forecast Track</b> </div>";
+//Create legend symbols for each layer
+var PeakSummarySymbologyInterior = "<div> <img class='legendSwatch' src='images/peak.png'></img> <b>Peak Summary</b> </div>";
+var streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> <b>Real-time Stream Gage</b> </div>";
+var rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> <b>Real-time Rain Gage<b> </div>";
+var barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> <b>Barometric Pressure Sensor</b> </div>";
+var stormTideSymbologyInterior = "<div> <img class='legendSwatch' src='images/stormtide.png'></img> <b>Storm Tide Sensor</b> </div>";
+var meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='images/met.png'></img> <b>Meteorlogical Sensor</b> </div>";
+var waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> <b>Wave Height Sensor</b> </div>";
+var highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> <b>High Water Mark</b> </div>";
+var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>Park Boundaries</b> </div>";
+var parkTractsSymbologyInterior = "<div> <b>Park Tracts</b> <br> <img class='squareDivInterest federalFeeColor'></img> Federal Land (Fee) <br> <img class='squareDivInterest federalLessFeeColor'></img> Federal Land (Less than Fee) <br> <img class='squareDivInterest publicColor'></img> Public <br> <img class='squareDivInterest privateColor'></img> Private <br> <img class='squareDivInterest otherFederalColor'></img> Other Federal Land <br> <img class='squareDivInterest aquisitionColor'></img> Aquisition Deferred <br> <img class='squareDivInterest noInfoColor'></img> Unknown <div>";
+var approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> <b>Approved Aquisition Boundaries</b> </div>";
+var interestFWSSymbologyInterior = "<div> <b>Interest Boundaries</b> <br> <img class='squareDivInterest intFee'></img> Fee <br> <img class='squareDivInterest intSecondary'></img> Secondary <br> <img class='squareDivInterest intEasement'></img> Easement <br> <img class='squareDivInterest intLease'></img> Lease <br> <img class='squareDivInterest intAgreement'></img> Agreement <br> <img class='squareDivInterest intPartial'></img> Partial Interest <br> <img class='squareDivInterest intPermit'></img> Permit <br> <img class='squareDivInterest intUnknown'></img> Unknown <div>";
+var doiSymbologyInterior = "<div> <img class='squareDiv doiRegionsColor'></img> <b>DOI Regions</b>";
+var noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></img> <b>NOAA Tropical Cyclone Forecast Track</b> </div>";
 
 //Display peak layer and legend item when peak box is checked
 function clickPeaks() {
@@ -2278,7 +2311,7 @@ function clickPeaks() {
 		peak.clearLayers();
 		peakStart = 3;
 	}
-  }
+}
 
 //Display rain gage layer and legend item when rain gage box is checked
 function clickRainGage() {
@@ -2300,7 +2333,7 @@ function clickRainGage() {
 		$('#rainGageSymbology').children().remove();
 		USGSRainGages.clearLayers(map);
 	}
-  }
+}
 
 //Display stream gage layer and legend item when rain gage box is checked
 function clickStreamGage() {
@@ -2322,9 +2355,9 @@ function clickStreamGage() {
 		USGSrtGages.clearLayers(map);
 		$('#streamGageSymbology').children().remove();
 	}
-  }
+}
 
-  //Display barometric pressure sensor layer and legend item when corresponding box is checked
+//Display barometric pressure sensor layer and legend item when corresponding box is checked
 function clickBaro() {
 	var baroCheckBox = document.getElementById("baroToggle");
 	if (baroCheckBox.checked == true) {
@@ -2344,9 +2377,9 @@ function clickBaro() {
 		$('#barometricSymbology').children().remove();
 		baroStart = 3;
 	}
-  }
+}
 
-  //Display storm tide sensor layer and legend item when corresponding box is checked
+//Display storm tide sensor layer and legend item when corresponding box is checked
 function clickStormTide() {
 	var stormTideCheckBox = document.getElementById("stormTideToggle");
 	if (stormTideCheckBox.checked == true) {
@@ -2366,9 +2399,9 @@ function clickStormTide() {
 		$('#stormTideSymbology').children().remove();
 		stormtideStart = 3;
 	}
-  }
+}
 
-  //Display meteorological layer and legend item when corresponding box is checked
+//Display meteorological layer and legend item when corresponding box is checked
 function clickMet() {
 	var metCheckBox = document.getElementById("metToggle");
 	if (metCheckBox.checked == true) {
@@ -2388,9 +2421,9 @@ function clickMet() {
 		$('#meteorlogicalSymbology').children().remove();
 		metStart = 3;
 	}
-  }
+}
 
-  //Display waveheight layer and legend item when corresponding box is checked
+//Display waveheight layer and legend item when corresponding box is checked
 function clickWaveHeight() {
 	var waveHeightCheckBox = document.getElementById("waveHeightToggle");
 	if (waveHeightCheckBox.checked == true) {
@@ -2410,9 +2443,9 @@ function clickWaveHeight() {
 		$('#waveHeightSymbology').children().remove();
 		waveheightStart = 3;
 	}
-  }
+}
 
-  //Display high water mark layer and legend item when corresponding box is checked
+//Display high water mark layer and legend item when corresponding box is checked
 function clickHWM() {
 	var HWMCheckBox = document.getElementById("HWMToggle");
 	if (HWMCheckBox.checked == true) {
@@ -2432,9 +2465,9 @@ function clickHWM() {
 		$('#highWaterSymbology').children().remove();
 		hwmStart = 3;
 	}
-  }
+}
 
-  //Display park boundaries layer and legend item when corresponding box is checked
+//Display park boundaries layer and legend item when corresponding box is checked
 function clickBounds() {
 	var parkBoundsCheckBox = document.getElementById("parkBoundsToggle");
 	//Prevent user from using toggle when zoom is less than 9
@@ -2450,9 +2483,9 @@ function clickBounds() {
 	//Remove symbol and layer name from legend when box is unchecked
 	if (parkBoundsCheckBox.checked == false) {
 		bounds.removeFrom(map);
-		$('#parkBoundsSymbology').children().remove();	
+		$('#parkBoundsSymbology').children().remove();
 	}
-  }
+}
 
 //Display park tracts layer and legend item when corresponding box is checked
 function clickTracts() {
@@ -2472,7 +2505,7 @@ function clickTracts() {
 		tracts.removeFrom(map);
 		$('#parkTractsSymbology').children().remove();
 	}
-  }
+}
 
 //Display FWS interest boundaries layer and legend item when corresponding box is checked
 function clickInterestFWS() {
@@ -2492,9 +2525,9 @@ function clickInterestFWS() {
 		int.removeFrom(map);
 		$('#interestFWSSymbology').children().remove();
 	}
-  }
+}
 
-  //Display FWS approved aquisition boundaries layer and legend item when corresponding box is checked
+//Display FWS approved aquisition boundaries layer and legend item when corresponding box is checked
 function clickApprovedFWS() {
 	var approvedFWSCheckBox = document.getElementById("approvedFWSToggle");
 	//Prevent user from using toggle when zoom is less than 9
@@ -2512,7 +2545,7 @@ function clickApprovedFWS() {
 		appr.removeFrom(map);
 		$('#approvedFWSSymbology').children().remove();
 	}
-  }
+}
 
 //Display DOI Region layer and legend item when corresponding box is checked
 function clickDOI() {
@@ -2532,7 +2565,7 @@ function clickDOI() {
 		doiRegions.removeFrom(map);
 		$('#doiSymbology').children().remove();
 	}
-  }
+}
 
 //Display NOAA Tropical Cyclone Forecast Track layer and legend item when corresponding box is checked
 function clickNOAA() {
@@ -2549,9 +2582,9 @@ function clickNOAA() {
 	if (noaaCheckBox.checked == false) {
 		noaaService.removeFrom(map);
 		$('#noaaCycloneSymbology').children().remove();
-		noaaStart = 3; 
+		noaaStart = 3;
 	}
-  }
+}
 
 
 
