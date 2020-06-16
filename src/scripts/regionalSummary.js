@@ -48,6 +48,7 @@ var allHWMs = [];
 var allPeaks = [];
 var hwmRegionalCSVData = [];
 var peaksRegionalCSVData = [];
+var peakArrReg = [];
 
 var fevRegional = fevRegional || {
     //Assign column names for the regional peak table csv download
@@ -64,33 +65,33 @@ var fevRegional = fevRegional || {
     ],
     //Assign column names for the regional hwm table csv download
     csvRegionalHWMColumns: [
-		{ fieldName: 'site_name', colName: "Site Name" },
-		{ fieldName: 'event', colName: "Event" },
-		{ fieldName: 'elev_ft', colName: "Elevation" },
-		{ fieldName: 'survey_date', colName: "Survey Date" },
-		{ fieldName: 'bank', colName: "Bank" },
-		{ fieldName: 'hwmQualityName', colName: "HWM Quality" },
-		{ fieldName: 'hwmTypeName', colName: "HWM Type" },
-		{ fieldName: 'verticalDatumName', colName: "Vertical Datum" },
-		{ fieldName: 'verticalMethodName', colName: "Vertical Method" },
-		{ fieldName: 'horizontalMethodName', colName: "Horizontal Method" },
-		{ fieldName: 'horizontalDatumName', colName: "Horizontal Datum" },
-		{ fieldName: 'hwm_locationdescription', colName: "HWM Location Description" },
-		{ fieldName: 'hwm_environment', colName: "HWM Environment" },
-		{ fieldName: 'stillwater', colName: "Stillwater)" },
-		{ fieldName: 'uncertainty', colName: "Uncertainty" },
-		{ fieldName: 'hwm_uncertainty', colName: "HWM Uncertainty" },
-		{ fieldName: 'hwm_label', colName: "HWM Label" },
-		{ fieldName: 'flag_date', colName: "Flag Date" },
-		{ fieldName: 'siteDescription', colName: "Site Description" },
-		{ fieldName: 'sitePermHousing', colName: "Permanent Housing Site" },
-		{ fieldName: 'county', colName: "County" },
+        { fieldName: 'site_name', colName: "Site Name" },
+        { fieldName: 'event', colName: "Event" },
+        { fieldName: 'elev_ft', colName: "Elevation" },
+        { fieldName: 'survey_date', colName: "Survey Date" },
+        { fieldName: 'bank', colName: "Bank" },
+        { fieldName: 'hwmQualityName', colName: "HWM Quality" },
+        { fieldName: 'hwmTypeName', colName: "HWM Type" },
+        { fieldName: 'verticalDatumName', colName: "Vertical Datum" },
+        { fieldName: 'verticalMethodName', colName: "Vertical Method" },
+        { fieldName: 'horizontalMethodName', colName: "Horizontal Method" },
+        { fieldName: 'horizontalDatumName', colName: "Horizontal Datum" },
+        { fieldName: 'hwm_locationdescription', colName: "HWM Location Description" },
+        { fieldName: 'hwm_environment', colName: "HWM Environment" },
+        { fieldName: 'stillwater', colName: "Stillwater)" },
+        { fieldName: 'uncertainty', colName: "Uncertainty" },
+        { fieldName: 'hwm_uncertainty', colName: "HWM Uncertainty" },
+        { fieldName: 'hwm_label', colName: "HWM Label" },
+        { fieldName: 'flag_date', colName: "Flag Date" },
+        { fieldName: 'siteDescription', colName: "Site Description" },
+        { fieldName: 'sitePermHousing', colName: "Permanent Housing Site" },
+        { fieldName: 'county', colName: "County" },
         { fieldName: 'state', colName: "HWM State" },
         { fieldName: 'latitude_dd', colName: "Latitude" },
-		{ fieldName: 'longitude_dd', colName: "Longitude" },
-		{ fieldName: 'site_no', colName: "Site Number" },
-		{ fieldName: 'waterbody', colName: "Waterbody" },
-	],
+        { fieldName: 'longitude_dd', colName: "Longitude" },
+        { fieldName: 'site_no', colName: "Site Number" },
+        { fieldName: 'waterbody', colName: "Waterbody" },
+    ],
 }
 
 // URLS
@@ -373,6 +374,33 @@ $(document).ready(function () {
 
         // creating markers for peaks
         function getPeaks(url, markerIcon, eventName) {
+            //Create variables for scaling peak label sizes
+            var lengthPeak = [];
+            var sortedPeaks = [];
+            var thirdLength = [];
+            var thirdVal = [];
+            var twoThirdVal = [];
+
+            var createPeakArrayReg = L.geoJson(false, {
+                onEachFeature: function (feature) {
+
+                    //Create an array of each peak value
+                    peakArrReg.push(feature.properties.peak_stage);
+
+                    //sort array of peak values
+                    sortedPeaks = peakArrReg.sort();
+
+                    //find number of peak values
+                    lengthPeak = peakArrReg.length;
+
+                    //divide the array into 3 equal sections
+                    //find the maximum peak value of each of those sections
+                    thirdLength = Math.round(lengthPeak / 3);
+                    fifthVal = sortedPeaks[thirdLength];
+                    twoThirdVal = sortedPeaks[thirdLength * 2]
+                }
+            });
+
             //increment layerCount
             layerCountReg++;
             //var maxPeak = Math.max(feature.properties.peak_stage);
@@ -381,9 +409,25 @@ $(document).ready(function () {
                 pointToLayer: function (feature, latlng) {
                     var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
                     markerCoords.push(latlng);
-                    var marker = L.marker(latlng, {
-                        icon: markerIcon
-                    }).bindLabel("Peak: " + labelText);
+                    //Create 3 categories for marker size          
+                    if (feature.properties.peak_stage <= thirdVal) {
+                        var marker =
+                            L.marker(latlng, {
+                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
+                            }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                    }
+                    if (thirdVal < feature.properties.peak_stage <= twoThirdVal) {
+                        var marker =
+                            L.marker(latlng, {
+                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                            }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                    }
+                    if (feature.properties.peak_stage > twoThirdVal) {
+                        var marker =
+                            L.marker(latlng, {
+                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
+                            }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                    }
                     return marker;
                 },
 
@@ -417,6 +461,7 @@ $(document).ready(function () {
                             data.features.splice(i, 1);
                         }
                     }
+                    createPeakArrayReg.addData(data);
                     currentMarkerReg.addData(data);
                     currentMarkerReg.eachLayer(function (layer) {
                         layer.addTo(regionalPeak);
@@ -499,7 +544,7 @@ $(document).ready(function () {
 
                     //transfer data to the peaks csv data table
                     peaksRegionalCSVData = allPeaks;
-                    
+
                     peaksWithinBuffer.addTo(regionalMap);
                     if (allPeaks.length === 0) {
                         console.log("no results");
@@ -1086,7 +1131,7 @@ $(document).ready(function () {
     $('#saveRegionalPeakCSV').click(function () {
         console.log("regional peaks clicked");
         //if there is a hwm table, download as csv
-        
+
         if (peaksRegionalCSVData.length > 0) {
             downloadRegionalCSV("peaks");
         }
@@ -1094,7 +1139,7 @@ $(document).ready(function () {
         else {
             console.log("There are no peak datapoints.")
         }
-        
+
     });
 
 });
