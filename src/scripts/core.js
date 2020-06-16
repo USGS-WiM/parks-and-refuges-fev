@@ -930,9 +930,15 @@ $(document).ready(function () {
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
 		 */
+		if (peakTableData > 0) {
+			//If peak table data does not clear from buffer, this will clear it now
+			peakTableData.length = 0;
+		}
 
 		// setting up peak data for table
 		var peakTableData = [];
+		
+
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
 			if (identifiedPeaks[i].feature.properties.is_peak_stage_estimated === 0) {
@@ -960,9 +966,12 @@ $(document).ready(function () {
 			//Empty text from previous report, if it was run
 			$("#peakTable").find("b").empty();
 			$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>")
-			var columns = addAllColumnHeaders(peakTableData);
+			
 			//Empty peak data table from previous report, if it was run
 			$("#peakDataTable").empty();
+			
+			var columns = addAllColumnHeaders(peakTableData);
+			
 			for (var i = 0; i < peakTableData.length; i++) {
 				var row$ = $('<tr/>');
 				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
@@ -1000,6 +1009,7 @@ $(document).ready(function () {
 		//setting up HWM data for table
 		var hwmTableData = [];
 		var hwmCaptionData = [];
+		hwmTableData.length = 0;
 		for (var i in identifiedMarks) {
 			hwmCaptionData.push({
 				"STN Site No.": identifiedMarks[i].feature.properties.site_no
@@ -1057,9 +1067,12 @@ $(document).ready(function () {
 			//Empty text from previous report, if was run
 			$("#hwmTable").find("b").empty();
 			$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>")
-			var columns = addHwmColumnHeaders(hwmTableData);
+			
 			//Empty hwm data table from previous report, if it was run
 			$("#hwmDataTable").empty();
+
+			var columns = addHwmColumnHeaders(hwmTableData);
+			
 			for (var i = 0; i < hwmTableData.length; i++) {
 				var row$ = $('<tr/>');
 				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
