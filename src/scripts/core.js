@@ -951,6 +951,7 @@ $(document).ready(function () {
 		showRegionalModal();
 	});
 	var pdfMapUrl;
+	var legendUrl;
 	
 	$('#printNav').click(function () {
 		showPrintModal();
@@ -1264,12 +1265,13 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
-
-		// // Get legend for print preview
-		// html2canvas(document.getElementById('printout'))
-		// .then(function (canvas) {
-		// 	legendPreview.append(canvas);
-		// })
+		
+		// Get legend for print preview
+		html2canvas(document.getElementById('legendDiv'))
+		.then(function (canvas) {
+			legendPreview.append(canvas);
+			legendUrl = canvas.toDataURL('image/png');
+		});	
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -2113,61 +2115,6 @@ $(document).ready(function () {
 			margin: [0,0,0,15],
 		};
 	}
-	
-	//Begin legend prep to get active layers into legend table for pdf report
-	var srcLegendImgs = [];
-	var legendLayer = [];
-	var legendUrls = [];
-
-	function getLegendItems() {
-		// Get legend images via the class "legendSwatch", and create base64 images for pdfMake
-		var legendImgs = document.getElementsByClassName('legendSwatch');
-
-		for (let i = 0; i < legendImgs.length; i++) {
-			srcLegendImgs.push(legendImgs[i].getAttribute("src"));
-		}
-
-		for (var i in srcLegendImgs) {
-			function imageToBase64(){
-				var canvas = document.createElement("canvas");
-				var ctx = canvas.getContext("2d");
-				var base_image = new Image();
-				canvas.width = 10;
-				canvas.height = 10;
-				base_image.src = srcLegendImgs[i];
-				ctx.drawImage(base_image, 0, 0, 10, 10);
-				var dataURL = canvas.toDataURL();
-				legendUrls.push(dataURL);
-			};
-			imageToBase64();
-		};
-
-		//Get legend text 
-		$.each($(".mapSymbology").find("b"), function (index, b) {
-			legendLayer.push($(b).text())
-		})
-	}
-
-	//Setting up the body of legend table for pdfMake
-	function legendTableBody() {
-		getLegendItems();
-		var body = [];
-		for (var i = 0; i < legendUrls.length && legendLayer.length; i++) {
-			var dataRow = [];
-			dataRow.push({image: legendUrls[i]}, legendLayer[i]);
-			body.push(dataRow);
-		}
-		return body;
-	}
-
-	function legendTable() {
-		return {
-			table: {	
-				body: legendTableBody(),
-			},
-			layout: 'noBorders', 
-		};
-	}
 
 	function printReport() {
 		const docDefinition = {
@@ -2193,11 +2140,12 @@ $(document).ready(function () {
 			content: [
 				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0,0,0,10] },
 				//{ image: pdfMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+				//{ image: legendUrl, width: 200, height: 200 },
 				{
 					table: {
 						body: [
 							['', ''],
-							[{image: pdfMapUrl, width: 300, height: 200}, legendTable(),]
+							[{image: pdfMapUrl, width: 300, height: 200}, {image: legendUrl, width: 150, height: 200}]
 						]
 					},
 					layout: 'noBorders',
