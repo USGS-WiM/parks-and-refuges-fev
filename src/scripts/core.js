@@ -923,6 +923,7 @@ $(document).ready(function () {
 
 	$('#printNav').click(function () {
 		showPrintModal();
+		$("#reportFooter").hide();
 
 		var mapPreview = document.getElementById('reviewMap');
 		var legendPreview = document.getElementById('legendImage');
@@ -1280,7 +1281,10 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
-
+		
+		setTimeout(() => {
+			$("#reportFooter").show();
+		}, 4500);
 		// // Get legend for print preview
 		// html2canvas(document.getElementById('printout'))
 		// .then(function (canvas) {
