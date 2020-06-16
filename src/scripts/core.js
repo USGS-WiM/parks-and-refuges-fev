@@ -924,9 +924,6 @@ $(document).ready(function () {
 	$('#printNav').click(function () {
 		showPrintModal();
 
-		// setting element to empty string incase a report has already been ran
-		// document.getElementById('dataTable').innerHTML = "";
-
 		var mapPreview = document.getElementById('reviewMap');
 		var legendPreview = document.getElementById('legendImage');
 		/* mapPreview.innerHTML='Loading Map...'
@@ -953,13 +950,18 @@ $(document).ready(function () {
 			});
 		}
 		peaksCSVData = peakTableData;
+		
+		console.log(peakTableData)
+		
 
-
-		// Builds the HTML Table
+		// Builds the HTML Table for peaks
 		function buildHtmlTable() {
+			//Empty text from previous report, if it was run
+			$("#peakTable").find("b").empty();
 			$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>")
 			var columns = addAllColumnHeaders(peakTableData);
-
+			//Empty peak data table from previous report, if it was run
+			$("#peakDataTable").empty();
 			for (var i = 0; i < peakTableData.length; i++) {
 				var row$ = $('<tr/>');
 				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
@@ -969,7 +971,7 @@ $(document).ready(function () {
 
 					row$.append($('<td/>').html(cellValue));
 				}
-				$("#dataTable").append(row$);
+				$("#peakDataTable").append(row$);
 			}
 		}
 
@@ -986,11 +988,13 @@ $(document).ready(function () {
 					}
 				}
 			}
-			$("#dataTable").append(headerTr$);
+			$("#peakDataTable").append(headerTr$);
 			return columnSet;
 		}
 
-		buildHtmlTable();
+		if (peakTableData.length > 0) {
+			buildHtmlTable();
+		}
 
 		//setting up HWM data for table
 		var hwmTableData = [];
@@ -1031,10 +1035,13 @@ $(document).ready(function () {
 		}
 		var chunks = [];
 		hwmCSVData = hwmTableData;
+
+		console.log(hwmTableData)
+
 		//console.log("hwmTableData", hwmCSVData);
 		//console.log("length of hwm data", hwmCSVData.length);
 
-		//Messing around with taking chunks of the table data... 
+		/* //Messing around with taking chunks of the table data... 
 		$.each(hwmTableData, function (index, value) {
 			//console.log(value)
 			var chunkSize = 11;
@@ -1042,13 +1049,16 @@ $(document).ready(function () {
 				chunks.push(cols.splice(0, chunkSize).reduce((o, [k, v]) => (o[k] = v, o), {}));
 			//console.log(chunks);
 		});
-		//$.each(chunks, function(index, value) {});
+		//$.each(chunks, function(index, value) {}); */
 
-		//build html table for HWMs
+		//build HTML Table for HWMs
 		function buildHwmHtmlTable() {
+			//Empty text from previous report, if was run
+			$("#hwmTable").find("b").empty();
 			$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>")
 			var columns = addHwmColumnHeaders(hwmTableData);
-
+			//Empty hwm data table from previous report, if it was run
+			$("#hwmDataTable").empty();
 			for (var i = 0; i < hwmTableData.length; i++) {
 				var row$ = $('<tr/>');
 				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
@@ -1080,7 +1090,9 @@ $(document).ready(function () {
 			return columnSet;
 		}
 
-		buildHwmHtmlTable();
+		if (hwmTableData.length > 0) {
+			buildHwmHtmlTable();
+		}
 
 		//test function 
 		function export_table_to_csv() {
@@ -1558,6 +1570,9 @@ $(document).ready(function () {
 	}
 
 	function searchComplete() {
+		// Clearing identified peaks and identified marks arrays before buffer runs if array had previous values
+		identifiedPeaks.length = 0;
+		identifiedMarks.length = 0;
 
 		map
 			.fitBounds([ // zoom to location
