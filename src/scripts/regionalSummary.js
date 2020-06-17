@@ -370,9 +370,46 @@ $(document).ready(function () {
             }
         }, 800);
 
-
+        //This array will be populated with the peak values from peaks within the buffered regions
+        var peakArrReg = [];
         // creating markers for peaks
         function getPeaks(url, markerIcon, eventName) {
+            //Create variables for scaling peak label sizes
+            var lengthPeak = [];
+            var sortedPeaks = [];
+            var thirdLength = [];
+            var thirdVal = [];
+            var twoThirdVal = [];
+
+            var createPeakArrayReg = L.geoJson(false, {
+                onEachFeature: function (feature) {
+                    //find coordinates of each peak 
+                    var cordsInitial = ([feature.properties.longitude_dd, feature.properties.latitude_dd]);
+                    for (buffPolyCount = 0; buffPolyCount < bufferedPolys.length; buffPolyCount++) {
+                        //see if peak is inside of a buffered polygon
+                        var isItInsideInitial = turf.booleanPointInPolygon(cordsInitial, bufferedPolys[buffPolyCount], { ignoreBoundary: true });
+                        //if peak is inside of the buffered polygon, add the corresponding peak value to an array
+                        if (isItInsideInitial) {
+                            peakArrReg.push(feature.properties.peak_stage);
+                        }
+
+                    }
+
+                    //sort array of peak values
+                    sortedPeaks = peakArrReg.sort();
+
+                    //find number of peak values
+                    lengthPeak = peakArrReg.length;
+
+                    //divide the array into 3 equal sections
+                    //find the maximum peak value of each of those sections
+                    thirdLength = Math.round(lengthPeak / 3);
+                    console.log("thirdLength", thirdLength);
+                    thirdVal = sortedPeaks[thirdLength - 1];
+                    twoThirdVal = sortedPeaks[thirdLength * 2 - 1];
+                }
+            });
+
             //increment layerCount
             layerCountReg++;
             //var maxPeak = Math.max(feature.properties.peak_stage);
@@ -381,9 +418,26 @@ $(document).ready(function () {
                 pointToLayer: function (feature, latlng) {
                     var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
                     markerCoords.push(latlng);
-                    var marker = L.marker(latlng, {
-                        icon: markerIcon
-                    }).bindLabel("Peak: " + labelText);
+                    console.log("Ranges for regional peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
+                    //Create 3 categories for marker size          
+                    if (feature.properties.peak_stage <= thirdVal) {
+                        var marker =
+                            L.marker(latlng, {
+                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
+                            }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                    }
+                    if (thirdVal < feature.properties.peak_stage <= twoThirdVal) {
+                        var marker =
+                            L.marker(latlng, {
+                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                            }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                    }
+                    if (feature.properties.peak_stage > twoThirdVal) {
+                        var marker =
+                            L.marker(latlng, {
+                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
+                            }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                    }
                     return marker;
                 },
 
@@ -395,32 +449,34 @@ $(document).ready(function () {
             });
 
 
-            $.getJSON(url, function (data) {
-                if (data.length == 0) {
-                    console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
-                    return
+
+    $.getJSON(url, function (data) {
+        if (data.length == 0) {
+            console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+            return
+        }
+        if (data.features.length > 0) {
+            console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+            //check for bad lat/lon values
+            for (var i = data.features.length - 1; i >= 0; i--) {
+                //check that lat/lng are not NaN
+                if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
+                    console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                    //remove it from array
+                    data.features.splice(i, 1);
                 }
-                if (data.features.length > 0) {
-                    console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
-                    //check for bad lat/lon values
-                    for (var i = data.features.length - 1; i >= 0; i--) {
-                        //check that lat/lng are not NaN
-                        if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
-                            console.error("Bad latitude or latitude value for point: ", data.features[i]);
-                            //remove it from array
-                            data.features.splice(i, 1);
-                        }
-                        //check that lat/lng are within the US and also not 0
-                        if (fev.vars.extentSouth <= data.features[i].geometry.coordinates[0] <= fev.vars.extentNorth && fev.vars.extentWest <= data.features[i].geometry.coordinates[1] <= fev.vars.extentEast || data.features[i].geometry.coordinates[0] == 0 || data.features[i].geometry.coordinates[1] == 0) {
-                            console.error("Bad latitude or latitude value for point: ", data.features[i]);
-                            //remove it from array
-                            data.features.splice(i, 1);
-                        }
-                    }
-                    currentMarkerReg.addData(data);
-                    currentMarkerReg.eachLayer(function (layer) {
-                        layer.addTo(regionalPeak);
-                    });
+                //check that lat/lng are within the US and also not 0
+                if (fev.vars.extentSouth <= data.features[i].geometry.coordinates[0] <= fev.vars.extentNorth && fev.vars.extentWest <= data.features[i].geometry.coordinates[1] <= fev.vars.extentEast || data.features[i].geometry.coordinates[0] == 0 || data.features[i].geometry.coordinates[1] == 0) {
+                    console.error("Bad latitude or latitude value for point: ", data.features[i]);
+                    //remove it from array
+                    data.features.splice(i, 1);
+                }
+            }
+            createPeakArrayReg.addData(data);
+            currentMarkerReg.addData(data);
+            currentMarkerReg.eachLayer(function (layer) {
+                layer.addTo(regionalPeak);
+            });
                     //regionalPeak.addTo(regionaltableData);
                     //checkLayerCount(layerCount);
 
@@ -468,6 +524,7 @@ $(document).ready(function () {
                             // looping through the peaks and identifying ones that are within current park poly
                             for (var i in regionalPeak._layers) {
                                 var cords = ([regionalPeak._layers[i]._latlng.lng, regionalPeak._layers[i]._latlng.lat]);
+                                //console.log("cordsFinal", cords);
                                 var isItInside = turf.booleanPointInPolygon(cords, buffer, { ignoreBoundary: true });
                                 // if true add it to an array containing all the 'true' regionalPeak
                                 if (isItInside) {
