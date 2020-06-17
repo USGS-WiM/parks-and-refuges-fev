@@ -201,6 +201,10 @@ body {
     position: relative; 
     margin-left: 6px;
 }
+#npsNetToggle {
+    position: relative; 
+    margin-left: 6px;
+}
 #peaksToggle {
     position: relative; 
     margin-left: 6px;
