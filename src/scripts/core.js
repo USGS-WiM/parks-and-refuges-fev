@@ -12,7 +12,8 @@ var bufferPoly;
 var searchResults;
 var searchObject;
 var currentParkOrRefuge = "";
-var currParkRefPoly;
+var currRefPoly;
+var currParkPoly;
 var identifiedPeaks = [];
 var identifiedMarks = [];
 var fev = fev || {
@@ -912,6 +913,18 @@ $(document).ready(function () {
 	}
 	$('#geosearchNav').click(function () {
 		showGeosearchModal();
+		
+	});
+	$('#btnDismiss').click(function() {
+		//clicking on the geosearch modal auto-clears all layers in order for the search function to work
+		//we want the park or refuge and its buffer to stay on the map if the user exits out of the modal
+		bufferPoly.addTo(map);
+		if (currParkPoly != undefined) {
+			currParkPoly.addTo(map);
+		}
+		if (currRefPoly != undefined) {
+			currRefPoly.addTo(map);
+		}
 	});
 
 	function showPrintModal() {
@@ -1524,8 +1537,6 @@ $(document).ready(function () {
 		}
 	}).addTo(map);
 
-	currParkRefPoly = suggestion_layer;
-
 	function setSearchAPI(searchTerm) {
 		// create search_api widget
 		searchObject = search_api.create(searchTerm, {
@@ -1714,6 +1725,7 @@ $(document).ready(function () {
 			style: parkStyle
 		}).addTo(map);
 		parksLayerGroup.addLayer(parks);
+		currParkPoly = parks;
 
 		var refCount = [];
 		where = "ORGNAME=" + name;
@@ -1758,6 +1770,7 @@ $(document).ready(function () {
 			},
 			style: parkStyle
 		}).addTo(map);
+		currRefPoly = refuges;
 
 		//if there was a name match with the refuge layer, this will not run
 		setTimeout(() => {
@@ -1858,9 +1871,16 @@ $(document).ready(function () {
 
 	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
 	function geosearchComplete() {
-		//bufferPoly.addTo(map);
-		currParkRefPoly.addTo(map);
-		console.log("currParkRefPoly", currParkRefPoly);
+		//clicking on the geosearch modal auto-clears all layers in order for the search function to work
+		//we want the park or refuge and its buffer to stay on the map
+		bufferPoly.addTo(map);
+		if (currParkPoly != undefined) {
+			currParkPoly.addTo(map);
+		}
+		if (currRefPoly != undefined) {
+			currRefPoly.addTo(map);
+		}
+
 		map
 			.fitBounds([ // zoom to location
 				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
