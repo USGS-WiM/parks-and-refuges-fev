@@ -383,9 +383,12 @@ $(document).ready(function () {
 
             var createPeakArrayReg = L.geoJson(false, {
                 onEachFeature: function (feature) {
+                    //find coordinates of each peak 
                     var cordsInitial = ([feature.properties.longitude_dd, feature.properties.latitude_dd]);
                     for (buffPolyCount = 0; buffPolyCount < bufferedPolys.length; buffPolyCount++) {
+                        //see if peak is inside of a buffered polygon
                         var isItInsideInitial = turf.booleanPointInPolygon(cordsInitial, bufferedPolys[buffPolyCount], { ignoreBoundary: true });
+                        //if peak is inside of the buffered polygon, add the corresponding peak value to an array
                         if (isItInsideInitial) {
                             peakArrReg.push(feature.properties.peak_stage);
                         }
