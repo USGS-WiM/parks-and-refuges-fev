@@ -250,13 +250,13 @@
                         <div class="form-group" id="bufferOptions" style="display: contents;">
                             <span>Select a buffer distance: &nbsp;&nbsp;</span>
                             <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
+                                <input type="radio" name="inlineRadioOptions" id="tenKmFilter" value="option1"> 10 KM
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
+                                <input type="radio" name="inlineRadioOptions" id="twentyKmFilter" value="option2"> 20 KM
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
+                                <input type="radio" name="inlineRadioOptions" id="thirtyKmFilter" value="option3"> 30 KM
                             </label>
                         </div>
                     </div>
@@ -311,53 +311,6 @@
     </div>
     <!-- end Geosearch Modal -->
 
-    <div class="modal fade overflow-y-hidden" id="geosearchModalWelcome" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                    <h4 class="modal-title">Geosearch</h4>
-                </div>
-                <div class="modal-body" style="text-align: center;">
-                    <div class="form-group" id="bufferOptions" style="display: contents;">
-                        <span>Select a buffer distance: &nbsp;&nbsp;</span>
-                        <label class="radio-inline">
-                            <input type="radio" name="inlineRadioOptions" id="tenKmMap" value="option1"> 10 KM
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="inlineRadioOptions" id="twentyKmMap" value="option2"> 20 KM
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="inlineRadioOptions" id="thirtyKmMap" value="option3"> 30 KM
-                        </label>
-                    </div>
-                    <div class="form-group" align="center">
-                        <div id="search_container">
-                            <div style="margin-left: -120px;" id="searchMap">
-
-                            </div>
-                        </div>
-                        <div class="search-help" align="center"> </br>
-                            <b>Supported Search Strings:</b> </br>
-                            <code>Geographic Names</code>
-                            <code>Zip Codes</code>
-                            <code>States</code>
-                            <code>Street Address</code>
-                            <br />
-                            <br /> Search provided by
-                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript
-                                API</a>
-                        </div>
-                    </div>
-                </div>
-                <form id="geosearch-form" class="form-inline">
-
-                    <button id="btnDismiss" type="submit" class="dismissbutton btn"
-                        data-dismiss="modal">Dismiss</button>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" aria-hidden="true">
         <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important">
