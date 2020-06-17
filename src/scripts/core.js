@@ -1551,46 +1551,72 @@ $(document).ready(function () {
 	document.getElementById('tenKm').checked = false;
 	document.getElementById('twentyKm').checked = true;
 	document.getElementById('thirtyKm').checked = false;
+	document.getElementById('fiftyKm').checked = false;
 	// 10 kilometers
 	$('#tenKm').click(function () {
+		console.log("10 button clicked");
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
+		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 10;
 	});
 	// 20 kilometers
 	$('#twentyKm').click(function () {
+		console.log("20 button clicked");
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
+		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 20;
 	});
 	// 30 kilometers
 	$('#thirtyKm').click(function () {
+		console.log("30 button clicked");
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
+		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 30;
+	});
+	// 50 kilometers
+	$('#fiftyKm').click(function () {
+		console.log("50 button clicked");
+		document.getElementById('tenKm').checked = false;
+		document.getElementById('twentyKm').checked = false;
+		document.getElementById('tenKm').checked = false;
+		fev.vars.currentBufferSelection = 50;
 	});
 
 	// setting checked values for Filter Modal buffer radio buttons
 	document.getElementById('tenKmFilter').checked = false;
 	document.getElementById('twentyKmFilter').checked = true;
 	document.getElementById('thirtyKmFilter').checked = false;
+	document.getElementById('fiftyKmFilter').checked = false;
 	// 10 kilometers
 	$('#tenKmFilter').click(function () {
 		document.getElementById('twentyKmFilter').checked = false;
 		document.getElementById('thirtyKmFilter').checked = false;
+		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 10;
 	});
 	// 20 kilometers
 	$('#twentyKmFilter').click(function () {
 		document.getElementById('tenKmFilter').checked = false;
 		document.getElementById('thirtyKmFilter').checked = false;
+		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 20;
 	});
 	// 30 kilometers
 	$('#thirtyKmFilter').click(function () {
 		document.getElementById('twentyKmFilter').checked = false;
 		document.getElementById('tenKmFilter').checked = false;
+		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 30;
+	});
+	// 50 kilometers
+	$('#fiftyKmFilter').click(function () {
+		document.getElementById('twentyKmFilter').checked = false;
+		document.getElementById('tenKmFilter').checked = false;
+		document.getElementById('thirtyKmFilter').checked = false;
+		fev.vars.currentBufferSelection = 50;
 	});
 
 
