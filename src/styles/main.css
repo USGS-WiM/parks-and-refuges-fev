@@ -240,6 +240,11 @@ body {
     border-color: #bee8ff;
     Border-width: .1px;
 }
+.npsNetColor{
+    border-color: orange;
+    Border-width: 2px;
+}
+}
 .approvedAquiColor{
     background: brown;
     border-color: brown;

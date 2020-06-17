@@ -314,13 +314,19 @@ var bounds = L.esri.featureLayer({
 	} */
 })
 
+// Style for NPS Networks layer
+var npsNetStyle = {
+	"color": 'orange',
+	"fillOpacity": 0,
+	"opacity": 0.65,
+	"weight": 4
+};
+
 // NPS Networks
 var npsNetworks = L.esri.featureLayer({
 	useCors: false,
 	url: "https://irmaservices.nps.gov/arcgis/rest/services/NPSData/NPS_MonitoringNetworks/MapServer/0",
-	style: function (feature) {
-		return { color: 'orange', weight: 2 };
-	}
+	style: npsNetStyle
 });
 
 
@@ -2384,7 +2390,7 @@ var meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='image
 var waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> <b>Wave Height Sensor</b> </div>";
 var highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> <b>High Water Mark</b> </div>";
 var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>Park Boundaries</b> </div>";
-var npsNetworksSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>NPS Networks</b> </div>";
+var npsNetworksSymbologyInterior = "<div> <img class='squareDiv npsNetColor'></img> <b>NPS Networks</b> </div>";
 var parkTractsSymbologyInterior = "<div> <b>Park Tracts</b> <br> <img class='squareDivInterest federalFeeColor'></img> Federal Land (Fee) <br> <img class='squareDivInterest federalLessFeeColor'></img> Federal Land (Less than Fee) <br> <img class='squareDivInterest publicColor'></img> Public <br> <img class='squareDivInterest privateColor'></img> Private <br> <img class='squareDivInterest otherFederalColor'></img> Other Federal Land <br> <img class='squareDivInterest aquisitionColor'></img> Aquisition Deferred <br> <img class='squareDivInterest noInfoColor'></img> Unknown <div>";
 var approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> <b>Approved Aquisition Boundaries</b> </div>";
 var interestFWSSymbologyInterior = "<div> <b>Interest Boundaries</b> <br> <img class='squareDivInterest intFee'></img> Fee <br> <img class='squareDivInterest intSecondary'></img> Secondary <br> <img class='squareDivInterest intEasement'></img> Easement <br> <img class='squareDivInterest intLease'></img> Lease <br> <img class='squareDivInterest intAgreement'></img> Agreement <br> <img class='squareDivInterest intPartial'></img> Partial Interest <br> <img class='squareDivInterest intPermit'></img> Permit <br> <img class='squareDivInterest intUnknown'></img> Unknown <div>";
@@ -2607,7 +2613,7 @@ function clickTracts() {
 	}
 }
 
-//Display park tracts layer and legend item when corresponding box is checked
+//Display NPS Network layer and legend item when corresponding box is checked
 function clickNPSNetworks() {
 	var netCheckBox = document.getElementById("npsNetToggle");
 	if (netCheckBox.checked == true) {
