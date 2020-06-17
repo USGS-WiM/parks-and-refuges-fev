@@ -201,6 +201,10 @@ body {
     position: relative; 
     margin-left: 6px;
 }
+#npsNetToggle {
+    position: relative; 
+    margin-left: 6px;
+}
 #peaksToggle {
     position: relative; 
     margin-left: 6px;
@@ -235,6 +239,11 @@ body {
     background: #bee8ff;
     border-color: #bee8ff;
     Border-width: .1px;
+}
+.npsNetColor{
+    border-color: orange;
+    Border-width: 2px;
+}
 }
 .approvedAquiColor{
     background: brown;
