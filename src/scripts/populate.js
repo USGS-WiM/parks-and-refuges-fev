@@ -201,6 +201,7 @@ $( document ).ready(function() {
     $('.bufferSelect').append('<option value="10">' + '10 km' + '</option>');
     $('.bufferSelect').append('<option value="20">' + '20 km' + '</option>');
     $('.bufferSelect').append('<option value="30">' + '30 km' + '</option>');
+    $('.bufferSelect').append('<option value="50">' + '50 km' + '</option>');
 
     // END REGIONAL SUMMARY
 
