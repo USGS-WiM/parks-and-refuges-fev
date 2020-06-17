@@ -497,7 +497,7 @@ $(document).ready(function () {
                                         var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
                                         // if true add it to an array containing all the 'true' regionalPeaks
                                         if (isItInside) {
-                                            var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                            var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME ;
                                             regionalPeak._layers[i].addTo(peaksWithinBuffer);
                                             parksWithPeaks.push({
                                                 "site_name": landsitetype,
@@ -529,7 +529,7 @@ $(document).ready(function () {
                                 // if true add it to an array containing all the 'true' regionalPeak
                                 if (isItInside) {
                                     //peaksWithinBuffer.push(regionalPeak._layers[i]);
-                                    var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                    var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME ;
                                     regionalPeak._layers[i].addTo(peaksWithinBuffer);
                                     parksWithPeaks.push({
                                         "site_name": landsitetype,
@@ -639,7 +639,7 @@ $(document).ready(function () {
                                         // if true add it to an array containing all the 'true' regionalHWM
                                         if (isItInside) {
                                             regionalHWM._layers[i].addTo(hwmsWithinBuffer);
-                                            var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                            var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME ;
                                             parksWithHWMs.push({
                                                 "site_name": landsitetype,
                                                 data: {
@@ -687,7 +687,7 @@ $(document).ready(function () {
                                 // if true add it to an array containing all the 'true' regionalHWM
                                 if (isItInside) {
                                     //peaksWithinBuffer.push(regionalHWM._layers[i]);
-                                    var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                    var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME ;
                                     regionalHWM._layers[i].addTo(hwmsWithinBuffer);
                                     parksWithHWMs.push({
                                         "site_name": landsitetype,
@@ -823,7 +823,7 @@ $(document).ready(function () {
                                         // if true add it to an array containing all the 'true' regionalHWM
                                         if (isItInside) {
                                             regionalBaro._layers[i].addTo(barosWithinBuffer);
-                                            var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                            var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME ;
                                             parksWithBaros.push({
                                                 "site_name": landsitetype,
                                                 data: {
@@ -849,7 +849,7 @@ $(document).ready(function () {
                                 // if true add it to an array containing all the 'true' regionalBaro
                                 if (isItInside) {
                                     //peaksWithinBuffer.push(regionalBaro._layers[i]);
-                                    var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.CMPXNAME;
+                                    var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME ;
                                     //regionalBaro._layers[i].addTo(barosWithinBuffer);
                                     parksWithBaros.push({
                                         "site_name": landsitetype,
