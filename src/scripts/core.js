@@ -515,6 +515,12 @@ $(document).ready(function () {
 		printReport();
 	});
 
+	$('#printRegionalReport').click(function () {
+		setTimeout(() => {
+			printRegionalReport();
+		}, 3000)
+	});
+
 	//Corresponds with the 'HWM CSV' button on the report modal
 	$('#saveHWMCSV').click(function () {
 		//if there is a hwm table, download as csv
@@ -915,10 +921,135 @@ $(document).ready(function () {
 			L.esri.basemapLayer('Topographic').addTo(reviewMap);
 		}, 500); */
 	}
-
+	
+	var pdfRegionalMapUrl;
 	$('#regionalReportNav').click(function () {
 		showRegionalModal();
+		function getRegionalMap() {
+			let mapPane;
+			//mapPane = $('.leaflet-map-pane')[0];
+			mapPane = $('#regionalMapContainer')[0].children[0].children[0];
+			const mapTransform = mapPane.style.transform.split(',');
+			let mapX;
+	
+			// fix for firefox
+			if (mapTransform[0] === undefined) {
+				mapX = '';
+			} if (mapTransform[0].split('(')[1] === undefined) {
+				mapX = '';
+			} else {
+				mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
+			}
+	
+			let mapY;
+			if (mapTransform[1] === undefined) {
+				mapY = '';
+			} else {
+				mapY = parseFloat(mapTransform[1].replace('px', ''));
+			}
+	
+			mapPane.style.transform = '';
+			mapPane.style.left = mapX + 'px';
+			mapPane.style.top = mapY + 'px';
+	
+			const myTiles = $('img.leaflet-tile');
+			const tilesLeft = [];
+			const tilesTop = [];
+			const tileMethod = [];
+			for (let i = 0; i < myTiles.length; i++) {
+				if (myTiles[i].style.left !== '') {
+					tilesLeft.push(parseFloat(myTiles[i].style.left.replace('px', '')));
+					tilesTop.push(parseFloat(myTiles[i].style.top.replace('px', '')));
+					tileMethod[i] = 'left';
+				} else if (myTiles[i].style.transform !== '') {
+					const tileTransform = myTiles[i].style.transform.split(',');
+					tilesLeft[i] = parseFloat(tileTransform[0].split('(')[1].replace('px', ''));
+					tilesTop[i] = parseFloat(tileTransform[1].replace('px', ''));
+					myTiles[i].style.transform = '';
+					tileMethod[i] = 'transform';
+				} else {
+					tilesLeft[i] = 0;
+					tileMethod[i] = 'neither';
+				}
+				myTiles[i].style.left = (tilesLeft[i]) + 'px';
+				myTiles[i].style.top = (tilesTop[i]) + 'px';
+			}
+	
+			const myDivicons = $('.leaflet-marker-icon');
+			const dx = [];
+			const dy = [];
+			const mLeft = [];
+			const mTop = [];
+			for (let i = 0; i < myDivicons.length; i++) {
+				const curTransform = myDivicons[i].style.transform;
+				const splitTransform = curTransform.split(',');
+				if (splitTransform[0] === '') {
+	
+				} else {
+					dx.push(parseFloat(splitTransform[0].split('(')[1].replace('px', '')));
+				}
+				if (splitTransform[0] === '') {
+	
+					// when printing without reloading the style.transform property is blank
+					// but the values we need are in the style.cssText string
+					// so with the code below I'm manipulating those strings to get the values we need
+	
+					dx.push(myDivicons[i].style.cssText.split(' left: ')[1].split('px')[0]);
+					dy.push(myDivicons[i].style.cssText.split('top')[1].replace('px;', ''));
+				} else {
+					dy.push(parseFloat(splitTransform[1].replace('px', '')));
+				}
+				myDivicons[i].style.transform = '';
+				myDivicons[i].style.left = dx[i] + 'px';
+				myDivicons[i].style.top = dy[i] + 'px';
+			}
+	
+			const mapWidth = parseFloat($('#mapDiv').css('width').replace('px', ''));
+			const mapHeight = parseFloat($('#mapDiv').css('height').replace('px', ''));
+	
+			const options = {
+				useCORS: true,
+			};
+	
+			for (let i = 0; i < myTiles.length; i++) {
+				if (tileMethod[i] === 'left') {
+					myTiles[i].style.left = (tilesLeft[i]) + 'px';
+					myTiles[i].style.top = (tilesTop[i]) + 'px';
+				} else if (tileMethod[i] === 'transform') {
+					myTiles[i].style.left = '';
+					myTiles[i].style.top = '';
+					myTiles[i].style.transform = 'translate(' + tilesLeft[i] + 'px, ' + tilesTop[i] + 'px)';
+				} else {
+					myTiles[i].style.left = '0px';
+					myTiles[i].style.top = '0px';
+					myTiles[i].style.transform = 'translate(0px, 0px)';
+				}
+			}
+			for (let i = 0; i < myDivicons.length; i++) {
+				myDivicons[i].style.transform = 'translate(' + dx[i] + 'px, ' + dy[i] + 'px, 0)';
+				myDivicons[i].style.marginLeft = mLeft[i] + 'px';
+				myDivicons[i].style.marginTop = mTop[i] + 'px';
+			}
+	
+			mapPane.style.transform = 'translate(' + (mapX) + 'px,' + (mapY) + 'px)';
+			mapPane.style.left = '';
+			mapPane.style.top = '';
+	
+			var mapEvent;
+			html2canvas(document.getElementById('regionalMap'), options).then(function (canvas) {
+				mapEvent = new Event('map_ready');
+				canvas.style.width = '700px';
+				canvas.style.height = '450px';
+				pdfRegionalMapUrl = canvas.toDataURL('image/png');
+				window.dispatchEvent(mapEvent);
+			});
+		};
+		
+		$('#printRegionalReport').click(function () {
+			getRegionalMap();			
+		});
 	});
+
 	var pdfMapUrl;
 
 	$('#printNav').click(function () {
@@ -2287,6 +2418,94 @@ $(document).ready(function () {
 			}
 		};
 		pdfMake.createPdf(docDefinition).download('report.pdf');
+	}
+
+	//Get preview map as picture from Regional Report modal to put into Regional Report pdfMake
+	
+	//Get Summary Information Table data to put into pdfMake table
+
+	//Get Peak Table data to put into pdfMake table
+
+	//Get HWM Table data to put into pdfMake table
+
+
+	function printRegionalReport() {
+		const docDefinition = {
+			pageOrientation: 'landscape',
+			pageMargins: [20, 20, 20, 35],
+			footer: function (currentPage, pageCount) {
+				return {
+					margin: [20, 0, 20, 0],
+					style: 'footer',
+					columns: [
+						{
+							width: 700,
+							text: ['Report generated ']
+						}
+					]
+				},
+				{
+					width: 50,
+					alignment: 'center',
+					text: 'Page ' + currentPage.toString()
+				}
+			},
+			content: [
+				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
+				{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+				// {
+				// 	table: {
+				// 		body: [
+				// 			['', ''],
+				// 			[{ image: pdfMapUrl, width: 300, height: 200 }, "hello"]
+				// 		]
+				// 	},
+				// 	layout: 'noBorders',
+				// 	margin: [0, 0, 0, 15]
+				// },
+				// { text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+				// peakTable(bodyData(), ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
+				// { text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+				// hwmTable(),
+			],
+			styles: {
+				header: {
+					fontSize: 15,
+					bold: true
+				},
+				tableHeader: {
+					fontSize: 10,
+					bold: true,
+				},
+				subHeader: {
+					fontSize: 12,
+					bold: true
+				},
+				bigger: {
+					fontSize: 18,
+					bold: true
+				},
+				explanation: {
+					fontSize: 9
+				},
+				smaller: {
+					fontSize: 10
+				},
+				smallest: {
+					fontSize: 8
+				},
+				footer: {
+					fontSize: 9
+				},
+				definitionsTable: {
+					fontSize: 9
+				}
+			},
+			defaultStyle: {
+				columnGap: 20
+			}
+		};
+		pdfMake.createPdf(docDefinition).download('regional_report.pdf');
 	}
 
 	function scaleLookup(mapZoom) {
