@@ -12,6 +12,7 @@ var bufferPoly;
 var searchResults;
 var searchObject;
 var currentParkOrRefuge = "";
+var currParkRefPoly;
 var identifiedPeaks = [];
 var identifiedMarks = [];
 var fev = fev || {
@@ -543,8 +544,7 @@ $(document).ready(function () {
 		}
 	});
 
-	$('#savePeakCSV').click(function () 
-	{
+	$('#savePeakCSV').click(function () {
 		//if there is a hwm table, download as csv
 		if (peaksCSVData.length > 0) {
 			downloadCSV("peaks");
@@ -847,7 +847,7 @@ $(document).ready(function () {
 			// function to execute when a search is started
 			// triggered when the search textbox text changes
 			on_search: function (o) {
-				console.warn(o.id + ": my 'on_search' callback function - a search is started");
+				//console.warn(o.id + ": my 'on_search' callback function - a search is started");
 				map.closePopup(); // close any previous popup when user searches for new location
 			},
 
@@ -953,7 +953,7 @@ $(document).ready(function () {
 
 		// setting up peak data for table
 		var peakTableData = [];
-		
+
 
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
@@ -973,21 +973,21 @@ $(document).ready(function () {
 			});
 		}
 		peaksCSVData = peakTableData;
-		
+
 		console.log(peakTableData)
-		
+
 
 		// Builds the HTML Table for peaks
 		function buildHtmlTable() {
 			//Empty text from previous report, if it was run
 			$("#peakTable").find("b").empty();
 			$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>")
-			
+
 			//Empty peak data table from previous report, if it was run
 			$("#peakDataTable").empty();
-			
+
 			var columns = addAllColumnHeaders(peakTableData);
-			
+
 			for (var i = 0; i < peakTableData.length; i++) {
 				var row$ = $('<tr/>');
 				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
@@ -1083,12 +1083,12 @@ $(document).ready(function () {
 			//Empty text from previous report, if was run
 			$("#hwmTable").find("b").empty();
 			$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>")
-			
+
 			//Empty hwm data table from previous report, if it was run
 			$("#hwmDataTable").empty();
 
 			var columns = addHwmColumnHeaders(hwmTableData);
-			
+
 			for (var i = 0; i < hwmTableData.length; i++) {
 				var row$ = $('<tr/>');
 				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
@@ -1310,7 +1310,7 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
-		
+
 		setTimeout(() => {
 			$("#reportFooter").show();
 		}, 4500);
@@ -1416,7 +1416,7 @@ $(document).ready(function () {
 		//clickPeakLabels();
 
 	}
-	// setting checked values for buffer radio buttons
+	// setting checked values for Welcome Modal buffer radio buttons
 	document.getElementById('tenKm').checked = false;
 	document.getElementById('twentyKm').checked = true;
 	document.getElementById('thirtyKm').checked = false;
@@ -1439,29 +1439,31 @@ $(document).ready(function () {
 		fev.vars.currentBufferSelection = 30;
 	});
 
-
-	// setting checked values for buffer radio buttons
-	document.getElementById('tenKmMap').checked = false;
-	document.getElementById('twentyKmMap').checked = true;
-	document.getElementById('thirtyKmMap').checked = false;
+	// setting checked values for Filter Modal buffer radio buttons
+	document.getElementById('tenKmFilter').checked = false;
+	document.getElementById('twentyKmFilter').checked = true;
+	document.getElementById('thirtyKmFilter').checked = false;
 	// 10 kilometers
-	$('#tenKmMap').click(function () {
-		document.getElementById('twentyKmMap').checked = false;
-		document.getElementById('thirtyKmMap').checked = false;
+	$('#tenKmFilter').click(function () {
+		document.getElementById('twentyKmFilter').checked = false;
+		document.getElementById('thirtyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 10;
 	});
 	// 20 kilometers
-	$('#twentyKmMap').click(function () {
-		document.getElementById('tenKmMap').checked = false;
-		document.getElementById('thirtyKmMap').checked = false;
+	$('#twentyKmFilter').click(function () {
+		document.getElementById('tenKmFilter').checked = false;
+		document.getElementById('thirtyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 20;
 	});
 	// 30 kilometers
-	$('#thirtyKmMap').click(function () {
-		document.getElementById('twentyKmMap').checked = false;
-		document.getElementById('tenKmMap').checked = false;
+	$('#thirtyKmFilter').click(function () {
+		document.getElementById('twentyKmFilter').checked = false;
+		document.getElementById('tenKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 30;
 	});
+
+
+
 
 	// add empty geojson layer that will contain suggested locations on update
 	var suggestion_layer = L.geoJson(null, {
@@ -1495,6 +1497,8 @@ $(document).ready(function () {
 			);
 		}
 	}).addTo(map);
+
+	currParkRefPoly = suggestion_layer;
 
 	function setSearchAPI(searchTerm) {
 		// create search_api widget
@@ -1543,7 +1547,7 @@ $(document).ready(function () {
 			// function to execute when a search is started
 			// triggered when the search textbox text changes
 			on_search: function (o) {
-				console.warn(o.id + ": my 'on_search' callback function - a search is started");
+				//console.warn(o.id + ": my 'on_search' callback function - a search is started");
 				map.closePopup(); // close any previous popup when user searches for new location
 			},
 
@@ -1828,6 +1832,9 @@ $(document).ready(function () {
 
 	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
 	function geosearchComplete() {
+		//bufferPoly.addTo(map);
+		currParkRefPoly.addTo(map);
+		console.log("currParkRefPoly", currParkRefPoly);
 		map
 			.fitBounds([ // zoom to location
 				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
@@ -1840,26 +1847,12 @@ $(document).ready(function () {
 			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
 			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
 		);
+
 	}
 	//end of search api
 
 
-	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
-	function geosearchComplete() {
-		map
-			.fitBounds([ // zoom to location
-				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
-				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
-			]);
 
-		//location popup
-		map.openPopup(
-			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
-			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
-			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
-		);
-	}
-	//end of filter search api
 
 
 	/* legend control */
@@ -2045,7 +2038,7 @@ $(document).ready(function () {
 		}
 		return peaksPdfData;
 	}
-	
+
 
 	function buildTableBody(data, columns) {
 		var body = [];
@@ -2230,7 +2223,7 @@ $(document).ready(function () {
 	function downloadCSV(type) {
 		//Format name of park or refuge
 		var siteName = searchResults.result.properties.Name.split(" ").join("_");
-	
+
 		switch (type) {
 			//If 'HWM CSV' is clicked, download the HWM table
 			case "hwm":
