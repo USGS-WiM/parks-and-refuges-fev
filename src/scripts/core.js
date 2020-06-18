@@ -1237,7 +1237,8 @@ $(document).ready(function () {
 	});
 
 	var pdfMapUrl;
-
+	var legendUrl;
+	
 	$('#printNav').click(function () {
 		showPrintModal();
 		$("#reportFooter").hide();
@@ -1610,15 +1611,17 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
+		
+		// Get legend for print preview
+		html2canvas(document.getElementById('legendDiv'))
+		.then(function (canvas) {
+			legendPreview.append(canvas);
+			legendUrl = canvas.toDataURL('image/png');
+		});	
 
 		setTimeout(() => {
 			$("#reportFooter").show();
 		}, 4500);
-		// // Get legend for print preview
-		// html2canvas(document.getElementById('printout'))
-		// .then(function (canvas) {
-		// 	legendPreview.append(canvas);
-		// })
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -2339,7 +2342,9 @@ $(document).ready(function () {
 	});
 
 	//Begin data prep for pdf print out
-	var peaksPdfData = [];
+
+	//Get peak summary data into table for pdf report
+	var peaksPdfData = [];	
 	function bodyData() {
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
@@ -2480,67 +2485,6 @@ $(document).ready(function () {
 		};
 	}
 
-	//Begin legend prep to get active layers into legend table for pdf report
-	var getOverlays = [];
-	var srcActiveOverlays = [];
-	var activeOverlays = [];
-	var imageUrls = [];
-
-	function getActiveOverlays() {
-		$.each($('.leaflet-control-layers-overlays'), function (index, overlayGroup) {
-			$.each(overlayGroup.children, function (index, overlayLabel) {
-				//console.log(index, overlayLabel)Y
-				if ($(overlayLabel.children[0]).is(":checked")) {
-					getOverlays.push($(overlayLabel.children[1]).text());
-					srcActiveOverlays.push($(overlayLabel.children[1].children).attr("src"));
-					activeOverlays.push({
-						"Image": $(overlayLabel.children[1].children).attr("src").replace('images/', ''),
-						"Layer": ($(overlayLabel.children[1]).text())
-					});
-				}
-			})
-		})
-
-		for (var i in srcActiveOverlays) {
-			function imageToBase64() {
-				console.log("scrActiveOverlays", srcActiveOverlays);
-				var canvas = document.createElement("canvas");
-				var ctx = canvas.getContext("2d");
-				var base_image = new Image();
-				canvas.width = 10;
-				canvas.height = 10;
-				base_image.src = srcActiveOverlays[i];
-				ctx.drawImage(base_image, 0, 0, 10, 10);
-				var dataURL = canvas.toDataURL();
-				//console.log(dataURL);
-				imageUrls.push(dataURL);
-			};
-			imageToBase64();
-		};
-	}
-
-
-
-	function legendTableBody() {
-		getActiveOverlays();
-		var body = [];
-		for (var i = 0; i < imageUrls.length && getOverlays.length; i++) {
-			var dataRow = [];
-			dataRow.push({ image: imageUrls[i] }, getOverlays[i]);
-			body.push(dataRow);
-		}
-		return body;
-	}
-
-	function legendTable() {
-		return {
-			table: {
-				body: legendTableBody(),
-			},
-			layout: 'noBorders',
-		};
-	}
-
 	//This runs when clicking the 'Peak CSV' or 'HWM CSV' button on the Report modal
 	function downloadCSV(type) {
 		//Format name of park or refuge
@@ -2569,7 +2513,6 @@ $(document).ready(function () {
 	}
 
 	function printReport() {
-		(buildHwmTableBody())
 		const docDefinition = {
 			pageOrientation: 'landscape',
 			pageMargins: [20, 20, 20, 35],
@@ -2593,11 +2536,12 @@ $(document).ready(function () {
 			content: [
 				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
 				//{ image: pdfMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+				//{ image: legendUrl, width: 200, height: 200 },
 				{
 					table: {
 						body: [
 							['', ''],
-							[{ image: pdfMapUrl, width: 300, height: 200 }, legendTable(),]
+							[{image: pdfMapUrl, width: 300, height: 200}, {image: legendUrl, width: 150, height: 200}]
 						]
 					},
 					layout: 'noBorders',
