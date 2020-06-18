@@ -1028,7 +1028,7 @@ $(document).ready(function () {
                 maxReg = numbers.basic.max(dataArray);
                 numReg = dataArray.length;
                 standReg = numbers.statistic.standardDev(dataArray);
-                var confIntTemp = 1.645 * (standReg/Math.sqrt(numReg));
+                var confIntTemp = 1.645 * (standReg / Math.sqrt(numReg));
                 confIntNinetyHigh = meanReg + confIntTemp;
                 confIntNinetyLow = meanReg - confIntTemp;
 
@@ -1192,18 +1192,18 @@ function downloadRegionalCSV(type) {
 
 //function for toggling peak labels
 function clickPeakLabelsReg() {
-	var checkBox = document.getElementById("peakCheckboxReg");
-	//Display peak labels when toggle is on
-	if (checkBox.checked == true) {
-		regionalPeak.eachLayer(function (myMarker) {
-			myMarker.showLabel();
-		});
-		//Remove peak labels when toggle is off
-	} else {
-		regionalPeak.eachLayer(function (myMarker) {
-			myMarker.hideLabel();
-		});
-	}
+    var checkBox = document.getElementById("peakCheckboxReg");
+    //Display peak labels when toggle is on
+    if (checkBox.checked == true) {
+        regionalPeak.eachLayer(function (myMarker) {
+            myMarker.showLabel();
+        });
+        //Remove peak labels when toggle is off
+    } else {
+        regionalPeak.eachLayer(function (myMarker) {
+            myMarker.hideLabel();
+        });
+    }
 }
 
 
