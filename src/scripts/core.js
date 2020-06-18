@@ -12,7 +12,6 @@ var bufferPoly;
 var searchResults;
 var searchObject;
 var currentParkOrRefuge = "";
-var currParkRefPoly;
 var identifiedPeaks = [];
 var identifiedMarks = [];
 var fev = fev || {
@@ -901,19 +900,11 @@ $(document).ready(function () {
 			// miscellaneous
 			verbose: false // whether to set verbose mode on (true) or off (false)
 		});
-
-		// clearing the layers if a search has already been performed
-		if (parks !== undefined) {
-			map.removeLayer(parks);
-			map.removeLayer(refuges);
-			map.removeLayer(fwsInterest);
-			map.removeLayer(bufferPoly);
-		}
 	}
 	$('#geosearchNav').click(function () {
 		showGeosearchModal();
+		
 	});
-
 	function showPrintModal() {
 		$('#printModal').modal('show');
 
@@ -1524,8 +1515,6 @@ $(document).ready(function () {
 		}
 	}).addTo(map);
 
-	currParkRefPoly = suggestion_layer;
-
 	function setSearchAPI(searchTerm) {
 		// create search_api widget
 		searchObject = search_api.create(searchTerm, {
@@ -1715,6 +1704,7 @@ $(document).ready(function () {
 		}).addTo(map);
 		parksLayerGroup.addLayer(parks);
 
+
 		var refCount = [];
 		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
@@ -1858,9 +1848,6 @@ $(document).ready(function () {
 
 	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
 	function geosearchComplete() {
-		//bufferPoly.addTo(map);
-		currParkRefPoly.addTo(map);
-		console.log("currParkRefPoly", currParkRefPoly);
 		map
 			.fitBounds([ // zoom to location
 				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
