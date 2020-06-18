@@ -420,7 +420,7 @@ $(document).ready(function () {
                 pointToLayer: function (feature, latlng) {
                     var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
                     markerCoords.push(latlng);
-                    console.log("Ranges for regional peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
+                    //console.log("Ranges for regional peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
                     //Create 3 categories for marker size          
                     if (feature.properties.peak_stage <= thirdVal) {
                         var marker =
@@ -573,6 +573,7 @@ $(document).ready(function () {
 
         function getHWMs(url, markerIcon, eventName) {
 
+            //Get the elevation values for hwm that are inside the buffers
             var createHwmArrayReg = L.geoJson(false, {
                 onEachFeature: function (feature) {
                     //find coordinates of each peak 
@@ -586,7 +587,6 @@ $(document).ready(function () {
                         }
 
                     }
-                    console.log("hwmArrReg", hwmArrReg);
                 }
             });
             //increment layerCount
@@ -996,29 +996,61 @@ $(document).ready(function () {
             var sum = []
             var peakSum = {};
             var hwmSum = {};
-            var max;
+            var meanReg;
+            var minReg;
+            var maxReg;
+            var medianReg;
+            var confIntNinetyHigh;
+            var confIntNinetyLow;
+            var confIntFormat;
+            /* var max;
             var min;
             var med;
 
             // PEAK stats
             var currentDataType = "peak";
+            
 
             if (formattedPeaks.length !== 0) {
                 var max = formattedPeaks[0].data[0].peak_stage;
                 var min = formattedPeaks[0].data[0].peak_stage;
             }
+*/
 
-            getMinMax(formattedPeaks);
-            getMedian(peakArrReg);
+            //getMinMax(formattedPeaks);
+            //getMedian(peakArrReg);
+
+
+            //Variables for summary table:
+            /*
+             !mean
+            !median
+            !max
+            !min
+            !number of sites
+            10th & 90th percentile
+            standard deviation
+            */
+            
+            getSummaryStats(peakArrReg);
+            //confIntFormat = 
+            console.log("peak mean", meanReg);
+            console.log("peak min", minReg);
+            console.log("peak max", maxReg);
+            console.log("peak median", medianReg);
+            console.log("peak num sites", numReg);
+            console.log("peak standard dev", standReg);
+
 
             if (formattedPeaks.length > 0) {
-                peakSum = { "Type": "Peak", "Max": max, "Min": min, "Median": med };
+                peakSum = { "Type": "Peak", "Total Sites": numReg, "Max": maxReg, "Min": minReg, "Median": medianReg, "Mean": meanReg, "Standard Dev": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
             }
 
             // HWM Stats
 
             // reset min max variables
+            /*
             if (formattedHWMS.length !== 0) {
                 var max = formattedHWMS[0].data[0].elev_ft;
                 var min = formattedHWMS[0].data[0].elev_ft;
@@ -1027,53 +1059,80 @@ $(document).ready(function () {
             var currentDataType = "hwm";
 
             getMinMax(formattedHWMS);
-            getMedian(hwmArrReg);
+            med = numbers.statistic.mean([1, 2, 3, 4]);
+            //getMedian(hwmArrReg);
+            */
 
+            getSummaryStats(hwmArrReg);
+            console.log("hwmArrReg", hwmArrReg);
             if (formattedHWMS.length > 0) {
-                hwmSum = { "Type": "HWM", "Max": max, "Min": min, "Median": med };
+                hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max": maxReg, "Min": minReg, "Median": medianReg, "Mean": meanReg, "Standard Dev": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
             }
 
-            console.log(sum)
 
-            // getting stats for summary table
-            function getMinMax(data) {
-                var current;
-                for (var p in data) {
-                    for (var d in data[p].data) {
-                        if (currentDataType === "peak") {
-                            current = data[p].data[d].peak_stage;
-                        } else if (currentDataType === "hwm") {
-                            current = data[p].data[d].elev_ft;
-                        }
-                        if (max < current) {
-                            max = current;
-                        }
-                        if (min > current) {
-                            min = current;
-                        }
-                    }
-                }
-            }
+            function getSummaryStats(dataArray) {
+                meanReg = numbers.statistic.mean(dataArray);
+                medianReg = numbers.statistic.median(dataArray);
+                minReg = numbers.basic.min(dataArray);
+                maxReg = numbers.basic.max(dataArray);
+                numReg = dataArray.length;
+                standReg = numbers.statistic.standardDev(dataArray);
+                var confIntTemp = 1.645 * (standReg/Math.sqrt(numReg));
+                confIntNinetyHigh = meanReg + confIntTemp
+                confIntNinetyLow = meanReg - confIntTemp
+                console.log("confIntNinety", confIntNinetyHigh);
+                console.log("confIntTen", confIntNinetyLow);
 
-            function getMedian(data) {
-                var dataLen = data.length;
-                console.log(dataLen);
-                console.log(peakArrReg);
-
-                if (dataLen % 2 == 0) {
-                    var dataIndex = Math.round(dataLen / 2) - 1;
-                    med = (data[dataIndex] + data[dataIndex + 1]) / 2;
-                    console.log("dataMed even", med);
-
-                }
-                else {
-                    var dataIndex = Math.round(dataLen / 2) - 1;
-                    med = data[dataIndex];
-                    console.log("dataMed odd", med);
-                }
+                //Round Results
+                meanReg = meanReg.toFixed(3);
+                standReg = standReg.toFixed(3);
+                confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
+                confIntNinetyLow = confIntNinetyLow.toFixed(3);
 
             }
+            /*
+                        console.log(sum)
+            
+                        // getting stats for summary table
+                        function getMinMax(data) {
+                            var current;
+                            for (var p in data) {
+                                for (var d in data[p].data) {
+                                    if (currentDataType === "peak") {
+                                        current = data[p].data[d].peak_stage;
+                                    } else if (currentDataType === "hwm") {
+                                        current = data[p].data[d].elev_ft;
+                                    }
+                                    if (max < current) {
+                                        max = current;
+                                    }
+                                    if (min > current) {
+                                        min = current;
+                                    }
+                                }
+                            }
+                        }
+            
+                        function getMedian(data) {
+                            var dataLen = data.length;
+                            console.log(dataLen);
+                            console.log(peakArrReg);
+            
+                            if (dataLen % 2 == 0) {
+                                var dataIndex = Math.round(dataLen / 2) - 1;
+                                med = (data[dataIndex] + data[dataIndex + 1]) / 2;
+                                console.log("dataMed even", med);
+            
+                            }
+                            else {
+                                var dataIndex = Math.round(dataLen / 2) - 1;
+                                med = data[dataIndex];
+                                console.log("dataMed odd", med);
+                            }
+            
+                        }
+                        */
 
             // Builds the HTML Table
             function buildDataTables(table, data, type) {
@@ -1173,7 +1232,6 @@ $(document).ready(function () {
 
     //Corresponds with the 'HWM CSV' button on the regional report modal
     $('#saveRegionalHWMCSV').click(function () {
-        console.log("regional hwm clicked");
         //if there is a hwm table, download as csv
         if (hwmRegionalCSVData.length > 0) {
             downloadRegionalCSV("hwm");
@@ -1185,7 +1243,6 @@ $(document).ready(function () {
     });
     //Corresponds with the 'Peak CSV' button on the regional report modal
     $('#saveRegionalPeakCSV').click(function () {
-        console.log("regional peaks clicked");
         //if there is a hwm table, download as csv
 
         if (peaksRegionalCSVData.length > 0) {
