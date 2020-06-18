@@ -1190,5 +1190,21 @@ function downloadRegionalCSV(type) {
     }
 }
 
+//function for toggling peak labels
+function clickPeakLabelsReg() {
+	var checkBox = document.getElementById("peakCheckboxReg");
+	//Display peak labels when toggle is on
+	if (checkBox.checked == true) {
+		regionalPeak.eachLayer(function (myMarker) {
+			myMarker.showLabel();
+		});
+		//Remove peak labels when toggle is off
+	} else {
+		regionalPeak.eachLayer(function (myMarker) {
+			myMarker.hideLabel();
+		});
+	}
+}
+
 
 
