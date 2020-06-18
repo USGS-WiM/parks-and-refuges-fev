@@ -532,11 +532,11 @@ $(document).ready(function () {
 		printReport();
 	});
 
-	$('#printRegionalReport').click(function () {
-		setTimeout(() => {
-			printRegionalReport();
-		}, 3000)
-	});
+	// $('#printRegionalReport').click(function () {
+	// 	setTimeout(() => {
+	// 		printRegionalReport();
+	// 	}, 3000)
+	// });
 
 	//Corresponds with the 'HWM CSV' button on the report modal
 	$('#saveHWMCSV').click(function () {
@@ -941,6 +941,7 @@ $(document).ready(function () {
 	var pdfRegionalMapUrl;
 	$('#regionalReportNav').click(function () {
 		showRegionalModal();
+
 		function getRegionalMap() {
 			let mapPane;
 			//mapPane = $('.leaflet-map-pane')[0];
@@ -1060,9 +1061,187 @@ $(document).ready(function () {
 				window.dispatchEvent(mapEvent);
 			});
 		};
+
+		
 		
 		$('#printRegionalReport').click(function () {
-			getRegionalMap();			
+			getRegionalMap();
+			
+			var summaryRows = [];
+
+			// console.log($('#summaryDataTable')[0].children[1].children)
+			// var test = [];
+			// test.push($('#summaryDataTable')[0].children[1].children)
+			// console.log(test)
+
+			//var array = [];
+			//function getSummaryInfo() {
+			$.each($('#summaryDataTable')[0].children[1].children, function (index, rows) {
+				console.log(rows)
+				//var arrayItem = {};
+				var tempArray = [];
+				var arrayItem = {};
+				$(rows.children).each(function() {
+					
+					
+					$(this).each(function(index, item) {
+						
+						tempArray.push($(item).text())
+						
+						//arrayItem = $(item).text();
+					});
+					arrayItem = tempArray;
+					//array.push(arrayItem);
+						
+				});
+				summaryRows.push(arrayItem)
+
+
+
+				// $.each($(rows).find(this.children), function (index, item) {
+				// 	console.log(item)
+				// 	arrayItem = $(item).text();
+				// 	console.log(arrayItem)	
+				// })
+					
+			})
+		//}
+			//console.log(array)
+			console.log(summaryRows)
+
+			
+			// function getSummaryInfo() {
+			// 	$('#summaryDataTable')[0].children[1], function (index, rows) {
+			// 		console.log(rows)
+			// 		//summaryRows.push(rows);
+					
+			// 		// $.each(tbody, function (index, rows) {
+			// 		// 	summaryRows.push(rows);
+			// 		// });
+			// 	}
+			// }
+			// getSummaryInfo();
+			//console.log(summaryRows)
+			function summaryTableBody() {
+					//getSummaryInfo();
+					var body = [];
+					$(summaryRows).each(function(){
+						var dataRow = [];
+						dataRow.push(summaryRows);
+						body.push(dataRow);
+					})
+					// for (var i in summaryRows) {
+					// 	console.log(summaryRows[i])
+					// 	var dataRow = [];
+					// 	dataRow.push(summaryRows[i]);
+					// 	body.push(dataRow);
+					// }
+					$.each($(summaryRows), function(){
+						
+					})
+					// for (var i = 0; i < summaryRows.length; i++) {
+					// 	var dataRow = [];
+					// 	dataRow.push(summaryRows[i]);
+					// 	body.push(dataRow);
+					// }
+				
+					return body;
+				
+				}
+			
+			function summaryTable() {
+				return {
+					table: {
+						body: summaryTableBody(),
+					},
+					layout: 'noBorders',
+				};
+			}
+
+			function printRegionalReport() {
+				const docDefinition = {
+					pageOrientation: 'landscape',
+					pageMargins: [20, 20, 20, 35],
+					footer: function (currentPage, pageCount) {
+						return {
+							margin: [20, 0, 20, 0],
+							style: 'footer',
+							columns: [
+								{
+									width: 700,
+									text: ['Report generated ']
+								}
+							]
+						},
+						{
+							width: 50,
+							alignment: 'center',
+							text: 'Page ' + currentPage.toString()
+						}
+					},
+					content: [
+						{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
+						{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+						summaryTable(),
+						// {
+						// 	table: {
+						// 		body: [
+						// 			['', ''],
+						// 			[{ image: pdfMapUrl, width: 300, height: 200 }, "hello"]
+						// 		]
+						// 	},
+						// 	layout: 'noBorders',
+						// 	margin: [0, 0, 0, 15]
+						// },
+						// { text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+						// peakTable(bodyData(), ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
+						// { text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+						// hwmTable(),
+					],
+					styles: {
+						header: {
+							fontSize: 15,
+							bold: true
+						},
+						tableHeader: {
+							fontSize: 10,
+							bold: true,
+						},
+						subHeader: {
+							fontSize: 12,
+							bold: true
+						},
+						bigger: {
+							fontSize: 18,
+							bold: true
+						},
+						explanation: {
+							fontSize: 9
+						},
+						smaller: {
+							fontSize: 10
+						},
+						smallest: {
+							fontSize: 8
+						},
+						footer: {
+							fontSize: 9
+						},
+						definitionsTable: {
+							fontSize: 9
+						}
+					},
+					defaultStyle: {
+						columnGap: 20
+					}
+				};
+				pdfMake.createPdf(docDefinition).download('regional_report.pdf');
+			}
+
+			setTimeout(() => {
+				printRegionalReport();
+			},3000)
+						
 		});
 	});
 
@@ -1084,7 +1263,6 @@ $(document).ready(function () {
 
 		// setting up peak data for table
 		var peakTableData = [];
-
 
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
@@ -2483,93 +2661,122 @@ $(document).ready(function () {
 		pdfMake.createPdf(docDefinition).download('report.pdf');
 	}
 
-	//Get preview map as picture from Regional Report modal to put into Regional Report pdfMake
-	
 	//Get Summary Information Table data to put into pdfMake table
+	// var summaryRows = [];
+	// function getSummaryInfo() {
+	// 	$.each($('#summaryDataTable')[1].children[1].children), function (index, rows) {
+	// 		summaryRows.push(rows);
+	// 		// $.each(tbody, function (index, rows) {
+	// 		// 	summaryRows.push(rows);
+	// 		// });
+	// 	}
+	// }
+	// function summaryTableBody() {
+	// 	getSummaryInfo();
+	// 	var body = [];
+	// 	for (var i = 0; i < summaryRows.length; i++) {
+	// 		var dataRow = [];
+	// 		dataRow.push(summaryRows[i]);
+	// 		body.push(dataRow);
+	// 	}
+	// 	return body;
+	// }
+	// function summaryTable() {
+	// 	return {
+	// 		table: {
+	// 			body: summaryTableBody(),
+	// 		},
+	// 		layout: 'noBorders',
+	// 	};
+	// }
 
+	
 	//Get Peak Table data to put into pdfMake table
 
 	//Get HWM Table data to put into pdfMake table
 
+	
 
-	function printRegionalReport() {
-		const docDefinition = {
-			pageOrientation: 'landscape',
-			pageMargins: [20, 20, 20, 35],
-			footer: function (currentPage, pageCount) {
-				return {
-					margin: [20, 0, 20, 0],
-					style: 'footer',
-					columns: [
-						{
-							width: 700,
-							text: ['Report generated ']
-						}
-					]
-				},
-				{
-					width: 50,
-					alignment: 'center',
-					text: 'Page ' + currentPage.toString()
-				}
-			},
-			content: [
-				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
-				{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
-				// {
-				// 	table: {
-				// 		body: [
-				// 			['', ''],
-				// 			[{ image: pdfMapUrl, width: 300, height: 200 }, "hello"]
-				// 		]
-				// 	},
-				// 	layout: 'noBorders',
-				// 	margin: [0, 0, 0, 15]
-				// },
-				// { text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
-				// peakTable(bodyData(), ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
-				// { text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
-				// hwmTable(),
-			],
-			styles: {
-				header: {
-					fontSize: 15,
-					bold: true
-				},
-				tableHeader: {
-					fontSize: 10,
-					bold: true,
-				},
-				subHeader: {
-					fontSize: 12,
-					bold: true
-				},
-				bigger: {
-					fontSize: 18,
-					bold: true
-				},
-				explanation: {
-					fontSize: 9
-				},
-				smaller: {
-					fontSize: 10
-				},
-				smallest: {
-					fontSize: 8
-				},
-				footer: {
-					fontSize: 9
-				},
-				definitionsTable: {
-					fontSize: 9
-				}
-			},
-			defaultStyle: {
-				columnGap: 20
-			}
-		};
-		pdfMake.createPdf(docDefinition).download('regional_report.pdf');
-	}
+
+	// function printRegionalReport() {
+	// 	const docDefinition = {
+	// 		pageOrientation: 'landscape',
+	// 		pageMargins: [20, 20, 20, 35],
+	// 		footer: function (currentPage, pageCount) {
+	// 			return {
+	// 				margin: [20, 0, 20, 0],
+	// 				style: 'footer',
+	// 				columns: [
+	// 					{
+	// 						width: 700,
+	// 						text: ['Report generated ']
+	// 					}
+	// 				]
+	// 			},
+	// 			{
+	// 				width: 50,
+	// 				alignment: 'center',
+	// 				text: 'Page ' + currentPage.toString()
+	// 			}
+	// 		},
+	// 		content: [
+	// 			{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
+	// 			{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+	// 			summaryTable(),
+	// 			// {
+	// 			// 	table: {
+	// 			// 		body: [
+	// 			// 			['', ''],
+	// 			// 			[{ image: pdfMapUrl, width: 300, height: 200 }, "hello"]
+	// 			// 		]
+	// 			// 	},
+	// 			// 	layout: 'noBorders',
+	// 			// 	margin: [0, 0, 0, 15]
+	// 			// },
+	// 			// { text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+	// 			// peakTable(bodyData(), ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
+	// 			// { text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+	// 			// hwmTable(),
+	// 		],
+	// 		styles: {
+	// 			header: {
+	// 				fontSize: 15,
+	// 				bold: true
+	// 			},
+	// 			tableHeader: {
+	// 				fontSize: 10,
+	// 				bold: true,
+	// 			},
+	// 			subHeader: {
+	// 				fontSize: 12,
+	// 				bold: true
+	// 			},
+	// 			bigger: {
+	// 				fontSize: 18,
+	// 				bold: true
+	// 			},
+	// 			explanation: {
+	// 				fontSize: 9
+	// 			},
+	// 			smaller: {
+	// 				fontSize: 10
+	// 			},
+	// 			smallest: {
+	// 				fontSize: 8
+	// 			},
+	// 			footer: {
+	// 				fontSize: 9
+	// 			},
+	// 			definitionsTable: {
+	// 				fontSize: 9
+	// 			}
+	// 		},
+	// 		defaultStyle: {
+	// 			columnGap: 20
+	// 		}
+	// 	};
+	// 	pdfMake.createPdf(docDefinition).download('regional_report.pdf');
+	// }
 
 	function scaleLookup(mapZoom) {
 		switch (mapZoom) {
