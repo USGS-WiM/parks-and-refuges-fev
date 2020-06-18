@@ -314,6 +314,22 @@ var bounds = L.esri.featureLayer({
 	} */
 })
 
+// Style for NPS Networks layer
+var npsNetStyle = {
+	"color": 'orange',
+	"fillOpacity": 0,
+	"opacity": 0.65,
+	"weight": 4
+};
+
+// NPS Networks
+var npsNetworks = L.esri.featureLayer({
+	useCors: false,
+	url: "https://irmaservices.nps.gov/arcgis/rest/services/NPSData/NPS_MonitoringNetworks/MapServer/0",
+	style: npsNetStyle
+});
+
+
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
 	useCors: false,
@@ -527,8 +543,7 @@ $(document).ready(function () {
 		}
 	});
 
-	$('#savePeakCSV').click(function () 
-	{
+	$('#savePeakCSV').click(function () {
 		//if there is a hwm table, download as csv
 		if (peaksCSVData.length > 0) {
 			downloadCSV("peaks");
@@ -831,7 +846,7 @@ $(document).ready(function () {
 			// function to execute when a search is started
 			// triggered when the search textbox text changes
 			on_search: function (o) {
-				console.warn(o.id + ": my 'on_search' callback function - a search is started");
+				//console.warn(o.id + ": my 'on_search' callback function - a search is started");
 				map.closePopup(); // close any previous popup when user searches for new location
 			},
 
@@ -885,19 +900,11 @@ $(document).ready(function () {
 			// miscellaneous
 			verbose: false // whether to set verbose mode on (true) or off (false)
 		});
-
-		// clearing the layers if a search has already been performed
-		if (parks !== undefined) {
-			map.removeLayer(parks);
-			map.removeLayer(refuges);
-			map.removeLayer(fwsInterest);
-			map.removeLayer(bufferPoly);
-		}
 	}
 	$('#geosearchNav').click(function () {
 		showGeosearchModal();
+		
 	});
-
 	function showPrintModal() {
 		$('#printModal').modal('show');
 
@@ -924,18 +931,22 @@ $(document).ready(function () {
 	
 	$('#printNav').click(function () {
 		showPrintModal();
-
-		// setting element to empty string incase a report has already been ran
-		// document.getElementById('dataTable').innerHTML = "";
+		$("#reportFooter").hide();
 
 		var mapPreview = document.getElementById('reviewMap');
 		var legendPreview = document.getElementById('legendImage');
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
 		 */
+		if (peakTableData > 0) {
+			//If peak table data does not clear from buffer, this will clear it now
+			peakTableData.length = 0;
+		}
 
 		// setting up peak data for table
 		var peakTableData = [];
+
+
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
 			if (identifiedPeaks[i].feature.properties.is_peak_stage_estimated === 0) {
@@ -955,10 +966,18 @@ $(document).ready(function () {
 		}
 		peaksCSVData = peakTableData;
 
+		console.log(peakTableData)
 
-		// Builds the HTML Table
+
+		// Builds the HTML Table for peaks
 		function buildHtmlTable() {
+			//Empty text from previous report, if it was run
+			$("#peakTable").find("b").empty();
 			$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>")
+
+			//Empty peak data table from previous report, if it was run
+			$("#peakDataTable").empty();
+
 			var columns = addAllColumnHeaders(peakTableData);
 
 			for (var i = 0; i < peakTableData.length; i++) {
@@ -970,7 +989,7 @@ $(document).ready(function () {
 
 					row$.append($('<td/>').html(cellValue));
 				}
-				$("#dataTable").append(row$);
+				$("#peakDataTable").append(row$);
 			}
 		}
 
@@ -987,15 +1006,18 @@ $(document).ready(function () {
 					}
 				}
 			}
-			$("#dataTable").append(headerTr$);
+			$("#peakDataTable").append(headerTr$);
 			return columnSet;
 		}
 
-		buildHtmlTable();
+		if (peakTableData.length > 0) {
+			buildHtmlTable();
+		}
 
 		//setting up HWM data for table
 		var hwmTableData = [];
 		var hwmCaptionData = [];
+		hwmTableData.length = 0;
 		for (var i in identifiedMarks) {
 			hwmCaptionData.push({
 				"STN Site No.": identifiedMarks[i].feature.properties.site_no
@@ -1032,10 +1054,13 @@ $(document).ready(function () {
 		}
 		var chunks = [];
 		hwmCSVData = hwmTableData;
+
+		console.log(hwmTableData)
+
 		//console.log("hwmTableData", hwmCSVData);
 		//console.log("length of hwm data", hwmCSVData.length);
 
-		//Messing around with taking chunks of the table data... 
+		/* //Messing around with taking chunks of the table data... 
 		$.each(hwmTableData, function (index, value) {
 			//console.log(value)
 			var chunkSize = 11;
@@ -1043,11 +1068,17 @@ $(document).ready(function () {
 				chunks.push(cols.splice(0, chunkSize).reduce((o, [k, v]) => (o[k] = v, o), {}));
 			//console.log(chunks);
 		});
-		//$.each(chunks, function(index, value) {});
+		//$.each(chunks, function(index, value) {}); */
 
-		//build html table for HWMs
+		//build HTML Table for HWMs
 		function buildHwmHtmlTable() {
+			//Empty text from previous report, if was run
+			$("#hwmTable").find("b").empty();
 			$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>")
+
+			//Empty hwm data table from previous report, if it was run
+			$("#hwmDataTable").empty();
+
 			var columns = addHwmColumnHeaders(hwmTableData);
 
 			for (var i = 0; i < hwmTableData.length; i++) {
@@ -1081,7 +1112,9 @@ $(document).ready(function () {
 			return columnSet;
 		}
 
-		buildHwmHtmlTable();
+		if (hwmTableData.length > 0) {
+			buildHwmHtmlTable();
+		}
 
 		//test function 
 		function export_table_to_csv() {
@@ -1276,6 +1309,10 @@ $(document).ready(function () {
 			legendPreview.append(canvas);
 			legendUrl = canvas.toDataURL('image/png');
 		});	
+
+		setTimeout(() => {
+			$("#reportFooter").show();
+		}, 4500);
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -1373,52 +1410,80 @@ $(document).ready(function () {
 		//clickPeakLabels();
 
 	}
-	// setting checked values for buffer radio buttons
+	// setting checked values for Welcome Modal buffer radio buttons
 	document.getElementById('tenKm').checked = false;
 	document.getElementById('twentyKm').checked = true;
 	document.getElementById('thirtyKm').checked = false;
+	document.getElementById('fiftyKm').checked = false;
 	// 10 kilometers
 	$('#tenKm').click(function () {
+		console.log("10 button clicked");
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
+		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 10;
 	});
 	// 20 kilometers
 	$('#twentyKm').click(function () {
+		console.log("20 button clicked");
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
+		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 20;
 	});
 	// 30 kilometers
 	$('#thirtyKm').click(function () {
+		console.log("30 button clicked");
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
+		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 30;
 	});
+	// 50 kilometers
+	$('#fiftyKm').click(function () {
+		console.log("50 button clicked");
+		document.getElementById('tenKm').checked = false;
+		document.getElementById('twentyKm').checked = false;
+		document.getElementById('tenKm').checked = false;
+		fev.vars.currentBufferSelection = 50;
+	});
 
-
-	// setting checked values for buffer radio buttons
-	document.getElementById('tenKmMap').checked = false;
-	document.getElementById('twentyKmMap').checked = true;
-	document.getElementById('thirtyKmMap').checked = false;
+	// setting checked values for Filter Modal buffer radio buttons
+	document.getElementById('tenKmFilter').checked = false;
+	document.getElementById('twentyKmFilter').checked = true;
+	document.getElementById('thirtyKmFilter').checked = false;
+	document.getElementById('fiftyKmFilter').checked = false;
 	// 10 kilometers
-	$('#tenKmMap').click(function () {
-		document.getElementById('twentyKmMap').checked = false;
-		document.getElementById('thirtyKmMap').checked = false;
+	$('#tenKmFilter').click(function () {
+		document.getElementById('twentyKmFilter').checked = false;
+		document.getElementById('thirtyKmFilter').checked = false;
+		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 10;
 	});
 	// 20 kilometers
-	$('#twentyKmMap').click(function () {
-		document.getElementById('tenKmMap').checked = false;
-		document.getElementById('thirtyKmMap').checked = false;
+	$('#twentyKmFilter').click(function () {
+		document.getElementById('tenKmFilter').checked = false;
+		document.getElementById('thirtyKmFilter').checked = false;
+		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 20;
 	});
 	// 30 kilometers
-	$('#thirtyKmMap').click(function () {
-		document.getElementById('twentyKmMap').checked = false;
-		document.getElementById('tenKmMap').checked = false;
+	$('#thirtyKmFilter').click(function () {
+		document.getElementById('twentyKmFilter').checked = false;
+		document.getElementById('tenKmFilter').checked = false;
+		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 30;
 	});
+	// 50 kilometers
+	$('#fiftyKmFilter').click(function () {
+		document.getElementById('twentyKmFilter').checked = false;
+		document.getElementById('tenKmFilter').checked = false;
+		document.getElementById('thirtyKmFilter').checked = false;
+		fev.vars.currentBufferSelection = 50;
+	});
+
+
+
 
 	// add empty geojson layer that will contain suggested locations on update
 	var suggestion_layer = L.geoJson(null, {
@@ -1500,7 +1565,7 @@ $(document).ready(function () {
 			// function to execute when a search is started
 			// triggered when the search textbox text changes
 			on_search: function (o) {
-				console.warn(o.id + ": my 'on_search' callback function - a search is started");
+				//console.warn(o.id + ": my 'on_search' callback function - a search is started");
 				map.closePopup(); // close any previous popup when user searches for new location
 			},
 
@@ -1560,6 +1625,9 @@ $(document).ready(function () {
 	}
 
 	function searchComplete() {
+		// Clearing identified peaks and identified marks arrays before buffer runs if array had previous values
+		identifiedPeaks.length = 0;
+		identifiedMarks.length = 0;
 
 		map
 			.fitBounds([ // zoom to location
@@ -1638,6 +1706,7 @@ $(document).ready(function () {
 			style: parkStyle
 		}).addTo(map);
 		parksLayerGroup.addLayer(parks);
+
 
 		var refCount = [];
 		where = "ORGNAME=" + name;
@@ -1794,26 +1863,12 @@ $(document).ready(function () {
 			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
 			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
 		);
+
 	}
 	//end of search api
 
 
-	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
-	function geosearchComplete() {
-		map
-			.fitBounds([ // zoom to location
-				[searchResults.result.properties.LatMin, searchResults.result.properties.LonMin],
-				[searchResults.result.properties.LatMax, searchResults.result.properties.LonMax]
-			]);
 
-		//location popup
-		map.openPopup(
-			"<b>" + searchResults.result.properties.Name + "</b><br/>" +
-			searchResults.result.properties.County + ", " + searchResults.result.properties.State,
-			[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
-		);
-	}
-	//end of filter search api
 
 
 	/* legend control */
@@ -2001,7 +2056,7 @@ $(document).ready(function () {
 		}
 		return peaksPdfData;
 	}
-	
+
 
 	function buildTableBody(data, columns) {
 		var body = [];
@@ -2125,7 +2180,7 @@ $(document).ready(function () {
 	function downloadCSV(type) {
 		//Format name of park or refuge
 		var siteName = searchResults.result.properties.Name.split(" ").join("_");
-	
+
 		switch (type) {
 			//If 'HWM CSV' is clicked, download the HWM table
 			case "hwm":
@@ -2285,6 +2340,7 @@ var meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='image
 var waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> <b>Wave Height Sensor</b> </div>";
 var highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> <b>High Water Mark</b> </div>";
 var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>Park Boundaries</b> </div>";
+var npsNetworksSymbologyInterior = "<div> <img class='squareDiv npsNetColor'></img> <b>NPS Networks</b> </div>";
 var parkTractsSymbologyInterior = "<div> <b>Park Tracts</b> <br> <img class='squareDivInterest federalFeeColor'></img> Federal Land (Fee) <br> <img class='squareDivInterest federalLessFeeColor'></img> Federal Land (Less than Fee) <br> <img class='squareDivInterest publicColor'></img> Public <br> <img class='squareDivInterest privateColor'></img> Private <br> <img class='squareDivInterest otherFederalColor'></img> Other Federal Land <br> <img class='squareDivInterest aquisitionColor'></img> Aquisition Deferred <br> <img class='squareDivInterest noInfoColor'></img> Unknown <div>";
 var approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> <b>Approved Aquisition Boundaries</b> </div>";
 var interestFWSSymbologyInterior = "<div> <b>Interest Boundaries</b> <br> <img class='squareDivInterest intFee'></img> Fee <br> <img class='squareDivInterest intSecondary'></img> Secondary <br> <img class='squareDivInterest intEasement'></img> Easement <br> <img class='squareDivInterest intLease'></img> Lease <br> <img class='squareDivInterest intAgreement'></img> Agreement <br> <img class='squareDivInterest intPartial'></img> Partial Interest <br> <img class='squareDivInterest intPermit'></img> Permit <br> <img class='squareDivInterest intUnknown'></img> Unknown <div>";
@@ -2504,6 +2560,22 @@ function clickTracts() {
 	if (tractCheckBox.checked == false) {
 		tracts.removeFrom(map);
 		$('#parkTractsSymbology').children().remove();
+	}
+}
+
+//Display NPS Network layer and legend item when corresponding box is checked
+function clickNPSNetworks() {
+	var netCheckBox = document.getElementById("npsNetToggle");
+	if (netCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
+		npsNetworks.addTo(map);
+		//Add symbol and layer name to legend
+		$('#npsNetworksSymbology').append(npsNetworksSymbologyInterior);
+	}
+	//Remove symbol and layer name from legend when box is unchecked
+	if (netCheckBox.checked == false) {
+		npsNetworks.removeFrom(map);
+		$('#npsNetworksSymbology').children().remove();
 	}
 }
 

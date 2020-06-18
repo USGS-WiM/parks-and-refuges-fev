@@ -295,8 +295,9 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             //divide the array into 3 equal sections
             //find the maximum peak value of each of those sections
             thirdLength = Math.round(lengthPeak/3);
-            fifthVal = sortedPeaks[thirdLength];
-            twoThirdVal = sortedPeaks[thirdLength*2]
+            //subtract one, because the first index starts at zero
+            thirdVal = sortedPeaks[thirdLength - 1];
+            twoThirdVal = sortedPeaks[thirdLength*2 - 1];
         }
     });
 
@@ -323,7 +324,8 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
         pointToLayer: function (feature, latlng) {
             markerCoords.push(latlng);
             var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
-           //Create 3 categories for marker size          
+            //console.log("Ranges for peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
+            //Create 3 categories for marker size          
             if (feature.properties.peak_stage <= thirdVal) {
                 var marker =             
                 L.marker(latlng, {

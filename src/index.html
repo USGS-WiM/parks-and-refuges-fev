@@ -28,6 +28,7 @@
     <script src="bower_components/Leaflet.label/dist/leaflet.label.js"></script>
     <script src="bower_components/pdfmake/build/pdfmake.js"></script>
     <script src="bower_components/pdfmake/build/vfs_fonts.js"></script>
+    <script src="bower_components/numbers.js/src/numbers.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -201,6 +202,9 @@
                             <label class="radio-inline">
                                 <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
                             </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="inlineRadioOptions" id="fiftyKm" value="option4"> 50 KM
+                            </label>
                         </div>
                     </div>
                     <div class="alert alert-danger parkRefSelectAlert" role="alert"><i
@@ -250,13 +254,16 @@
                         <div class="form-group" id="bufferOptions" style="display: contents;">
                             <span>Select a buffer distance: &nbsp;&nbsp;</span>
                             <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
+                                <input type="radio" name="inlineRadioOptions" id="tenKmFilter" value="option1"> 10 KM
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
+                                <input type="radio" name="inlineRadioOptions" id="twentyKmFilter" value="option2"> 20 KM
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
+                                <input type="radio" name="inlineRadioOptions" id="thirtyKmFilter" value="option3"> 30 KM
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="inlineRadioOptions" id="fiftyKmFilter" value="option4"> 50 KM
                             </label>
                         </div>
                     </div>
@@ -311,53 +318,6 @@
     </div>
     <!-- end Geosearch Modal -->
 
-    <div class="modal fade overflow-y-hidden" id="geosearchModalWelcome" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                    <h4 class="modal-title">Geosearch</h4>
-                </div>
-                <div class="modal-body" style="text-align: center;">
-                    <div class="form-group" id="bufferOptions" style="display: contents;">
-                        <span>Select a buffer distance: &nbsp;&nbsp;</span>
-                        <label class="radio-inline">
-                            <input type="radio" name="inlineRadioOptions" id="tenKmMap" value="option1"> 10 KM
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="inlineRadioOptions" id="twentyKmMap" value="option2"> 20 KM
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="inlineRadioOptions" id="thirtyKmMap" value="option3"> 30 KM
-                        </label>
-                    </div>
-                    <div class="form-group" align="center">
-                        <div id="search_container">
-                            <div style="margin-left: -120px;" id="searchMap">
-
-                            </div>
-                        </div>
-                        <div class="search-help" align="center"> </br>
-                            <b>Supported Search Strings:</b> </br>
-                            <code>Geographic Names</code>
-                            <code>Zip Codes</code>
-                            <code>States</code>
-                            <code>Street Address</code>
-                            <br />
-                            <br /> Search provided by
-                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript
-                                API</a>
-                        </div>
-                    </div>
-                </div>
-                <form id="geosearch-form" class="form-inline">
-
-                    <button id="btnDismiss" type="submit" class="dismissbutton btn"
-                        data-dismiss="modal">Dismiss</button>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" aria-hidden="true">
         <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important">
@@ -373,8 +333,7 @@
                         <div id="legendImage" style="display: inline-flex;"></div>
                     </div>
                     <div class='reportInfo' id="peakTable">
-                        <table class="table" id="dataTable">
-                        </table>
+                        <table class="table" id="peakDataTable"></table>
                     </div>
                     <div class='reportInfo' id="hwmTable" style="width: 850px; overflow-x: scroll;">
                         <table class="table" id="hwmDataTable"></table>
@@ -384,95 +343,112 @@
                     </div>
                 </div> -->
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" id="reportFooter">
                     <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
-                    style="color:gray;" class="btn btn-default">Close</button>
-                    <button class=" btn close" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn" id="saveHWMCSV">HWM CSV</button>
-                    <button class=" btn close" type="button"  aria-hidden="true"
-                        style="color:gray;" class="btn" id="savePeakCSV">Peak CSV</button>
-                    <button class=" btn close" type="button" data-dismiss="modal" aria-hidden="true"
-                        style="color:gray;" class="btn" id="print">Print</button>
+                        style="color:gray;" class="btn btn-default">Close</button>
+                    <button class=" btn close" type="button" aria-hidden="true" style="color:gray;" class="btn"
+                        id="saveHWMCSV">HWM CSV</button>
+                    <button class=" btn close" type="button" aria-hidden="true" style="color:gray;" class="btn"
+                        id="savePeakCSV">Peak CSV</button>
+                    <button class=" btn close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;"
+                        class="btn" id="print">Print</button>
 
                 </div>
             </div>
         </div>
     </div>
-</div>
+    </div>
 
-<div id="regionalModal" class="modal fade" style="display: none;" aria-hidden="true" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                <h4 class="modal-title">Regional Report</h4>
-            </div>
-            <div class="modal-body">
-                <!-- begin filter panels -->
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <!--<h4 class="formSectionHead">Event Options</h4>-->
-                        <form class="form-horizontal" role="form" id="regionalForm">
-                            <div class="form-group" id="evtNameForm_regionalModal">
-                                <label for="typeSelect_regionalModal"  class="col-sm-2 control-label filterForms">Lands Type: </label>
-                                <div class="col-sm-10 filterForms">
-                                    <select id="typeSelect_regionalModal" class="typeSelect" multiple="multiple" style="width: 100%"></select>
+    <div id="regionalModal" class="modal fade" style="display: none;" aria-hidden="true" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    <h4 class="modal-title">Regional Report</h4>
+                </div>
+                <div class="modal-body">
+                    <!-- begin filter panels -->
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <!--<h4 class="formSectionHead">Event Options</h4>-->
+                            <form class="form-horizontal" role="form" id="regionalForm">
+                                <div class="form-group" id="evtNameForm_regionalModal">
+                                    <label for="typeSelect_regionalModal"
+                                        class="col-sm-2 control-label filterForms">Lands Type: </label>
+                                    <div class="col-sm-10 filterForms">
+                                        <select id="typeSelect_regionalModal" class="typeSelect" multiple="multiple"
+                                            style="width: 100%"></select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group" id="evtNameForm_regionalModal">
-                                <label for="regionType_regionalModal"  class="col-sm-2 control-label filterForms">Region Type: </label>
-                                <div class="col-sm-10 filterForms">
-                                    <select id="regionType_regionalModal" class="regionType" multiple style="width: 100%"></select>
+                                <div class="form-group" id="evtNameForm_regionalModal">
+                                    <label for="regionType_regionalModal"
+                                        class="col-sm-2 control-label filterForms">Region Type: </label>
+                                    <div class="col-sm-10 filterForms">
+                                        <select id="regionType_regionalModal" class="regionType" multiple
+                                            style="width: 100%"></select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group" id="evtNameForm_regionalModal">
-                                <label for="regionSelect_regionalModal"  class="col-sm-2 control-label filterForms">Region: </label>
-                                <div class="col-sm-10 filterForms">
-                                    <select id="regionSelect_regionalModal" class="regionSelect" multiple style="width: 100%"></select>
+                                <div class="form-group" id="evtNameForm_regionalModal">
+                                    <label for="regionSelect_regionalModal"
+                                        class="col-sm-2 control-label filterForms">Region: </label>
+                                    <div class="col-sm-10 filterForms">
+                                        <select id="regionSelect_regionalModal" class="regionSelect" multiple
+                                            style="width: 100%"></select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group" id="evtNameForm_regionalModal">
-                                <label for="evtSelect_regionalModal"  class="col-sm-2 control-label filterForms">Event: </label>
-                                <div class="col-sm-10 filterForms">
-                                    <select id="evtSelect_regionalModal" class="evtSelectRegional" multiple="multiple" style="width: 100%"></select>
+                                <div class="form-group" id="evtNameForm_regionalModal">
+                                    <label for="evtSelect_regionalModal"
+                                        class="col-sm-2 control-label filterForms">Event: </label>
+                                    <div class="col-sm-10 filterForms">
+                                        <select id="evtSelect_regionalModal" class="evtSelectRegional"
+                                            multiple="multiple" style="width: 100%"></select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group" id="evtNameForm_regionalModal">
-                                <label for="bufferSelect_regionalModal"  class="col-sm-2 control-label filterForms">Buffer size: </label>
-                                <div class="col-sm-10 filterForms">
-                                    <select id="bufferSelect_regionalModal" class="bufferSelect" multiple style="width: 100%"></select>
+                                <div class="form-group" id="evtNameForm_regionalModal">
+                                    <label for="bufferSelect_regionalModal"
+                                        class="col-sm-2 control-label filterForms">Buffer size: </label>
+                                    <div class="col-sm-10 filterForms">
+                                        <select id="bufferSelect_regionalModal" class="bufferSelect" multiple
+                                            style="width: 100%"></select>
+                                    </div>
                                 </div>
+                            </form>
+                            <div id="regionalMapContainer" style="margin: auto; width: 600px;">
+                                <div id="regionalMap" style="width: 600px; height: 400px;"></div>
+                                <span class="progress-bar-fill" style="width: 0%"></span>
                             </div>
-                        </form>
-                        <div id="regionalMapContainer" style="margin: auto; width: 600px;">
-                            <div id="regionalMap" style="width: 600px; height: 400px;"></div>
-                            <span class="progress-bar-fill" style="width: 0%"></span>
-                        </div>
-                        <div id="data">
-                            <div class='dataSection' id="regionalPeakTable" style="width: 850px; overflow-x: scroll;">
-                                <table class="table" id="summaryDataTable">
-                                </table>
-                                <table class="table" id="peakDataTableReg">
-                                </table>
-                                <table class="table" id="hwmDataTableReg">
-                                </table>
+                            <div id="data">
+                                <div class='dataSection' id="regionalPeakTable"
+                                    style="width: 850px; overflow-x: scroll;">
+                                    <table class="table" id="summaryDataTable">
+                                    </table>
+                                    <table class="table" id="peakDataTableReg">
+                                    </table>
+                                    <table class="table" id="hwmDataTableReg">
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <!-- end filter panels -->
+                    <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
+                            aria-hidden="true"></i> Please choose an event to proceed.</div>
                 </div>
-                <!-- end filter panels -->
-                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose an event to proceed.</div>
-            </div>
-            <div class="modal-footer">
-                <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
-                <button id="btnClearFilters" class="btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Clear Selections</button>
-                <button id="btnSubmitSelections" class="btn btn-primary btn-lg" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Run</button>
-                <button id="saveRegionalPeakCSV" class="btn close" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">Peak CSV</button>
-                <button id="saveRegionalHWMCSV" class="btn close" type="button" aria-hidden="true" style="color:gray;" class="btn btn-primary">HWM CSV</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
+                <div class="modal-footer">
+                    <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
+                        style="color:gray;" class="btn btn-default">Close</button>
+                    <button id="btnClearFilters" class="btn btn-default" type="button" aria-hidden="true"
+                        style="color:gray;" class="btn btn-primary">Clear Selections</button>
+                    <button id="btnSubmitSelections" class="btn btn-primary btn-lg" type="button" aria-hidden="true"
+                        style="color:gray;" class="btn btn-primary">Run</button>
+                    <button id="saveRegionalPeakCSV" class="btn close" type="button" aria-hidden="true"
+                        style="color:gray;" class="btn btn-primary">Peak CSV</button>
+                    <button id="saveRegionalHWMCSV" class="btn close" type="button" aria-hidden="true"
+                        style="color:gray;" class="btn btn-primary">HWM CSV</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
     <div id="aboutModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog  modal-lg">
             <div class="modal-content">
@@ -925,6 +901,12 @@
                                                         onclick="clickBounds()" />
                                                 </label>Park Boundaries
                                             </div>
+                                            <div style="text-align: left">
+                                                <label>
+                                                    <input type="checkbox" id=npsNetToggle
+                                                        onclick="clickNPSNetworks()" />
+                                                </label>NPS Networks
+                                            </div>
                                         </div>
                                         <!--FWS Layers-->
                                         <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;"
@@ -1200,6 +1182,7 @@
                                 <div id=highWaterSymbology></div>
                                 <div id=parkTractsSymbology></div>
                                 <div id=parkBoundsSymbology></div>
+                                <div id=npsNetworksSymbology></div>
                                 <div id=approvedFWSSymbology></div>
                                 <div id=interestFWSSymbology></div>
                                 <div id=doiSymbology></div>
