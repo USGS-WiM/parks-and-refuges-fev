@@ -1007,14 +1007,14 @@ $(document).ready(function () {
             var confIntNinetyLow;
 
             //Create peak row in regional summary table
-            getSummaryStats([5, 10, 15]);
+            getSummaryStats(peakArrReg);
             if (formattedPeaks.length > 0) {
                 peakSum = { "Type": "Peak", "Total Sites": numReg, "Max": maxReg, "Min": minReg, "Median": medianReg, "Mean": meanReg, "Standard Dev": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
             }
 
             //Create hwm row in regional summary table
-            getSummaryStats([5]);
+            getSummaryStats(hwmArrReg);
             if (formattedHWMS.length > 0) {
                 hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max": maxReg, "Min": minReg, "Median": medianReg, "Mean": meanReg, "Standard Dev": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
