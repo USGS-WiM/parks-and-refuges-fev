@@ -991,86 +991,36 @@ $(document).ready(function () {
                 }
             }
 
+            //Sort peak and hwm arrays
             peakArrReg = peakArrReg.sort();
             hwmArrReg = hwmArrReg.sort();
             var sum = []
             var peakSum = {};
             var hwmSum = {};
+
+            //variables for regional summary table
             var meanReg;
             var minReg;
             var maxReg;
             var medianReg;
             var confIntNinetyHigh;
             var confIntNinetyLow;
-            var confIntFormat;
-            /* var max;
-            var min;
-            var med;
 
-            // PEAK stats
-            var currentDataType = "peak";
-            
-
-            if (formattedPeaks.length !== 0) {
-                var max = formattedPeaks[0].data[0].peak_stage;
-                var min = formattedPeaks[0].data[0].peak_stage;
-            }
-*/
-
-            //getMinMax(formattedPeaks);
-            //getMedian(peakArrReg);
-
-
-            //Variables for summary table:
-            /*
-             !mean
-            !median
-            !max
-            !min
-            !number of sites
-            10th & 90th percentile
-            standard deviation
-            */
-            
-            getSummaryStats(peakArrReg);
-            //confIntFormat = 
-            console.log("peak mean", meanReg);
-            console.log("peak min", minReg);
-            console.log("peak max", maxReg);
-            console.log("peak median", medianReg);
-            console.log("peak num sites", numReg);
-            console.log("peak standard dev", standReg);
-
-
+            //Create peak row in regional summary table
+            getSummaryStats([5, 10, 15]);
             if (formattedPeaks.length > 0) {
                 peakSum = { "Type": "Peak", "Total Sites": numReg, "Max": maxReg, "Min": minReg, "Median": medianReg, "Mean": meanReg, "Standard Dev": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
             }
 
-            // HWM Stats
-
-            // reset min max variables
-            /*
-            if (formattedHWMS.length !== 0) {
-                var max = formattedHWMS[0].data[0].elev_ft;
-                var min = formattedHWMS[0].data[0].elev_ft;
-            }
-
-            var currentDataType = "hwm";
-
-            getMinMax(formattedHWMS);
-            med = numbers.statistic.mean([1, 2, 3, 4]);
-            //getMedian(hwmArrReg);
-            */
-
-            getSummaryStats(hwmArrReg);
-            console.log("hwmArrReg", hwmArrReg);
+            //Create hwm row in regional summary table
+            getSummaryStats([5]);
             if (formattedHWMS.length > 0) {
                 hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max": maxReg, "Min": minReg, "Median": medianReg, "Mean": meanReg, "Standard Dev": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
             }
 
-
+            //Summary stats to populate regional report summary table
             function getSummaryStats(dataArray) {
                 meanReg = numbers.statistic.mean(dataArray);
                 medianReg = numbers.statistic.median(dataArray);
@@ -1079,60 +1029,16 @@ $(document).ready(function () {
                 numReg = dataArray.length;
                 standReg = numbers.statistic.standardDev(dataArray);
                 var confIntTemp = 1.645 * (standReg/Math.sqrt(numReg));
-                confIntNinetyHigh = meanReg + confIntTemp
-                confIntNinetyLow = meanReg - confIntTemp
-                console.log("confIntNinety", confIntNinetyHigh);
-                console.log("confIntTen", confIntNinetyLow);
+                confIntNinetyHigh = meanReg + confIntTemp;
+                confIntNinetyLow = meanReg - confIntTemp;
 
                 //Round Results
                 meanReg = meanReg.toFixed(3);
                 standReg = standReg.toFixed(3);
                 confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
                 confIntNinetyLow = confIntNinetyLow.toFixed(3);
-
             }
-            /*
-                        console.log(sum)
-            
-                        // getting stats for summary table
-                        function getMinMax(data) {
-                            var current;
-                            for (var p in data) {
-                                for (var d in data[p].data) {
-                                    if (currentDataType === "peak") {
-                                        current = data[p].data[d].peak_stage;
-                                    } else if (currentDataType === "hwm") {
-                                        current = data[p].data[d].elev_ft;
-                                    }
-                                    if (max < current) {
-                                        max = current;
-                                    }
-                                    if (min > current) {
-                                        min = current;
-                                    }
-                                }
-                            }
-                        }
-            
-                        function getMedian(data) {
-                            var dataLen = data.length;
-                            console.log(dataLen);
-                            console.log(peakArrReg);
-            
-                            if (dataLen % 2 == 0) {
-                                var dataIndex = Math.round(dataLen / 2) - 1;
-                                med = (data[dataIndex] + data[dataIndex + 1]) / 2;
-                                console.log("dataMed even", med);
-            
-                            }
-                            else {
-                                var dataIndex = Math.round(dataLen / 2) - 1;
-                                med = data[dataIndex];
-                                console.log("dataMed odd", med);
-                            }
-            
-                        }
-                        */
+
 
             // Builds the HTML Table
             function buildDataTables(table, data, type) {
