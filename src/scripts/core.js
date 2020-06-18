@@ -1059,93 +1059,45 @@ $(document).ready(function () {
 			getRegionalMap();
 			
 			var summaryRows = [];
-
-			// console.log($('#summaryDataTable')[0].children[1].children)
-			// var test = [];
-			// test.push($('#summaryDataTable')[0].children[1].children)
-			// console.log(test)
-
-			//var array = [];
-			//function getSummaryInfo() {
-			$.each($('#summaryDataTable')[0].children[1].children, function (index, rows) {
-				console.log(rows)
-				//var arrayItem = {};
-				var tempArray = [];
-				var arrayItem = {};
-				$(rows.children).each(function() {
-					
-					
-					$(this).each(function(index, item) {
-						
-						tempArray.push($(item).text())
-						
-						//arrayItem = $(item).text();
-					});
-					arrayItem = tempArray;
-					//array.push(arrayItem);
-						
+			var headers = [];
+			function summaryInfo() {
+				$('#summaryDataTable th').each(function(index, item) {
+					headers[index] = $(item).html();
 				});
-				summaryRows.push(arrayItem)
-
-
-
-				// $.each($(rows).find(this.children), function (index, item) {
-				// 	console.log(item)
-				// 	arrayItem = $(item).text();
-				// 	console.log(arrayItem)	
-				// })
-					
-			})
-		//}
-			//console.log(array)
+				$('#summaryDataTable tr').has('td').each(function() {
+					var arrayItem = {};
+					$('td', $(this)).each(function(index, item) {
+						arrayItem[headers[index]] = $(item).html();
+					});
+					summaryRows.push(arrayItem);
+				});
+				return summaryRows;
+			}
 			console.log(summaryRows)
 
-			
-			// function getSummaryInfo() {
-			// 	$('#summaryDataTable')[0].children[1], function (index, rows) {
-			// 		console.log(rows)
-			// 		//summaryRows.push(rows);
-					
-			// 		// $.each(tbody, function (index, rows) {
-			// 		// 	summaryRows.push(rows);
-			// 		// });
-			// 	}
-			// }
-			// getSummaryInfo();
-			//console.log(summaryRows)
-			function summaryTableBody() {
-					//getSummaryInfo();
+			function summaryTableBody(data, columns) {
 					var body = [];
-					$(summaryRows).each(function(){
+					body.push(columns);
+					data.forEach(function (row) {
 						var dataRow = [];
-						dataRow.push(summaryRows);
+						columns.forEach(function (column) {
+							dataRow.push(row[column].toString());
+						})
 						body.push(dataRow);
-					})
-					// for (var i in summaryRows) {
-					// 	console.log(summaryRows[i])
-					// 	var dataRow = [];
-					// 	dataRow.push(summaryRows[i]);
-					// 	body.push(dataRow);
-					// }
-					$.each($(summaryRows), function(){
-						
-					})
-					// for (var i = 0; i < summaryRows.length; i++) {
-					// 	var dataRow = [];
-					// 	dataRow.push(summaryRows[i]);
-					// 	body.push(dataRow);
-					// }
-				
+					});
 					return body;
-				
 				}
 			
-			function summaryTable() {
+			function summaryTable(data, columns) {
 				return {
 					table: {
-						body: summaryTableBody(),
+						headerRows: 1,
+						widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+						body: summaryTableBody(data, columns),
 					},
-					layout: 'noBorders',
+					layout: 'lightHorizontalLines',
+					style: 'smaller',
+					margin: [0, 0, 0, 15]
 				};
 			}
 
@@ -1173,7 +1125,7 @@ $(document).ready(function () {
 					content: [
 						{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
 						{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
-						summaryTable(),
+						summaryTable(summaryInfo(), ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max','90% Conf Low', '90% Conf High']),
 						// {
 						// 	table: {
 						// 		body: [
