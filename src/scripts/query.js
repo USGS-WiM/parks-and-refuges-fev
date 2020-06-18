@@ -324,7 +324,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
         pointToLayer: function (feature, latlng) {
             markerCoords.push(latlng);
             var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
-            console.log("Ranges for peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
+            //console.log("Ranges for peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
             //Create 3 categories for marker size          
             if (feature.properties.peak_stage <= thirdVal) {
                 var marker =             
