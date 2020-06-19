@@ -2524,7 +2524,7 @@ function clickHWM() {
 	}
 }
 
-//Display high water mark layer and legend item when corresponding box is checked
+//Display rapid deployment gage layer and legend item when corresponding box is checked
 function clickRdg() {
 	var rdgCheckBox = document.getElementById("rdgToggle");
 	if (rdgCheckBox.checked == true) {
