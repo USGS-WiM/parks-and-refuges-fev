@@ -177,6 +177,10 @@ body {
     position: relative; 
     margin-left: 6px;
 }
+#rdgToggle {
+    position: relative; 
+    margin-left: 6px;
+}
 #metToggle {
     position: relative; 
     margin-left: 6px;
@@ -198,6 +202,10 @@ body {
     margin-left: 6px;
 }
 #rainGageToggle {
+    position: relative; 
+    margin-left: 6px;
+}
+#npsNetToggle {
     position: relative; 
     margin-left: 6px;
 }
@@ -235,6 +243,11 @@ body {
     background: #bee8ff;
     border-color: #bee8ff;
     Border-width: .1px;
+}
+.npsNetColor{
+    border-color: orange;
+    Border-width: 2px;
+}
 }
 .approvedAquiColor{
     background: brown;
@@ -1041,6 +1054,20 @@ a.lgi-zoom:hover {
     border-color: rgb(204, 204, 204);
 }
 
+#peakCheckboxReg {
+    position: relative;
+    display: inline-block;
+    width: 0px;
+    height: 0px;
+    margin-right: 0px;
+  }
+  
+  .peakCheckboxReg input { 
+      
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
 
 #peakCheckbox {
     position: relative;
@@ -1104,6 +1131,13 @@ a.lgi-zoom:hover {
   }
   
   #peakSizeCheck {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 18px;
+    margin-right: 0px;
+  }
+  #peakSizeCheckReg {
     position: relative;
     display: inline-block;
     width: 30px;
