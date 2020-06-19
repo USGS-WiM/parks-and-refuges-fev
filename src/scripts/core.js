@@ -2526,8 +2526,8 @@ function clickHWM() {
 
 //Display high water mark layer and legend item when corresponding box is checked
 function clickRdg() {
-	var HWMCheckBox = document.getElementById("rdgToggle");
-	if (HWMCheckBox.checked == true) {
+	var rdgCheckBox = document.getElementById("rdgToggle");
+	if (rdgCheckBox.checked == true) {
 		//When checkbox is checked, add layer to map
 		displaySensorGeoJSON("rdg", "Rapid Deployment Gage", fev.urls["rdg" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["rdg" + 'MarkerIcon']);
 		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
