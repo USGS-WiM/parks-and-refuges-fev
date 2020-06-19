@@ -888,10 +888,10 @@ $(document).ready(function () {
 
 		// clearing the layers if a search has already been performed
 		if (parks !== undefined) {
-			map.removeLayer(parks);
+			//map.removeLayer(parks);
 			map.removeLayer(refuges);
 			map.removeLayer(fwsInterest);
-			map.removeLayer(bufferPoly);
+			//map.removeLayer(bufferPoly);
 		}
 	}
 	$('#geosearchNav').click(function () {
