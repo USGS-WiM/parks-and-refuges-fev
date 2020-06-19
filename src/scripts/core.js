@@ -1324,7 +1324,10 @@ $(document).ready(function () {
 	//Need to figure out how to fix this, maybe just reintialize the map? we did have to fix 
 	//this in whispers too but can't remember what I did off hand
 	$("#printModal").on("hidden.bs.modal", function () {
-		// location.reload();
+
+		// leaving this in until we have 
+		location.reload();
+
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
 		/* USGSrtGages.clearLayers();
 		USGSRainGages.clearLayers(); */
@@ -1408,7 +1411,6 @@ $(document).ready(function () {
 		queryNWISgraph();
 		queryNWISRaingraph();
 		//clickPeakLabels();
-
 	}
 	// setting checked values for Welcome Modal buffer radio buttons
 	document.getElementById('tenKm').checked = false;
@@ -1844,7 +1846,7 @@ $(document).ready(function () {
 				[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
 			);
 
-		}, 600);
+		}, 1001);
 		//$(inputModal).modal('hide');
 
 	}

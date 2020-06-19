@@ -1,7 +1,7 @@
 // setting global variables for the regional summary
 var regionalMap;
+var alreadyRan = false;
 var layerCountReg = 0;
-var regionPoly = [];
 var selectedRegion = "";
 var selectedEvents = [];
 var selectedLandType;
@@ -104,7 +104,6 @@ var peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks
 
 $(document).ready(function () {
 
-
     $('#regionalReportNav').click(function () {
 
         // for some reason tableData loading incompletely without timeout
@@ -121,22 +120,14 @@ $(document).ready(function () {
             regionalMap.boxZoom.disable();
             regionalMap.keyboard.disable(); */
 
-            var layerfel = L.esri.basemapLayer('Topographic').addTo(regionalMap);
-        }, 600);
+            var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
+        }, 800);
 
         // checking for region entry when region input is changed
-        $('#regionSelect_regionalModal').change(function () {
 
-
-            // if it has a value, we query to get the region geometry
-            if (($('#regionSelect_regionalModal').val()) !== null) {
-
-            } else {
-
-            }
-        });
-
-
+        /* if ((($('#regionSelect_regionalModal').val() !== null)) && (($('#typeSelect_regionalModal').val() !== null)) && 
+        (($('#evtSelect_regionalModal').val() !== null)) && (($('#regionSelect_regionalModal').val() !== null)) && 
+        (($('#bufferSelect_regionalModal').val() !== null))) { */
 
     });
 
@@ -144,9 +135,10 @@ $(document).ready(function () {
 
     $('#btnSubmitSelections').click(function () {
 
-        $('.progress-bar-fill').delay(1000).queue(function () {
+        /* $('.progress-bar-fill').delay(1000).queue(function () {
             $(this).css('width', '100%')
-        });
+        }); */
+        document.querySelector('.progress-bar-fill').style.width = "100%"
 
         // setting buffer style
         var bufferStyle = {
@@ -264,115 +256,134 @@ $(document).ready(function () {
                 document.getElementById("demo").innerHTML += index + ":" + item + "<br>";
             }
 
+
             // lopping through each poly of the regional poly since esri-leaflet can't handle multipolygons at the version we're at
             if (flattenedRegionalPoly !== undefined) {
                 for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {
+
                     allSites.query()
-                        .within(flattenedRegionalPoly.features[p])
+                        //.within(flattenedRegionalPoly.features[p])
+                        //.bboxIntersects(flattenedRegionalPoly.features[p])
+                        .intersects(flattenedRegionalPoly.features[p])
                         .run(function (error, featureCollection, response) {
                             if (featureCollection.features.length !== 0) {
-                                regionParksFC = featureCollection;
-                                L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
-                                getbuffers();
+                                regionParksFC.push(featureCollection);
+                                /* L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
+                                getbuffers(); */
+                            }
+                        });
+                    allSites.query()
+                        .within(flattenedRegionalPoly.features[p])
+                        //.bboxIntersects(flattenedRegionalPoly.features[p])
+                        //.intersects(flattenedRegionalPoly.features[p])
+                        .run(function (error, featureCollection, response) {
+                            if (featureCollection.features.length !== 0) {
+                                regionParksFC.push(featureCollection);
+                                /* L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
+                                getbuffers(); */
                             }
                         });
                 }
             }
 
-            /* setTimeout(() => {
+            setTimeout(() => {
                 L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
                 console.log(regionParksFC);
                 getbuffers();
-            }, 7000); */
+            }, 7000);
 
             //getbuffers();
             // getting the park buffers base on the buffer size selection value
             function getbuffers() {
-                if (regionParksFC !== undefined) {
-                    for (var p = 0; p < regionParksFC.features.length; p++) {
-                        var feature = regionParksFC.features[p];
-                        var options = { tolerance: 0.01, highQuality: false };
-                        // check incase there are any multipolys and convert them to simple polys
-                        if (regionParksFC.features[p].geometry.type === "MultiPolygon") {
-                            regionParksFC.features[p].geometry.coordinates.forEach(function (coords) {
-                                feature = { 'type': 'Polygon', 'coordinates': coords };
+                setTimeout(() => {
+                    if (regionParksFC !== undefined) {
+                        var polygons = [];
+                        for (var p = 0; p < regionParksFC.length; p++) {
+                            regionParksFC[p].features.forEach(function (site) {
+                                var feature = site;
+                                var options = { tolerance: 0.01, highQuality: false, mutate: true };
+
                                 var simplified = turf.simplify(feature, options);
                                 var buffered = turf.buffer(simplified, bufferSize, { units: 'kilometers' });
-                                // bufferedPolys.push(buffered);
+                                bufferedPolys.push(buffered);
+
                             });
-                        } else {
-                            var simplified = turf.simplify(feature, options);
-                            var buffered = turf.buffer(simplified, bufferSize, { units: 'kilometers' });
-                            bufferedPolys.push(buffered);
+
                         }
+
                     }
-                    console.log('buffered polys' + bufferedPolys);
                     L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
                     getEventSpecificData();
-                }
+                }, 1400);
+
             }
 
             // looping through each event and sensor data
             function getEventSpecificData() {
-                for (var e = 0; e < selectedEvents.length; e++) {
-                    // Getting event name
+                if (alreadyRan !== true) {
+                    if (selectedEvents.length > 0) {
+                        alreadyRan = true;
+                        for (var e = 0; e < selectedEvents.length; e++) {
+                            // Getting event name
 
-                    // resetting event url
+                            // resetting event url
 
-                    eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
-                    eventURL = eventURL + selectedEvents[e] + '.json';
-                    parksInEvent = [];
-                    var queryString = "?Event=" + selectedEvents[e] + "&States=&County=&StartDate=undefined&EndDate=undefined";
-                    var sensorQueryString = "?Event=" + selectedEvents[e] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
-                    getEventName(function (output) {
-                        eventName = output.event_name;
-                    });
+                            eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
+                            eventURL = eventURL + selectedEvents[e] + '.json';
+                            parksInEvent = [];
+                            var queryString = "?Event=" + selectedEvents[e] + "&States=&County=&StartDate=undefined&EndDate=undefined";
+                            var sensorQueryString = "?Event=" + selectedEvents[e] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
+                            getEventName(function (output) {
+                                eventName = output.event_name;
+                            });
 
-                    // function for getting the event data
-                    function getEventName(handleData) {
-                        var data;
-                        $.ajax({
-                            dataType: "json",
-                            url: eventURL,
-                            data: data,
-                            success: function (data) {
-                                handleData(data)
-                            },
-                            error: function (error) {
-                                console.log('Error processing the JSON. The error is:' + error);
+                            // function for getting the event data
+                            function getEventName(handleData) {
+                                var data;
+                                $.ajax({
+                                    dataType: "json",
+                                    url: eventURL,
+                                    data: data,
+                                    success: function (data) {
+                                        handleData(data)
+                                    },
+                                    error: function (error) {
+                                        console.log('Error processing the JSON. The error is:' + error);
+                                    }
+                                });
                             }
-                        });
+                            // PEAKS
+                            getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
+
+                            // HWMS
+                            getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
+
+                            // BARO
+                            //getBaros(fev.urls.baroGeoJSONViewURL + sensorQueryString, regionalbaroMarkerIcon);
+
+                            /* // STORMTIDE
+                            getStormtides(fev.urls.stormtideGeoJSONViewURL + sensorQueryString, regionalstormtideMarkerIcon);
+        
+                            // MET
+                            getMets(fev.urls.metGeoJSONViewURL + sensorQueryString, regionalmetMarkerIcon);
+        
+                            // WAVEHEIGHT
+                            getWaveheights(fev.urls.waveheightGeoJSONViewURL + sensorQueryString, regionalwaveheightMarkerIcon);
+        
+                            // RDG
+                            getRDGs(fev.urls.rdgGeoJSONViewURL + sensorQueryString, regionalrdgMarkerIcon); */
+
+                            setTimeout(() => {
+                                //regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                                processData();
+                            }, 1501);
+
+
+                        }
                     }
-                    // PEAKS
-                    getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
-
-                    // HWMS
-                    getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
-
-                    // BARO
-                    //getBaros(fev.urls.baroGeoJSONViewURL + sensorQueryString, regionalbaroMarkerIcon);
-
-                    /* // STORMTIDE
-                    getStormtides(fev.urls.stormtideGeoJSONViewURL + sensorQueryString, regionalstormtideMarkerIcon);
-
-                    // MET
-                    getMets(fev.urls.metGeoJSONViewURL + sensorQueryString, regionalmetMarkerIcon);
-
-                    // WAVEHEIGHT
-                    getWaveheights(fev.urls.waveheightGeoJSONViewURL + sensorQueryString, regionalwaveheightMarkerIcon);
-
-                    // RDG
-                    getRDGs(fev.urls.rdgGeoJSONViewURL + sensorQueryString, regionalrdgMarkerIcon); */
-
-                    setTimeout(() => {
-                        //regionalMap.fitBounds(peaksWithinBuffer.getBounds());
-                        processData();
-                    }, 1000);
-
-
                 }
             }
-        }, 800);
+        }, 1500);
 
 
         // creating markers for peaks
@@ -1076,9 +1087,13 @@ $(document).ready(function () {
                 return columnSet;
             }
 
-            if (allPeaks.length > 0) {
+            if (sum.length > 0) {
                 buildDataTables("#summaryDataTable", sum, "Summary Information");
+            }
+            if (allPeaks.length > 0) {
                 buildDataTables("#peakDataTableReg", allPeaks, "Peak Data");
+            }
+            if (allHWMs.length > 0) {
                 buildDataTables("#hwmDataTableReg", allHWMs, "HWM Data");
             }
         }
@@ -1136,6 +1151,45 @@ $(document).ready(function () {
         // END TABLE FUNCTIONS
     });
 
+    $('#btnClearRegFilters').click(function () {
+
+        // removing all layers from the map regardless of type
+        regionalMap.eachLayer(function (layer) {
+            regionalMap.removeLayer(layer);
+        });
+
+        // resetting the feature groups
+        peaksWithinBuffer = L.featureGroup();
+        peaksWithinBuffer = L.featureGroup();
+        hwmsWithinBuffer = L.featureGroup();
+
+        // resetting the arrays
+        bufferedPolys = [];
+        regionParksFC = [];
+        tableData = [];
+        hwmTableData = [];
+        sensorTableData = [];
+        allHWMs = [];
+        allPeaks = [];
+
+        // clearing tables
+        document.getElementById('summaryDataTable').innerHTML = '';
+        document.getElementById('peakDataTableReg').innerHTML = '';
+        document.getElementById('hwmDataTableReg').innerHTML = '';
+
+        document.querySelector('.progress-bar-fill').style.width = "0%"
+
+        $('.clear').val('').trigger('change');
+
+        // adding the basemap back to the map
+        setTimeout(() => {
+            var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
+        }, 1400);
+
+
+    });
+
+
     //Corresponds with the 'HWM CSV' button on the regional report modal
     $('#saveRegionalHWMCSV').click(function () {
         //if there is a hwm table, download as csv
@@ -1190,6 +1244,17 @@ function downloadRegionalCSV(type) {
     }
 }
 
+function formReady() {
+    if (
+        (($('#regionSelect_regionalModal').val() !== null))
+        && (($('#typeSelect_regionalModal').val() !== null))
+        && (($('#evtSelect_regionalModal').val() !== null))
+        && (($('#regionSelect_regionalModal').val() !== null))
+        && (($('#regionType_regionalModal').val() !== null))
+    ) {
+        $('#btnSubmitSelections').removeAttr('disabled');
+    }
+}
 //function for toggling peak labels
 function clickPeakLabelsReg() {
     var checkBox = document.getElementById("peakCheckboxReg");
