@@ -177,6 +177,10 @@ body {
     position: relative; 
     margin-left: 6px;
 }
+#rdgToggle {
+    position: relative; 
+    margin-left: 6px;
+}
 #metToggle {
     position: relative; 
     margin-left: 6px;

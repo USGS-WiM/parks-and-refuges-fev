@@ -2338,6 +2338,7 @@ var barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/b
 var stormTideSymbologyInterior = "<div> <img class='legendSwatch' src='images/stormtide.png'></img> <b>Storm Tide Sensor</b> </div>";
 var meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='images/met.png'></img> <b>Meteorlogical Sensor</b> </div>";
 var waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> <b>Wave Height Sensor</b> </div>";
+var rdgSymbologyInterior = "<div> <img class='legendSwatch' src='images/rdg.png'></img> <b>Rapid Deployment Gage</b> </div>";
 var highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> <b>High Water Mark</b> </div>";
 var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>Park Boundaries</b> </div>";
 var npsNetworksSymbologyInterior = "<div> <img class='squareDiv npsNetColor'></img> <b>NPS Networks</b> </div>";
@@ -2520,6 +2521,28 @@ function clickHWM() {
 		hwm.clearLayers(map);
 		$('#highWaterSymbology').children().remove();
 		hwmStart = 3;
+	}
+}
+
+//Display high water mark layer and legend item when corresponding box is checked
+function clickRdg() {
+	var HWMCheckBox = document.getElementById("rdgToggle");
+	if (HWMCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
+		displaySensorGeoJSON("rdg", "Rapid Deployment Gage", fev.urls["rdg" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["rdg" + 'MarkerIcon']);
+		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
+		//When they are turned off, they are given a value of 3
+		//Values of 0 or 3 indicate that symbol and name in legend is off 
+		if (rdgStart == 0 || rdgStart == 3) {
+			//Add symbol and layer name to legend
+			$('#rdgSymbology').append(rdgSymbologyInterior);
+		}
+	}
+	//Remove symbol and layer name from legend when box is unchecked
+	if (rdgCheckBox.checked == false) {
+		rdg.clearLayers(map);
+		$('#rdgSymbology').children().remove();
+		rdgStart = 3;
 	}
 }
 

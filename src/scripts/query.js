@@ -12,6 +12,7 @@ var stormtideStart = 0;
 var metStart = 0;
 var waveheightStart = 0;
 var hwmStart = 0;
+var rdgStart = 0;
 var peakStart = 0;
 var noaaStart = 0;
 
@@ -152,6 +153,14 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
                     waveHeightCheckBox.checked = true;
                     $('#waveHeightSymbology').append(waveHeightSymbologyInterior);
                     waveheightStart = 1;
+                }
+            }
+            if (type == "rdg") {
+                if (rdgStart == 0) {
+                    var rdgCheckBox = document.getElementById("rdgToggle");
+                    rdgCheckBox.checked = true;
+                    $('#rdgSymbology').append(rdgSymbologyInterior);
+                    rdgStart = 1;
                 }
             }
             if (currentSubGroup == 'rdg') {
