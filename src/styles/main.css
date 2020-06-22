@@ -1137,6 +1137,22 @@ a.lgi-zoom:hover {
     height: 18px;
     margin-right: 0px;
   }
+  .peakSmall {
+    width: 7px;
+    height:10px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+.peakMedium {
+    width: 11px;
+    height:16px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+.peakLarge {
+    width: 15px;
+    height:22px;
+}
   #peakSizeCheckReg {
     position: relative;
     display: inline-block;
