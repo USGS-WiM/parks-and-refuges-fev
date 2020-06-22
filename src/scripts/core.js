@@ -2332,13 +2332,9 @@ function clickPeakLabels() {
 	}
 }
 
-var smallPeak = getPeakThresholds(0, 1);
-var medPeak = getPeakThresholds(1, 0);
-//smallPeak = 3;
-//medPeak = 4;
 
 //Create legend symbols for each layer
-var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + smallPeak + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + smallPeak + " - " + medPeak + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + medPeak + "</div>";
+//PeakSummarySymbologyInterior is found in displayPeaksGeoJSON()
 var streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> <b>Real-time Stream Gage</b> </div>";
 var rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> <b>Real-time Rain Gage<b> </div>";
 var barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> <b>Barometric Pressure Sensor</b> </div>";
@@ -2359,13 +2355,6 @@ var noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></im
 function clickPeaks() {
 	var peaksCheckBox = document.getElementById("peaksToggle");
 	if (peaksCheckBox.checked == true) {
-		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
-		//When they are turned off, they are given a value of 3
-		//Values of 0 or 3 indicate that symbol and name in legend is off 
-		if (peakStart == 0 || peakStart == 3) {
-			//Add symbol and layer name to legend
-			$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
-		}
 		//When checkbox is checked, add layer to map
 		displayPeaksGeoJSON("peak", "Peak Summary", fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
 	}
@@ -2373,7 +2362,7 @@ function clickPeaks() {
 	if (peaksCheckBox.checked == false) {
 		$('#PeakSummarySymbology').children().remove();
 		peak.clearLayers();
-		peakStart = 3;
+		peakStart = 0;
 	}
 }
 

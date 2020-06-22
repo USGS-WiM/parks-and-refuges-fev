@@ -404,6 +404,8 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             if (peakStart == 0) {
                 var peaksCheckBox = document.getElementById("peaksToggle");
                 peaksCheckBox.checked = true;
+                var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + thirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + thirdVal + " - " + twoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + twoThirdVal + "</div>";
+
                 $('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
                 peakStart = 1;
             }

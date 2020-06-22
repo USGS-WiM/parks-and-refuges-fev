@@ -248,10 +248,10 @@ body {
     border-color: orange;
     Border-width: 2px;
 }
-}
 .approvedAquiColor{
     background: brown;
     border-color: brown;
+    opacity: 0.65;
     Border-width: .1px
 }
 .interestBoundsColor{
