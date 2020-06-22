@@ -11,6 +11,7 @@ var fwsInterest;
 var bufferPoly;
 var searchResults;
 var searchObject;
+var bbox;	
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var identifiedMarks = [];
@@ -623,7 +624,6 @@ $(document).ready(function () {
 	setSearchAPI("search");
 	setSearchAPI("search_filter");
 
-
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
 	map.on('popupopen', function () {
 		$('.data-disclaim').click(function (e) {
@@ -636,7 +636,7 @@ $(document).ready(function () {
 		overlayadd: function (e) {
 			if (e.name.indexOf('Stream Gage') !== -1) {
 				if (map.getZoom() < 9) USGSrtGages.clearLayers();
-				if (map.hasLayer(USGSrtGages) && map.getZoom() >= 9) {
+				if (map.hasLayer(USGSrtGages) && document.getElementById("streamGageToggle").checked == true && map.getZoom() >= 9) {
 					//USGSrtGages.clearLayers();
 					$('#nwisLoadingAlert').show();
 					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -653,7 +653,7 @@ $(document).ready(function () {
 		overlayadd: function (e) {
 			if (e.name.indexOf('Rain Gage') !== -1) {
 				if (map.getZoom() < 9) USGSRainGages.clearLayers();
-				if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9) {
+				if (map.hasLayer(USGSRainGages) && document.getElementById("rainGageToggle").checked == true && map.getZoom() >= 9) {
 					//USGSrtGages.clearLayers();
 					$('#nwisLoadingAlert').show();
 					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -1960,7 +1960,7 @@ $(document).ready(function () {
 		if (map.getZoom() >= 9) {
 			$('#rtScaleAlert').hide();
 		}
-		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 9 && !foundPopup) {
+		if (map.hasLayer(USGSrtGages) && document.getElementById("streamGageToggle").checked == true && map.getZoom() >= 9 && !foundPopup) {
 			//USGSrtGages.clearLayers();
 			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -1970,7 +1970,7 @@ $(document).ready(function () {
 				USGSRainGages.bringToFront();
 			}
 		}
-		if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9 && !foundPopup) {
+		if (map.hasLayer(USGSRainGages) && document.getElementById("rainGageToggle").checked == true && map.getZoom() >= 9 && !foundPopup) {
 			//USGSrtGages.clearLayers();
 			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -2386,6 +2386,9 @@ function clickRainGage() {
 		//queryNWISRainGages(bbox);
 		//When checkbox is checked, add layer to map
 		USGSRainGages.addTo(map);
+		$('#nwisLoadingAlert').show();
+		var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+		queryNWISRainGages(bbox);
 	}
 	//Remove symbol and layer name from legend when box is unchecked
 	if (raingageCheckBox.checked == false) {
@@ -2406,6 +2409,9 @@ function clickStreamGage() {
 		//queryNWISrtGages(bbox);
 		//When checkbox is checked, add layer to map
 		USGSrtGages.addTo(map);
+		$('#nwisLoadingAlert').show();
+		var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+		queryNWISrtGages(bbox);
 		//Add symbol and layer name to legend
 		$('#streamGageSymbology').append(streamGageSymbologyInterior);
 	}
