@@ -350,13 +350,13 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
             //console.log("Ranges for peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
             //Create 3 categories for marker size          
-            if (feature.properties.peak_stage <= thirdVal) {
+            if (feature.properties.peak_stage < thirdVal) {
                 var marker =             
                 L.marker(latlng, {
                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7,10] })
                 }).bindLabel("Peak: " + labelText + "<br>Site: " +feature.properties.site_no);
             }
-            if (thirdVal < feature.properties.peak_stage <= twoThirdVal) {
+            if (thirdVal <= feature.properties.peak_stage <= twoThirdVal) {
                 var marker =             
                 L.marker(latlng, {
                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11,16] })
@@ -404,7 +404,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             if (peakStart == 0) {
                 var peaksCheckBox = document.getElementById("peaksToggle");
                 peaksCheckBox.checked = true;
-                var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + thirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + thirdVal + " - " + twoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + twoThirdVal + "</div>";
+                var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + thirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + thirdVal + " - " + twoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + twoThirdVal + "</div>";
 
                 $('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
                 peakStart = 1;
