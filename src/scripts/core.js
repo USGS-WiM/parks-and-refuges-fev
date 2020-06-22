@@ -636,7 +636,7 @@ $(document).ready(function () {
 		overlayadd: function (e) {
 			if (e.name.indexOf('Stream Gage') !== -1) {
 				if (map.getZoom() < 9) USGSrtGages.clearLayers();
-				if (map.hasLayer(USGSrtGages) && map.getZoom() >= 9) {
+				if (map.hasLayer(USGSrtGages) && document.getElementById("streamGageToggle").checked == true && map.getZoom() >= 9) {
 					//USGSrtGages.clearLayers();
 					$('#nwisLoadingAlert').show();
 					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -653,7 +653,7 @@ $(document).ready(function () {
 		overlayadd: function (e) {
 			if (e.name.indexOf('Rain Gage') !== -1) {
 				if (map.getZoom() < 9) USGSRainGages.clearLayers();
-				if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9) {
+				if (map.hasLayer(USGSRainGages) && document.getElementById("rainGageToggle").checked == true && map.getZoom() >= 9) {
 					//USGSrtGages.clearLayers();
 					$('#nwisLoadingAlert').show();
 					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -1960,7 +1960,7 @@ $(document).ready(function () {
 		if (map.getZoom() >= 9) {
 			$('#rtScaleAlert').hide();
 		}
-		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 9 && !foundPopup) {
+		if (map.hasLayer(USGSrtGages) && document.getElementById("streamGageToggle").checked == true && map.getZoom() >= 9 && !foundPopup) {
 			//USGSrtGages.clearLayers();
 			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -1970,7 +1970,7 @@ $(document).ready(function () {
 				USGSRainGages.bringToFront();
 			}
 		}
-		if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9 && !foundPopup) {
+		if (map.hasLayer(USGSRainGages) && document.getElementById("rainGageToggle").checked == true && map.getZoom() >= 9 && !foundPopup) {
 			//USGSrtGages.clearLayers();
 			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
