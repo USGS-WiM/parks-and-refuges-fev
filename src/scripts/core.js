@@ -15,6 +15,7 @@ var bbox;
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var identifiedMarks = [];
+var identifiedUSGSrtGage = [];
 var fev = fev || {
 	data: {
 		events: [],
@@ -1836,6 +1837,28 @@ $(document).ready(function () {
 					identifiedMarks.push(hwm._layers[i])
 				}
 			}
+
+			// cycling through each peak and seeing if it's inside the buffer
+			for (var i in USGSrtGages._layers) {
+				console.log("USGSrtGages", USGSrtGages._layers);
+				console.log("USGSrtGages._layers[i]._latlng.lng", USGSrtGages._layers[i]._latlng.lng);
+
+				// formatting point for turf
+				var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
+
+				var isItInside = turf.booleanPointInPolygon(cords, buffer);
+
+				// if true add it to an array containing all the 'true' peaks
+				if (isItInside) {
+					identifiedUSGSrtGage.push(USGSrtGages._layers[i])
+				}
+				console.log("identifiedUSGSrtGage", identifiedUSGSrtGage);
+				if (identifiedUSGSrtGage.length > 0) {
+					var gageGraphTitle = document.getElementById('gageGraphs');
+					gageGraphTitle.innerHTML += "Stream Gage Hydrographs";
+				}
+			}
+
 
 			//location popup
 			map.openPopup(
