@@ -1326,7 +1326,7 @@ $(document).ready(function () {
 	$("#printModal").on("hidden.bs.modal", function () {
 
 		// leaving this in until we have 
-		location.reload();
+		//location.reload();
 
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
 		/* USGSrtGages.clearLayers();

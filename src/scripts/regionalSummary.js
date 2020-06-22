@@ -290,7 +290,7 @@ $(document).ready(function () {
                 L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
                 console.log(regionParksFC);
                 getbuffers();
-            }, 7000);
+            }, 10000);
 
             //getbuffers();
             // getting the park buffers base on the buffer size selection value
