@@ -266,21 +266,21 @@ $(document).ready(function () {
                         //.bboxIntersects(flattenedRegionalPoly.features[p])
                         .intersects(flattenedRegionalPoly.features[p])
                         .run(function (error, featureCollection, response) {
-                            if (featureCollection !== null){
+                            if (featureCollection !== null) {
                                 if (featureCollection.features.length !== 0) {
                                     regionParksFC.push(featureCollection);
                                     /* L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
                                     getbuffers(); */
                                 }
                             }
-                            
+
                         });
                     allSites.query()
                         .within(flattenedRegionalPoly.features[p])
                         //.bboxIntersects(flattenedRegionalPoly.features[p])
                         //.intersects(flattenedRegionalPoly.features[p])
                         .run(function (error, featureCollection, response) {
-                            if (featureCollection !== null){
+                            if (featureCollection !== null) {
                                 if (featureCollection.features.length !== 0) {
                                     regionParksFC.push(featureCollection);
                                     /* L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
@@ -295,7 +295,7 @@ $(document).ready(function () {
                 L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
                 console.log(regionParksFC);
                 getbuffers();
-            }, 7000);
+            }, 10000);
 
             //getbuffers();
             // getting the park buffers base on the buffer size selection value
@@ -570,12 +570,12 @@ $(document).ready(function () {
                                 }
                             }
                         }
+                        allPeaks = allPeaks.filter((v, i, a) => a.findIndex(t => (JSON.stringify(t) === JSON.stringify(v))) === i);
+                        // transfer data to the peaks csv data table
+                        peaksRegionalCSVData = allPeaks;
                     });
 
-                    //regionaltableData.removeLayer(regionalPeak);
 
-                    //transfer data to the peaks csv data table
-                    peaksRegionalCSVData = allPeaks;
 
                     peaksWithinBuffer.addTo(regionalMap);
                     if (allPeaks.length === 0) {
@@ -761,10 +761,14 @@ $(document).ready(function () {
                                         }
                                     });
                                     allHWMs.push(parksWithHWMs[count].data);
+
                                     count++;
                                 }
                             }
                         }
+                        allHWMs = allHWMs.filter((v, i, a) => a.findIndex(t => (JSON.stringify(t) === JSON.stringify(v))) === i);
+                        // transfer data to the peaks csv data table
+                        hwmRegionalCSVData = allHWMs;
                     });
 
                     //regionaltableData.removeLayer(regionalPeak);
@@ -772,8 +776,14 @@ $(document).ready(function () {
                 }
             });
         }
+
+        // Filtering out duplicates that fall within 2 different buffers
+
+
         //Transfer data to the csv table variable
-        hwmRegionalCSVData = allHWMs;
+
+
+
 
         function getBaros(url, markerIcon) {
             //increment layerCount
