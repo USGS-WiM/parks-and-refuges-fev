@@ -15,21 +15,6 @@ var hwmStart = 0;
 var rdgStart = 0;
 var peakStart = 0;
 var noaaStart = 0;
-var thirdVal;
-var twoThirdVal;
-//var thirdVal = 3;
-//var twoThirdVal = 4;
-
-
-//return values of peak thresholds to use in core.js
-function getPeakThresholds(small, med) {
-    if (small == 0) {
-            return thirdVal;
-    }
-    if (med == 0) {
-        return twoThirdVal;
-    }
-}
 
 //ajax retrieval function
 function displaySensorGeoJSON(type, name, url, markerIcon) {
@@ -292,8 +277,8 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
     var lengthPeak = [];
     var sortedPeaks = [];
     var thirdLength = [];
-    //var thirdVal = [];
-    //var twoThirdVal = [];
+    var thirdVal = [];
+    var twoThirdVal = [];
 
     //increment layerCount
     layerCount++;
