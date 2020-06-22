@@ -11,6 +11,7 @@ var fwsInterest;
 var bufferPoly;
 var searchResults;
 var searchObject;
+var bbox;	
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var identifiedMarks = [];
@@ -622,7 +623,6 @@ $(document).ready(function () {
 	L.Icon.Default.imagePath = './images';
 	setSearchAPI("search");
 	setSearchAPI("search_filter");
-
 
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
 	map.on('popupopen', function () {
@@ -2386,6 +2386,9 @@ function clickRainGage() {
 		//queryNWISRainGages(bbox);
 		//When checkbox is checked, add layer to map
 		USGSRainGages.addTo(map);
+		$('#nwisLoadingAlert').show();
+		var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+		queryNWISRainGages(bbox);
 	}
 	//Remove symbol and layer name from legend when box is unchecked
 	if (raingageCheckBox.checked == false) {
@@ -2406,6 +2409,9 @@ function clickStreamGage() {
 		//queryNWISrtGages(bbox);
 		//When checkbox is checked, add layer to map
 		USGSrtGages.addTo(map);
+		$('#nwisLoadingAlert').show();
+		var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+		queryNWISrtGages(bbox);
 		//Add symbol and layer name to legend
 		$('#streamGageSymbology').append(streamGageSymbologyInterior);
 	}
