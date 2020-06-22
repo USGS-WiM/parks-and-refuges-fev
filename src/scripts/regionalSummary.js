@@ -266,21 +266,26 @@ $(document).ready(function () {
                         //.bboxIntersects(flattenedRegionalPoly.features[p])
                         .intersects(flattenedRegionalPoly.features[p])
                         .run(function (error, featureCollection, response) {
-                            if (featureCollection.features.length !== 0) {
-                                regionParksFC.push(featureCollection);
-                                /* L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
-                                getbuffers(); */
+                            if (featureCollection !== null){
+                                if (featureCollection.features.length !== 0) {
+                                    regionParksFC.push(featureCollection);
+                                    /* L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
+                                    getbuffers(); */
+                                }
                             }
+                            
                         });
                     allSites.query()
                         .within(flattenedRegionalPoly.features[p])
                         //.bboxIntersects(flattenedRegionalPoly.features[p])
                         //.intersects(flattenedRegionalPoly.features[p])
                         .run(function (error, featureCollection, response) {
-                            if (featureCollection.features.length !== 0) {
-                                regionParksFC.push(featureCollection);
-                                /* L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
-                                getbuffers(); */
+                            if (featureCollection !== null){
+                                if (featureCollection.features.length !== 0) {
+                                    regionParksFC.push(featureCollection);
+                                    /* L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
+                                    getbuffers(); */
+                                }
                             }
                         });
                 }
@@ -404,7 +409,9 @@ $(document).ready(function () {
                         var isItInsideInitial = turf.booleanPointInPolygon(cordsInitial, bufferedPolys[buffPolyCount], { ignoreBoundary: true });
                         //if peak is inside of the buffered polygon, add the corresponding peak value to an array
                         if (isItInsideInitial) {
-                            peakArrReg.push(feature.properties.peak_stage);
+                            if (feature.properties.peak_stage !== undefined) {
+                                peakArrReg.push(feature.properties.peak_stage);
+                            }
                         }
 
                     }
@@ -594,7 +601,9 @@ $(document).ready(function () {
                         var isItInsideInitial = turf.booleanPointInPolygon(cordsInitial, bufferedPolys[buffPolyCount], { ignoreBoundary: true });
                         //if peak is inside of the buffered polygon, add the corresponding peak value to an array
                         if (isItInsideInitial) {
-                            hwmArrReg.push(feature.properties.elev_ft);
+                            if (feature.properties.elev_ft !== undefined) {
+                                hwmArrReg.push(feature.properties.elev_ft);
+                            }
                         }
 
                     }
