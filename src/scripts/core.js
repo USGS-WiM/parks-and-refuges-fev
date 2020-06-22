@@ -2338,7 +2338,7 @@ var medPeak = getPeakThresholds(1, 0);
 //medPeak = 4;
 
 //Create legend symbols for each layer
-var PeakSummarySymbologyInterior = "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + smallPeak + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + smallPeak + " - " + medPeak + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + medPeak;
+var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + smallPeak + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + smallPeak + " - " + medPeak + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + medPeak + "</div>";
 var streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> <b>Real-time Stream Gage</b> </div>";
 var rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> <b>Real-time Rain Gage<b> </div>";
 var barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> <b>Barometric Pressure Sensor</b> </div>";

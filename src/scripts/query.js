@@ -15,21 +15,16 @@ var hwmStart = 0;
 var rdgStart = 0;
 var peakStart = 0;
 var noaaStart = 0;
-//var thirdVal;
-//var twoThirdVal;
-var thirdVal = 3;
-var twoThirdVal = 4;
+var thirdVal;
+var twoThirdVal;
+//var thirdVal = 3;
+//var twoThirdVal = 4;
 
-
-console.log("peakArr", peakArr);
 
 //return values of peak thresholds to use in core.js
 function getPeakThresholds(small, med) {
     if (small == 0) {
-        
             return thirdVal;
-
-        
     }
     if (med == 0) {
         return twoThirdVal;
@@ -352,8 +347,6 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
 
         pointToLayer: function (feature, latlng) {
             markerCoords.push(latlng);
-            //smallPeakVal.push(thirdVal);
-           // medPeakVal == twoThirdVal;
             var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
             //console.log("Ranges for peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
             //Create 3 categories for marker size          
