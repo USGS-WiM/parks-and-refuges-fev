@@ -11,7 +11,7 @@ var fwsInterest;
 var bufferPoly;
 var searchResults;
 var searchObject;
-var bbox;	
+var bbox;
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var identifiedMarks = [];
@@ -238,12 +238,6 @@ $.ajax({
 			//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
 			//noaaService = noaaTrack;
 			console.log("noaa layer added");
-			var noaaCheckBox = document.getElementById("noaaToggle");
-			noaaCheckBox.checked = true;
-			if (noaaStart == 0) {
-				$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
-				noaaStart = 1;
-			}
 		}
 	}
 });
@@ -693,6 +687,14 @@ $(document).ready(function () {
 	//display USGS rt gages by default on map load
 	// USGSrtGages.addTo(map);
 	noaaService.addTo(map);
+	if (map.hasLayer(noaaService)) {
+		var noaaCheckBox = document.getElementById("noaaToggle");
+		noaaCheckBox.checked = true;
+		if (noaaStart == 0) {
+			$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
+			noaaStart = 1;
+		}
+	}
 
 	//define layer 'overlays' (overlay is a leaflet term)
 	//define the real-time overlay and manually add the NWIS RT gages to it
@@ -904,7 +906,7 @@ $(document).ready(function () {
 	}
 	$('#geosearchNav').click(function () {
 		showGeosearchModal();
-		
+
 	});
 	function showPrintModal() {
 		$('#printModal').modal('show');
@@ -929,7 +931,7 @@ $(document).ready(function () {
 	});
 	var pdfMapUrl;
 	var legendUrl;
-	
+
 	$('#printNav').click(function () {
 		showPrintModal();
 		$("#reportFooter").hide();
@@ -1303,13 +1305,13 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
-		
+
 		// Get legend for print preview
 		html2canvas(document.getElementById('legendDiv'))
-		.then(function (canvas) {
-			legendPreview.append(canvas);
-			legendUrl = canvas.toDataURL('image/png');
-		});	
+			.then(function (canvas) {
+				legendPreview.append(canvas);
+				legendUrl = canvas.toDataURL('image/png');
+			});
 
 		setTimeout(() => {
 			$("#reportFooter").show();
@@ -1840,8 +1842,6 @@ $(document).ready(function () {
 
 			// cycling through each peak and seeing if it's inside the buffer
 			for (var i in USGSrtGages._layers) {
-				console.log("USGSrtGages", USGSrtGages._layers);
-				console.log("USGSrtGages._layers[i]._latlng.lng", USGSrtGages._layers[i]._latlng.lng);
 
 				// formatting point for turf
 				var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
@@ -1852,11 +1852,11 @@ $(document).ready(function () {
 				if (isItInside) {
 					identifiedUSGSrtGage.push(USGSrtGages._layers[i])
 				}
-				console.log("identifiedUSGSrtGage", identifiedUSGSrtGage);
-				if (identifiedUSGSrtGage.length > 0) {
-					var gageGraphTitle = document.getElementById('gageGraphs');
-					gageGraphTitle.innerHTML += "Stream Gage Hydrographs";
-				}
+			}
+			if (identifiedUSGSrtGage.length > 0) {
+				var gageGraphTitle = document.getElementById('gageGraphs');
+				gageGraphTitle.innerHTML += "Stream Gage Hydrographs";
+				console.log("how many gages?", identifiedUSGSrtGage.length);
 			}
 
 
@@ -2060,7 +2060,7 @@ $(document).ready(function () {
 	//Begin data prep for pdf print out
 
 	//Get peak summary data into table for pdf report
-	var peaksPdfData = [];	
+	var peaksPdfData = [];
 	function bodyData() {
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
@@ -2257,7 +2257,7 @@ $(document).ready(function () {
 					table: {
 						body: [
 							['', ''],
-							[{image: pdfMapUrl, width: 300, height: 200}, {image: legendUrl, width: 150, height: 200}]
+							[{ image: pdfMapUrl, width: 300, height: 200 }, { image: legendUrl, width: 150, height: 200 }]
 						]
 					},
 					layout: 'noBorders',
