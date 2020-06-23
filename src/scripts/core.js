@@ -1074,7 +1074,6 @@ $(document).ready(function () {
 				});
 				return summaryRows;
 			}
-			console.log(summaryRows)
 			// Build the table body for pdfMake of summary information - This is used for all tables
 			function buildTableBody(data, columns) {
 				var body = [];
@@ -1142,7 +1141,7 @@ $(document).ready(function () {
 			//// Get HWM Table information data to put into pdfMake /////
 			var hwmData = [];
 			var hwmHeaders = [];
-
+			// Get table values from hwm table
 			function getHwmsData() {
 				$('#hwmDataTableReg th').each(function(index, item) {
 					hwmHeaders[index] = $(item).html();
@@ -1156,34 +1155,10 @@ $(document).ready(function () {
 				});
 				if (allHWMs.length === 0) {
 					hwmData = {'No HWM data available from selection.': ''};
-				}
-			};
-			getHwmsData();
-			console.log(hwmData)
-
-			function hwmsData() {
-				if (allHWMs.length > 0) {
-					hwmData = allHWMs;
-				} else {
-					hwmData = {'No HWM data available from selection.': ''};
 				};
 				return hwmData;
-			}
-			function hwmTableBody(data, columns) {
-				var body = [];
-				body.push(columns);
-				data.forEach(function (row) {
-					var dataRow = [];
-					columns.forEach(function (column) {
-						dataRow.push(row[column].toString());
-					})
-					body.push(dataRow);
-				});
-				return body;
-			}
-			//hwmsData();
-			//console.log(allHWMs)
-			//console.log(hwmData)
+			};
+			console.log(hwmData)
 			// Build the table body for pdfMake of hwm table information
 			// Insert table body into pdfMake formatted table
 			function hwmsTable(data, columns) {
@@ -1191,17 +1166,14 @@ $(document).ready(function () {
 					table: {
 						headerRows: 1,
 						//widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
-						body: hwmTableBody(data, columns),
+						body: buildTableBody(data, columns),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
 					margin: [0, 0, 0, 15]
 				};
 			}
-
-
 			//// End of HWM Table information build ////
-
 
 			// Function to create pdfMake pdf of Regional Report
 			function printRegionalReport() {
@@ -1235,9 +1207,9 @@ $(document).ready(function () {
 						//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 						peaksTable(getPeaksData(), ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no','waterbody']),
 						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+						//hwmsTable(getHwmsData(), ['site_name', 'event', 'elev_ft', 'survey_date', 'bank', 'hwmQualityNam', 'hwmTypeName','verticalDatumName', 'verticalMethodName', 'horizontalMethodName', 'horizontalDatumName', 'hwm_locationdescription', 'hwm_environment', 'stillwater', 'uncertainty', 'hwm_uncertainty', 'hwm_label', 'flag_date', 'siteDescription', 'sitePermHousing', 'county', 'state', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
 						//hwmsTable(hwmsData(), ['Site Name', 'Event', 'Elevation', 'Survey Date', 'Bank', 'HWM Quality', 'HWM Type','Vertical Datum', 'Vertical Method', 'Horizontal Method', 'Horizontal Datum', 'HWM Location Description', 'HWM Environment', 'Stillwater', 'Uncertainty', 'HWM Uncertainty', 'HWM Label', 'Flag Date', 'Site Description', 'Permanent Housing Site', 'County', 'HWM State', 'Latitude', 'Longitude', 'Site Number', 'Waterbody']),
-						//hwmsTable(hwmsData()),
-						//hwmsTable(getHwmsData()),
+
 						// {
 						// 	table: {
 						// 		body: [
