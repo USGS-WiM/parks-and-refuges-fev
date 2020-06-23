@@ -11,6 +11,7 @@ var fwsInterest;
 var bufferPoly;
 var searchResults;
 var searchObject;
+var bbox;	
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var identifiedMarks = [];
@@ -629,7 +630,6 @@ $(document).ready(function () {
 	setSearchAPI("search");
 	setSearchAPI("search_filter");
 
-
 	//attach the listener for data disclaimer button after the popup is opened - needed b/c popup content not in DOM right away
 	map.on('popupopen', function () {
 		$('.data-disclaim').click(function (e) {
@@ -642,7 +642,7 @@ $(document).ready(function () {
 		overlayadd: function (e) {
 			if (e.name.indexOf('Stream Gage') !== -1) {
 				if (map.getZoom() < 9) USGSrtGages.clearLayers();
-				if (map.hasLayer(USGSrtGages) && map.getZoom() >= 9) {
+				if (map.hasLayer(USGSrtGages) && document.getElementById("streamGageToggle").checked == true && map.getZoom() >= 9) {
 					//USGSrtGages.clearLayers();
 					$('#nwisLoadingAlert').show();
 					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -659,7 +659,7 @@ $(document).ready(function () {
 		overlayadd: function (e) {
 			if (e.name.indexOf('Rain Gage') !== -1) {
 				if (map.getZoom() < 9) USGSRainGages.clearLayers();
-				if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9) {
+				if (map.hasLayer(USGSRainGages) && document.getElementById("rainGageToggle").checked == true && map.getZoom() >= 9) {
 					//USGSrtGages.clearLayers();
 					$('#nwisLoadingAlert').show();
 					var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -1697,7 +1697,10 @@ $(document).ready(function () {
 	//Need to figure out how to fix this, maybe just reintialize the map? we did have to fix 
 	//this in whispers too but can't remember what I did off hand
 	$("#printModal").on("hidden.bs.modal", function () {
-		// location.reload();
+
+		// leaving this in until we have 
+		//location.reload();
+
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
 		/* USGSrtGages.clearLayers();
 		USGSRainGages.clearLayers(); */
@@ -1781,7 +1784,6 @@ $(document).ready(function () {
 		queryNWISgraph();
 		queryNWISRaingraph();
 		//clickPeakLabels();
-
 	}
 	// setting checked values for Welcome Modal buffer radio buttons
 	document.getElementById('tenKm').checked = false;
@@ -2217,7 +2219,7 @@ $(document).ready(function () {
 				[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
 			);
 
-		}, 600);
+		}, 1001);
 		//$(inputModal).modal('hide');
 
 	}
@@ -2331,7 +2333,7 @@ $(document).ready(function () {
 		if (map.getZoom() >= 9) {
 			$('#rtScaleAlert').hide();
 		}
-		if (map.hasLayer(USGSrtGages) && map.getZoom() >= 9 && !foundPopup) {
+		if (map.hasLayer(USGSrtGages) && document.getElementById("streamGageToggle").checked == true && map.getZoom() >= 9 && !foundPopup) {
 			//USGSrtGages.clearLayers();
 			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -2341,7 +2343,7 @@ $(document).ready(function () {
 				USGSRainGages.bringToFront();
 			}
 		}
-		if (map.hasLayer(USGSRainGages) && map.getZoom() >= 9 && !foundPopup) {
+		if (map.hasLayer(USGSRainGages) && document.getElementById("rainGageToggle").checked == true && map.getZoom() >= 9 && !foundPopup) {
 			//USGSrtGages.clearLayers();
 			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -2703,14 +2705,16 @@ function clickPeakLabels() {
 	}
 }
 
+
 //Create legend symbols for each layer
-var PeakSummarySymbologyInterior = "<div> <img class='legendSwatch' src='images/peak.png'></img> <b>Peak Summary</b> </div>";
+//PeakSummarySymbologyInterior is found in displayPeaksGeoJSON()
 var streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> <b>Real-time Stream Gage</b> </div>";
 var rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> <b>Real-time Rain Gage<b> </div>";
 var barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> <b>Barometric Pressure Sensor</b> </div>";
 var stormTideSymbologyInterior = "<div> <img class='legendSwatch' src='images/stormtide.png'></img> <b>Storm Tide Sensor</b> </div>";
 var meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='images/met.png'></img> <b>Meteorlogical Sensor</b> </div>";
 var waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> <b>Wave Height Sensor</b> </div>";
+var rdgSymbologyInterior = "<div> <img class='legendSwatch' src='images/rdg.png'></img> <b>Rapid Deployment Gage</b> </div>";
 var highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> <b>High Water Mark</b> </div>";
 var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>Park Boundaries</b> </div>";
 var npsNetworksSymbologyInterior = "<div> <img class='squareDiv npsNetColor'></img> <b>NPS Networks</b> </div>";
@@ -2724,13 +2728,6 @@ var noaaCycloneSymbologyInterior = "<div> <img class='squareDiv parksColor'></im
 function clickPeaks() {
 	var peaksCheckBox = document.getElementById("peaksToggle");
 	if (peaksCheckBox.checked == true) {
-		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
-		//When they are turned off, they are given a value of 3
-		//Values of 0 or 3 indicate that symbol and name in legend is off 
-		if (peakStart == 0 || peakStart == 3) {
-			//Add symbol and layer name to legend
-			$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
-		}
 		//When checkbox is checked, add layer to map
 		displayPeaksGeoJSON("peak", "Peak Summary", fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
 	}
@@ -2738,7 +2735,7 @@ function clickPeaks() {
 	if (peaksCheckBox.checked == false) {
 		$('#PeakSummarySymbology').children().remove();
 		peak.clearLayers();
-		peakStart = 3;
+		peakStart = 0;
 	}
 }
 
@@ -2756,6 +2753,9 @@ function clickRainGage() {
 		//queryNWISRainGages(bbox);
 		//When checkbox is checked, add layer to map
 		USGSRainGages.addTo(map);
+		$('#nwisLoadingAlert').show();
+		var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+		queryNWISRainGages(bbox);
 	}
 	//Remove symbol and layer name from legend when box is unchecked
 	if (raingageCheckBox.checked == false) {
@@ -2776,6 +2776,9 @@ function clickStreamGage() {
 		//queryNWISrtGages(bbox);
 		//When checkbox is checked, add layer to map
 		USGSrtGages.addTo(map);
+		$('#nwisLoadingAlert').show();
+		var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+		queryNWISrtGages(bbox);
 		//Add symbol and layer name to legend
 		$('#streamGageSymbology').append(streamGageSymbologyInterior);
 	}
@@ -2893,6 +2896,28 @@ function clickHWM() {
 		hwm.clearLayers(map);
 		$('#highWaterSymbology').children().remove();
 		hwmStart = 3;
+	}
+}
+
+//Display rapid deployment gage layer and legend item when corresponding box is checked
+function clickRdg() {
+	var rdgCheckBox = document.getElementById("rdgToggle");
+	if (rdgCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
+		displaySensorGeoJSON("rdg", "Rapid Deployment Gage", fev.urls["rdg" + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window["rdg" + 'MarkerIcon']);
+		//Layers that appear on initial load are assigined a value of 0, and then a value of 1 when the map is first loaded
+		//When they are turned off, they are given a value of 3
+		//Values of 0 or 3 indicate that symbol and name in legend is off 
+		if (rdgStart == 0 || rdgStart == 3) {
+			//Add symbol and layer name to legend
+			$('#rdgSymbology').append(rdgSymbologyInterior);
+		}
+	}
+	//Remove symbol and layer name from legend when box is unchecked
+	if (rdgCheckBox.checked == false) {
+		rdg.clearLayers(map);
+		$('#rdgSymbology').children().remove();
+		rdgStart = 3;
 	}
 }
 
