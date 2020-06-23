@@ -146,7 +146,7 @@ body {
     background: #659cef;
     border-radius: 3px;
     /*transition: width 250ms ease-in-out;*/
-    transition: width 20s ease-in-out;
+    transition: width 30s ease-in-out;
 }
 
 #noaaToggle {
