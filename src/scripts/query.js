@@ -999,7 +999,7 @@ function queryNWISgraphRDG(e) {
 }
 
 //get data and generate graph of real-time gage water level time-series data
-function queryNWISgraph(e) {
+function displayRtGageReport(e) {
     var popupContent = '';
     //$.each(e.layer.data.parameters, function( index, parameter ) {
     //create table, converting timestamp to friendly format using moment.js library
@@ -1029,7 +1029,7 @@ function queryNWISgraph(e) {
     //rtgraphForReport = '<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://waterdata.usgs.gov/monitoring-location/02231175/#parameterCode=' + e.layer.data.siteCode + '"><b>Site ' + e.layer.data.siteCode + ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>';
     //var getGraphs = document.getElementById('rtgraphs');
     
-   $('#rtgraphs').append("<div>"+ "<label>" + "NWIS Site" + "</label>&nbsp" + "<b>" + e.layer.data.siteCode + "</b>" + "</br>" + e.layer.data.siteName + "</br>" + "<div id='graphContainerReport' style='width:100%; height:200px; display:none;'>" + "</div>" + "</div>");
+   $('#rtgraphs').append("<div style='text-align: left'>"+ "</br>" + "NWIS Site" + "&nbsp" + e.layer.data.siteCode + "</br>" + e.layer.data.siteName + "</br>" + "<div id='graphContainerReport' style='width:400px; height:250px; display:none;'>" + "</div>" + "</div>");
    console.log("appended? this is a test ")
 
 
@@ -1102,6 +1102,109 @@ function queryNWISgraph(e) {
                     type: 'line'
                 },
                 title: {
+                    text: "",
+                    align: 'left',
+                    style: {
+                        color: 'rgba(0,0,0,0.6)',
+                        fontSize: 'small',
+                        fontWeight: 'bold',
+                        fontFamily: 'Open Sans, sans-serif'
+                    }
+                    //text: null
+                },
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    type: "datetime",
+                    labels: {
+                        formatter: function () {
+                            return Highcharts.dateFormat('%d %b %y', this.value);
+                        },
+                        //rotation: -90,
+                        align: 'center'
+                    }
+                },
+                yAxis: {
+                    title: { text: 'Gage Height, feet' }
+                },
+                series: [{
+                    showInLegend: false,
+                    data: data.data[0].time_series_data,
+                    tooltip: {
+                        pointFormat: "Gage height: {point.y} feet"
+                    }
+                }]
+            });
+        }
+    });
+}
+
+//get data and generate graph of real-time gage water level time-series data
+function queryNWISgraph(e) {
+    var popupContent = '';
+    //$.each(e.layer.data.parameters, function( index, parameter ) {
+    //create table, converting timestamp to friendly format using moment.js library
+    //popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + moment(parameter.Time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>'
+    //});
+
+    var parameterCodeList = '00065,62619,62620,63160,72279';
+    //var parameterCodeList = '00065';
+
+    var timeQueryRange = '';
+    //if event has no end date
+    if (fev.vars.currentEventEndDate_str == '') {
+        //use moment.js lib to get current system date string, properly formatted, set currentEventEndDate var to current date
+        fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+    }
+    //if no start date and
+    if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
+        timeQueryRange = '&period=P7D'
+    } else {
+        timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
+    }
+
+    //popup markup with site name number and name - moved into chart title
+    //e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', {minWidth: 350}).openPopup();
+    e.layer.bindPopup('<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://waterdata.usgs.gov/monitoring-location/02231175/#parameterCode=' + e.layer.data.siteCode + '"><b>Site ' + e.layer.data.siteCode + ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', { minWidth: 350 }).openPopup();
+
+    //rtgraphForReport = '<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://waterdata.usgs.gov/monitoring-location/02231175/#parameterCode=' + e.layer.data.siteCode + '"><b>Site ' + e.layer.data.siteCode + ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>';
+    //var getGraphs = document.getElementById('rtgraphs');
+    
+   $('#rtgraphs').append("<div style='text-align: left'>"+ "</br>" + "NWIS Site" + "&nbsp" + e.layer.data.siteCode + "</br>" + e.layer.data.siteName + "</br>" + "<div id='graphContainerReport' style='width:400px; height:250px; display:none;'>" + "</div>" + "</div>");
+   console.log("appended? this is a test ")
+
+
+    $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e.layer.data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
+
+        //if (data.data[0].time_series_data.length <= 0) console.log("No NWIS graph data available for this time period");
+
+
+        if (data.data == undefined) {
+            console.log("No NWIS data available for this time period");
+            $('#graphLoadMessage').hide();
+            $('#noDataMessage').show();
+            //if no time series data, display data NA message
+            //if (data.data[0].time_series_data.length <= 0 ){}
+        }
+
+        else {
+            //if there is some data, show the div
+            $('#graphLoadMessage').hide();
+            $('.popup-title').hide();
+            $('#graphContainer').show();
+            $('#graphContainerReport').show();
+
+            //create chart
+            Highcharts.setOptions({ global: { useUTC: false } });
+            $('#graphContainer').highcharts({
+                chart: {
+                    type: 'line'
+                },
+                title: {
                     text: 'NWIS Site ' + e.layer.data.siteCode + '<br> ' + e.layer.data.siteName,
                     align: 'left',
                     style: {
@@ -1114,6 +1217,48 @@ function queryNWISgraph(e) {
                 },
                 exporting: {
                     filename: 'FEV_NWIS_Site' + e.layer.data.siteCode
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    type: "datetime",
+                    labels: {
+                        formatter: function () {
+                            return Highcharts.dateFormat('%d %b %y', this.value);
+                        },
+                        //rotation: -90,
+                        align: 'center'
+                    }
+                },
+                yAxis: {
+                    title: { text: 'Gage Height, feet' }
+                },
+                series: [{
+                    showInLegend: false,
+                    data: data.data[0].time_series_data,
+                    tooltip: {
+                        pointFormat: "Gage height: {point.y} feet"
+                    }
+                }]
+            });
+            $('#graphContainerReport').highcharts({
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: "",
+                    align: 'left',
+                    style: {
+                        color: 'rgba(0,0,0,0.6)',
+                        fontSize: 'small',
+                        fontWeight: 'bold',
+                        fontFamily: 'Open Sans, sans-serif'
+                    }
+                    //text: null
+                },
+                exporting: {
+                    enabled: false
                 },
                 credits: {
                     enabled: false

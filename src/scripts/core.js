@@ -1853,10 +1853,13 @@ $(document).ready(function () {
 					identifiedUSGSrtGage.push(USGSrtGages._layers[i])
 				}
 			}
-			if (identifiedUSGSrtGage.length > 0) {
+			if (identifiedUSGSrtGage.length == 1) {
 				var gageGraphTitle = document.getElementById('gageGraphs');
-				gageGraphTitle.innerHTML += "Stream Gage Hydrographs";
-				console.log("how many gages?", identifiedUSGSrtGage.length);
+				gageGraphTitle.innerHTML += "Real-time Stream Gage";
+			}
+			if (identifiedUSGSrtGage.length > 1) {
+				var gageGraphTitle = document.getElementById('gageGraphs');
+				gageGraphTitle.innerHTML += "Real-time Stream Gages";
 			}
 
 
