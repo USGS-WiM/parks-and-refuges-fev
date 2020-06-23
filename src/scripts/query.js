@@ -1029,7 +1029,7 @@ function queryNWISgraph(e) {
     rtgraphForReport = '<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://waterdata.usgs.gov/monitoring-location/02231175/#parameterCode=' + e.layer.data.siteCode + '"><b>Site ' + e.layer.data.siteCode + ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>';
     //var getGraphs = document.getElementById('rtgraphs');
     
-   $('#rtgraphs').append("<div>"+ "<label class='popup-title'>" + "NWIS Site"  + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label>' + "</div>");
+   $('#rtgraphs').append("<div>"+ "<label>" + "NWIS Site" + "</label>&nbsp" + e.layer.data.siteCode + "</div>");
    console.log("appended? this is a test ")
 
 
