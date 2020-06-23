@@ -1026,10 +1026,10 @@ function queryNWISgraph(e) {
     //e.layer.bindPopup('<label class="popup-title">Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a target="_blank" href="https://nwis.waterdata.usgs.gov/nwis/uv?site_no=' + e.layer.data.siteCode + '">NWIS data page for site ' + e.layer.data.siteCode + ' <i class="fa fa-external-link" aria-hidden="true"></i></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', {minWidth: 350}).openPopup();
     e.layer.bindPopup('<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://waterdata.usgs.gov/monitoring-location/02231175/#parameterCode=' + e.layer.data.siteCode + '"><b>Site ' + e.layer.data.siteCode + ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>', { minWidth: 350 }).openPopup();
 
-    rtgraphForReport = '<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://waterdata.usgs.gov/monitoring-location/02231175/#parameterCode=' + e.layer.data.siteCode + '"><b>Site ' + e.layer.data.siteCode + ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>';
+    //rtgraphForReport = '<label class="popup-title">NWIS Site ' + e.layer.data.siteCode + '</br>' + e.layer.data.siteName + '</span></label></br><p id="graphLoadMessage"><span><i class="fa fa-lg fa-cog fa-spin fa-fw"></i> NWIS data graph loading...</span></p><div id="graphContainer" style="width:100%; height:200px;display:none;"></div> <a class="nwis-link" target="_blank" href="https://waterdata.usgs.gov/monitoring-location/02231175/#parameterCode=' + e.layer.data.siteCode + '"><b>Site ' + e.layer.data.siteCode + ' on NWISWeb <i class="fa fa-external-link" aria-hidden="true"></i></b></a><div id="noDataMessage" style="width:100%;display:none;"><b><span>NWIS water level data not available to graph</span></b></div>';
     //var getGraphs = document.getElementById('rtgraphs');
     
-   $('#rtgraphs').append("<div>"+ "<label>" + "NWIS Site" + "</label>&nbsp" + e.layer.data.siteCode + "</div>");
+   $('#rtgraphs').append("<div>"+ "<label>" + "NWIS Site" + "</label>&nbsp" + "<b>" + e.layer.data.siteCode + "</b>" + "</br>" + e.layer.data.siteName + "</br>" + "<div id='graphContainerReport' style='width:100%; height:200px; display:none;'>" + "</div>" + "</div>");
    console.log("appended? this is a test ")
 
 
@@ -1051,10 +1051,53 @@ function queryNWISgraph(e) {
             $('#graphLoadMessage').hide();
             $('.popup-title').hide();
             $('#graphContainer').show();
+            $('#graphContainerReport').show();
 
             //create chart
             Highcharts.setOptions({ global: { useUTC: false } });
             $('#graphContainer').highcharts({
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'NWIS Site ' + e.layer.data.siteCode + '<br> ' + e.layer.data.siteName,
+                    align: 'left',
+                    style: {
+                        color: 'rgba(0,0,0,0.6)',
+                        fontSize: 'small',
+                        fontWeight: 'bold',
+                        fontFamily: 'Open Sans, sans-serif'
+                    }
+                    //text: null
+                },
+                exporting: {
+                    filename: 'FEV_NWIS_Site' + e.layer.data.siteCode
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    type: "datetime",
+                    labels: {
+                        formatter: function () {
+                            return Highcharts.dateFormat('%d %b %y', this.value);
+                        },
+                        //rotation: -90,
+                        align: 'center'
+                    }
+                },
+                yAxis: {
+                    title: { text: 'Gage Height, feet' }
+                },
+                series: [{
+                    showInLegend: false,
+                    data: data.data[0].time_series_data,
+                    tooltip: {
+                        pointFormat: "Gage height: {point.y} feet"
+                    }
+                }]
+            });
+            $('#graphContainerReport').highcharts({
                 chart: {
                     type: 'line'
                 },
