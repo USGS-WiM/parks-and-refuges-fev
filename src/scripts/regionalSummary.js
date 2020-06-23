@@ -351,13 +351,14 @@ $(document).ready(function () {
 
                             eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
                             eventURL = eventURL + selectedEvents[e] + '.json';
-                            parksInEvent = [];
                             var queryString = "?Event=" + selectedEvents[e] + "&States=&County=&StartDate=undefined&EndDate=undefined";
                             var sensorQueryString = "?Event=" + selectedEvents[e] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
                             getEventName(function (output) {
                                 eventName = output.event_name;
+                                getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
+                                getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
                             });
-
+                            
                             // function for getting the event data
                             function getEventName(handleData) {
                                 var data;
@@ -374,10 +375,9 @@ $(document).ready(function () {
                                 });
                             }
                             // PEAKS
-                            getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
-
+                            
                             // HWMS
-                            getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
+                            
 
                             // BARO
                             //getBaros(fev.urls.baroGeoJSONViewURL + sensorQueryString, regionalbaroMarkerIcon);
