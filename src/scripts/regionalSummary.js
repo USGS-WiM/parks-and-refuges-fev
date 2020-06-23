@@ -8,6 +8,8 @@ var selectedLandType;
 var regionPoly = [];
 var regionBoundaries;
 var flattenedRegionalPoly;
+var simplifiedRegionalPoly;
+var simpPoly = [];
 var regionLayerGroup = L.layerGroup();
 var where = "";
 var eventName;
@@ -203,6 +205,7 @@ $(document).ready(function () {
                     onEachFeature: function (feature, latlng) {
                         regionPoly = feature.geometry;
                         flattenedRegionalPoly = turf.flatten(regionPoly);
+                        simplifiedRegionalPoly = turf.simplify(regionPoly);
                     }
                 }).addTo(regionalMap);
             regionLayerGroup.addLayer(regionBoundaries);
@@ -215,6 +218,7 @@ $(document).ready(function () {
                 onEachFeature: function (feature, latlng) {
                     regionPoly = feature.geometry;
                     flattenedRegionalPoly = turf.flatten(regionPoly);
+                    simplifiedRegionalPoly = turf.simplify(regionPoly);
                 }
             }).addTo(regionalMap);
             regionLayerGroup.addLayer(regionBoundaries);
@@ -227,13 +231,19 @@ $(document).ready(function () {
                 onEachFeature: function (feature, latlng) {
                     regionPoly = feature.geometry;
                     flattenedRegionalPoly = turf.flatten(regionPoly);
+                    simplifiedRegionalPoly = turf.simplify(regionPoly);
                 }
             }).addTo(regionalMap);
             regionLayerGroup.addLayer(regionBoundaries);
         }
         // TODO: explore options to avoid this timeout. dealing with motely crew of services that is making it difficult atm
         setTimeout(() => {
-
+            simplifiedRegionalPoly.coordinates.forEach(function(coords){
+                var feat = {'type':'Polygon','coordinates':coords};
+                simpPoly.push(feat);
+                }
+             );
+            
             // Identify parks/refuges in event in regions
             var allSites;
             if (selectedLandType[0] === "parks") {
@@ -256,11 +266,11 @@ $(document).ready(function () {
                 document.getElementById("demo").innerHTML += index + ":" + item + "<br>";
             }
 
-
             // lopping through each poly of the regional poly since esri-leaflet can't handle multipolygons at the version we're at
             if (flattenedRegionalPoly !== undefined) {
-                for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {
-
+                /* var box = turf.bbox(flattenedRegionalPoly);
+                var boxPoly = turf.bboxPolygon(box); */
+                for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {  
                     allSites.query()
                         //.within(flattenedRegionalPoly.features[p])
                         //.bboxIntersects(flattenedRegionalPoly.features[p])
@@ -275,27 +285,33 @@ $(document).ready(function () {
                             }
 
                         });
-                    allSites.query()
-                        .within(flattenedRegionalPoly.features[p])
-                        //.bboxIntersects(flattenedRegionalPoly.features[p])
-                        //.intersects(flattenedRegionalPoly.features[p])
-                        .run(function (error, featureCollection, response) {
-                            if (featureCollection !== null) {
-                                if (featureCollection.features.length !== 0) {
-                                    regionParksFC.push(featureCollection);
-                                    /* L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
-                                    getbuffers(); */
-                                }
-                            }
-                        });
                 }
             }
+            /* setTimeout(() => {
+                if (flattenedRegionalPoly !== undefined) {
+                    for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {
+    
+                        allSites.query()
+                            .within(flattenedRegionalPoly.features[p])
+                            //.bboxIntersects(flattenedRegionalPoly.features[p])
+                            //.intersects(flattenedRegionalPoly.features[p])
+                            .run(function (error, featureCollection, response) {
+                                if (featureCollection !== null) {
+                                    if (featureCollection.features.length !== 0) {
+                                        regionParksFC.push(featureCollection);
+                                    }
+                                }
+                            });
+                    }
+                }
+            }, 1000); */
+            
 
             setTimeout(() => {
                 L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
                 console.log(regionParksFC);
                 getbuffers();
-            }, 10000);
+            }, 15000);
 
             //getbuffers();
             // getting the park buffers base on the buffer size selection value
@@ -319,7 +335,7 @@ $(document).ready(function () {
                     }
                     L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
                     getEventSpecificData();
-                }, 1400);
+                }, 3000);
 
             }
 
@@ -381,14 +397,14 @@ $(document).ready(function () {
                             setTimeout(() => {
                                 //regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                                 processData();
-                            }, 1501);
+                            }, 5000);
 
 
                         }
                     }
                 }
             }
-        }, 1500);
+        }, 4000);
 
 
         // creating markers for peaks
