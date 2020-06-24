@@ -316,7 +316,6 @@ $(document).ready(function () {
             //getbuffers();
             // getting the park buffers base on the buffer size selection value
             function getbuffers() {
-                document.querySelector('.progress-bar-fill').style.transition = "width 1s ease-in-out";
                 setTimeout(() => {
                     if (regionParksFC !== undefined) {
                         var polygons = [];
@@ -1221,9 +1220,7 @@ $(document).ready(function () {
         document.getElementById('peakDataTableReg').innerHTML = '';
         document.getElementById('hwmDataTableReg').innerHTML = '';
 
-
         document.querySelector('.progress-bar-fill').style.width = "0%"
-        document.querySelector('.progress-bar-fill').style.transition = "width 30s ease-in-out";
 
         $('.clear').val('').trigger('change');
 
