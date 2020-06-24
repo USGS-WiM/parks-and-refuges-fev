@@ -935,6 +935,7 @@ $(document).ready(function () {
 	$('#printNav').click(function () {
 		showPrintModal();
 		$("#reportFooter").hide();
+		displayRtGageReport(identifiedUSGSrtGage);
 
 		var mapPreview = document.getElementById('reviewMap');
 		var legendPreview = document.getElementById('legendImage');
@@ -1853,6 +1854,7 @@ $(document).ready(function () {
 					identifiedUSGSrtGage.push(USGSrtGages._layers[i])
 				}
 			}
+			console.log("There are ", identifiedUSGSrtGage.length, " stream gages in the buffer");
 			if (identifiedUSGSrtGage.length == 1) {
 				var gageGraphTitle = document.getElementById('gageGraphs');
 				gageGraphTitle.innerHTML += "Real-time Stream Gage";
