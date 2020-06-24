@@ -966,6 +966,8 @@ $(document).ready(function () {
 
         // MAKE bulk function to build table once all data has loaded
         function processData() {
+            $('#saveRegionalPeakCSV').removeAttr('disabled');
+            $('#saveRegionalHWMCSV').removeAttr('disabled');
             var formattedPeaks = [];
             var formattedHWMS = [];
             var formattedSensors = [];
@@ -1187,7 +1189,8 @@ $(document).ready(function () {
     });
 
     $('#btnClearRegFilters').click(function () {
-        
+        $('#saveRegionalPeakCSV').attr('disabled', true);
+        $('#saveRegionalHWMCSV').attr('disabled', true)
         // removing all layers from the map regardless of type
         regionalMap.eachLayer(function (layer) {
             regionalMap.removeLayer(layer);
