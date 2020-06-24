@@ -1122,6 +1122,7 @@ $(document).ready(function () {
 				}
 				return peakData;
 			};
+			//console.log(peakData)
 			// Build the table body for pdfMake of peak table information
 			// Insert table body into pdfMake formatted table
 			function peaksTable(data, columns) {
@@ -1139,7 +1140,8 @@ $(document).ready(function () {
 			//// End of Peak Table information build ////
 
 			//// Get HWM Table information data to put into pdfMake /////
-			var hwmData = [];
+			var hwmData;
+			hwmData = allHWMs;
 			var hwmHeaders = [];
 			// Get table values from hwm table
 			function getHwmsData() {
@@ -1153,22 +1155,151 @@ $(document).ready(function () {
 					});
 					hwmData.push(arrayItem);
 				});
-				if (allHWMs.length === 0) {
-					hwmData = {'No HWM data available from selection.': ''};
-				};
+				// if (allHWMs.length === 0) {
+				// 	hwmData = {'No HWM data available from selection.': ''};
+				// };
 				return hwmData;
 			};
+			console.log(allHWMs)
 			console.log(hwmData)
+
+			for (var obj of hwmData) {
+				if (typeof obj !== 'object') continue;
+				for (var k in obj) {
+					if (!obj.hasOwnProperty(k)) continue;
+					var v = obj[k];
+					if (v === null || v === undefined) {
+						obj[k] = "n/a";
+					}
+				}
+			}
+			console.log(hwmData)
+
+			// var test = allHWMs.map(function(obj) {
+			// 	for (var key in obj) {
+			// 		if (allHWMs[key] === null || allHWMs[key] === undefined) {
+			// 			obj[key] = "n/a";
+			// 		}
+			// 	}
+			// 	return obj;
+			// })
+			// console.log(test)
+
+			// function checkProp() {
+			// 	for (var key in hwmData) {
+			// 		if (hwmData[key] == null || hwmData[key] == undefined) {
+			// 			hwmData[key] = "";
+			// 		}
+			// 	}
+			// }
+			// checkProp();
+			// console.log(hwmData)
+			
+
+			function buildHwmsTable() {
+				var body = [];
+				for (var i in hwmData) {
+					// var county = "";
+					// var event = "";
+					// var locationDescription = "";
+					// var hwmUncertainty = "";
+					// var uncertainty = "";
+					// var verticalDN = "";
+					// var verticalMN = "";
+					
+
+					// if (allHWMs[i].county == undefined) {
+					// 	county = "n/a";
+					// } else {
+					// 	county = allHWMs[i].county;
+					// }
+					// if (allHWMs[i].event == undefined) {
+					// 	event = "n/a";
+					// } else {
+					// 	event = allHWMs[i].event;
+					// }
+					// if (allHWMs[i].hwm_locationdescription == undefined) {
+					// 	locationDescription = "n/a";
+					// } else {
+					// 	locationDescription = allHWMs[i].hwm_uncertainty;
+					// }
+					// if (allHWMs[i].hwm_uncertainty == undefined) {
+					// 	hwmUncertainty = "n/a";
+					// } else {
+					// 	hwmUncertainty = allHWMs[i].hwm_uncertainty;
+					// }
+					// if (allHWMs[i].uncertainty == undefined) {
+					// 	uncertainty = "n/a";
+					// } else {
+					// 	uncertainty = allHWMs[i].uncertainty;
+					// }
+
+					body.push([
+						{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
+						{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
+						{ text: 'Elevation(ft)', style: 'tableHeader' }, hwmData[i].elev_ft
+					],
+					[
+						{},
+						{ text: 'Event', style: 'tableHeader' }, hwmData[i].event,
+						{ text: 'Site Name', style: 'tableHeader' }, hwmData[i].site_name
+					],
+					[
+						{},
+						{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i].verticalDatumName + ", " + hwmData[i].verticalMethodName,
+						{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i].horizontalDatumName + ", " + hwmData[i].horizontalMethodName
+					],
+					[
+						{},
+						{ text: 'Type', style: 'tableHeader' }, hwmData[i].hwmTypeName,
+						{ text: 'Quality', style: 'tableHeader' }, hwmData[i].hwmQualityName
+					],
+					[
+						{},
+						{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i].waterbody,
+						{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i].sitePermHousing
+					],
+					[
+						{},
+						{ text: 'County', style: 'tableHeader' }, hwmData[i].county,
+						{ text: 'State', style: 'tableHeader' }, hwmData[i].state
+					],
+					[
+						{},
+						{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i].latitude_dd + ", " + hwmData[i].longitude_dd,
+						{ text: 'Site Description', style: 'tableHeader' }, hwmData[i].hwm_locationdescription
+					],
+					[
+						{},
+						{ text: 'Location Description', style: 'tableHeader' }, hwmData[i].siteDescription,
+						{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i].survey_date
+					],
+					[
+						{},
+						{ text: 'Bank', style: 'tableHeader' }, hwmData[i].bank,
+						{ text: 'Environment', style: 'tableHeader' }, hwmData[i].hwm_environment
+					],
+					[
+						{},
+						{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i].flag_date,
+						{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i].stillwater
+					],
+					[
+						{},
+						{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i].uncertainty,
+						{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
+					]);
+				}
+				return body;
+			}
 			// Build the table body for pdfMake of hwm table information
 			// Insert table body into pdfMake formatted table
-			function hwmsTable(data, columns) {
+			function hwmsTable() {
 				return {
 					table: {
-						headerRows: 1,
-						//widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
-						body: buildTableBody(data, columns),
+						widths: ['auto', 'auto', '*', 'auto', '*'],
+						body: buildHwmsTable(),
 					},
-					layout: 'lightHorizontalLines',
 					style: 'smaller',
 					margin: [0, 0, 0, 15]
 				};
@@ -1207,7 +1338,9 @@ $(document).ready(function () {
 						//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 						peaksTable(getPeaksData(), ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no','waterbody']),
 						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+						hwmsTable()
 						//hwmsTable(getHwmsData(), ['site_name', 'event', 'elev_ft', 'survey_date', 'bank', 'hwmQualityNam', 'hwmTypeName','verticalDatumName', 'verticalMethodName', 'horizontalMethodName', 'horizontalDatumName', 'hwm_locationdescription', 'hwm_environment', 'stillwater', 'uncertainty', 'hwm_uncertainty', 'hwm_label', 'flag_date', 'siteDescription', 'sitePermHousing', 'county', 'state', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
+						//hwmsTable(hwmsData(), ['site_name', 'event', 'elev_ft', 'survey_date', 'bank', 'hwmQualityNam', 'hwmTypeName','verticalDatumName', 'verticalMethodName', 'horizontalMethodName', 'horizontalDatumName', 'hwm_locationdescription', 'hwm_environment', 'stillwater', 'uncertainty', 'hwm_uncertainty', 'hwm_label', 'flag_date', 'siteDescription', 'sitePermHousing', 'county', 'state', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
 						//hwmsTable(hwmsData(), ['Site Name', 'Event', 'Elevation', 'Survey Date', 'Bank', 'HWM Quality', 'HWM Type','Vertical Datum', 'Vertical Method', 'Horizontal Method', 'Horizontal Datum', 'HWM Location Description', 'HWM Environment', 'Stillwater', 'Uncertainty', 'HWM Uncertainty', 'HWM Label', 'Flag Date', 'Site Description', 'Permanent Housing Site', 'County', 'HWM State', 'Latitude', 'Longitude', 'Site Number', 'Waterbody']),
 
 						// {
@@ -2435,6 +2568,7 @@ $(document).ready(function () {
 	function buildHwmTableBody() {
 		var body = [];
 		for (var i in identifiedMarks) {
+			console.log(identifiedMarks)
 			var hwmUncertainty = "";
 			var uncertainty = "";
 			if (identifiedMarks[i].feature.properties.hwm_uncertainty == null) {
