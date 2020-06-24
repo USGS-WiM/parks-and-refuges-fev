@@ -934,6 +934,8 @@ $(document).ready(function () {
 	var legendUrl;
 
 	$('#printNav').click(function () {
+		$('#rtgraphs').children().remove();
+		identifiedUSGSrtGage = [];
 		showPrintModal();
 		$("#reportFooter").hide();
 		
@@ -986,9 +988,6 @@ $(document).ready(function () {
 			});
 		}
 		peaksCSVData = peakTableData;
-
-		console.log(peakTableData)
-
 
 		// Builds the HTML Table for peaks
 		function buildHtmlTable() {
@@ -1075,8 +1074,6 @@ $(document).ready(function () {
 		}
 		var chunks = [];
 		hwmCSVData = hwmTableData;
-
-		console.log(hwmTableData)
 
 		//console.log("hwmTableData", hwmCSVData);
 		//console.log("length of hwm data", hwmCSVData.length);
@@ -1869,8 +1866,6 @@ $(document).ready(function () {
 			var streamgageCheckBox = document.getElementById("streamGageToggle");
 			var raingageCheckBox = document.getElementById("rainGageToggle");
 			if (raingageCheckBox.checked == true) {
-				//Add symbol and layer name to legend
-				$('#rainGageSymbology').append(rainGageSymbologyInterior);
 				//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 				//queryNWISRainGages(bbox);
 				//When checkbox is checked, add layer to map
@@ -1887,8 +1882,6 @@ $(document).ready(function () {
 				$('#nwisLoadingAlert').show();
 				var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 				queryNWISrtGages(bbox);
-				//Add symbol and layer name to legend
-				$('#streamGageSymbology').append(streamGageSymbologyInterior);
 			}
 
 
