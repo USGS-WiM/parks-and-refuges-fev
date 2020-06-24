@@ -16,7 +16,6 @@ var rdgStart = 0;
 var peakStart = 0;
 var noaaStart = 0;
 
-var rtgraphForReport;
 
 //ajax retrieval function
 function displaySensorGeoJSON(type, name, url, markerIcon) {
@@ -1005,7 +1004,17 @@ function displayRtGageReport(e) {
     //create table, converting timestamp to friendly format using moment.js library
     //popupContent += '<tr><td>' + index + '</td><td>' + parameter.Value + '</td><td>' + moment(parameter.Time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>'
     //});
-    console.log("Entering displayRtGagesReport");
+    var gageGraphTitle = document.getElementById('gageGraphs');
+    if (e.length == 1) {
+        gageGraphTitle.innerHTML = "Real-time Stream Gage";
+    }
+    if (e.length > 1) {
+        gageGraphTitle.innerHTML = "Real-time Stream Gages";
+    }
+    if (e.length == 0) {
+        gageGraphTitle.innerHTML = "";
+    }
+
     for (i in e) {
 
         var parameterCodeList = '00065,62619,62620,63160,72279';

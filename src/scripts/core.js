@@ -16,6 +16,7 @@ var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var identifiedMarks = [];
 var identifiedUSGSrtGage = [];
+var buffer;
 var fev = fev || {
 	data: {
 		events: [],
@@ -935,6 +936,22 @@ $(document).ready(function () {
 	$('#printNav').click(function () {
 		showPrintModal();
 		$("#reportFooter").hide();
+		
+
+		// cycling through each peak and seeing if it's inside the buffer
+		for (var i in USGSrtGages._layers) {
+
+			// formatting point for turf
+			var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
+
+			var isItInside = turf.booleanPointInPolygon(cords, buffer);
+
+			// if true add it to an array containing all the 'true' peaks
+			if (isItInside) {
+				identifiedUSGSrtGage.push(USGSrtGages._layers[i])
+			}
+		}
+
 		displayRtGageReport(identifiedUSGSrtGage);
 
 		var mapPreview = document.getElementById('reviewMap');
@@ -1670,7 +1687,6 @@ $(document).ready(function () {
 		// UNIT_NAME holds gnis major value of park name (I think)
 		var where = "1=1";
 		var polys = [];
-		var buffer;
 		var regionName;
 
 		where = "UNIT_NAME=" + name;
@@ -1841,30 +1857,6 @@ $(document).ready(function () {
 				}
 			}
 
-			// cycling through each peak and seeing if it's inside the buffer
-			for (var i in USGSrtGages._layers) {
-
-				// formatting point for turf
-				var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
-
-				var isItInside = turf.booleanPointInPolygon(cords, buffer);
-
-				// if true add it to an array containing all the 'true' peaks
-				if (isItInside) {
-					identifiedUSGSrtGage.push(USGSrtGages._layers[i])
-				}
-			}
-			console.log("There are ", identifiedUSGSrtGage.length, " stream gages in the buffer");
-			if (identifiedUSGSrtGage.length == 1) {
-				var gageGraphTitle = document.getElementById('gageGraphs');
-				gageGraphTitle.innerHTML += "Real-time Stream Gage";
-			}
-			if (identifiedUSGSrtGage.length > 1) {
-				var gageGraphTitle = document.getElementById('gageGraphs');
-				gageGraphTitle.innerHTML += "Real-time Stream Gages";
-			}
-
-
 			//location popup
 			map.openPopup(
 				"<b>" + searchResults.result.properties.Name + "</b><br/>" +
@@ -1873,6 +1865,32 @@ $(document).ready(function () {
 				"Region: " + regionName + "</b><br/>",
 				[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
 			);
+
+			var streamgageCheckBox = document.getElementById("streamGageToggle");
+			var raingageCheckBox = document.getElementById("rainGageToggle");
+			if (raingageCheckBox.checked == true) {
+				//Add symbol and layer name to legend
+				$('#rainGageSymbology').append(rainGageSymbologyInterior);
+				//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+				//queryNWISRainGages(bbox);
+				//When checkbox is checked, add layer to map
+				USGSRainGages.addTo(map);
+				$('#nwisLoadingAlert').show();
+				var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+				queryNWISRainGages(bbox);
+			}
+			if (streamgageCheckBox.checked == true) {
+				//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+				//queryNWISrtGages(bbox);
+				//When checkbox is checked, add layer to map
+				USGSrtGages.addTo(map);
+				$('#nwisLoadingAlert').show();
+				var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+				queryNWISrtGages(bbox);
+				//Add symbol and layer name to legend
+				$('#streamGageSymbology').append(streamGageSymbologyInterior);
+			}
+
 
 		}, 1001);
 		//$(inputModal).modal('hide');
