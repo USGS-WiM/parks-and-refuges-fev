@@ -351,13 +351,14 @@ $(document).ready(function () {
 
                             eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
                             eventURL = eventURL + selectedEvents[e] + '.json';
-                            parksInEvent = [];
                             var queryString = "?Event=" + selectedEvents[e] + "&States=&County=&StartDate=undefined&EndDate=undefined";
                             var sensorQueryString = "?Event=" + selectedEvents[e] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
                             getEventName(function (output) {
                                 eventName = output.event_name;
+                                getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
+                                getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
                             });
-
+                            
                             // function for getting the event data
                             function getEventName(handleData) {
                                 var data;
@@ -374,10 +375,9 @@ $(document).ready(function () {
                                 });
                             }
                             // PEAKS
-                            getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
-
+                            
                             // HWMS
-                            getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
+                            
 
                             // BARO
                             //getBaros(fev.urls.baroGeoJSONViewURL + sensorQueryString, regionalbaroMarkerIcon);
@@ -1187,7 +1187,7 @@ $(document).ready(function () {
     });
 
     $('#btnClearRegFilters').click(function () {
-
+        
         // removing all layers from the map regardless of type
         regionalMap.eachLayer(function (layer) {
             regionalMap.removeLayer(layer);
@@ -1197,6 +1197,10 @@ $(document).ready(function () {
         peaksWithinBuffer = L.featureGroup();
         peaksWithinBuffer = L.featureGroup();
         hwmsWithinBuffer = L.featureGroup();
+        regionalPeak = L.layerGroup();
+        regionalHWM = L.layerGroup();
+        regionalPeakMarkerIcon = L.icon({ className: 'regionalpeakMarker', iconUrl: 'images/peak.png', iconAnchor: [12, 16], popupAnchor: [0, 2] });
+        regionalhwmIcon = L.icon({ className: 'regionalhwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 
         // resetting the arrays
         bufferedPolys = [];
@@ -1204,8 +1208,12 @@ $(document).ready(function () {
         tableData = [];
         hwmTableData = [];
         sensorTableData = [];
+        hwmRegionalCSVData = [];
+        peaksRegionalCSVData = [];
         allHWMs = [];
         allPeaks = [];
+
+        alreadyRan = false;
 
         // clearing tables
         document.getElementById('summaryDataTable').innerHTML = '';
