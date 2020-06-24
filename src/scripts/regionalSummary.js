@@ -316,6 +316,7 @@ $(document).ready(function () {
             //getbuffers();
             // getting the park buffers base on the buffer size selection value
             function getbuffers() {
+                document.querySelector('.progress-bar-fill').style.transition = "width 1s ease-in-out";
                 setTimeout(() => {
                     if (regionParksFC !== undefined) {
                         var polygons = [];
@@ -1187,7 +1188,7 @@ $(document).ready(function () {
     });
 
     $('#btnClearRegFilters').click(function () {
-
+        
         // removing all layers from the map regardless of type
         regionalMap.eachLayer(function (layer) {
             regionalMap.removeLayer(layer);
@@ -1197,6 +1198,10 @@ $(document).ready(function () {
         peaksWithinBuffer = L.featureGroup();
         peaksWithinBuffer = L.featureGroup();
         hwmsWithinBuffer = L.featureGroup();
+        regionalPeak = L.layerGroup();
+        regionalHWM = L.layerGroup();
+        regionalPeakMarkerIcon = L.icon({ className: 'regionalpeakMarker', iconUrl: 'images/peak.png', iconAnchor: [12, 16], popupAnchor: [0, 2] });
+        regionalhwmIcon = L.icon({ className: 'regionalhwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 
         // resetting the arrays
         bufferedPolys = [];
@@ -1204,15 +1209,21 @@ $(document).ready(function () {
         tableData = [];
         hwmTableData = [];
         sensorTableData = [];
+        hwmRegionalCSVData = [];
+        peaksRegionalCSVData = [];
         allHWMs = [];
         allPeaks = [];
+
+        alreadyRan = false;
 
         // clearing tables
         document.getElementById('summaryDataTable').innerHTML = '';
         document.getElementById('peakDataTableReg').innerHTML = '';
         document.getElementById('hwmDataTableReg').innerHTML = '';
 
+
         document.querySelector('.progress-bar-fill').style.width = "0%"
+        document.querySelector('.progress-bar-fill').style.transition = "width 30s ease-in-out";
 
         $('.clear').val('').trigger('change');
 
