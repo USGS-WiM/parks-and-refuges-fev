@@ -1142,98 +1142,21 @@ $(document).ready(function () {
 			//// Get HWM Table information data to put into pdfMake /////
 			var hwmData;
 			hwmData = allHWMs;
-			var hwmHeaders = [];
-			// Get table values from hwm table
-			function getHwmsData() {
-				$('#hwmDataTableReg th').each(function(index, item) {
-					hwmHeaders[index] = $(item).html();
-				});
-				$('#hwmDataTableReg tr').has('td').each(function() {
-					var arrayItem = {};
-					$('td', $(this)).each(function(index, item) {
-						arrayItem[hwmHeaders[index]] = $(item).html();
-					});
-					hwmData.push(arrayItem);
-				});
-				// if (allHWMs.length === 0) {
-				// 	hwmData = {'No HWM data available from selection.': ''};
-				// };
-				return hwmData;
-			};
-			console.log(allHWMs)
-			console.log(hwmData)
-
+			// Data has some undefined and null values, this replaces those values with empty string/no value
 			for (var obj of hwmData) {
 				if (typeof obj !== 'object') continue;
 				for (var k in obj) {
 					if (!obj.hasOwnProperty(k)) continue;
 					var v = obj[k];
 					if (v === null || v === undefined) {
-						obj[k] = "n/a";
+						obj[k] = "";
 					}
 				}
 			}
-			console.log(hwmData)
-
-			// var test = allHWMs.map(function(obj) {
-			// 	for (var key in obj) {
-			// 		if (allHWMs[key] === null || allHWMs[key] === undefined) {
-			// 			obj[key] = "n/a";
-			// 		}
-			// 	}
-			// 	return obj;
-			// })
-			// console.log(test)
-
-			// function checkProp() {
-			// 	for (var key in hwmData) {
-			// 		if (hwmData[key] == null || hwmData[key] == undefined) {
-			// 			hwmData[key] = "";
-			// 		}
-			// 	}
-			// }
-			// checkProp();
-			// console.log(hwmData)
-			
-
+			// Build the table body for pdfMake of hwm table information
 			function buildHwmsTable() {
 				var body = [];
 				for (var i in hwmData) {
-					// var county = "";
-					// var event = "";
-					// var locationDescription = "";
-					// var hwmUncertainty = "";
-					// var uncertainty = "";
-					// var verticalDN = "";
-					// var verticalMN = "";
-					
-
-					// if (allHWMs[i].county == undefined) {
-					// 	county = "n/a";
-					// } else {
-					// 	county = allHWMs[i].county;
-					// }
-					// if (allHWMs[i].event == undefined) {
-					// 	event = "n/a";
-					// } else {
-					// 	event = allHWMs[i].event;
-					// }
-					// if (allHWMs[i].hwm_locationdescription == undefined) {
-					// 	locationDescription = "n/a";
-					// } else {
-					// 	locationDescription = allHWMs[i].hwm_uncertainty;
-					// }
-					// if (allHWMs[i].hwm_uncertainty == undefined) {
-					// 	hwmUncertainty = "n/a";
-					// } else {
-					// 	hwmUncertainty = allHWMs[i].hwm_uncertainty;
-					// }
-					// if (allHWMs[i].uncertainty == undefined) {
-					// 	uncertainty = "n/a";
-					// } else {
-					// 	uncertainty = allHWMs[i].uncertainty;
-					// }
-
 					body.push([
 						{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
 						{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
@@ -1292,7 +1215,6 @@ $(document).ready(function () {
 				}
 				return body;
 			}
-			// Build the table body for pdfMake of hwm table information
 			// Insert table body into pdfMake formatted table
 			function hwmsTable() {
 				return {
@@ -1306,7 +1228,45 @@ $(document).ready(function () {
 			}
 			//// End of HWM Table information build ////
 
-			// Function to create pdfMake pdf of Regional Report
+			//// Get date and time of print click //// 
+			var date = new Date();
+			// For today's date
+			Date.prototype.today = function () { 
+				return (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+ this.getFullYear();
+			}
+			// For current time
+			Date.prototype.timeNow = function () {
+				return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+			}
+			var todayDate = date.today() + " at " + date.timeNow();
+
+			//// Get summary of search selections ////
+			var landType = $(".select2-selection__choice")[0].title
+			var regionType = $(".select2-selection__choice")[1].title;
+			var regionSubType = $(".select2-selection__choice")[2].title;
+			var event = $(".select2-selection__choice")[3].title;
+			var buffer = $(".select2-selection__choice")[4].title;
+			// Build summary selections table
+			function selectionsTable() {
+				return {
+					table: {
+						widths: ['auto', 'auto'],
+						body: [
+							[{colSpan: 2, border: [false, false, false, true], text: 'Regional Report Selections: ', style: 'subHeader' }, ''], 
+							[{ text: 'Land Type: ', style: 'selectHeader', alignment: 'right' }, landType], 
+							[{ text: 'Region Type: ', style: 'selectHeader', alignment: 'right' }, regionType],
+							[{ text: 'Region: ', style: 'selectHeader', alignment: 'right' }, regionSubType],
+							[{ text: 'Event: ', style: 'selectHeader', alignment: 'right' }, event],
+							[{ text: 'Buffer Size: ', style: 'selectHeader', alignment: 'right' }, buffer]
+						]
+					},
+					layout: {
+						defaultBorder: false,
+					}
+				};
+			}
+
+			//// Function to create pdfMake pdf of Regional Report ////
 			function printRegionalReport() {
 				const docDefinition = {
 					pageOrientation: 'landscape',
@@ -1329,34 +1289,54 @@ $(document).ready(function () {
 						}
 					},
 					content: [
-						{ text: 'Regional Report for land type of ' + selectedLandType /* + ' within '  + regionPoly + ' - ' + selectedRegionName */ + ' for the event of ' + eventName + ' within a ' + bufferSize +' Kilometer Buffer', 
-							style: 'header', margin: [0, 0, 0, 10] },
-						{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
-						{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+						//{ text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center', margin: [0, 0, 0, 15] },
+						{ 
+							table: {
+								widths: ['*'],
+								body: [
+									[{border: [false, false, false, true], text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center' }]
+								]
+							},
+							margin: [0, 0, 0, 15]
+						},
+						{
+							//table with columns: selections table, map image, legend
+							table: {
+								body: [
+									[
+										// {
+										// 	table: {
+										// 		widths: ['auto', 'auto'],
+										// 		body: [
+										// 			[{colSpan: 2, border: [false, false, false, true], text: 'Regional Report Selections: ', style: 'subHeader' }, ''], 
+										// 			[{ text: 'Land Type: ', style: 'selectHeader', alignment: 'right' }, landType], 
+										// 			[{ text: 'Region Type: ', style: 'selectHeader', alignment: 'right' }, regionType],
+										// 			[{ text: 'Region: ', style: 'selectHeader', alignment: 'right' }, regionSubType],
+										// 			[{ text: 'Event: ', style: 'selectHeader', alignment: 'right' }, event],
+										// 			[{ text: 'Buffer Size: ', style: 'selectHeader', alignment: 'right' }, buffer]
+										// 		]
+										// 	},
+										// 	layout: {
+										// 		defaultBorder: false,
+										// 	}
+										// }, 
+										selectionsTable(),
+										{ image: pdfRegionalMapUrl, width: 300, height: 200 },
+										{ text: 'legend goes here' }
+									],
+								]
+							},
+							layout: 'noBorders',
+							margin: [0, 0, 0, 15]
+						},
+						//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+						{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 5] },
 						summaryTable(summaryInfo(), ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max','90% Conf Low', '90% Conf High']),
-						{ text: 'Peak Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+						{ text: 'Peak Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 						peaksTable(getPeaksData(), ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no','waterbody']),
-						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						hwmsTable()
-						//hwmsTable(getHwmsData(), ['site_name', 'event', 'elev_ft', 'survey_date', 'bank', 'hwmQualityNam', 'hwmTypeName','verticalDatumName', 'verticalMethodName', 'horizontalMethodName', 'horizontalDatumName', 'hwm_locationdescription', 'hwm_environment', 'stillwater', 'uncertainty', 'hwm_uncertainty', 'hwm_label', 'flag_date', 'siteDescription', 'sitePermHousing', 'county', 'state', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
-						//hwmsTable(hwmsData(), ['site_name', 'event', 'elev_ft', 'survey_date', 'bank', 'hwmQualityNam', 'hwmTypeName','verticalDatumName', 'verticalMethodName', 'horizontalMethodName', 'horizontalDatumName', 'hwm_locationdescription', 'hwm_environment', 'stillwater', 'uncertainty', 'hwm_uncertainty', 'hwm_label', 'flag_date', 'siteDescription', 'sitePermHousing', 'county', 'state', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
-						//hwmsTable(hwmsData(), ['Site Name', 'Event', 'Elevation', 'Survey Date', 'Bank', 'HWM Quality', 'HWM Type','Vertical Datum', 'Vertical Method', 'Horizontal Method', 'Horizontal Datum', 'HWM Location Description', 'HWM Environment', 'Stillwater', 'Uncertainty', 'HWM Uncertainty', 'HWM Label', 'Flag Date', 'Site Description', 'Permanent Housing Site', 'County', 'HWM State', 'Latitude', 'Longitude', 'Site Number', 'Waterbody']),
-
-						// {
-						// 	table: {
-						// 		body: [
-						// 			['', ''],
-						// 			[{ image: pdfMapUrl, width: 300, height: 200 }, "hello"]
-						// 		]
-						// 	},
-						// 	layout: 'noBorders',
-						// 	margin: [0, 0, 0, 15]
-						// },
-						// { text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
-						// peakTable(bodyData(), ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
-						// { text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
-						// hwmTable(),
 					],
 					styles: {
 						header: {
@@ -1368,6 +1348,10 @@ $(document).ready(function () {
 							bold: true,
 						},
 						subHeader: {
+							fontSize: 12,
+							bold: true
+						},
+						selectHeader: {
 							fontSize: 12,
 							bold: true
 						},
