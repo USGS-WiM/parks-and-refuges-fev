@@ -105,7 +105,6 @@ var parksURL = "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/servic
 var peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.json?Event=";
 
 $(document).ready(function () {
-
     $('#regionalReportNav').click(function () {
 
         // for some reason tableData loading incompletely without timeout
@@ -137,6 +136,7 @@ $(document).ready(function () {
 
     $('#btnSubmitSelections').click(function () {
 
+       
         /* $('.progress-bar-fill').delay(1000).queue(function () {
             $(this).css('width', '100%')
         }); */
@@ -966,6 +966,8 @@ $(document).ready(function () {
 
         // MAKE bulk function to build table once all data has loaded
         function processData() {
+            $('#saveRegionalPeakCSV').removeAttr('disabled');
+            $('#saveRegionalHWMCSV').removeAttr('disabled');
             var formattedPeaks = [];
             var formattedHWMS = [];
             var formattedSensors = [];
@@ -1187,7 +1189,8 @@ $(document).ready(function () {
     });
 
     $('#btnClearRegFilters').click(function () {
-        
+        $('#saveRegionalPeakCSV').attr('disabled', true);
+        $('#saveRegionalHWMCSV').attr('disabled', true)
         // removing all layers from the map regardless of type
         regionalMap.eachLayer(function (layer) {
             regionalMap.removeLayer(layer);
@@ -1292,10 +1295,15 @@ function formReady() {
         (($('#regionSelect_regionalModal').val() !== null))
         && (($('#typeSelect_regionalModal').val() !== null))
         && (($('#evtSelect_regionalModal').val() !== null))
-        && (($('#regionSelect_regionalModal').val() !== null))
+        && (($('#bufferSelect_regionalModal').val() !== null))
         && (($('#regionType_regionalModal').val() !== null))
     ) {
         $('#btnSubmitSelections').removeAttr('disabled');
+        return;
+    }
+    console.log('not ready');
+    if (document.getElementById('btnSubmitSelections').disabled === false) {
+        $('#btnSubmitSelections').attr('disabled', true);
     }
 }
 //function for toggling peak labels
