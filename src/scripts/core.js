@@ -1640,6 +1640,7 @@ $(document).ready(function () {
 	}
 
 	function searchComplete() {
+		var success = false;
 		// Clearing identified peaks and identified marks arrays before buffer runs if array had previous values
 		identifiedPeaks.length = 0;
 		identifiedMarks.length = 0;
@@ -1694,6 +1695,7 @@ $(document).ready(function () {
 				latlng.bindPopup(popupContent);
 				polys = feature.geometry;
 				// flattening the geometry for use in turf
+				success = true;
 				flattenedPoly = turf.flatten(polys);
 				regionName = feature.properties.REGION;
 				if (regionName == "PW") {
@@ -1736,6 +1738,7 @@ $(document).ready(function () {
 				latlng.bindPopup(popupContent);
 				polys = feature.geometry;
 				// flattening the geometry for use in turf
+				success = true;
 				flattenedPoly = turf.flatten(polys);
 				refCount = 1;
 				regionName = feature.properties.FWSREGION;
@@ -1781,6 +1784,7 @@ $(document).ready(function () {
 						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
 						latlng.bindPopup(popupContent);
 						polys = feature.geometry;
+						success = true;
 						// flattening the geometry for use in turf
 						flattenedPoly = turf.flatten(polys);
 						refCount = 1;
@@ -1792,8 +1796,9 @@ $(document).ready(function () {
 		}, 1000);
 
 		// account for a search that is not a park or refuge
-		if (flattenedPoly !== undefined) {
-			setTimeout(() => {
+		setTimeout(() => {
+		if (success === true) {
+			
 				var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
 				var polysCount = flattenedPoly.features.length;
 				buffer = buffered;
@@ -1860,13 +1865,12 @@ $(document).ready(function () {
 					[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
 				);
 	
-			}, 1001);
+			
 		} else {
-			/* $('#invalidModal').modal('show'); */
+			$('#invalidModal').modal('show');
 		}
-		
+	}, 1001);
 		//$(inputModal).modal('hide');
-
 	}
 
 	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
