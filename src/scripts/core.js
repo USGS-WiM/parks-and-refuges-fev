@@ -928,24 +928,22 @@ $(document).ready(function () {
 	});
 	var pdfMapUrl;
 	var legendUrl;
-	
 	$('#printNav').click(function () {
 		showPrintModal();
 		$("#reportFooter").hide();
 
 		var mapPreview = document.getElementById('reviewMap');
-		var legendPreview = document.getElementById('legendImage');
+		var legendPreview = document.getElementById('legendImage');			
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
 		 */
-		if (peakTableData > 0) {
-			//If peak table data does not clear from buffer, this will clear it now
-			peakTableData.length = 0;
-		}
+		// if (peakTableData > 0) {
+		// 	//If peak table data does not clear from buffer, this will clear it now
+		// 	peakTableData.length = 0;
+		// }
 
 		// setting up peak data for table
 		var peakTableData = [];
-
 
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
@@ -967,7 +965,6 @@ $(document).ready(function () {
 		peaksCSVData = peakTableData;
 
 		console.log(peakTableData)
-
 
 		// Builds the HTML Table for peaks
 		function buildHtmlTable() {
@@ -1012,8 +1009,15 @@ $(document).ready(function () {
 
 		if (peakTableData.length > 0) {
 			buildHtmlTable();
+		} else {
+			$("#peakTable").find("b").empty();
+			$("#peakDataTable").empty();
+			setTimeout(() => {
+				$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>");
+				$("#peakDataTable").append("<p>" + "There is no peak data." + "</p>");
+			}, 3000);
 		}
-
+		
 		//setting up HWM data for table
 		var hwmTableData = [];
 		var hwmCaptionData = [];
@@ -1114,6 +1118,13 @@ $(document).ready(function () {
 
 		if (hwmTableData.length > 0) {
 			buildHwmHtmlTable();
+		} else {
+			$("#hwmTable").find("b").empty();
+			$("#hwmDataTable").empty();
+			setTimeout(() => {	
+				$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>");
+				$("#hwmDataTable").append("<p>" + "There is no high water mark data." + "</p>");
+			}, 3000);
 		}
 
 		//test function 
@@ -1298,21 +1309,31 @@ $(document).ready(function () {
 				})
 		}, 3000);
 
+		// Get legend for print preview
+		html2canvas(document.getElementById('legendDiv'))
+			.then(function (canvas) {
+				legendPreview.append(canvas);
+				legendUrl = canvas.toDataURL('image/png');
+			}
+		);
+
 		setTimeout(() => {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
-		
-		// Get legend for print preview
-		html2canvas(document.getElementById('legendDiv'))
-		.then(function (canvas) {
-			legendPreview.append(canvas);
-			legendUrl = canvas.toDataURL('image/png');
-		});	
 
 		setTimeout(() => {
 			$("#reportFooter").show();
 		}, 4500);
+
+		// If there is no data, then printing will be disabled. 
+		if ((hwmTableData.length === 0) && (peakTableData.length === 0)) {
+			document.getElementById("print").disabled = true;
+			//$('#print').attr('disabled', true);
+		} else {
+			document.getElementById("print").disabled = false;
+		}
+
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -1326,7 +1347,7 @@ $(document).ready(function () {
 	$("#printModal").on("hidden.bs.modal", function () {
 
 		// leaving this in until we have 
-		location.reload();
+		//location.reload();
 
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
 		/* USGSrtGages.clearLayers();
