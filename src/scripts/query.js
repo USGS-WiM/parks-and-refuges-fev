@@ -1017,9 +1017,8 @@ function displayRtGageReport(e) {
         gageGraphTitle.innerHTML = "";
     }
 
+    testgraphcounter = 0;
     for (i in e) {
-
-
         var parameterCodeList = '00065,62619,62620,63160,72279';
         //var parameterCodeList = '00065';
 
@@ -1055,71 +1054,126 @@ function displayRtGageReport(e) {
 
             //if (data.data[0].time_series_data.length <= 0) console.log("No NWIS graph data available for this time period");
 
+            if (data.data != undefined) {
+                if (testgraphcounter == 0) {
+                    testgraphcounter = 1;
+                    console.log("testgraphcounter", testgraphcounter);
+                    //if there is some data, show the div
+                    $('#graphLoadMessage').hide();
+                    $('.popup-title').hide();
+                    $('#graphContainerReport').show();
 
-            if (data.data == undefined) {
-                console.log("No NWIS data available for this time period");
-                $('#graphLoadMessage').hide();
-                $('#noDataMessage').show();
-                //if no time series data, display data NA message
-                //if (data.data[0].time_series_data.length <= 0 ){}
-            }
+                    //create chart
 
-            else {
-                //if there is some data, show the div
-                $('#graphLoadMessage').hide();
-                $('.popup-title').hide();
-                $('#graphContainer').show();
-                $('#graphContainerReport').show();
+                    Highcharts.setOptions({ global: { useUTC: false } });
+                    $('#graphContainerReport').highcharts({
+                        chart: {
+                            type: 'line'
+                        },
+                        title: {
+                            text: "",
+                            align: 'left',
+                            style: {
+                                color: 'rgba(0,0,0,0.6)',
+                                fontSize: 'small',
+                                fontWeight: 'bold',
+                                fontFamily: 'Open Sans, sans-serif'
+                            }
+                            //text: null
+                        },
+                        exporting: {
+                            enabled: false
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        xAxis: {
+                            type: "datetime",
+                            labels: {
+                                formatter: function () {
+                                    return Highcharts.dateFormat('%d %b %y', this.value);
+                                },
+                                //rotation: -90,
+                                align: 'center'
+                            }
+                        },
+                        yAxis: {
+                            title: { text: 'Gage Height, feet' }
+                        },
+                        series: [{
+                            showInLegend: false,
+                            data: data.data[0].time_series_data,
+                            tooltip: {
+                                pointFormat: "Gage height: {point.y} feet"
+                            }
+                        }]
+                    });
 
-                //create chart
-                Highcharts.setOptions({ global: { useUTC: false } });
-                $('#graphContainerReport').highcharts({
-                    chart: {
-                        type: 'line'
-                    },
-                    title: {
-                        text: "",
-                        align: 'left',
-                        style: {
-                            color: 'rgba(0,0,0,0.6)',
-                            fontSize: 'small',
-                            fontWeight: 'bold',
-                            fontFamily: 'Open Sans, sans-serif'
-                        }
-                        //text: null
-                    },
-                    exporting: {
-                        enabled: false
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    xAxis: {
-                        type: "datetime",
-                        labels: {
-                            formatter: function () {
-                                return Highcharts.dateFormat('%d %b %y', this.value);
-                            },
-                            //rotation: -90,
-                            align: 'center'
-                        }
-                    },
-                    yAxis: {
-                        title: { text: 'Gage Height, feet' }
-                    },
-                    series: [{
-                        showInLegend: false,
-                        data: data.data[0].time_series_data,
-                        tooltip: {
-                            pointFormat: "Gage height: {point.y} feet"
-                        }
-                    }]
-                });
+                }
+                if (testgraphcounter == 1) {
+                    //if there is some data, show the div
+                    $('#graphLoadMessage').hide();
+                    $('.popup-title').hide();
+                    $('#graphContainerReport2').show();
+
+                    //create chart
+
+                    Highcharts.setOptions({ global: { useUTC: false } });
+                    $('#graphContainerReport2').highcharts({
+                        chart: {
+                            type: 'line'
+                        },
+                        title: {
+                            text: "",
+                            align: 'left',
+                            style: {
+                                color: 'rgba(0,0,0,0.6)',
+                                fontSize: 'small',
+                                fontWeight: 'bold',
+                                fontFamily: 'Open Sans, sans-serif'
+                            }
+                            //text: null
+                        },
+                        exporting: {
+                            enabled: false
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        xAxis: {
+                            type: "datetime",
+                            labels: {
+                                formatter: function () {
+                                    return Highcharts.dateFormat('%d %b %y', this.value);
+                                },
+                                //rotation: -90,
+                                align: 'center'
+                            }
+                        },
+                        yAxis: {
+                            title: { text: 'Gage Height, feet' }
+                        },
+                        series: [{
+                            showInLegend: false,
+                            data: data.data[0].time_series_data,
+                            tooltip: {
+                                pointFormat: "Gage height: {point.y} feet"
+                            }
+                        }]
+                    });
+                }
             }
         });
 
         //allGraphs.push(currentGraph);
-        $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + "NWIS Site" + "&nbsp" + e[i].data.siteCode + "</br>" + e[i].data.siteName + "</br>" + "<div id='graphContainerReport' style='width:400px; height:250px; display:none;'>" + "</div>" + "</div>");
+        if (testgraphcounter == 0) {
+            console.log('reached normal testcounter');
+            $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + "NWIS Site" + "&nbsp" + e[i].data.siteCode + "</br>" + e[i].data.siteName + "</br>" + "<div id='graphContainerReport' style='width:400px; height:250px; display:none;'>" + "</div>" + "</div>");
+        }
+        if (testgraphcounter == 1) {
+            console.log("reached testgraphcounter1");
+            $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + "NWIS Site" + "&nbsp" + e[i].data.siteCode + "</br>" + e[i].data.siteName + "</br>" + "<div id='graphContainerReport2' style='width:400px; height:250px; display:none;'>" + "</div>" + "</div>");
+        }
     }
 }
 

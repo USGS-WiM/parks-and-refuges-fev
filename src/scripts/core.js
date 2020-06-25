@@ -1869,6 +1869,7 @@ $(document).ready(function () {
 				//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 				//queryNWISRainGages(bbox);
 				//When checkbox is checked, add layer to map
+				USGSRainGages.clearLayers(map);
 				USGSRainGages.addTo(map);
 				$('#nwisLoadingAlert').show();
 				var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
@@ -1878,6 +1879,7 @@ $(document).ready(function () {
 				//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 				//queryNWISrtGages(bbox);
 				//When checkbox is checked, add layer to map
+				USGSrtGages.clearLayers(map);
 				USGSrtGages.addTo(map);
 				$('#nwisLoadingAlert').show();
 				var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
