@@ -11,7 +11,7 @@ var fwsInterest;
 var bufferPoly;
 var searchResults;
 var searchObject;
-var bbox;	
+var bbox;
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var identifiedMarks = [];
@@ -903,7 +903,7 @@ $(document).ready(function () {
 	}
 	$('#geosearchNav').click(function () {
 		showGeosearchModal();
-		
+
 	});
 	function showPrintModal() {
 		$('#printModal').modal('show');
@@ -928,7 +928,7 @@ $(document).ready(function () {
 	});
 	var pdfMapUrl;
 	var legendUrl;
-	
+
 	$('#printNav').click(function () {
 		showPrintModal();
 		$("#reportFooter").hide();
@@ -1302,13 +1302,13 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
-		
+
 		// Get legend for print preview
 		html2canvas(document.getElementById('legendDiv'))
-		.then(function (canvas) {
-			legendPreview.append(canvas);
-			legendUrl = canvas.toDataURL('image/png');
-		});	
+			.then(function (canvas) {
+				legendPreview.append(canvas);
+				legendUrl = canvas.toDataURL('image/png');
+			});
 
 		setTimeout(() => {
 			$("#reportFooter").show();
@@ -1676,7 +1676,7 @@ $(document).ready(function () {
 		var polys = [];
 		var buffer;
 		var regionName;
-		
+
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
@@ -1791,33 +1791,33 @@ $(document).ready(function () {
 
 		// account for a search that is not a park or refuge
 		setTimeout(() => {
-		if (success === true) {
-			
+			if (success === true) {
+
 				var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
 				var polysCount = flattenedPoly.features.length;
 				buffer = buffered;
-	
+
 				// if there is more than one poly for a park we merge the buffers made for each park. can only do two at a time
 				if (polysCount >= 1) {
 					buffer = buffered.features[0];
-	
+
 					// cycling through features
 					for (var i = 0; i < buffered.features.length; i++) {
 						// not cycling through if we're on the last one
 						if (i === (polysCount - 1)) {
-	
+
 						} else {
-	
+
 							// getting the index of the next feature to use in the union
 							var nextFeatureIndex = i + 1;
 							var nextFeature = buffered.features[nextFeatureIndex];
-	
+
 							// unifying or merging the buffer
 							buffer = turf.union(buffer, nextFeature);
 						}
 					}
 				}
-	
+
 				// adding the buffer to the map
 				bufferPoly = L.geoJson(buffer, {
 					style: bufferStyle,
@@ -1826,21 +1826,21 @@ $(document).ready(function () {
 					},
 				}).addTo(map);
 				map.fitBounds(bufferPoly.getBounds());
-	
+
 				// cycling through each peak and seeing if it's inside the buffer
 				for (var i in peak._layers) {
-	
+
 					// formatting point for turf
 					var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
-	
+
 					var isItInside = turf.booleanPointInPolygon(cords, buffer);
-	
+
 					// if true add it to an array containing all the 'true' peaks
 					if (isItInside) {
 						identifiedPeaks.push(peak._layers[i])
 					}
 				}
-	
+
 				//cycling through each HWM to see if inside the buffer
 				for (var i in hwm._layers) {
 					var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
@@ -1849,7 +1849,7 @@ $(document).ready(function () {
 						identifiedMarks.push(hwm._layers[i])
 					}
 				}
-	
+
 				//location popup
 				map.openPopup(
 					"<b>" + searchResults.result.properties.Name + "</b><br/>" +
@@ -1858,12 +1858,20 @@ $(document).ready(function () {
 					"Region: " + regionName + "</b><br/>",
 					[searchResults.result.properties.Lat, searchResults.result.properties.Lon]
 				);
-	
-			
-		} else {
-			$('#invalidModal').modal('show');
-		}
-	}, 1001);
+
+
+			} else {
+				$('#invalidModal').modal('show');
+			}
+
+			//Refresh peaks so that the legend updates if the event is changed
+			var peaksCheckBox = document.getElementById("peaksToggle");
+			peaksCheckBox.checked = false;
+			clickPeaks();
+			peaksCheckBox.checked = true;
+			clickPeaks();
+
+		}, 2001);
 		//$(inputModal).modal('hide');
 	}
 
@@ -2053,7 +2061,7 @@ $(document).ready(function () {
 	//Begin data prep for pdf print out
 
 	//Get peak summary data into table for pdf report
-	var peaksPdfData = [];	
+	var peaksPdfData = [];
 	function bodyData() {
 		for (var i in identifiedPeaks) {
 			var peakEstimated = "";
@@ -2250,7 +2258,7 @@ $(document).ready(function () {
 					table: {
 						body: [
 							['', ''],
-							[{image: pdfMapUrl, width: 300, height: 200}, {image: legendUrl, width: 150, height: 200}]
+							[{ image: pdfMapUrl, width: 300, height: 200 }, { image: legendUrl, width: 150, height: 200 }]
 						]
 					},
 					layout: 'noBorders',

@@ -280,6 +280,9 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
     var thirdVal = [];
     var twoThirdVal = [];
 
+    //clear peakArr so that it starts fresh in case the event is switched
+    peakArr = [];
+
     //increment layerCount
     layerCount++;
     //var maxPeak = Math.max(feature.properties.peak_stage);
