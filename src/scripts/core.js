@@ -1013,8 +1013,8 @@ $(document).ready(function () {
 				myDivicons[i].style.top = dy[i] + 'px';
 			}
 	
-			const mapWidth = parseFloat($('#mapDiv').css('width').replace('px', ''));
-			const mapHeight = parseFloat($('#mapDiv').css('height').replace('px', ''));
+			const mapWidth = parseFloat($('#regionalMap').css('width').replace('px', ''));
+			const mapHeight = parseFloat($('#regionalMap').css('height').replace('px', ''));
 	
 			const options = {
 				useCORS: true,
@@ -1072,9 +1072,12 @@ $(document).ready(function () {
 					});
 					summaryRows.push(arrayItem);
 				});
+				// if ($('#summaryDataTable')[0].children.length === 0) {
+				// 	summaryRows.push({'Summary information': 'None available.'},{},{},{},{},{},{},{});
+				// }
 				return summaryRows;
 			}
-			// Build the table body for pdfMake of summary information - This is used for all tables
+			// Build the table body for pdfMake of summary information - This is used for other tables where appropriate
 			function buildTableBody(data, columns) {
 				var body = [];
 				body.push(columns);
@@ -1092,7 +1095,7 @@ $(document).ready(function () {
 				return {
 					table: {
 						headerRows: 1,
-						widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+						widths: ['*', '*', '*', '*', '*', '*', '*', '*', '*'],
 						body: buildTableBody(data, columns),
 					},
 					layout: 'lightHorizontalLines',
@@ -1117,12 +1120,11 @@ $(document).ready(function () {
 					});
 					peakData.push(arrayItem);
 				});
-				if (allPeaks.length === 0) {
-					peakData = {'No peak data available from selection.': ''};
-				}
+				// if ($('#peakDataTableReg')[0].children.length === 0) {
+				// 	peakData.push({'There is no peak data available': '.'},{},{},{},{},{},{},{});
+				// }
 				return peakData;
 			};
-			//console.log(peakData)
 			// Build the table body for pdfMake of peak table information
 			// Insert table body into pdfMake formatted table
 			function peaksTable(data, columns) {
@@ -1156,63 +1158,67 @@ $(document).ready(function () {
 			// Build the table body for pdfMake of hwm table information
 			function buildHwmsTable() {
 				var body = [];
-				for (var i in hwmData) {
-					body.push([
-						{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
-						{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
-						{ text: 'Elevation(ft)', style: 'tableHeader' }, hwmData[i].elev_ft
-					],
-					[
-						{},
-						{ text: 'Event', style: 'tableHeader' }, hwmData[i].event,
-						{ text: 'Site Name', style: 'tableHeader' }, hwmData[i].site_name
-					],
-					[
-						{},
-						{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i].verticalDatumName + ", " + hwmData[i].verticalMethodName,
-						{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i].horizontalDatumName + ", " + hwmData[i].horizontalMethodName
-					],
-					[
-						{},
-						{ text: 'Type', style: 'tableHeader' }, hwmData[i].hwmTypeName,
-						{ text: 'Quality', style: 'tableHeader' }, hwmData[i].hwmQualityName
-					],
-					[
-						{},
-						{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i].waterbody,
-						{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i].sitePermHousing
-					],
-					[
-						{},
-						{ text: 'County', style: 'tableHeader' }, hwmData[i].county,
-						{ text: 'State', style: 'tableHeader' }, hwmData[i].state
-					],
-					[
-						{},
-						{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i].latitude_dd + ", " + hwmData[i].longitude_dd,
-						{ text: 'Site Description', style: 'tableHeader' }, hwmData[i].hwm_locationdescription
-					],
-					[
-						{},
-						{ text: 'Location Description', style: 'tableHeader' }, hwmData[i].siteDescription,
-						{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i].survey_date
-					],
-					[
-						{},
-						{ text: 'Bank', style: 'tableHeader' }, hwmData[i].bank,
-						{ text: 'Environment', style: 'tableHeader' }, hwmData[i].hwm_environment
-					],
-					[
-						{},
-						{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i].flag_date,
-						{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i].stillwater
-					],
-					[
-						{},
-						{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i].uncertainty,
-						{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
-					]);
-				}
+				// if (hwmData.length === 0) {
+				// 	hwmData.push({'There is no HWM data available': '.'},{},{},{},{});
+				// } else {
+					for (var i in hwmData) {
+						body.push([
+							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
+							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
+							{ text: 'Elevation(ft)', style: 'tableHeader' }, hwmData[i].elev_ft
+						],
+						[
+							{},
+							{ text: 'Event', style: 'tableHeader' }, hwmData[i].event,
+							{ text: 'Site Name', style: 'tableHeader' }, hwmData[i].site_name
+						],
+						[
+							{},
+							{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i].verticalDatumName + ", " + hwmData[i].verticalMethodName,
+							{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i].horizontalDatumName + ", " + hwmData[i].horizontalMethodName
+						],
+						[
+							{},
+							{ text: 'Type', style: 'tableHeader' }, hwmData[i].hwmTypeName,
+							{ text: 'Quality', style: 'tableHeader' }, hwmData[i].hwmQualityName
+						],
+						[
+							{},
+							{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i].waterbody,
+							{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i].sitePermHousing
+						],
+						[
+							{},
+							{ text: 'County', style: 'tableHeader' }, hwmData[i].county,
+							{ text: 'State', style: 'tableHeader' }, hwmData[i].state
+						],
+						[
+							{},
+							{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i].latitude_dd + ", " + hwmData[i].longitude_dd,
+							{ text: 'Site Description', style: 'tableHeader' }, hwmData[i].hwm_locationdescription
+						],
+						[
+							{},
+							{ text: 'Location Description', style: 'tableHeader' }, hwmData[i].siteDescription,
+							{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i].survey_date
+						],
+						[
+							{},
+							{ text: 'Bank', style: 'tableHeader' }, hwmData[i].bank,
+							{ text: 'Environment', style: 'tableHeader' }, hwmData[i].hwm_environment
+						],
+						[
+							{},
+							{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i].flag_date,
+							{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i].stillwater
+						],
+						[
+							{},
+							{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i].uncertainty,
+							{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
+						]);
+					}
+				//}
 				return body;
 			}
 			// Insert table body into pdfMake formatted table
@@ -1252,7 +1258,7 @@ $(document).ready(function () {
 					table: {
 						widths: ['auto', 'auto'],
 						body: [
-							[{colSpan: 2, border: [false, false, false, true], text: 'Regional Report Selections: ', style: 'subHeader' }, ''], 
+							[{ colSpan: 2, border: [false, false, false, true], text: 'Regional Report Selections: ', style: 'subHeader' }, ''], 
 							[{ text: 'Land Type: ', style: 'selectHeader', alignment: 'right' }, landType], 
 							[{ text: 'Region Type: ', style: 'selectHeader', alignment: 'right' }, regionType],
 							[{ text: 'Region: ', style: 'selectHeader', alignment: 'right' }, regionSubType],
@@ -1266,6 +1272,110 @@ $(document).ready(function () {
 				};
 			}
 
+			//// Build legend ////
+			// Convert peak image to dataURL for pdfMake
+			var peakImg = [];
+			function peakToBase64() {
+				var canvas = document.createElement("canvas");
+				var ctx = canvas.getContext("2d");
+				var base_image = new Image();
+				canvas.width = 10;
+				canvas.height = 10;
+				base_image.src = './images/peak.png';
+				ctx.drawImage(base_image, 0, 0, 10, 10);
+				var dataURL = canvas.toDataURL();
+				console.log(dataURL);
+				peakImg.push(dataURL);
+			}
+			peakToBase64();
+			// Convert hwm image to dataURL for pdfMake
+			var hwmImg = [];
+			function hwmToBase64() {
+				var canvas = document.createElement("canvas");
+				var ctx = canvas.getContext("2d");
+				var base_image = new Image();
+				canvas.width = 10;
+				canvas.height = 10;
+				base_image.src = './images/hwm.png';
+				ctx.drawImage(base_image, 0, 0, 10, 10);
+				var dataURL = canvas.toDataURL();
+				console.log(dataURL);
+				hwmImg.push(dataURL);
+			}
+			hwmToBase64();
+			// Convert buffer style to dataURL for pdfMake, change this if symbology changes
+			var bufferImg = [];
+			function bufferToBase64() {
+				var canvas = document.createElement("canvas");
+				var ctx = canvas.getContext("2d");
+				canvas.width = 10;
+				canvas.height = 10;
+				ctx.beginPath();
+				ctx.lineWidth = 1.5;
+				ctx.strokeStyle = "rgba(0, 0, 204, .8)";
+				ctx.rect(0, 0, 10, 10);
+				ctx.stroke();
+				var dataURL = canvas.toDataURL();
+				console.log(dataURL);
+				bufferImg.push(dataURL);
+			}
+			bufferToBase64();
+			// Convert park polygon to dataURL for pdfMake, change this if symbology changes
+			var parkImg = [];
+			function parkToBase64() {
+				var canvas = document.createElement("canvas");
+				var ctx = canvas.getContext("2d");
+				canvas.width = 10;
+				canvas.height = 10;
+				ctx.beginPath();
+				ctx.rect(0, 0, 10, 10);
+				ctx.fillStyle = "rgba(0, 0, 204, .3)";
+				ctx.fill();
+				ctx.lineWidth = 1.5;
+				ctx.strokeStyle = "rgba(0, 0, 204, 1)";
+				ctx.stroke();
+				var dataURL = canvas.toDataURL();
+				console.log(dataURL);
+				parkImg.push(dataURL);
+			}
+			parkToBase64();
+			// Convert region polygon to dataURL for pdfMake, change this if symbology changes
+			var regionImg = [];
+			function regionToBase64() {
+				var canvas = document.createElement("canvas");
+				var ctx = canvas.getContext("2d");
+				canvas.width = 10;
+				canvas.height = 10;
+				ctx.beginPath();
+				ctx.lineWidth = 1.5;
+				ctx.strokeStyle = "rgba(153, 51, 255, 1)";
+				ctx.rect(0, 0, 10, 10);
+				ctx.stroke();
+				var dataURL = canvas.toDataURL();
+				console.log(dataURL);
+				regionImg.push(dataURL);
+			}
+			regionToBase64();
+			// Build legend table
+			function legendTable() {
+				return {
+					table: {
+						widths: ['auto', 'auto'],
+						body: [
+							[{ colSpan: 2, border: [false, false, false, true], text: 'Layer Explanation:', style: 'subHeader' }, ''],
+							[{ image: peakImg }, { text: 'Peak Location', alignment: 'left' }],
+							[{ image: hwmImg }, { text: 'High Water Mark', alignment: 'left' }],
+							[{ image: parkImg }, { text: 'Park Boundary', alignment: 'left' }],
+							[{ image: bufferImg }, { text: 'Buffer Extent', alignment: 'left' }],
+							[{ image: regionImg }, { text: 'Region Boundary', alignment: 'left' }],
+						]
+					},
+					layout: {
+						defaultBorder: false,
+					}
+				};
+			}
+			
 			//// Function to create pdfMake pdf of Regional Report ////
 			function printRegionalReport() {
 				const docDefinition = {
@@ -1304,25 +1414,9 @@ $(document).ready(function () {
 							table: {
 								body: [
 									[
-										// {
-										// 	table: {
-										// 		widths: ['auto', 'auto'],
-										// 		body: [
-										// 			[{colSpan: 2, border: [false, false, false, true], text: 'Regional Report Selections: ', style: 'subHeader' }, ''], 
-										// 			[{ text: 'Land Type: ', style: 'selectHeader', alignment: 'right' }, landType], 
-										// 			[{ text: 'Region Type: ', style: 'selectHeader', alignment: 'right' }, regionType],
-										// 			[{ text: 'Region: ', style: 'selectHeader', alignment: 'right' }, regionSubType],
-										// 			[{ text: 'Event: ', style: 'selectHeader', alignment: 'right' }, event],
-										// 			[{ text: 'Buffer Size: ', style: 'selectHeader', alignment: 'right' }, buffer]
-										// 		]
-										// 	},
-										// 	layout: {
-										// 		defaultBorder: false,
-										// 	}
-										// }, 
 										selectionsTable(),
 										{ image: pdfRegionalMapUrl, width: 300, height: 200 },
-										{ text: 'legend goes here' }
+										legendTable()
 									],
 								]
 							},
