@@ -248,14 +248,14 @@ $(document).ready(function () {
             var allSites;
             if (selectedLandType[0] === "parks") {
                 allSites = L.esri.featureLayer({
-                    // useCors: false,
+                    //useCors: false,
                     url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
                     where: "1=1",
                     fields: ["*"]
                 });
             } else if (selectedLandType[0] === "refuges") {
                 allSites = L.esri.featureLayer({
-                    // useCors: false,
+                    //useCors: false,
                     url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
                     where: "1=1",
                     fields: ["*"]
@@ -1231,8 +1231,6 @@ $(document).ready(function () {
         setTimeout(() => {
             var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         }, 1400);
-
-
     });
 
 
@@ -1256,7 +1254,7 @@ $(document).ready(function () {
         }
         //if there are no peak markers within the buffer, exit
         else {
-            console.log("There are no peak datapoints.")
+            console.log("There are no peak datapoints.");
         }
 
     });

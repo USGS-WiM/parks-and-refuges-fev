@@ -1344,7 +1344,7 @@ $(document).ready(function () {
 	$("#printModal").on("hidden.bs.modal", function () {
 
 		// leaving this in until we have 
-		//location.reload();
+		location.reload();
 
 		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
 		/* USGSrtGages.clearLayers();
@@ -1364,6 +1364,13 @@ $(document).ready(function () {
 		$('#updateFiltersModal').modal('show');
 	}
 	$('#btnChangeFilters').click(function () {
+		//parks.clearLayers();
+		//update the event select within the filters modal to reflect current event
+		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
+		showFiltersModal();
+	});
+	$('a[href="#openFiltersModal"]').click(function () {
+		$('#invalidModal').modal('hide');
 		//parks.clearLayers();
 		//update the event select within the filters modal to reflect current event
 		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
@@ -1561,7 +1568,7 @@ $(document).ready(function () {
 			include_gnis_major: true,  // whether to include GNIS places as suggestions in the menu: major categories (most common)...
 			include_gnis_minor: false,  // ...minor categories (less common)
 
-			include_state: true,  // whether to include U.S. States and Territories as suggestions in the menu
+			/* include_state: true,  // whether to include U.S. States and Territories as suggestions in the menu
 			include_zip_code: false,  // whether to include 5-digit zip codes as suggestions in the menu
 			include_area_code: false,  // whether to include 3-digit area codes as suggestions in the menu
 
@@ -1576,7 +1583,7 @@ $(document).ready(function () {
 			include_huc6: false,  // ... 6-digit
 			include_huc8: false,  // ... 8-digit
 			include_huc10: false,  // ...10-digit
-			include_huc12: false,  // ...12-digit
+			include_huc12: false,  // ...12-digit */
 
 			// event callback functions
 			// function argument "o" is widget object
@@ -1645,6 +1652,7 @@ $(document).ready(function () {
 	}
 
 	function searchComplete() {
+		var success = false;
 		// Clearing identified peaks and identified marks arrays before buffer runs if array had previous values
 		identifiedPeaks.length = 0;
 		identifiedMarks.length = 0;
@@ -1685,7 +1693,7 @@ $(document).ready(function () {
 		var where = "1=1";
 		var polys = [];
 		var regionName;
-
+		
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
@@ -1698,6 +1706,7 @@ $(document).ready(function () {
 				latlng.bindPopup(popupContent);
 				polys = feature.geometry;
 				// flattening the geometry for use in turf
+				success = true;
 				flattenedPoly = turf.flatten(polys);
 				regionName = feature.properties.REGION;
 				if (regionName == "PW") {
@@ -1740,6 +1749,7 @@ $(document).ready(function () {
 				latlng.bindPopup(popupContent);
 				polys = feature.geometry;
 				// flattening the geometry for use in turf
+				success = true;
 				flattenedPoly = turf.flatten(polys);
 				refCount = 1;
 				regionName = feature.properties.FWSREGION;
@@ -1785,6 +1795,7 @@ $(document).ready(function () {
 						var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
 						latlng.bindPopup(popupContent);
 						polys = feature.geometry;
+						success = true;
 						// flattening the geometry for use in turf
 						flattenedPoly = turf.flatten(polys);
 						refCount = 1;
@@ -1795,62 +1806,65 @@ $(document).ready(function () {
 			}
 		}, 1000);
 
-
+		// account for a search that is not a park or refuge
 		setTimeout(() => {
-			var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
-			var polysCount = flattenedPoly.features.length;
-			buffer = buffered;
-
-			// if there is more than one poly for a park we merge the buffers made for each park. can only do two at a time
-			if (polysCount >= 1) {
-				buffer = buffered.features[0];
-
-				// cycling through features
-				for (var i = 0; i < buffered.features.length; i++) {
-					// not cycling through if we're on the last one
-					if (i === (polysCount - 1)) {
-
-					} else {
-
-						// getting the index of the next feature to use in the union
-						var nextFeatureIndex = i + 1;
-						var nextFeature = buffered.features[nextFeatureIndex];
-
-						// unifying or merging the buffer
-						buffer = turf.union(buffer, nextFeature);
+		if (success === true) {
+			
+				var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
+				var polysCount = flattenedPoly.features.length;
+				buffer = buffered;
+	
+				// if there is more than one poly for a park we merge the buffers made for each park. can only do two at a time
+				if (polysCount >= 1) {
+					buffer = buffered.features[0];
+	
+					// cycling through features
+					for (var i = 0; i < buffered.features.length; i++) {
+						// not cycling through if we're on the last one
+						if (i === (polysCount - 1)) {
+	
+						} else {
+	
+							// getting the index of the next feature to use in the union
+							var nextFeatureIndex = i + 1;
+							var nextFeature = buffered.features[nextFeatureIndex];
+	
+							// unifying or merging the buffer
+							buffer = turf.union(buffer, nextFeature);
+						}
 					}
 				}
-			}
-
-			// adding the buffer to the map
-			bufferPoly = L.geoJson(buffer, {
-				style: bufferStyle,
-				pointToLayer: function (feature, latlng) {
-					return L.circleMarker(latlng, labelMarkerOptions);
-				},
-			}).addTo(map);
-			map.fitBounds(bufferPoly.getBounds());
-
-			// cycling through each peak and seeing if it's inside the buffer
-			for (var i in peak._layers) {
-
-				// formatting point for turf
-				var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
-
-				var isItInside = turf.booleanPointInPolygon(cords, buffer);
-
-				// if true add it to an array containing all the 'true' peaks
-				if (isItInside) {
-					identifiedPeaks.push(peak._layers[i])
+	
+				// adding the buffer to the map
+				bufferPoly = L.geoJson(buffer, {
+					style: bufferStyle,
+					pointToLayer: function (feature, latlng) {
+						return L.circleMarker(latlng, labelMarkerOptions);
+					},
+				}).addTo(map);
+				map.fitBounds(bufferPoly.getBounds());
+	
+				// cycling through each peak and seeing if it's inside the buffer
+				for (var i in peak._layers) {
+	
+					// formatting point for turf
+					var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
+	
+					var isItInside = turf.booleanPointInPolygon(cords, buffer);
+	
+					// if true add it to an array containing all the 'true' peaks
+					if (isItInside) {
+						identifiedPeaks.push(peak._layers[i])
+					}
 				}
-			}
-
-			//cycling through each HWM to see if inside the buffer
-			for (var i in hwm._layers) {
-				var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
-				var isItInside = turf.booleanPointInPolygon(cords, buffer);
-				if (isItInside) {
-					identifiedMarks.push(hwm._layers[i])
+	
+				//cycling through each HWM to see if inside the buffer
+				for (var i in hwm._layers) {
+					var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
+					var isItInside = turf.booleanPointInPolygon(cords, buffer);
+					if (isItInside) {
+						identifiedMarks.push(hwm._layers[i])
+					}
 				}
 			}
 
