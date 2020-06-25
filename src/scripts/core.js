@@ -1245,6 +1245,7 @@ $(document).ready(function () {
 				return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
 			}
 			var todayDate = date.today() + " at " + date.timeNow();
+			//// End of date/time ////
 
 			//// Get summary of search selections ////
 			var landType = $(".select2-selection__choice")[0].title
@@ -1271,6 +1272,7 @@ $(document).ready(function () {
 					}
 				};
 			}
+			//// End of summary for search selections ////
 
 			//// Build legend ////
 			// Convert peak image to dataURL for pdfMake
@@ -1284,7 +1286,6 @@ $(document).ready(function () {
 				base_image.src = './images/peak.png';
 				ctx.drawImage(base_image, 0, 0, 10, 10);
 				var dataURL = canvas.toDataURL();
-				console.log(dataURL);
 				peakImg.push(dataURL);
 			}
 			peakToBase64();
@@ -1299,7 +1300,6 @@ $(document).ready(function () {
 				base_image.src = './images/hwm.png';
 				ctx.drawImage(base_image, 0, 0, 10, 10);
 				var dataURL = canvas.toDataURL();
-				console.log(dataURL);
 				hwmImg.push(dataURL);
 			}
 			hwmToBase64();
@@ -1316,7 +1316,6 @@ $(document).ready(function () {
 				ctx.rect(0, 0, 10, 10);
 				ctx.stroke();
 				var dataURL = canvas.toDataURL();
-				console.log(dataURL);
 				bufferImg.push(dataURL);
 			}
 			bufferToBase64();
@@ -1335,7 +1334,6 @@ $(document).ready(function () {
 				ctx.strokeStyle = "rgba(0, 0, 204, 1)";
 				ctx.stroke();
 				var dataURL = canvas.toDataURL();
-				console.log(dataURL);
 				parkImg.push(dataURL);
 			}
 			parkToBase64();
@@ -1352,7 +1350,6 @@ $(document).ready(function () {
 				ctx.rect(0, 0, 10, 10);
 				ctx.stroke();
 				var dataURL = canvas.toDataURL();
-				console.log(dataURL);
 				regionImg.push(dataURL);
 			}
 			regionToBase64();
@@ -1375,7 +1372,8 @@ $(document).ready(function () {
 					}
 				};
 			}
-			
+			//// End of Legend build ////
+
 			//// Function to create pdfMake pdf of Regional Report ////
 			function printRegionalReport() {
 				const docDefinition = {
