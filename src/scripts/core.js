@@ -1863,6 +1863,8 @@ $(document).ready(function () {
 			} else {
 				$('#invalidModal').modal('show');
 			}
+
+			//Refresh peaks so that the legend updates if the event is changed
 			var peaksCheckBox = document.getElementById("peaksToggle");
 			peaksCheckBox.checked = false;
 			clickPeaks();
