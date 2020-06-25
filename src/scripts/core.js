@@ -489,12 +489,6 @@ $(document).ready(function () {
 	//set search for 'Go' click
 	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary) {
 		submitButton.click(function () {
-			if (bufferPoly !== undefined) {
-				map.removeLayer(bufferPoly);
-				map.removeLayer(parksLayerGroup);
-				map.removeLayer(refuges);
-				map.removeLayer(fwsInterest);
-			}
 			//check if an event has been selected
 			if (($(evtSelect_Modal_Primary).val() !== null) && (searchResults !== undefined)) {
 				//if event selected, hide welcome modal and begin filter process
