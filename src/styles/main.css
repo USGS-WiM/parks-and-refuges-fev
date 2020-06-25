@@ -812,6 +812,17 @@ a.lgi-zoom:hover {
     display: inline-block;
 }
 
+#legendImage {
+    /* width: 600px;
+    height: 450px; */
+    display: inline-block;
+    vertical-align: top;
+}
+
+.report-inline-block {
+    display: inline-block;
+}
+
 .imageLoader {
     border: 16px solid #f3f3f3; /* Light grey */
     border-top: 16px solid #3498db; /* Blue */

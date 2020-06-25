@@ -928,10 +928,7 @@ $(document).ready(function () {
 	});
 	var pdfMapUrl;
 	var legendUrl;
-<<<<<<< HEAD
-=======
 
->>>>>>> ed8df101dc87b5caaea197ee73c139a76620a1d3
 	$('#printNav').click(function () {
 		showPrintModal();
 		$("#reportFooter").hide();
@@ -1300,6 +1297,7 @@ $(document).ready(function () {
 			var mapEvent;
 			html2canvas(document.getElementById('mapDiv'), options)
 				.then(function (canvas) {
+					$("#reviewMap").find("canvas").remove()
 					mapEvent = new Event('map_ready');
 					/* canvas[0].drawImage */
 					canvas.style.width = '700px';
@@ -1316,6 +1314,7 @@ $(document).ready(function () {
 		// Get legend for print preview
 		html2canvas(document.getElementById('legendDiv'))
 			.then(function (canvas) {
+				$("#legendImage").find("canvas").remove()
 				legendPreview.append(canvas);
 				legendUrl = canvas.toDataURL('image/png');
 			}
@@ -1325,16 +1324,6 @@ $(document).ready(function () {
 			document.getElementById('loader').remove();
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
-<<<<<<< HEAD
-=======
-
-		// Get legend for print preview
-		html2canvas(document.getElementById('legendDiv'))
-			.then(function (canvas) {
-				legendPreview.append(canvas);
-				legendUrl = canvas.toDataURL('image/png');
-			});
->>>>>>> ed8df101dc87b5caaea197ee73c139a76620a1d3
 
 		setTimeout(() => {
 			$("#reportFooter").show();
@@ -1363,7 +1352,7 @@ $(document).ready(function () {
 		// leaving this in until we have 
 		//location.reload();
 
-		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
+		//document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
 		/* USGSrtGages.clearLayers();
 		USGSRainGages.clearLayers(); */
 		//refreshMapData(); function to reset map data
