@@ -318,6 +318,27 @@
     </div>
     <!-- end Geosearch Modal -->
 
+    <!-- Invalid search Modal -->
+    <div class="modal fade overflow-y-hidden" id="invalidModal" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    <h4 class="modal-title">Invalid Search</h4>
+                </div>
+                <div class="modal-body" style="text-align: center;">
+                    <p>Sorry, that site is not available. Please <a href="#openFiltersModal">try another site</a>.</p>
+                </div>
+                <form id="geosearch-form" class="form-inline">
+
+                    <button id="btnDismiss" type="submit" class="dismissbutton btn"
+                        data-dismiss="modal">Dismiss</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- end Invalid search Modal -->
+
 
     <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" aria-hidden="true">
         <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important">
