@@ -279,6 +279,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
     var thirdLength = [];
     var thirdVal = [];
     var twoThirdVal = [];
+    peakArr = [];
 
     //increment layerCount
     layerCount++;
