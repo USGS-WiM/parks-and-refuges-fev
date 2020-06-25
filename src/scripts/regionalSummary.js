@@ -105,7 +105,6 @@ var parksURL = "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/servic
 var peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.json?Event=";
 
 $(document).ready(function () {
-
     $('#regionalReportNav').click(function () {
 
         // for some reason tableData loading incompletely without timeout
@@ -137,6 +136,7 @@ $(document).ready(function () {
 
     $('#btnSubmitSelections').click(function () {
 
+       
         /* $('.progress-bar-fill').delay(1000).queue(function () {
             $(this).css('width', '100%')
         }); */
@@ -248,14 +248,14 @@ $(document).ready(function () {
             var allSites;
             if (selectedLandType[0] === "parks") {
                 allSites = L.esri.featureLayer({
-                    // useCors: false,
+                    //useCors: false,
                     url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
                     where: "1=1",
                     fields: ["*"]
                 });
             } else if (selectedLandType[0] === "refuges") {
                 allSites = L.esri.featureLayer({
-                    // useCors: false,
+                    //useCors: false,
                     url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
                     where: "1=1",
                     fields: ["*"]
@@ -966,6 +966,8 @@ $(document).ready(function () {
 
         // MAKE bulk function to build table once all data has loaded
         function processData() {
+            $('#saveRegionalPeakCSV').removeAttr('disabled');
+            $('#saveRegionalHWMCSV').removeAttr('disabled');
             var formattedPeaks = [];
             var formattedHWMS = [];
             var formattedSensors = [];
@@ -1187,7 +1189,8 @@ $(document).ready(function () {
     });
 
     $('#btnClearRegFilters').click(function () {
-        
+        $('#saveRegionalPeakCSV').attr('disabled', true);
+        $('#saveRegionalHWMCSV').attr('disabled', true)
         // removing all layers from the map regardless of type
         regionalMap.eachLayer(function (layer) {
             regionalMap.removeLayer(layer);
@@ -1228,8 +1231,6 @@ $(document).ready(function () {
         setTimeout(() => {
             var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         }, 1400);
-
-
     });
 
 
@@ -1253,7 +1254,7 @@ $(document).ready(function () {
         }
         //if there are no peak markers within the buffer, exit
         else {
-            console.log("There are no peak datapoints.")
+            console.log("There are no peak datapoints.");
         }
 
     });
@@ -1292,10 +1293,15 @@ function formReady() {
         (($('#regionSelect_regionalModal').val() !== null))
         && (($('#typeSelect_regionalModal').val() !== null))
         && (($('#evtSelect_regionalModal').val() !== null))
-        && (($('#regionSelect_regionalModal').val() !== null))
+        && (($('#bufferSelect_regionalModal').val() !== null))
         && (($('#regionType_regionalModal').val() !== null))
     ) {
         $('#btnSubmitSelections').removeAttr('disabled');
+        return;
+    }
+    console.log('not ready');
+    if (document.getElementById('btnSubmitSelections').disabled === false) {
+        $('#btnSubmitSelections').attr('disabled', true);
     }
 }
 //function for toggling peak labels
