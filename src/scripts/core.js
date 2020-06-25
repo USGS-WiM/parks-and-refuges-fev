@@ -1880,16 +1880,14 @@ $(document).ready(function () {
 				//queryNWISrtGages(bbox);
 				//When checkbox is checked, add layer to map
 				USGSrtGages.clearLayers(map);
+				identifiedUSGSrtGage = [];
 				USGSrtGages.addTo(map);
 				$('#nwisLoadingAlert').show();
 				var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 				queryNWISrtGages(bbox);
 			}
-
-
 		}, 1001);
 		//$(inputModal).modal('hide');
-
 	}
 
 	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state
