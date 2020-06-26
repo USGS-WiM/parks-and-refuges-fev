@@ -347,18 +347,18 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                     <h4 class="modal-title"><span class="glyphicon glyphicon-print"></span>Print Map</h4>
                 </div>
-                <div class="modal-body" style="text-align: center; height: 700px; overflow-y: auto;">
-                    <div id="reviewMap" style="display: inline-flex;">
+                <div class="modal-body" style="text-align: center; height: 700px; overflow-y: auto; overflow-x: auto;">
+                    <div id="reviewMap" class="report-inline-block">
                         <div id='loader' class='imageLoader'></div>
                         <p id='loadingMessage'>loading image...</p>
-                        <div id="legendImage" style="display: inline-flex;"></div>
                     </div>
+                    <div id="legendImage" class="report-inline-block"></div>
                     <div id="gageGraphs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
                     <div id="rtgraphs" ></div>
                     <div class='reportInfo' id="peakTable">
                         <table class="table" id="peakDataTable"></table>
                     </div>
-                    <div class='reportInfo' id="hwmTable" style="width: 850px; overflow-x: scroll;">
+                    <div class='reportInfo' id="hwmTable" style="width: 900px; overflow-x: scroll;">
                         <table class="table" id="hwmDataTable"></table>
                     </div>
                     <!-- <div id="reviewMapContainer">
@@ -443,7 +443,7 @@
                             <div style="text-align: left; display: inline-flex; margin-left: 115px"> Peak Labels
                                 <label class="switch" id="peakSizeCheckReg"
                                     style="display: inline-flex; margin-left: 10px">
-                                    <input type="checkbox" id="peakCheckboxReg" onclick="clickPeakLabelsReg()" />
+                                    <input type="checkbox" id="peakCheckboxReg" onclick="clickPeakLabelsReg()" disabled/>
                                     <span class="slider round"> </span>
                                 </label>
                             </div>
@@ -464,6 +464,7 @@
                     <!-- <div class="alert alert-danger typeSelectAlertReg" role="alert"><i class="fa fa-exclamation-triangle"
                             aria-hidden="true"></i> Please choose a Lands Type to proceed.</div> -->
                 </div>
+
                 <div class="modal-footer">
                     <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
                         style="color:gray;" class="btn btn-default">Close</button>
@@ -475,6 +476,8 @@
                         style="color:gray;" class="btn btn-primary" disabled>Peak CSV</button>
                     <button id="saveRegionalHWMCSV" class="btn close" type="button" aria-hidden="true"
                         style="color:gray;" class="btn btn-primary" disabled>HWM CSV</button>
+                    <button id="printRegionalReport" class="btn close" type="button" aria-hidden="true" 
+                        style="color:gray;" class="btn btn-primary" >Print</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->

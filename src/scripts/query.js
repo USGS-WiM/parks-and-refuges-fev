@@ -268,18 +268,37 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
     });
 }
 
+function getPeakValues(type, name, url, markerIcon) {
+        var typeData;
+    
+        //clear peakArr so that it starts fresh in case the event is switched
+        peaktest = [];
 
+        L.geoJson(false, {
+            onEachFeature: function (feature, latlng) {
+    
+                typeData = typeof feature.properties.peak_stage;
+                if (typeData == "number") {
+                    //Create an array of each peak value
+                    peaktest.push(feature.properties.peak_stage);
+                }
+            }
+        });
+        return peaktest;
+}
 
 function displayPeaksGeoJSON(type, name, url, markerIcon) {
 
     //Create variables for createPeakArray
-    var maxPeak = [];
-    var minPeak = [];
     var lengthPeak = [];
     var sortedPeaks = [];
     var thirdLength = [];
     var thirdVal = [];
     var twoThirdVal = [];
+    var typeData;
+
+    //clear peakArr so that it starts fresh in case the event is switched
+    peakArr = [];
 
     //increment layerCount
     layerCount++;
@@ -289,18 +308,18 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
     var createPeakArray = L.geoJson(false, {
         onEachFeature: function (feature, latlng) {
 
-            //Create an array of each peak value
-            peakArr.push(feature.properties.peak_stage);
-
-            //find min and max peak values 
-            maxPeak = Math.max(...peakArr);
-            minPeak = Math.min(...peakArr);
+            typeData = typeof feature.properties.peak_stage;
+            if (typeData == "number") {
+                //Create an array of each peak value
+                peakArr.push(feature.properties.peak_stage);
+            }
 
             //sort array of peak values
-            sortedPeaks = peakArr.sort();
+            sortedPeaks = peakArr.sort(function(a, b){return a - b});
+            //console.log("here are your sorted peask", sortedPeaks);
 
             //find number of peak values
-            lengthPeak = peakArr.length;
+            lengthPeak = sortedPeaks.length;
 
             //divide the array into 3 equal sections
             //find the maximum peak value of each of those sections
@@ -313,49 +332,52 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
 
     var currentMarker = L.geoJson(false, {
         onEachFeature: function (feature, latlng) {
-            //add marker to overlapping marker spidifier
-            oms.addMarker(latlng);
-            //var popupContent = '';
-            var currentEvent = fev.vars.currentEventName;
-            //set popup content using moment js to pretty format the date value
-            var popupContent =
-                '<table class="table table-condensed table-striped table-hover wim-table">' +
-                '<caption class="popup-title">' + name + ' | <span style="color:gray"> ' + currentEvent + '</span></caption>' +
-                '<tr><th>Peak Stage (ft)</th><th>Datum</th><th>Peak Date & Time (UTC)</th></tr>' +
-                '<tr><td>' + feature.properties.peak_stage + '</td><td>' + feature.properties.vdatum + '</td><td>' + moment(feature.properties.peak_date).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>' +
-                '</table>';
+            typeData = typeof feature.properties.peak_stage;
+            if (typeData == "number") {
+                //add marker to overlapping marker spidifier
+                oms.addMarker(latlng);
+                //var popupContent = '';
+                var currentEvent = fev.vars.currentEventName;
+                //set popup content using moment js to pretty format the date value
+                var popupContent =
+                    '<table class="table table-condensed table-striped table-hover wim-table">' +
+                    '<caption class="popup-title">' + name + ' | <span style="color:gray"> ' + currentEvent + '</span></caption>' +
+                    '<tr><th>Peak Stage (ft)</th><th>Datum</th><th>Peak Date & Time (UTC)</th></tr>' +
+                    '<tr><td>' + feature.properties.peak_stage + '</td><td>' + feature.properties.vdatum + '</td><td>' + moment(feature.properties.peak_date).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>' +
+                    '</table>';
 
-            // $.each(feature.properties, function( index, value ) {
-            //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-            // });
-            latlng.bindPopup(popupContent);
+                // $.each(feature.properties, function( index, value ) {
+                //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+                // });
+                latlng.bindPopup(popupContent);
+            }
         },
 
         pointToLayer: function (feature, latlng) {
-            markerCoords.push(latlng);
-            var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
-            //console.log("Ranges for peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
-            //Create 3 categories for marker size          
-            if (feature.properties.peak_stage < thirdVal) {
-                var marker =
-                    L.marker(latlng, {
-                        icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
-                    }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                markerCoords.push(latlng);
+                var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
+                //console.log("Ranges for peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
+                //Create 3 categories for marker size          
+                if (feature.properties.peak_stage < thirdVal) {
+                    var marker =
+                        L.marker(latlng, {
+                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
+                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                }
+                if (thirdVal <= feature.properties.peak_stage <= twoThirdVal) {
+                    var marker =
+                        L.marker(latlng, {
+                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                }
+                if (feature.properties.peak_stage > twoThirdVal) {
+                    var marker =
+                        L.marker(latlng, {
+                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
+                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                }
+                return marker;
             }
-            if (thirdVal <= feature.properties.peak_stage <= twoThirdVal) {
-                var marker =
-                    L.marker(latlng, {
-                        icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
-                    }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
-            }
-            if (feature.properties.peak_stage > twoThirdVal) {
-                var marker =
-                    L.marker(latlng, {
-                        icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
-                    }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
-            }
-            return marker;
-        }
     });
 
     $.getJSON(url, function (data) {

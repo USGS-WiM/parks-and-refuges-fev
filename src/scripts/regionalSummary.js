@@ -83,7 +83,7 @@ var fevRegional = fevRegional || {
         { fieldName: 'horizontalDatumName', colName: "Horizontal Datum" },
         { fieldName: 'hwm_locationdescription', colName: "HWM Location Description" },
         { fieldName: 'hwm_environment', colName: "HWM Environment" },
-        { fieldName: 'stillwater', colName: "Stillwater)" },
+        { fieldName: 'stillwater', colName: "Stillwater" },
         { fieldName: 'uncertainty', colName: "Uncertainty" },
         { fieldName: 'hwm_uncertainty', colName: "HWM Uncertainty" },
         { fieldName: 'hwm_label', colName: "HWM Label" },
@@ -141,6 +141,11 @@ $(document).ready(function () {
             $(this).css('width', '100%')
         }); */
         document.querySelector('.progress-bar-fill').style.width = "100%"
+
+        setTimeout(function(){  
+            var activatePeak = document.getElementById("peakCheckboxReg");
+            activatePeak.disabled = false;
+        }, 30000);
 
         // setting buffer style
         var bufferStyle = {
@@ -415,6 +420,7 @@ $(document).ready(function () {
             var thirdLength = [];
             var thirdVal = [];
             var twoThirdVal = [];
+            var typeData;
 
             var createPeakArrayReg = L.geoJson(false, {
                 onEachFeature: function (feature) {
@@ -425,7 +431,8 @@ $(document).ready(function () {
                         var isItInsideInitial = turf.booleanPointInPolygon(cordsInitial, bufferedPolys[buffPolyCount], { ignoreBoundary: true });
                         //if peak is inside of the buffered polygon, add the corresponding peak value to an array
                         if (isItInsideInitial) {
-                            if (feature.properties.peak_stage !== undefined) {
+                            typeData = typeof feature.properties.peak_stage;
+                            if (typeData == "number") {
                                 peakArrReg.push(feature.properties.peak_stage);
                             }
                         }
@@ -433,7 +440,7 @@ $(document).ready(function () {
                     }
 
                     //sort array of peak values
-                    sortedPeaks = peakArrReg.sort();
+                    sortedPeaks = peakArrReg.sort(function(a, b){return a - b});
 
                     //find number of peak values
                     lengthPeak = peakArrReg.length;
@@ -1040,8 +1047,8 @@ $(document).ready(function () {
             }
 
             //Sort peak and hwm arrays
-            peakArrReg = peakArrReg.sort();
-            hwmArrReg = hwmArrReg.sort();
+            peakArrReg = peakArrReg.sort(function(a, b){return a - b});
+            hwmArrReg = hwmArrReg.sort(function(a, b){return a - b});
             var sum = []
             var peakSum = {};
             var hwmSum = {};
