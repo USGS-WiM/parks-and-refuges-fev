@@ -1093,7 +1093,7 @@ function displayRtGageReport(e) {
                             type: 'line'
                         },
                         title: {
-                            text: "",
+                            text: 'NWIS Site ' + e[i].data.siteCode + '<br> ' + e[i].data.siteName,
                             align: 'left',
                             style: {
                                 color: 'rgba(0,0,0,0.6)',
@@ -1190,7 +1190,7 @@ function displayRtGageReport(e) {
         //allGraphs.push(currentGraph);
         if (testgraphcounter == 0) {
             console.log('reached normal testcounter');
-            $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + "NWIS Site" + "&nbsp" + e[i].data.siteCode + "</br>" + e[i].data.siteName + "</br>" + "<div id='graphContainerReport' style='width:400px; height:250px; display:none;'>" + "</div>" + "</div>");
+            $('#rtgraphs').append("<div style='text-align: left'>" + "</br>"  + e[i].data.siteName  + " (Site" + "&nbsp" + e[i].data.siteCode + ")" + "</br>" + "<div id='graphContainerReport' style='width:400px; height:250px; display:none;'>" + "</div>" + "</div>");
         }
         if (testgraphcounter == 1) {
             console.log("reached testgraphcounter1");
