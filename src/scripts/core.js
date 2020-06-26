@@ -1489,14 +1489,14 @@ $(document).ready(function () {
 		$("#reportFooter").hide();
 
 		var mapPreview = document.getElementById('reviewMap');
-		var legendPreview = document.getElementById('legendImage');
+		var legendPreview = document.getElementById('legendImage');			
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
 		 */
-		if (peakTableData > 0) {
-			//If peak table data does not clear from buffer, this will clear it now
-			peakTableData.length = 0;
-		}
+		// if (peakTableData > 0) {
+		// 	//If peak table data does not clear from buffer, this will clear it now
+		// 	peakTableData.length = 0;
+		// }
 
 		// setting up peak data for table
 		var peakTableData = [];
@@ -1522,11 +1522,10 @@ $(document).ready(function () {
 
 		console.log(peakTableData)
 
-
 		// Builds the HTML Table for peaks
 		function buildHtmlTable() {
 			//Empty text from previous report, if it was run
-			$("#peakTable").find("b").empty();
+			$("#peakTable").find("p").remove();
 			$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>")
 
 			//Empty peak data table from previous report, if it was run
@@ -1566,8 +1565,15 @@ $(document).ready(function () {
 
 		if (peakTableData.length > 0) {
 			buildHtmlTable();
+		} else {
+			$("#peakTable").find("p").remove();
+			$("#peakDataTable").empty();
+			setTimeout(() => {
+				$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>");
+				$("#peakTable").append("<p>" + "There are no Peaks at this Site." + "</p>");
+			}, 3000);
 		}
-
+		
 		//setting up HWM data for table
 		var hwmTableData = [];
 		var hwmCaptionData = [];
@@ -1624,10 +1630,10 @@ $(document).ready(function () {
 		});
 		//$.each(chunks, function(index, value) {}); */
 
-		//build HTML Table for HWMs
+		//builds HTML Table for HWMs
 		function buildHwmHtmlTable() {
 			//Empty text from previous report, if was run
-			$("#hwmTable").find("b").empty();
+			$("#hwmTable").find("p").remove();
 			$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>")
 
 			//Empty hwm data table from previous report, if it was run
@@ -1668,6 +1674,13 @@ $(document).ready(function () {
 
 		if (hwmTableData.length > 0) {
 			buildHwmHtmlTable();
+		} else {
+			$("#hwmTable").find("p").remove();
+			$("#hwmDataTable").empty();
+			setTimeout(() => {	
+				$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>");
+				$("#hwmTable").append("<p>" + "There are no High Water Marks at this Site." + "</p>");
+			}, 3000);
 		}
 
 		//test function 
@@ -1698,10 +1711,20 @@ $(document).ready(function () {
 		}
 		export_table_to_csv();
 
-
 		var hwmCSV = hwmDataTable.table2csv;
 		console.log("hwmDataTable", hwmDataTable);
 		console.log("hwmCSV", hwmCSV);
+
+		setTimeout(() => {
+			// Get legend for print preview
+			html2canvas(document.getElementById('legendDiv'))
+				.then(function (canvas) {
+					$("#legendImage").find("canvas").remove()
+					legendPreview.append(canvas);
+					legendUrl = canvas.toDataURL('image/png');
+				}
+			);
+		}, 2900);
 
 		setTimeout(() => {
 			let mapPane;
@@ -1839,9 +1862,10 @@ $(document).ready(function () {
 			var mapEvent;
 			html2canvas(document.getElementById('mapDiv'), options)
 				.then(function (canvas) {
+					$("#reviewMap").find("canvas").remove()
 					mapEvent = new Event('map_ready');
 					/* canvas[0].drawImage */
-					canvas.style.width = '700px';
+					canvas.style.width = '600px';
 					canvas.style.height = '450px';
 					mapPreview.append(canvas);
 					//mapImage = canvas.get(0).toDataUrl('image/png');
@@ -1849,7 +1873,8 @@ $(document).ready(function () {
 					window.dispatchEvent(mapEvent);
 					// Showing Legend once canvas event complete
 					$("#legendElement").show();
-				})
+				}
+			);	
 		}, 3000);
 
 		setTimeout(() => {
@@ -1857,16 +1882,18 @@ $(document).ready(function () {
 			document.getElementById('loadingMessage').remove();
 		}, 3001);
 
-		// Get legend for print preview
-		html2canvas(document.getElementById('legendDiv'))
-			.then(function (canvas) {
-				legendPreview.append(canvas);
-				legendUrl = canvas.toDataURL('image/png');
-			});
-
 		setTimeout(() => {
 			$("#reportFooter").show();
 		}, 4500);
+
+		// If there is no data, then printing will be disabled. 
+		if ((hwmTableData.length === 0) && (peakTableData.length === 0)) {
+			document.getElementById("print").disabled = true;
+			//$('#print').attr('disabled', true);
+		} else {
+			document.getElementById("print").disabled = false;
+		}
+
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -1880,9 +1907,10 @@ $(document).ready(function () {
 	$("#printModal").on("hidden.bs.modal", function () {
 
 		// leaving this in until we have 
-		location.reload();
+		//location.reload();
 
-		document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
+		//document.getElementById('reviewMap').innerHTML = ""; // deletes the image so that there aren't multiple on the next print
+
 		/* USGSrtGages.clearLayers();
 		USGSRainGages.clearLayers(); */
 		//refreshMapData(); function to reset map data
@@ -2612,7 +2640,7 @@ $(document).ready(function () {
 		$('#longitude').html(geographicMapCenter.lng.toFixed(4));
 	});
 
-	//Begin data prep for pdf print out
+	//// Begin data prep for pdf print out ////
 
 	//Get peak summary data into table for pdf report
 	var peaksPdfData = [];
@@ -2635,53 +2663,73 @@ $(document).ready(function () {
 			});
 		}
 		return peaksPdfData;
-	}
-
-
+	};
+	//Build the body of table with data, if present
 	function buildTableBody(data, columns) {
 		var body = [];
-		body.push(columns);
-		data.forEach(function (row) {
-			var dataRow = [];
-			columns.forEach(function (column) {
-				dataRow.push(row[column].toString());
-			})
-			body.push(dataRow);
-		});
-		return body;
-	}
-
-	function peakTable(data, columns) {
-		return {
-			table: {
-				headerRows: 1,
-				widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto'],
-				body: buildTableBody(data, columns),
-			},
-			layout: 'lightHorizontalLines',
-			style: 'smaller',
-			margin: [0, 0, 0, 15]
+		if (identifiedPeaks.length === 0) {
+			body.push([
+				{ text: 'There are no Peaks at this Site.' }
+			])
+		} else {
+			body.push(columns);
+			data.forEach(function (row) {
+				var dataRow = [];
+				columns.forEach(function (column) {
+					dataRow.push(row[column].toString());
+				})
+				body.push(dataRow);
+			});
 		};
-	}
-
-	//adding HWM table to pdf report
+		return body;
+	};
+	//Put table body within pdfMake formatted table
+	function peakTable(data, columns) {
+		if (identifiedPeaks.length === 0) {
+			return {
+				table: {
+					body: buildTableBody(data)
+				},
+				layout: 'noBorders',
+				style: 'smaller',
+				margin: [0, 0, 0, 15],
+			};
+		} else {
+			return {
+				table: {
+					headerRows: 1,
+					widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto'],
+					body: buildTableBody(data, ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
+				},
+				layout: 'lightHorizontalLines',
+				style: 'smaller',
+				margin: [0, 0, 0, 15]
+			};
+		};
+	};
+	
+	// Adding HWM data a table body for pdf report
 	function buildHwmTableBody() {
 		var body = [];
-		for (var i in identifiedMarks) {
-			console.log(identifiedMarks)
-			var hwmUncertainty = "";
-			var uncertainty = "";
-			if (identifiedMarks[i].feature.properties.hwm_uncertainty == null) {
-				hwmUncertainty = "n/a";
-			}
-			if (identifiedMarks[i].feature.properties.uncertainty == null) {
-				uncertainty = "n/a";
-			}
+		if (identifiedMarks.length === 0) {
 			body.push([
-				{ rowSpan: 10, style: 'tableHeader', text: 'STN Site No.: ' + identifiedMarks[i].feature.properties.site_no },
-				{ text: 'HWM Label', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_label,
-				{ text: 'Elevation(ft)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.elev_ft
-			],
+				{ text: 'There are no High Water Marks at this Site.' }
+			])
+		} else {
+			for (var i in identifiedMarks) {
+				var hwmUncertainty = "";
+				var uncertainty = "";
+				if (identifiedMarks[i].feature.properties.hwm_uncertainty == null) {
+					hwmUncertainty = "n/a";
+				}
+				if (identifiedMarks[i].feature.properties.uncertainty == null) {
+					uncertainty = "n/a";
+				}
+				body.push([
+					{ rowSpan: 10, style: 'tableHeader', text: 'STN Site No.: ' + identifiedMarks[i].feature.properties.site_no },
+					{ text: 'HWM Label', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_label,
+					{ text: 'Elevation(ft)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.elev_ft
+				],
 				[
 					{},
 					{ text: 'Vertical Datum, Method', style: 'tableHeader' }, identifiedMarks[i].feature.properties.verticalDatumName + ", " + identifiedMarks[i].feature.properties.verticalMethodName,
@@ -2726,36 +2774,47 @@ $(document).ready(function () {
 					{},
 					{ text: 'Uncertainty', style: 'tableHeader' }, uncertainty,
 					{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmUncertainty
-				]
-			);
+				]);
+			}
 		}
 		return body;
-	}
-
+	};
+	//Put table body within pdfMake formatted table
 	function hwmTable() {
-		return {
-			table: {
-				widths: ['auto', 'auto', '*', 'auto', '*'],
-				body: buildHwmTableBody(),
-			},
-			layout: {
-				hLineWidth: function (i, node) {
-					return (i === 0 || i === node.table.body.length) ? 1 : 1;
+		if (identifiedMarks.length === 0) {
+			return {
+				table: {
+					body: buildHwmTableBody(),
 				},
-				vLineWidth: function (i, node) {
-					return (i === 0 || i === node.table.widths.length) ? 1 : 1;
+				layout: 'noBorders',
+				style: 'smaller',
+				margin: [0, 0, 0, 15],
+			};
+		} else {
+			return {
+				table: {
+					widths: ['auto', 'auto', '*', 'auto', '*'],
+					body: buildHwmTableBody(),
 				},
-				hLineColor: function (i, node) {
-					return (i === 0 || i === node.table.body.length) ? 'gray' : 'gray';
+				layout: {
+					hLineWidth: function (i, node) {
+						return (i === 0 || i === node.table.body.length) ? 1 : 1;
+					},
+					vLineWidth: function (i, node) {
+						return (i === 0 || i === node.table.widths.length) ? 1 : 1;
+					},
+					hLineColor: function (i, node) {
+						return (i === 0 || i === node.table.body.length) ? 'gray' : 'gray';
+					},
+					vLineColor: function (i, node) {
+						return (i === 0 || i === node.table.widths.length) ? 'gray' : 'gray';
+					},
 				},
-				vLineColor: function (i, node) {
-					return (i === 0 || i === node.table.widths.length) ? 'gray' : 'gray';
-				},
-			},
-			style: 'smaller',
-			margin: [0, 0, 0, 15],
+				style: 'smaller',
+				margin: [0, 0, 0, 15],
+			};
 		};
-	}
+	};
 
 	//This runs when clicking the 'Peak CSV' or 'HWM CSV' button on the Report modal
 	function downloadCSV(type) {
@@ -2806,22 +2865,33 @@ $(document).ready(function () {
 				}
 			},
 			content: [
-				{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
+				//{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
+				{ table: {
+						widths: ['*'],
+						body: [
+							[{ 
+								border: [false, false, false, true], 
+								text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', 
+								style: 'header', alignment: 'center'
+							}]
+						]
+					}, 
+					margin: [0, 0, 0, 15]
+				},
 				//{ image: pdfMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
 				//{ image: legendUrl, width: 200, height: 200 },
 				{
 					table: {
 						body: [
-							['', ''],
-							[{ image: pdfMapUrl, width: 300, height: 200 }, { image: legendUrl, width: 150, height: 200 }]
+							[{ image: pdfMapUrl, width: 300, height: 200 }, { image: legendUrl, width: 125, height: 175 }]
 						]
 					},
 					layout: 'noBorders',
 					margin: [0, 0, 0, 15]
 				},
-				{ text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
-				peakTable(bodyData(), ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
-				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 5], alignment: 'center' },
+				{ text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5] },
+				peakTable(bodyData()),
+				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 				hwmTable(),
 			],
 			styles: {
