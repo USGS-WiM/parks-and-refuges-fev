@@ -83,7 +83,7 @@ var fevRegional = fevRegional || {
         { fieldName: 'horizontalDatumName', colName: "Horizontal Datum" },
         { fieldName: 'hwm_locationdescription', colName: "HWM Location Description" },
         { fieldName: 'hwm_environment', colName: "HWM Environment" },
-        { fieldName: 'stillwater', colName: "Stillwater)" },
+        { fieldName: 'stillwater', colName: "Stillwater" },
         { fieldName: 'uncertainty', colName: "Uncertainty" },
         { fieldName: 'hwm_uncertainty', colName: "HWM Uncertainty" },
         { fieldName: 'hwm_label', colName: "HWM Label" },
