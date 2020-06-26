@@ -205,11 +205,11 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
                 '<table class="table table-hover table-striped table-condensed wim-table">' +
                 '<caption class="popup-title">' + name + ' | <span style="color:gray">' + currentEvent + '</span></caption>' +
                 '<col style="width:50%"> <col style="width:50%">' +
-                '<tr><td><strong>STN Site No.: </strong></td><td><span id="hwmSiteNo">'+ feature.properties.site_no+ '</span></td></tr>'+
-                '<tr><td><strong>HWM Label: </strong></td><td><span id="hwmLabel">'+ feature.properties.hwm_label+ '</span></td></tr>'+
-                '<tr><td><strong>Elevation(ft): </strong></td><td><span id="hwmElev">'+ feature.properties.elev_ft + '</span></td></tr>'+
-                '<tr><td><strong>Datum: </strong></td><td><span id="hwmWaterbody">'+ feature.properties.verticalDatumName + '</span></td></tr>'+
-                '<tr><td><strong>Height Above Ground: </strong></td><td><span id="hwmHtAboveGnd">'+ (feature.properties.height_above_gnd !== undefined ? feature.properties.height_above_gnd : '<i>No value recorded</i>')+ '</span></td></tr>'+
+                '<tr><td><strong>STN Site No.: </strong></td><td><span id="hwmSiteNo">' + feature.properties.site_no + '</span></td></tr>' +
+                '<tr><td><strong>HWM Label: </strong></td><td><span id="hwmLabel">' + feature.properties.hwm_label + '</span></td></tr>' +
+                '<tr><td><strong>Elevation(ft): </strong></td><td><span id="hwmElev">' + feature.properties.elev_ft + '</span></td></tr>' +
+                '<tr><td><strong>Datum: </strong></td><td><span id="hwmWaterbody">' + feature.properties.verticalDatumName + '</span></td></tr>' +
+                '<tr><td><strong>Height Above Ground: </strong></td><td><span id="hwmHtAboveGnd">' + (feature.properties.height_above_gnd !== undefined ? feature.properties.height_above_gnd : '<i>No value recorded</i>') + '</span></td></tr>' +
                 //'<tr><td><strong>Approval status: </strong></td><td><span id="hwmStatus">'+ (feature.properties.approval_id == undefined || feature.properties.approval_id == 0 ? 'Provisional  <button type="button" class="btn btn-sm data-disclaim"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></button>'  : 'Approved')+ '</span></td></tr>'+
                 '<tr><td><strong>Approval status: </strong></td><td><span id="hwmStatus">' + (feature.properties.approval_id == undefined || feature.properties.approval_id == 0 ? '<button type="button" class="btn btn-sm data-disclaim" title="Click to view provisional data statement">Provisional <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></button>' : 'Approved') + '</span></td></tr>' +
                 '<tr><td><strong>Type: </strong></td><td><span id="hwmType"></span>' + feature.properties.hwmTypeName + '</td></tr>' +
@@ -267,18 +267,34 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
     });
 }
 
+function getPeakValues(type, name, url, markerIcon) {
+        var typeData;
+    
+        //clear peakArr so that it starts fresh in case the event is switched
+        peaktest = [];
 
+        L.geoJson(false, {
+            onEachFeature: function (feature, latlng) {
+    
+                typeData = typeof feature.properties.peak_stage;
+                if (typeData == "number") {
+                    //Create an array of each peak value
+                    peaktest.push(feature.properties.peak_stage);
+                }
+            }
+        });
+        return peaktest;
+}
 
 function displayPeaksGeoJSON(type, name, url, markerIcon) {
 
     //Create variables for createPeakArray
-    var maxPeak = [];
-    var minPeak = [];
     var lengthPeak = [];
     var sortedPeaks = [];
     var thirdLength = [];
     var thirdVal = [];
     var twoThirdVal = [];
+    var typeData;
 
     //clear peakArr so that it starts fresh in case the event is switched
     peakArr = [];
@@ -289,75 +305,78 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
     peak.clearLayers();
 
     var createPeakArray = L.geoJson(false, {
-        onEachFeature: function(feature, latlng){
+        onEachFeature: function (feature, latlng) {
 
-            //Create an array of each peak value
-            peakArr.push(feature.properties.peak_stage);
-
-            //find min and max peak values 
-            maxPeak = Math.max(...peakArr);
-            minPeak = Math.min(...peakArr);
+            typeData = typeof feature.properties.peak_stage;
+            if (typeData == "number") {
+                //Create an array of each peak value
+                peakArr.push(feature.properties.peak_stage);
+            }
 
             //sort array of peak values
-            sortedPeaks = peakArr.sort();
+            sortedPeaks = peakArr.sort(function(a, b){return a - b});
+            //console.log("here are your sorted peask", sortedPeaks);
 
             //find number of peak values
-            lengthPeak = peakArr.length;
+            lengthPeak = sortedPeaks.length;
 
             //divide the array into 3 equal sections
             //find the maximum peak value of each of those sections
-            thirdLength = Math.round(lengthPeak/3);
+            thirdLength = Math.round(lengthPeak / 3);
             //subtract one, because the first index starts at zero
             thirdVal = sortedPeaks[thirdLength - 1];
-            twoThirdVal = sortedPeaks[thirdLength*2 - 1];
+            twoThirdVal = sortedPeaks[thirdLength * 2 - 1];
         }
     });
 
     var currentMarker = L.geoJson(false, {
         onEachFeature: function (feature, latlng) {
-            //add marker to overlapping marker spidifier
-            oms.addMarker(latlng);
-            //var popupContent = '';
-            var currentEvent = fev.vars.currentEventName;        
-            //set popup content using moment js to pretty format the date value
-            var popupContent =
-                '<table class="table table-condensed table-striped table-hover wim-table">' +
-                '<caption class="popup-title">' + name + ' | <span style="color:gray"> ' + currentEvent + '</span></caption>' +
-                '<tr><th>Peak Stage (ft)</th><th>Datum</th><th>Peak Date & Time (UTC)</th></tr>' +
-                '<tr><td>' + feature.properties.peak_stage + '</td><td>' + feature.properties.vdatum + '</td><td>' + moment(feature.properties.peak_date).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>' +
-                '</table>';
+            typeData = typeof feature.properties.peak_stage;
+            if (typeData == "number") {
+                //add marker to overlapping marker spidifier
+                oms.addMarker(latlng);
+                //var popupContent = '';
+                var currentEvent = fev.vars.currentEventName;
+                //set popup content using moment js to pretty format the date value
+                var popupContent =
+                    '<table class="table table-condensed table-striped table-hover wim-table">' +
+                    '<caption class="popup-title">' + name + ' | <span style="color:gray"> ' + currentEvent + '</span></caption>' +
+                    '<tr><th>Peak Stage (ft)</th><th>Datum</th><th>Peak Date & Time (UTC)</th></tr>' +
+                    '<tr><td>' + feature.properties.peak_stage + '</td><td>' + feature.properties.vdatum + '</td><td>' + moment(feature.properties.peak_date).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</td></tr>' +
+                    '</table>';
 
-            // $.each(feature.properties, function( index, value ) {
-            //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-            // });
-            latlng.bindPopup(popupContent);
+                // $.each(feature.properties, function( index, value ) {
+                //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
+                // });
+                latlng.bindPopup(popupContent);
+            }
         },
 
         pointToLayer: function (feature, latlng) {
-            markerCoords.push(latlng);
-            var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
-            //console.log("Ranges for peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
-            //Create 3 categories for marker size          
-            if (feature.properties.peak_stage < thirdVal) {
-                var marker =             
-                L.marker(latlng, {
-                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7,10] })
-                }).bindLabel("Peak: " + labelText + "<br>Site: " +feature.properties.site_no);
+                markerCoords.push(latlng);
+                var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
+                //console.log("Ranges for peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
+                //Create 3 categories for marker size          
+                if (feature.properties.peak_stage < thirdVal) {
+                    var marker =
+                        L.marker(latlng, {
+                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
+                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                }
+                if (thirdVal <= feature.properties.peak_stage <= twoThirdVal) {
+                    var marker =
+                        L.marker(latlng, {
+                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                }
+                if (feature.properties.peak_stage > twoThirdVal) {
+                    var marker =
+                        L.marker(latlng, {
+                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
+                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                }
+                return marker;
             }
-            if (thirdVal <= feature.properties.peak_stage <= twoThirdVal) {
-                var marker =             
-                L.marker(latlng, {
-                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11,16] })
-                }).bindLabel("Peak: " + labelText + "<br>Site: " +feature.properties.site_no);
-            }
-            if (feature.properties.peak_stage > twoThirdVal) {
-                var marker =             
-                L.marker(latlng, {
-                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15,22] })
-                }).bindLabel("Peak: " + labelText + "<br>Site: " +feature.properties.site_no);
-            }
-            return marker;
-        }    
     });
 
     $.getJSON(url, function (data) {
@@ -785,24 +804,24 @@ function queryNWISRainGages(bbox) {
     //var state = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'GU', 'PR', 'VI'];
     //for (i = 0; i < state.length; i++) {
 
-        var parameterCodeList2 = '00045,46529,72192';
-        var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS,AT,WE,SP';
-        var siteStatus = 'active';
-        var url = 'https://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList2 + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
+    var parameterCodeList2 = '00045,46529,72192';
+    var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS,AT,WE,SP';
+    var siteStatus = 'active';
+    var url = 'https://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList2 + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
 
 
-        //var url = 'https://waterdata.usgs.gov/' + state[i] + '/nwis/current?type=precip&group_key=county_cd&format=sitefile_output&sitefile_output_format=xml&column_name=agency_cd&column_name=site_no&column_name=station_nm&column_name=site_tp_cd&column_name=dec_lat_va&column_name=dec_long_va&column_name=agency_use_cd';
-        //var url = 'https://waterdata.usgs.gov/nwis/current?type=precip&group_key=county_cd&format=sitefile_output&sitefile_output_format=xml&column_name=agency_cd&column_name=site_no&column_name=station_nm&column_name=site_tp_cd&column_name=dec_lat_va&column_name=dec_long_va&column_name=agency_use_cd';
-        console.log(url);
+    //var url = 'https://waterdata.usgs.gov/' + state[i] + '/nwis/current?type=precip&group_key=county_cd&format=sitefile_output&sitefile_output_format=xml&column_name=agency_cd&column_name=site_no&column_name=station_nm&column_name=site_tp_cd&column_name=dec_lat_va&column_name=dec_long_va&column_name=agency_use_cd';
+    //var url = 'https://waterdata.usgs.gov/nwis/current?type=precip&group_key=county_cd&format=sitefile_output&sitefile_output_format=xml&column_name=agency_cd&column_name=site_no&column_name=station_nm&column_name=site_tp_cd&column_name=dec_lat_va&column_name=dec_long_va&column_name=agency_use_cd';
+    console.log(url);
 
-        $.ajax({
-            url: url,
-            dataType: "xml",
-            data: NWISRainmarkers,
-            success: function (xml) {
-                $(xml).find('site').each(function () {
+    $.ajax({
+        url: url,
+        dataType: "xml",
+        data: NWISRainmarkers,
+        success: function (xml) {
+            $(xml).find('site').each(function () {
 
-                    var siteID = $(this).attr('sno');
+                var siteID = $(this).attr('sno');
                 var siteName = $(this).attr('sna');
                 var lat = $(this).attr('lat');
                 var lng = $(this).attr('lng');
@@ -819,20 +838,20 @@ function queryNWISRainGages(bbox) {
                         var lat = this.children[4].innerHTML;
                         var lng = this.children[5].innerHTML;
                     } */
-                    NWISRainmarkers[siteID] = L.marker([lat, lng], { icon: nwisRainMarkerIcon });
-                    NWISRainmarkers[siteID].data = { siteName: siteName, siteCode: siteID };
-                    NWISRainmarkers[siteID].data.parameters = {};
+                NWISRainmarkers[siteID] = L.marker([lat, lng], { icon: nwisRainMarkerIcon });
+                NWISRainmarkers[siteID].data = { siteName: siteName, siteCode: siteID };
+                NWISRainmarkers[siteID].data.parameters = {};
 
-                    //add point to featureGroup
-                    USGSRainGages.addLayer(NWISRainmarkers[siteID]);
+                //add point to featureGroup
+                USGSRainGages.addLayer(NWISRainmarkers[siteID]);
 
-                    $("#nwisLoadingAlert").fadeOut(2000);
-                });
-            },
-            error: function (xml) {
                 $("#nwisLoadingAlert").fadeOut(2000);
-            }
-        });
+            });
+        },
+        error: function (xml) {
+            $("#nwisLoadingAlert").fadeOut(2000);
+        }
+    });
     //}
 }
 //use extent to get NWIS rt gages based on bounding box, display on map
@@ -1145,11 +1164,11 @@ function queryNWISRaingraph(e) {
             var newList = [];
             var sum = 0;
 
-            data.forEach(function(item, idx) {
+            data.forEach(function (item, idx) {
                 //sum is the cumulative count of the value (second element of [time,data] item)
                 sum = sum + item[1];
                 //push new item with the original date, and latest sum value
-                newList.push([item[0],sum]);
+                newList.push([item[0], sum]);
             });
 
             //if there is some data, show the div
@@ -1194,8 +1213,8 @@ function queryNWISRaingraph(e) {
                     title: { text: 'Precipitation total, inches' }
                 },
                 tooltip: {
-                    formatter: function() {
-                        return 'Precipitation total: '+ Highcharts.numberFormat(this.y, 2, '.') +' inches';
+                    formatter: function () {
+                        return 'Precipitation total: ' + Highcharts.numberFormat(this.y, 2, '.') + ' inches';
                     }
                 },
                 series: [{
