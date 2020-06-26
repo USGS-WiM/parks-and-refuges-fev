@@ -142,6 +142,11 @@ $(document).ready(function () {
         }); */
         document.querySelector('.progress-bar-fill').style.width = "100%"
 
+        setTimeout(function(){  
+            var activatePeak = document.getElementById("peakCheckboxReg");
+            activatePeak.disabled = false;
+        }, 30000);
+
         // setting buffer style
         var bufferStyle = {
             "color": "#0000cc",
