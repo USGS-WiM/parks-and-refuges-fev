@@ -1054,6 +1054,14 @@ $(document).ready(function () {
 			});
 		};
 
+		// // If there is no data, then printing will be disabled. 
+		// if ((allPeaks.length === 0) && (allHWMs.length === 0)) {
+		// 	document.getElementById("printRegionalReport").disabled = true;
+		// 	//$('#print').attr('disabled', true);
+		// } else {
+		// 	document.getElementById("printRegionalReport").disabled = false;
+		// }
+
 		$('#printRegionalReport').click(function () {
 			getRegionalMap();
 
@@ -1076,33 +1084,40 @@ $(document).ready(function () {
 				// 	summaryRows.push({'Summary information': 'None available.'},{},{},{},{},{},{},{});
 				// }
 				return summaryRows;
-			}
+			};
 			// Build the table body for pdfMake of summary information - This is used for other tables where appropriate
 			function buildTableBody(data, columns) {
 				var body = [];
-				body.push(columns);
-				data.forEach(function (row) {
-					var dataRow = [];
-					columns.forEach(function (column) {
-						dataRow.push(row[column].toString());
-					})
-					body.push(dataRow);
-				});
+				//Prep for when buildTableBody() is called later for peak data
+				if (allPeaks.length === 0) {
+					body.push([
+						{ text: 'There is no Peak data based on selections.' }
+					])
+				} else {
+					body.push(columns);
+					data.forEach(function (row) {
+						var dataRow = [];
+						columns.forEach(function (column) {
+							dataRow.push(row[column].toString());
+						})
+						body.push(dataRow);
+					});
+				};
 				return body;
-			}
+			};
 			// Insert tably body into pdfMake formatted table
 			function summaryTable(data, columns) {
 				return {
 					table: {
 						headerRows: 1,
-						widths: ['*', '*', '*', '*', '*', '*', '*', '*', '*'],
-						body: buildTableBody(data, columns),
+						widths: '*',
+						body: buildTableBody(data, ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max','90% Conf Low', '90% Conf High']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
 					margin: [0, 0, 0, 15]
-				};
-			}
+				};	
+			};
 			//// End of Summary Information table build ////
 
 			//// Get Peak Table information data to put into pdfMake /////
@@ -1128,17 +1143,28 @@ $(document).ready(function () {
 			// Build the table body for pdfMake of peak table information
 			// Insert table body into pdfMake formatted table
 			function peaksTable(data, columns) {
-				return {
-					table: {
-						headerRows: 1,
-						widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
-						body: buildTableBody(data, columns),
-					},
-					layout: 'lightHorizontalLines',
-					style: 'smaller',
-					margin: [0, 0, 0, 15]
+				if (allPeaks.length === 0) {
+					return {
+						table: {
+							body: buildTableBody(data)
+						},
+						layout: 'noBorders',
+						style: 'smaller',
+						margin: [0, 0, 0, 15],
+					};
+				} else {
+					return {
+						table: {
+							headerRows: 1,
+							widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
+							body: buildTableBody(data, ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no','waterbody']),
+						},
+						layout: 'lightHorizontalLines',
+						style: 'smaller',
+						margin: [0, 0, 0, 15]
+					};
 				};
-			}
+			};
 			//// End of Peak Table information build ////
 
 			//// Get HWM Table information data to put into pdfMake /////
@@ -1158,9 +1184,11 @@ $(document).ready(function () {
 			// Build the table body for pdfMake of hwm table information
 			function buildHwmsTable() {
 				var body = [];
-				// if (hwmData.length === 0) {
-				// 	hwmData.push({'There is no HWM data available': '.'},{},{},{},{});
-				// } else {
+				if (allHWMs.length === 0) {
+					body.push([
+						{ text: 'There is no HWM data based on selections.'}
+					])
+				} else {
 					for (var i in hwmData) {
 						body.push([
 							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
@@ -1218,20 +1246,31 @@ $(document).ready(function () {
 							{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
 						]);
 					}
-				//}
+				}
 				return body;
-			}
+			};
 			// Insert table body into pdfMake formatted table
 			function hwmsTable() {
-				return {
-					table: {
-						widths: ['auto', 'auto', '*', 'auto', '*'],
-						body: buildHwmsTable(),
-					},
-					style: 'smaller',
-					margin: [0, 0, 0, 15]
+				if (allHWMs.length === 0) {
+					return {
+						table: {
+							body: buildHwmsTable(),
+						},
+						layout: 'noBorders',
+						style: 'smaller',
+						margin: [0, 0, 0, 15],
+					};
+				} else {
+					return {
+						table: {
+							widths: ['auto', 'auto', '*', 'auto', '*'],
+							body: buildHwmsTable(),
+						},
+						style: 'smaller',
+						margin: [0, 0, 0, 15]
+					};
 				};
-			}
+			};
 			//// End of HWM Table information build ////
 
 			//// Get date and time of print click //// 
@@ -1423,10 +1462,10 @@ $(document).ready(function () {
 						},
 						//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
 						{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 5] },
-						summaryTable(summaryInfo(), ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max','90% Conf Low', '90% Conf High']),
+						summaryTable(summaryInfo()),
 						{ text: 'Peak Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
-						peaksTable(getPeaksData(), ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no','waterbody']),
+						peaksTable(getPeaksData()),
 						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						hwmsTable()
 					],
