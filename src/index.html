@@ -347,16 +347,16 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                     <h4 class="modal-title"><span class="glyphicon glyphicon-print"></span>Print Map</h4>
                 </div>
-                <div class="modal-body" style="text-align: center; height: 700px; overflow-y: auto;">
-                    <div id="reviewMap" style="display: inline-flex;">
+                <div class="modal-body" style="text-align: center; height: 700px; overflow-y: auto; overflow-x: auto;">
+                    <div id="reviewMap" class="report-inline-block">
                         <div id='loader' class='imageLoader'></div>
                         <p id='loadingMessage'>loading image...</p>
-                        <div id="legendImage" style="display: inline-flex;"></div>
                     </div>
+                    <div id="legendImage" class="report-inline-block"></div>
                     <div class='reportInfo' id="peakTable">
                         <table class="table" id="peakDataTable"></table>
                     </div>
-                    <div class='reportInfo' id="hwmTable" style="width: 850px; overflow-x: scroll;">
+                    <div class='reportInfo' id="hwmTable" style="width: 900px; overflow-x: scroll;">
                         <table class="table" id="hwmDataTable"></table>
                     </div>
                     <!-- <div id="reviewMapContainer">
