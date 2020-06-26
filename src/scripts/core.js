@@ -2936,6 +2936,8 @@ function clickPeaks() {
 	if (peaksCheckBox.checked == true) {
 		//When checkbox is checked, add layer to map
 		displayPeaksGeoJSON("peak", "Peak Summary", fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
+		var peakvalues = getPeakValues("peak", "Peak Summary", fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
+
 	}
 	//Remove symbol and layer name from legend when box is unchecked
 	if (peaksCheckBox.checked == false) {
