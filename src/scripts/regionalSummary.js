@@ -1235,6 +1235,9 @@ $(document).ready(function () {
         peaksRegionalCSVData = [];
         allHWMs = [];
         allPeaks = [];
+        parksWithPeaks = [];
+        parksWithHWMs = [];
+        parksWithBaros = [];
 
         alreadyRan = false;
 
@@ -1246,10 +1249,12 @@ $(document).ready(function () {
         }
 
         // clearing tables
-        $('#summaryDataTable').empty();
+
+        $("#regionalPeakTable").find("table").empty();
+
         //document.getElementById('summaryDataTable').innerHTML = '';
-        document.getElementById('peakDataTableReg').innerHTML = '';
-        document.getElementById('hwmDataTableReg').innerHTML = '';
+        //document.getElementById('peakDataTableReg').innerHTML = '';
+        //document.getElementById('hwmDataTableReg').innerHTML = '';
 
         document.querySelector('.progress-bar-fill').style.width = "0%"
 

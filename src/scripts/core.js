@@ -1054,13 +1054,13 @@ $(document).ready(function () {
 			});
 		};
 
-		// // If there is no data, then printing will be disabled. 
-		// if ((allPeaks.length === 0) && (allHWMs.length === 0)) {
-		// 	document.getElementById("printRegionalReport").disabled = true;
-		// 	//$('#print').attr('disabled', true);
-		// } else {
-		// 	document.getElementById("printRegionalReport").disabled = false;
-		// }
+		// If there is no data, then printing will be disabled. 
+		if ((allPeaks.length === 0) && (allHWMs.length === 0)) {
+			document.getElementById("printRegionalReport").disabled = true;
+			//$('#print').attr('disabled', true);
+		} else {
+			document.getElementById("printRegionalReport").disabled = false;
+		}
 
 		$('#printRegionalReport').click(function () {
 			getRegionalMap();
