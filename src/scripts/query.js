@@ -1028,32 +1028,37 @@ function displayRtGageReport(e) {
     });
 
     var gageGraphTitle = document.getElementById('gageGraphs');
+    gageGraphTitle.innerHTML = ""
     if (e.length == 1) {
         gageGraphTitle.innerHTML = "Real-time Stream Gage";
     }
     if (e.length > 1) {
         gageGraphTitle.innerHTML = "Real-time Stream Gages";
     }
-    if (e.length == 0) {
-        gageGraphTitle.innerHTML = "";
-    }
+
     var graphCounter = 0;
 
     for (i in e) {
 
-        
         var graphCounterString = graphCounter.toString();
-       
+
         var tempGraphID = 'graphContainerReport';
         var tempGraphIDhash = '#graphContainerReport';
+        var tempGraphNoDataID = 'noDataMessage';
+        var tempGraphNoDataHash = '#noDataMessage';
 
-        tempGraphID = tempGraphID.substring(0,20);
-        tempGraphIDhash = tempGraphIDhash.substring(0,21);
-      
+
+        tempGraphID = tempGraphID.substring(0, 20);
+        tempGraphIDhash = tempGraphIDhash.substring(0, 21);
+        tempGraphNoDataID = tempGraphNoDataID.substring(0, 13);
+        tempGraphNoDataHash = tempGraphNoDataHash.substring(0, 14);
+
         var tempID = tempGraphID.concat(graphCounterString);
         var tempIDhash = tempGraphIDhash.concat(graphCounterString);
-        
-        
+        var tempNoDataID = tempGraphNoDataID.concat(graphCounterString);
+        var tempNoDataHash = tempGraphNoDataHash.concat(graphCounterString);
+
+
         graphCounter += 1;
 
         var parameterCodeList = '00065,62619,62620,63160,72279';
@@ -1071,9 +1076,15 @@ function displayRtGageReport(e) {
             timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
         }
 
-        $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + "<label class='popup-title'>" + e[i].data.siteName + " (Site" + "&nbsp" + e[i].data.siteCode + ")" + "</label>" + "</br>" + "<div id=" + tempID+ " style='width:400px; height:250px; display:none;'>" + "</div>" + "</div>");
+        $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + e[i].data.siteName + " (Site" + "&nbsp" + e[i].data.siteCode + ")" + "</br>" + "</div>" + "<div id= " + tempNoDataID + " display:none;'></div>" + "<div id=" + tempID + " style='width:400px; height:250px;display:none;'>" + "</div>");
 
         $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e[i].data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
+
+
+            if (data.data == undefined) {
+                $(tempNoDataHash).append("<div style= text-align:left;>" + "No NWIS data available for this time period" + "<div>");
+                $(tempNoDataHash).show();
+            }
 
             if (data.data != undefined) {
                 //if there is some data, show the div
@@ -1089,7 +1100,7 @@ function displayRtGageReport(e) {
                         type: 'line'
                     },
                     title: {
-                        text: 'NWIS Site ' + e[i].data.siteCode + '<br> ' + e[i].data.siteName,
+                        text: "",
                         align: 'left',
                         style: {
                             color: 'rgba(0,0,0,0.6)',
