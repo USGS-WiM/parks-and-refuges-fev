@@ -522,22 +522,22 @@ $(document).ready(function () {
 				$('.parkRefSelectAlert').show();
 			}
 
-			USGSrtGages.clearLayers(map);
-			USGSRainGages.clearLayers(map);
 
+			//If the box is checked, re-add the rain or stream gages to the map when running Filters Modal
 			var streamgageCheckBox = document.getElementById("streamGageToggle");
 			var raingageCheckBox = document.getElementById("rainGageToggle");
 			if (raingageCheckBox.checked == true) {
-
 				USGSRainGages.clearLayers(map);
+				var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+				queryNWISRainGages(bbox);
 				USGSRainGages.addTo(map);
 			}
 			if (streamgageCheckBox.checked == true) {
-			
 				USGSrtGages.clearLayers(map);
+				var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+				queryNWISrtGages(bbox);
 				USGSrtGages.addTo(map);
 			}
-			
 		});
 	}
 
