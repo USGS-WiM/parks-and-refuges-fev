@@ -1021,44 +1021,54 @@ function queryNWISgraphRDG(e) {
 }
 
 //get data and generate graph of real-time gage water level time-series data
-function displayRtGageReport(e) {
+function displayRtGageReport(rainGagesInBuffer) {
 
+    //Prevent the code before 'getJSON' to loop over before 'getJSON' has also run
     $.ajaxSetup({
         async: false
     });
 
+    //This title appears under the map/legend in the regional report
+    //No report or title are shown if there are no stream gages in the buffer
+    //Stream gage layer must be turned on
     var gageGraphTitle = document.getElementById('gageGraphs');
     gageGraphTitle.innerHTML = ""
-    if (e.length == 1) {
+    if (rainGagesInBuffer.length == 1) {
         gageGraphTitle.innerHTML = "Real-time Stream Gage";
     }
-    if (e.length > 1) {
+    if (rainGagesInBuffer.length > 1) {
         gageGraphTitle.innerHTML = "Real-time Stream Gages";
     }
 
+    //Keeps track of how many graphs were generated (or attempted to generate)
+    //Counter is later added to the end of each graph-related ID so that the elements don't overwrite after each loop
+    //Without this counter, only one graph/no data warning will appear
     var graphCounter = 0;
 
-    for (i in e) {
+    for (rainGage in rainGagesInBuffer) {
 
+        //Turn the graphCounter into a string so that it can be added onto the name of the ID
         var graphCounterString = graphCounter.toString();
 
+        //Create temporary IDs for displaying the hydrograph or no data warning
         var tempGraphID = 'graphContainerReport';
         var tempGraphIDhash = '#graphContainerReport';
         var tempGraphNoDataID = 'noDataMessage';
         var tempGraphNoDataHash = '#noDataMessage';
 
-
+        //Keep the IDs sensical by removing the previous counter
         tempGraphID = tempGraphID.substring(0, 20);
         tempGraphIDhash = tempGraphIDhash.substring(0, 21);
         tempGraphNoDataID = tempGraphNoDataID.substring(0, 13);
         tempGraphNoDataHash = tempGraphNoDataHash.substring(0, 14);
 
+        //Add the new counter to the end of the hydrograph and data warning ID
         var tempID = tempGraphID.concat(graphCounterString);
         var tempIDhash = tempGraphIDhash.concat(graphCounterString);
         var tempNoDataID = tempGraphNoDataID.concat(graphCounterString);
         var tempNoDataHash = tempGraphNoDataHash.concat(graphCounterString);
 
-
+        //Increase the graphCounter by one for each loop
         graphCounter += 1;
 
         var parameterCodeList = '00065,62619,62620,63160,72279';
@@ -1076,16 +1086,19 @@ function displayRtGageReport(e) {
             timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
         }
 
-        $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + e[i].data.siteName + " (Site" + "&nbsp" + e[i].data.siteCode + ")" + "</br>" + "</div>" + "<div id= " + tempNoDataID + " display:none;'></div>" + "<div id=" + tempID + " style='width:400px; height:250px;display:none;'>" + "</div>");
+        //This is where the hydrograph title and graph or no data warning are added to the Report 
+        $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + rainGagesInBuffer[rainGage].data.siteName + " (Site" + "&nbsp" + rainGagesInBuffer[rainGage].data.siteCode + ")" + "</br>" + "</div>" + "<div id= " + tempNoDataID + " display:none;'></div>" + "<div id=" + tempID + " style='width:400px; height:250px;display:none;'>" + "</div>");
 
-        $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + e[i].data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
-
-
+        //Get the data for the hydrograph
+        $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + rainGagesInBuffer[rainGage].data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
+            
+            //If there are no data to create a hydrograph, display the no data warning
             if (data.data == undefined) {
                 $(tempNoDataHash).append("<div style= text-align:left;>" + "No NWIS data available for this time period" + "<div>");
                 $(tempNoDataHash).show();
             }
 
+            //If there are data, create a hydrograph
             if (data.data != undefined) {
                 //if there is some data, show the div
                 $('#graphLoadMessage').hide();
@@ -1093,7 +1106,6 @@ function displayRtGageReport(e) {
                 $(tempIDhash).show();
 
                 //create chart
-
                 Highcharts.setOptions({ global: { useUTC: false } });
                 $(tempIDhash).highcharts({
                     chart: {
@@ -1138,7 +1150,6 @@ function displayRtGageReport(e) {
                     }]
                 });
             }
-
         });
     }
 }
