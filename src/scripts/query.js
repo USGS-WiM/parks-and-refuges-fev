@@ -1100,9 +1100,6 @@ function displayRtGageReport(rainGagesInBuffer) {
 
             //If there are data, create a hydrograph
             if (data.data != undefined) {
-                //if there is some data, show the div
-                $('#graphLoadMessage').hide();
-                $('.popup-title').hide();
                 $(tempIDhash).show();
 
                 //create chart

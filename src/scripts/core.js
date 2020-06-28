@@ -522,7 +522,6 @@ $(document).ready(function () {
 				$('.parkRefSelectAlert').show();
 			}
 
-
 			//If the box is checked, re-add the rain or stream gages to the map when running Filters Modal
 			var streamgageCheckBox = document.getElementById("streamGageToggle");
 			var raingageCheckBox = document.getElementById("rainGageToggle");
