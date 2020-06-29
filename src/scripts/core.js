@@ -15,6 +15,8 @@ var bbox;
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var identifiedMarks = [];
+var identifiedUSGSrtGage = [];
+var buffer;
 var fev = fev || {
 	data: {
 		events: [],
@@ -237,12 +239,6 @@ $.ajax({
 			//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
 			//noaaService = noaaTrack;
 			console.log("noaa layer added");
-			var noaaCheckBox = document.getElementById("noaaToggle");
-			noaaCheckBox.checked = true;
-			if (noaaStart == 0) {
-				$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
-				noaaStart = 1;
-			}
 		}
 	}
 });
@@ -531,6 +527,25 @@ $(document).ready(function () {
 			} else {
 				$('.parkRefSelectAlert').show();
 			}
+
+			//reset identified gages
+			identifiedUSGSrtGage = [];
+
+			//If the box is checked, re-add the rain or stream gages to the map when running Filters Modal
+			var streamgageCheckBox = document.getElementById("streamGageToggle");
+			var raingageCheckBox = document.getElementById("rainGageToggle");
+			if (raingageCheckBox.checked == true) {
+				USGSRainGages.clearLayers(map);
+				var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+				queryNWISRainGages(bbox);
+				USGSRainGages.addTo(map);
+			}
+			if (streamgageCheckBox.checked == true) {
+				USGSrtGages.clearLayers(map);
+				var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+				queryNWISrtGages(bbox);
+				USGSrtGages.addTo(map);
+			}
 		});
 	}
 
@@ -704,6 +719,14 @@ $(document).ready(function () {
 	//display USGS rt gages by default on map load
 	// USGSrtGages.addTo(map);
 	noaaService.addTo(map);
+	if (map.hasLayer(noaaService)) {
+		var noaaCheckBox = document.getElementById("noaaToggle");
+		noaaCheckBox.checked = true;
+		if (noaaStart == 0) {
+			$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
+			noaaStart = 1;
+		}
+	}
 
 	//define layer 'overlays' (overlay is a leaflet term)
 	//define the real-time overlay and manually add the NWIS RT gages to it
@@ -1491,8 +1514,27 @@ $(document).ready(function () {
 	var legendUrl;
 
 	$('#printNav').click(function () {
+		$('#rtgraphs').children().remove();
+		identifiedUSGSrtGage = [];
 		showPrintModal();
 		$("#reportFooter").hide();
+
+
+		// cycling through each peak and seeing if it's inside the buffer
+		for (var i in USGSrtGages._layers) {
+
+			// formatting point for turf
+			var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
+
+			var isItInside = turf.booleanPointInPolygon(cords, buffer);
+
+			// if true add it to an array containing all the 'true' peaks
+			if (isItInside) {
+				identifiedUSGSrtGage.push(USGSrtGages._layers[i])
+			}
+		}
+
+		displayRtGageReport(identifiedUSGSrtGage);
 
 		var mapPreview = document.getElementById('reviewMap');
 		var legendPreview = document.getElementById('legendImage');
@@ -1525,8 +1567,6 @@ $(document).ready(function () {
 			});
 		}
 		peaksCSVData = peakTableData;
-
-		console.log(peakTableData)
 
 		// Builds the HTML Table for peaks
 		function buildHtmlTable() {
@@ -1621,8 +1661,6 @@ $(document).ready(function () {
 		var chunks = [];
 		hwmCSVData = hwmTableData;
 
-		console.log(hwmTableData)
-
 		//console.log("hwmTableData", hwmCSVData);
 		//console.log("length of hwm data", hwmCSVData.length);
 
@@ -1689,33 +1727,6 @@ $(document).ready(function () {
 			}, 3000);
 		}
 
-		//test function 
-		function export_table_to_csv() {
-			var csv = [];
-			var rows = hwmDataTable.querySelectorAll("table tr");
-			console.log("rows here:", rows);
-			/*
-			console.log("here are the rows:", rows);
-			var cols = hwmDataTable.querySelectorAll("tr td");
-			console.log("here are the cols:", cols);
-		*/
-			for (var i = 0; i < rows.length; i++) {
-				var row = [];
-				var cols = rows[i].querySelectorAll("tr td");
-				console.log("cols here:", cols);
-				/*
-				for (var j = 0; j < cols.length; j++) 
-					row.push(cols[j].innerText);
-					console.log("new line", row );
-					*/
-
-				//csv.push(row.join(","));
-
-			}
-
-			//console.log("csv in table:", csv);
-		}
-		export_table_to_csv();
 
 		var hwmCSV = hwmDataTable.table2csv;
 		console.log("hwmDataTable", hwmDataTable);
@@ -2014,7 +2025,6 @@ $(document).ready(function () {
 	document.getElementById('fiftyKm').checked = false;
 	// 10 kilometers
 	$('#tenKm').click(function () {
-		console.log("10 button clicked");
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
@@ -2022,7 +2032,6 @@ $(document).ready(function () {
 	});
 	// 20 kilometers
 	$('#twentyKm').click(function () {
-		console.log("20 button clicked");
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
@@ -2030,7 +2039,6 @@ $(document).ready(function () {
 	});
 	// 30 kilometers
 	$('#thirtyKm').click(function () {
-		console.log("30 button clicked");
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
@@ -2038,7 +2046,6 @@ $(document).ready(function () {
 	});
 	// 50 kilometers
 	$('#fiftyKm').click(function () {
-		console.log("50 button clicked");
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
@@ -2262,7 +2269,6 @@ $(document).ready(function () {
 		// UNIT_NAME holds gnis major value of park name (I think)
 		var where = "1=1";
 		var polys = [];
-		var buffer;
 		var regionName;
 
 		where = "UNIT_NAME=" + name;
