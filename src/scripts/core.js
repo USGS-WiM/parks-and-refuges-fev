@@ -482,12 +482,12 @@ $(document).ready(function () {
 	});
 
 	//welcomeModal: set search for 'Go' click 
-	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_filterModal');
+	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_filterModal', false);
 	//updateFiltersModal MODAL: set search for 'Go' click 
-	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal');
+	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', true);
 
 	//set search for 'Go' click
-	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary) {
+	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary, runningFilter) {
 		submitButton.click(function () {
 			//check if an event has been selected
 			if (($(evtSelect_Modal_Primary).val() !== null) && (searchResults !== undefined)) {
@@ -511,7 +511,13 @@ $(document).ready(function () {
 					});
 				//populateEventDates(eventID);
 				filterMapData(eventID, false);
-				searchComplete();
+
+				if (runningFilter == true) {
+					searchComplete(true);
+				}
+				if (runningFilter == false) {
+					searchComplete(false);
+				}
 			} else {
 				//if no event selected, warn user with alert
 				// Also accounting for having an event selected but no parkref
@@ -928,7 +934,7 @@ $(document).ready(function () {
 			L.esri.basemapLayer('Topographic').addTo(reviewMap);
 		}, 500); */
 	}
-	
+
 	var pdfRegionalMapUrl;
 	$('#regionalReportNav').click(function () {
 		showRegionalModal();
@@ -940,7 +946,7 @@ $(document).ready(function () {
 			mapPane = $('#regionalMapContainer')[0].children[0].children[0];
 			const mapTransform = mapPane.style.transform.split(',');
 			let mapX;
-	
+
 			// fix for firefox
 			if (mapTransform[0] === undefined) {
 				mapX = '';
@@ -949,18 +955,18 @@ $(document).ready(function () {
 			} else {
 				mapX = parseFloat(mapTransform[0].split('(')[1].replace('px', ''));
 			}
-	
+
 			let mapY;
 			if (mapTransform[1] === undefined) {
 				mapY = '';
 			} else {
 				mapY = parseFloat(mapTransform[1].replace('px', ''));
 			}
-	
+
 			mapPane.style.transform = '';
 			mapPane.style.left = mapX + 'px';
 			mapPane.style.top = mapY + 'px';
-	
+
 			const myTiles = $('img.leaflet-tile');
 			const tilesLeft = [];
 			const tilesTop = [];
@@ -983,7 +989,7 @@ $(document).ready(function () {
 				myTiles[i].style.left = (tilesLeft[i]) + 'px';
 				myTiles[i].style.top = (tilesTop[i]) + 'px';
 			}
-	
+
 			const myDivicons = $('.leaflet-marker-icon');
 			const dx = [];
 			const dy = [];
@@ -993,16 +999,16 @@ $(document).ready(function () {
 				const curTransform = myDivicons[i].style.transform;
 				const splitTransform = curTransform.split(',');
 				if (splitTransform[0] === '') {
-	
+
 				} else {
 					dx.push(parseFloat(splitTransform[0].split('(')[1].replace('px', '')));
 				}
 				if (splitTransform[0] === '') {
-	
+
 					// when printing without reloading the style.transform property is blank
 					// but the values we need are in the style.cssText string
 					// so with the code below I'm manipulating those strings to get the values we need
-	
+
 					dx.push(myDivicons[i].style.cssText.split(' left: ')[1].split('px')[0]);
 					dy.push(myDivicons[i].style.cssText.split('top')[1].replace('px;', ''));
 				} else {
@@ -1012,14 +1018,14 @@ $(document).ready(function () {
 				myDivicons[i].style.left = dx[i] + 'px';
 				myDivicons[i].style.top = dy[i] + 'px';
 			}
-	
+
 			const mapWidth = parseFloat($('#regionalMap').css('width').replace('px', ''));
 			const mapHeight = parseFloat($('#regionalMap').css('height').replace('px', ''));
-	
+
 			const options = {
 				useCORS: true,
 			};
-	
+
 			for (let i = 0; i < myTiles.length; i++) {
 				if (tileMethod[i] === 'left') {
 					myTiles[i].style.left = (tilesLeft[i]) + 'px';
@@ -1039,11 +1045,11 @@ $(document).ready(function () {
 				myDivicons[i].style.marginLeft = mLeft[i] + 'px';
 				myDivicons[i].style.marginTop = mTop[i] + 'px';
 			}
-	
+
 			mapPane.style.transform = 'translate(' + (mapX) + 'px,' + (mapY) + 'px)';
 			mapPane.style.left = '';
 			mapPane.style.top = '';
-	
+
 			var mapEvent;
 			html2canvas(document.getElementById('regionalMap'), options).then(function (canvas) {
 				mapEvent = new Event('map_ready');
@@ -1062,12 +1068,12 @@ $(document).ready(function () {
 			var sumHeaders = [];
 			// Get table values from summary information table
 			function summaryInfo() {
-				$('#summaryDataTable th').each(function(index, item) {
+				$('#summaryDataTable th').each(function (index, item) {
 					sumHeaders[index] = $(item).html();
 				});
-				$('#summaryDataTable tr').has('td').each(function() {
+				$('#summaryDataTable tr').has('td').each(function () {
 					var arrayItem = {};
-					$('td', $(this)).each(function(index, item) {
+					$('td', $(this)).each(function (index, item) {
 						arrayItem[sumHeaders[index]] = $(item).html();
 					});
 					summaryRows.push(arrayItem);
@@ -1110,12 +1116,12 @@ $(document).ready(function () {
 			var peakHeaders = [];
 			// Get table values from peak table
 			function getPeaksData() {
-				$('#peakDataTableReg th').each(function(index, item) {
+				$('#peakDataTableReg th').each(function (index, item) {
 					peakHeaders[index] = $(item).html();
 				});
-				$('#peakDataTableReg tr').has('td').each(function() {
+				$('#peakDataTableReg tr').has('td').each(function () {
 					var arrayItem = {};
-					$('td', $(this)).each(function(index, item) {
+					$('td', $(this)).each(function (index, item) {
 						arrayItem[peakHeaders[index]] = $(item).html();
 					});
 					peakData.push(arrayItem);
@@ -1161,12 +1167,12 @@ $(document).ready(function () {
 				// if (hwmData.length === 0) {
 				// 	hwmData.push({'There is no HWM data available': '.'},{},{},{},{});
 				// } else {
-					for (var i in hwmData) {
-						body.push([
-							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
-							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
-							{ text: 'Elevation(ft)', style: 'tableHeader' }, hwmData[i].elev_ft
-						],
+				for (var i in hwmData) {
+					body.push([
+						{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
+						{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
+						{ text: 'Elevation(ft)', style: 'tableHeader' }, hwmData[i].elev_ft
+					],
 						[
 							{},
 							{ text: 'Event', style: 'tableHeader' }, hwmData[i].event,
@@ -1217,7 +1223,7 @@ $(document).ready(function () {
 							{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i].uncertainty,
 							{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
 						]);
-					}
+				}
 				//}
 				return body;
 			}
@@ -1237,12 +1243,12 @@ $(document).ready(function () {
 			//// Get date and time of print click //// 
 			var date = new Date();
 			// For today's date
-			Date.prototype.today = function () { 
-				return (((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+ this.getFullYear();
+			Date.prototype.today = function () {
+				return (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + this.getFullYear();
 			}
 			// For current time
 			Date.prototype.timeNow = function () {
-				return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+				return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
 			}
 			var todayDate = date.today() + " at " + date.timeNow();
 			//// End of date/time ////
@@ -1259,8 +1265,8 @@ $(document).ready(function () {
 					table: {
 						widths: ['auto', 'auto'],
 						body: [
-							[{ colSpan: 2, border: [false, false, false, true], text: 'Regional Report Selections: ', style: 'subHeader' }, ''], 
-							[{ text: 'Land Type: ', style: 'selectHeader', alignment: 'right' }, landType], 
+							[{ colSpan: 2, border: [false, false, false, true], text: 'Regional Report Selections: ', style: 'subHeader' }, ''],
+							[{ text: 'Land Type: ', style: 'selectHeader', alignment: 'right' }, landType],
 							[{ text: 'Region Type: ', style: 'selectHeader', alignment: 'right' }, regionType],
 							[{ text: 'Region: ', style: 'selectHeader', alignment: 'right' }, regionSubType],
 							[{ text: 'Event: ', style: 'selectHeader', alignment: 'right' }, event],
@@ -1398,11 +1404,11 @@ $(document).ready(function () {
 					},
 					content: [
 						//{ text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center', margin: [0, 0, 0, 15] },
-						{ 
+						{
 							table: {
 								widths: ['*'],
 								body: [
-									[{border: [false, false, false, true], text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center' }]
+									[{ border: [false, false, false, true], text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center' }]
 								]
 							},
 							margin: [0, 0, 0, 15]
@@ -1423,10 +1429,10 @@ $(document).ready(function () {
 						},
 						//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
 						{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 5] },
-						summaryTable(summaryInfo(), ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max','90% Conf Low', '90% Conf High']),
+						summaryTable(summaryInfo(), ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max', '90% Conf Low', '90% Conf High']),
 						{ text: 'Peak Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
-						peaksTable(getPeaksData(), ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no','waterbody']),
+						peaksTable(getPeaksData(), ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
 						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						hwmsTable()
 					],
@@ -1476,8 +1482,8 @@ $(document).ready(function () {
 
 			setTimeout(() => {
 				printRegionalReport();
-			},3500)
-						
+			}, 3500)
+
 		});
 	});
 
@@ -1489,7 +1495,7 @@ $(document).ready(function () {
 		$("#reportFooter").hide();
 
 		var mapPreview = document.getElementById('reviewMap');
-		var legendPreview = document.getElementById('legendImage');			
+		var legendPreview = document.getElementById('legendImage');
 		/* mapPreview.innerHTML='Loading Map...'
 		mapPreview.innerHTML='Loading Map...'
 		 */
@@ -1573,7 +1579,7 @@ $(document).ready(function () {
 				$("#peakTable").append("<p>" + "There are no Peaks at this Site." + "</p>");
 			}, 3000);
 		}
-		
+
 		//setting up HWM data for table
 		var hwmTableData = [];
 		var hwmCaptionData = [];
@@ -1677,7 +1683,7 @@ $(document).ready(function () {
 		} else {
 			$("#hwmTable").find("p").remove();
 			$("#hwmDataTable").empty();
-			setTimeout(() => {	
+			setTimeout(() => {
 				$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>");
 				$("#hwmTable").append("<p>" + "There are no High Water Marks at this Site." + "</p>");
 			}, 3000);
@@ -1723,7 +1729,7 @@ $(document).ready(function () {
 					legendPreview.append(canvas);
 					legendUrl = canvas.toDataURL('image/png');
 				}
-			);
+				);
 		}, 2900);
 
 		setTimeout(() => {
@@ -1874,7 +1880,7 @@ $(document).ready(function () {
 					// Showing Legend once canvas event complete
 					$("#legendElement").show();
 				}
-			);	
+				);
 		}, 3000);
 
 		setTimeout(() => {
@@ -2215,7 +2221,7 @@ $(document).ready(function () {
 		});
 	}
 
-	function searchComplete() {
+	function searchComplete(runningFilter) {
 		var success = false;
 		// Clearing identified peaks and identified marks arrays before buffer runs if array had previous values
 		identifiedPeaks.length = 0;
@@ -2446,12 +2452,51 @@ $(document).ready(function () {
 				$('#invalidModal').modal('show');
 			}
 
-			//Refresh peaks so that the legend updates if the event is changed
-			var peaksCheckBox = document.getElementById("peaksToggle");
-			peaksCheckBox.checked = false;
-			clickPeaks();
-			peaksCheckBox.checked = true;
-			clickPeaks();
+			if (runningFilter == true) {
+				//if the event is changed in the filters modal, the checkbox/legend symbols must be reset
+				var peaksCheckBox = document.getElementById("peaksToggle");
+				peaksCheckBox.checked = false;
+				clickPeaks();
+				peaksCheckBox.checked = true;
+				clickPeaks();
+
+				var baroCheckBox = document.getElementById("baroToggle");
+				baroCheckBox.checked = false;
+				clickBaro();
+				baroCheckBox.checked = true;
+				clickBaro();
+
+				var stormTideCheckBox = document.getElementById("stormTideToggle");
+				stormTideCheckBox.checked = false;
+				clickStormTide();
+				stormTideCheckBox.checked = true;
+				clickStormTide();
+
+				var metCheckBox = document.getElementById("metToggle");
+				metCheckBox.checked = false;
+				clickMet();
+				metCheckBox.checked = true;
+				clickMet();
+
+				var waveHeightCheckBox = document.getElementById("waveHeightToggle");
+				waveHeightCheckBox.checked = false;
+				clickWaveHeight();
+				waveHeightCheckBox.checked = true;
+				clickWaveHeight();
+
+				var HWMCheckBox = document.getElementById("HWMToggle");
+				HWMCheckBox.checked = false;
+				clickHWM();
+				HWMCheckBox.checked = true;
+				clickHWM();
+
+				var rdgCheckBox = document.getElementById("rdgToggle");
+				rdgCheckBox.checked = false;
+				clickRdg();
+				rdgCheckBox.checked = true;
+				clickRdg();
+			}
+
 
 		}, 2001);
 		//$(inputModal).modal('hide');
@@ -2707,7 +2752,7 @@ $(document).ready(function () {
 			};
 		};
 	};
-	
+
 	// Adding HWM data a table body for pdf report
 	function buildHwmTableBody() {
 		var body = [];
@@ -2730,51 +2775,51 @@ $(document).ready(function () {
 					{ text: 'HWM Label', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_label,
 					{ text: 'Elevation(ft)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.elev_ft
 				],
-				[
-					{},
-					{ text: 'Vertical Datum, Method', style: 'tableHeader' }, identifiedMarks[i].feature.properties.verticalDatumName + ", " + identifiedMarks[i].feature.properties.verticalMethodName,
-					{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, identifiedMarks[i].feature.properties.horizontalDatumName + ", " + identifiedMarks[i].feature.properties.horizontalMethodName
-				],
-				[
-					{},
-					{ text: 'Type', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwmTypeName,
-					{ text: 'Quality', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwmQualityName
-				],
-				[
-					{},
-					{ text: 'Waterbody', style: 'tableHeader' }, identifiedMarks[i].feature.properties.waterbody,
-					{ text: 'Permanent Housing', style: 'tableHeader' }, identifiedMarks[i].feature.properties.sitePermHousing
-				],
-				[
-					{},
-					{ text: 'County', style: 'tableHeader' }, identifiedMarks[i].feature.properties.countyName,
-					{ text: 'State', style: 'tableHeader' }, identifiedMarks[i].feature.properties.stateName
-				],
-				[
-					{},
-					{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
-					{ text: 'Site Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.siteDescription
-				],
-				[
-					{},
-					{ text: 'Location Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_locationdescription,
-					{ text: 'Survey Date', style: 'tableHeader' }, identifiedMarks[i].feature.properties.survey_date
-				],
-				[
-					{},
-					{ text: 'Bank', style: 'tableHeader' }, identifiedMarks[i].feature.properties.bank,
-					{ text: 'Environment', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_environment
-				],
-				[
-					{},
-					{ text: 'Flag Date', style: 'tableHeader' }, identifiedMarks[i].feature.properties.flag_date,
-					{ text: 'Stillwater', style: 'tableHeader' }, identifiedMarks[i].feature.properties.stillwater
-				],
-				[
-					{},
-					{ text: 'Uncertainty', style: 'tableHeader' }, uncertainty,
-					{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmUncertainty
-				]);
+					[
+						{},
+						{ text: 'Vertical Datum, Method', style: 'tableHeader' }, identifiedMarks[i].feature.properties.verticalDatumName + ", " + identifiedMarks[i].feature.properties.verticalMethodName,
+						{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, identifiedMarks[i].feature.properties.horizontalDatumName + ", " + identifiedMarks[i].feature.properties.horizontalMethodName
+					],
+					[
+						{},
+						{ text: 'Type', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwmTypeName,
+						{ text: 'Quality', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwmQualityName
+					],
+					[
+						{},
+						{ text: 'Waterbody', style: 'tableHeader' }, identifiedMarks[i].feature.properties.waterbody,
+						{ text: 'Permanent Housing', style: 'tableHeader' }, identifiedMarks[i].feature.properties.sitePermHousing
+					],
+					[
+						{},
+						{ text: 'County', style: 'tableHeader' }, identifiedMarks[i].feature.properties.countyName,
+						{ text: 'State', style: 'tableHeader' }, identifiedMarks[i].feature.properties.stateName
+					],
+					[
+						{},
+						{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
+						{ text: 'Site Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.siteDescription
+					],
+					[
+						{},
+						{ text: 'Location Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_locationdescription,
+						{ text: 'Survey Date', style: 'tableHeader' }, identifiedMarks[i].feature.properties.survey_date
+					],
+					[
+						{},
+						{ text: 'Bank', style: 'tableHeader' }, identifiedMarks[i].feature.properties.bank,
+						{ text: 'Environment', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_environment
+					],
+					[
+						{},
+						{ text: 'Flag Date', style: 'tableHeader' }, identifiedMarks[i].feature.properties.flag_date,
+						{ text: 'Stillwater', style: 'tableHeader' }, identifiedMarks[i].feature.properties.stillwater
+					],
+					[
+						{},
+						{ text: 'Uncertainty', style: 'tableHeader' }, uncertainty,
+						{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmUncertainty
+					]);
 			}
 		}
 		return body;
@@ -2866,16 +2911,17 @@ $(document).ready(function () {
 			},
 			content: [
 				//{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
-				{ table: {
+				{
+					table: {
 						widths: ['*'],
 						body: [
-							[{ 
-								border: [false, false, false, true], 
-								text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', 
+							[{
+								border: [false, false, false, true],
+								text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer',
 								style: 'header', alignment: 'center'
 							}]
 						]
-					}, 
+					},
 					margin: [0, 0, 0, 15]
 				},
 				//{ image: pdfMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
