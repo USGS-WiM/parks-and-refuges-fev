@@ -1249,12 +1249,7 @@ $(document).ready(function () {
         }
 
         // clearing tables
-
         $("#regionalPeakTable").find("table").empty();
-
-        //document.getElementById('summaryDataTable').innerHTML = '';
-        //document.getElementById('peakDataTableReg').innerHTML = '';
-        //document.getElementById('hwmDataTableReg').innerHTML = '';
 
         document.querySelector('.progress-bar-fill').style.width = "0%"
 

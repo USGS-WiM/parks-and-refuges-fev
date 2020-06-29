@@ -1080,29 +1080,19 @@ $(document).ready(function () {
 					});
 					summaryRows.push(arrayItem);
 				});
-				// if ($('#summaryDataTable')[0].children.length === 0) {
-				// 	summaryRows.push({'Summary information': 'None available.'},{},{},{},{},{},{},{});
-				// }
 				return summaryRows;
 			};
-			// Build the table body for pdfMake of summary information - This is used for other tables where appropriate
-			function buildTableBody(data, columns) {
+			// Build the table body for pdfMake of summary information
+			function buildSummaryBody(data, columns) {
 				var body = [];
-				//Prep for when buildTableBody() is called later for peak data
-				if (allPeaks.length === 0) {
-					body.push([
-						{ text: 'There is no Peak data based on selections.' }
-					])
-				} else {
-					body.push(columns);
-					data.forEach(function (row) {
-						var dataRow = [];
-						columns.forEach(function (column) {
-							dataRow.push(row[column].toString());
-						})
-						body.push(dataRow);
-					});
-				};
+				body.push(columns);
+				data.forEach(function (row) {
+					var dataRow = [];
+					columns.forEach(function (column) {
+						dataRow.push(row[column].toString());
+					})
+					body.push(dataRow);
+				});
 				return body;
 			};
 			// Insert tably body into pdfMake formatted table
@@ -1111,7 +1101,7 @@ $(document).ready(function () {
 					table: {
 						headerRows: 1,
 						widths: '*',
-						body: buildTableBody(data, ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max','90% Conf Low', '90% Conf High']),
+						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max','90% Conf Low', '90% Conf High']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
@@ -1141,12 +1131,31 @@ $(document).ready(function () {
 				return peakData;
 			};
 			// Build the table body for pdfMake of peak table information
+			function buildPeaksBody(data, columns) {
+				var body = [];
+				//Prep for when buildTableBody() is called later for peak data
+				if (allPeaks.length === 0) {
+					body.push([
+						{ text: 'There is no Peak data based on selections.' }
+					])
+				} else {
+					body.push(columns);
+					data.forEach(function (row) {
+						var dataRow = [];
+						columns.forEach(function (column) {
+							dataRow.push(row[column].toString());
+						})
+						body.push(dataRow);
+					});
+				};
+				return body;
+			};
 			// Insert table body into pdfMake formatted table
 			function peaksTable(data, columns) {
 				if (allPeaks.length === 0) {
 					return {
 						table: {
-							body: buildTableBody(data)
+							body: buildPeaksBody(data)
 						},
 						layout: 'noBorders',
 						style: 'smaller',
@@ -1157,7 +1166,7 @@ $(document).ready(function () {
 						table: {
 							headerRows: 1,
 							widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
-							body: buildTableBody(data, ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no','waterbody']),
+							body: buildPeaksBody(data, ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no','waterbody']),
 						},
 						layout: 'lightHorizontalLines',
 						style: 'smaller',
