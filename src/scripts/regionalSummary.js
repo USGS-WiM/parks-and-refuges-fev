@@ -53,6 +53,9 @@ var peaksRegionalCSVData = [];
 //This array will be populated with the peak values from peaks within the buffered regions
 var peakArrReg = [];
 var hwmArrReg = [];
+//var regionBBox = [];
+//var regionalStreamGages = L.featureGroup();
+
 
 var fevRegional = fevRegional || {
     //Assign column names for the regional peak table csv download
@@ -238,6 +241,7 @@ $(document).ready(function () {
                     simplifiedRegionalPoly = turf.simplify(regionPoly);
                 }
             }).addTo(regionalMap);
+            
             regionLayerGroup.addLayer(regionBoundaries);
         }
         // TODO: explore options to avoid this timeout. dealing with motely crew of services that is making it difficult atm
@@ -247,6 +251,8 @@ $(document).ready(function () {
                 simpPoly.push(feat);
                 }
              );
+
+             
             
             // Identify parks/refuges in event in regions
             var allSites;
@@ -309,7 +315,84 @@ $(document).ready(function () {
                     }
                 }
             }, 1000); */
+
+            //Get the bounding box for the region
+            //regionBBox = turf.bbox(regionPoly);
+            //format the bounding box so that it can be used in queryStreamGages
+            //regionBBox = regionBBox[0] + ',' + regionBBox[1] + ',' + regionBBox[2] + ',' + regionBBox[3];
+
+            //Since the bounding box is way too big, we could need to cut it into a bunch of sub-regions for it to work
+            //To test out the general layout, etc. use the bounding box alone, which, for Hurricane Dorian, will retrieve 2 gages near the Florida border
+            /*regionBBox = -81.7300415 + ',' + 30.6795540 + ',' + -81.1814117 + ',' + 30.8541951;
             
+            function queryStreamGages(bbox) {
+                var NWISmarkers = {};
+                console.log("entering queryStreamgages");
+                console.log(regionBBox);
+            
+                //NWIS query options from http://waterservices.usgs.gov/rest/IV-Test-Tool.html
+                var parameterCodeList = '00065,62619,62620,63160,72214';
+                var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
+                var siteStatus = 'active';
+                var url = 'https://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
+            
+                console.log("stream gage url", url);
+                $.ajax({
+                    url: url,
+                    dataType: "xml",
+                    success: function (xml) {
+                        $(xml).find('site').each(function () {
+            
+                            var siteID = $(this).attr('sno');
+                            var siteName = $(this).attr('sna');
+                            var lat = $(this).attr('lat');
+                            var lng = $(this).attr('lng');
+                            NWISmarkers[siteID] = L.marker([lat, lng], { icon: nwisMarkerIcon });
+                            NWISmarkers[siteID].data = { siteName: siteName, siteCode: siteID };
+                            NWISmarkers[siteID].data.parameters = {};
+            
+                            //add point to featureGroup
+                            regionalStreamGages.addLayer(NWISmarkers[siteID]);
+                            console.log("added regionalStreamGage");
+            
+                            $("#nwisLoadingAlert").fadeOut(2000);
+                        });
+                    },
+                    error: function (xml) {
+                        $("#nwisLoadingAlert").fadeOut(2000);
+                    }
+                });
+            }
+            */
+
+         /*   
+function displayRegionalRtGageReport(regionalStreamGages) {
+
+    for (streamGage in regionalStreamGages) {
+
+        var parameterCodeList = '00065,62619,62620,63160,72279';
+
+        var timeQueryRange = '';
+        //if event has no end date
+        if (fev.vars.currentEventEndDate_str == '') {
+            //use moment.js lib to get current system date string, properly formatted, set currentEventEndDate var to current date
+            fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+        }
+        //if no start date and
+        if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
+            timeQueryRange = '&period=P7D'
+        } else {
+            timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
+        }
+
+        //This is where the hydrograph title and graph or no data warning are added to the Report 
+        $('#hydrographTableReg').append("<div style='text-align: left'>" + "</br>" + regionalStreamGages[streamGage].data.siteName + " (Site" + "&nbsp" + regionalStreamGages[streamGage].data.siteCode + ")" + "</br>" + "</div>");
+    }
+}
+*/
+
+
+
 
             setTimeout(() => {
                 L.geoJson(regionParksFC, { style: parkStyle }).addTo(regionalMap);
@@ -357,11 +440,20 @@ $(document).ready(function () {
                             eventURL = eventURL + selectedEvents[e] + '.json';
                             var queryString = "?Event=" + selectedEvents[e] + "&States=&County=&StartDate=undefined&EndDate=undefined";
                             var sensorQueryString = "?Event=" + selectedEvents[e] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
-                            getEventName(function (output) {
-                                eventName = output.event_name;
-                                getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
-                                getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
-                            });
+                        
+                                getEventName(function (output) {
+                                    eventName = output.event_name;
+                                    /*
+                                    queryStreamGages(regionBBox);
+                                    regionalStreamGages.addTo(regionalMap);
+                                    displayRegionalRtGageReport(regionalStreamGages);
+                                    */
+                                    getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
+                                    getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
+
+                                });
+                  
+
                             
                             // function for getting the event data
                             function getEventName(handleData) {
@@ -409,6 +501,7 @@ $(document).ready(function () {
                 }
             }
         }, 4000);
+
 
         // creating markers for peaks
         function getPeaks(url, markerIcon, eventName) {
@@ -1125,32 +1218,23 @@ $(document).ready(function () {
                     }
                 }
                 $(table).append(headerTr$);
-
                 return columnSet;
             }
 
             if (sum.length > 0) {
                 buildDataTables("#summaryDataTable", sum, "Summary Information");
-            } else {
-                $("#summaryDataTable").append("<p>" + "<b>" + "Summary Information" + "</b>" + "</p>" + "<p>" + "There is no Summary data based on selections." + "</p>")
             }
             if (allPeaks.length > 0) {
                 buildDataTables("#peakDataTableReg", allPeaks, "Peak Data");
-            } else {
-                $("#peakDataTableReg").append("<p>" + "<b>" + "Peak Data" + "</b>" + "</p>" + "<p>" + "There is no Peak data based on selections." + "</p>")
             }
             if (allHWMs.length > 0) {
                 buildDataTables("#hwmDataTableReg", allHWMs, "HWM Data");
-            } else {
-                $("#hwmDataTableReg").append("<p>" + "<b>" + "HWM Data" + "</b>" + "</p>" + "<p>" + "There is no HWM data based on selections." + "</p>")
             }
-
-            // If there is no data, then printing will be disabled. 
-            if ((allPeaks.length === 0) && (allHWMs.length === 0)) {
-                document.getElementById("printRegionalReport").disabled = true;
-            } else {
-                document.getElementById("printRegionalReport").disabled = false;
+            /*
+            if (regionalStreamGages.length >0) {
+                $('#hydrographTableReg').append(<div>Real-time Stream Gages</div>);
             }
+            */
         }
 
         // PEAK FUNCTIONS
@@ -1233,21 +1317,13 @@ $(document).ready(function () {
         peaksRegionalCSVData = [];
         allHWMs = [];
         allPeaks = [];
-        parksWithPeaks = [];
-        parksWithHWMs = [];
-        parksWithBaros = [];
 
         alreadyRan = false;
 
-        // If there is no data, then printing will be disabled. 
-        if ((allPeaks.length === 0) && (allHWMs.length === 0)) {
-            document.getElementById("printRegionalReport").disabled = true;
-        } else {
-            document.getElementById("printRegionalReport").disabled = false;
-        }
-
         // clearing tables
-        $("#regionalPeakTable").find("table").empty();
+        document.getElementById('summaryDataTable').innerHTML = '';
+        document.getElementById('peakDataTableReg').innerHTML = '';
+        document.getElementById('hwmDataTableReg').innerHTML = '';
 
         document.querySelector('.progress-bar-fill').style.width = "0%"
 
