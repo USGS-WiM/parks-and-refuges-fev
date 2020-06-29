@@ -478,12 +478,12 @@ $(document).ready(function () {
 	});
 
 	//welcomeModal: set search for 'Go' click 
-	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_filterModal');
+	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_filterModal', false);
 	//updateFiltersModal MODAL: set search for 'Go' click 
-	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal');
+	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', true);
 
 	//set search for 'Go' click
-	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary) {
+	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary, runningFilter) {
 		submitButton.click(function () {
 			//check if an event has been selected
 			if (($(evtSelect_Modal_Primary).val() !== null) && (searchResults !== undefined)) {
@@ -507,7 +507,13 @@ $(document).ready(function () {
 					});
 				//populateEventDates(eventID);
 				filterMapData(eventID, false);
-				searchComplete();
+
+				if (runningFilter == true) {
+					searchComplete(true);
+				}
+				if (runningFilter == false) {
+					searchComplete(false);
+				}
 			} else {
 				//if no event selected, warn user with alert
 				// Also accounting for having an event selected but no parkref
@@ -2222,7 +2228,7 @@ $(document).ready(function () {
 		});
 	}
 
-	function searchComplete() {
+	function searchComplete(runningFilter) {
 		var success = false;
 		// Clearing identified peaks and identified marks arrays before buffer runs if array had previous values
 		identifiedPeaks.length = 0;
@@ -2452,12 +2458,51 @@ $(document).ready(function () {
 				$('#invalidModal').modal('show');
 			}
 
-			//Refresh peaks so that the legend updates if the event is changed
-			var peaksCheckBox = document.getElementById("peaksToggle");
-			peaksCheckBox.checked = false;
-			clickPeaks();
-			peaksCheckBox.checked = true;
-			clickPeaks();
+			if (runningFilter == true) {
+				//if the event is changed in the filters modal, the checkbox/legend symbols must be reset
+				var peaksCheckBox = document.getElementById("peaksToggle");
+				peaksCheckBox.checked = false;
+				clickPeaks();
+				peaksCheckBox.checked = true;
+				clickPeaks();
+
+				var baroCheckBox = document.getElementById("baroToggle");
+				baroCheckBox.checked = false;
+				clickBaro();
+				baroCheckBox.checked = true;
+				clickBaro();
+
+				var stormTideCheckBox = document.getElementById("stormTideToggle");
+				stormTideCheckBox.checked = false;
+				clickStormTide();
+				stormTideCheckBox.checked = true;
+				clickStormTide();
+
+				var metCheckBox = document.getElementById("metToggle");
+				metCheckBox.checked = false;
+				clickMet();
+				metCheckBox.checked = true;
+				clickMet();
+
+				var waveHeightCheckBox = document.getElementById("waveHeightToggle");
+				waveHeightCheckBox.checked = false;
+				clickWaveHeight();
+				waveHeightCheckBox.checked = true;
+				clickWaveHeight();
+
+				var HWMCheckBox = document.getElementById("HWMToggle");
+				HWMCheckBox.checked = false;
+				clickHWM();
+				HWMCheckBox.checked = true;
+				clickHWM();
+
+				var rdgCheckBox = document.getElementById("rdgToggle");
+				rdgCheckBox.checked = false;
+				clickRdg();
+				rdgCheckBox.checked = true;
+				clickRdg();
+			}
+
 
 		}, 2001);
 		//$(inputModal).modal('hide');
