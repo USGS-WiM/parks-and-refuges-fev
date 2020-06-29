@@ -1133,12 +1133,25 @@ $(document).ready(function () {
 
             if (sum.length > 0) {
                 buildDataTables("#summaryDataTable", sum, "Summary Information");
+            } else {
+                $("#summaryDataTable").append("<p>" + "<b>" + "Summary Information" + "</b>" + "</p>" + "<p>" + "There is no Summary data based on selections." + "</p>")
             }
             if (allPeaks.length > 0) {
                 buildDataTables("#peakDataTableReg", allPeaks, "Peak Data");
+            } else {
+                $("#peakDataTableReg").append("<p>" + "<b>" + "Peak Data" + "</b>" + "</p>" + "<p>" + "There is no Peak data based on selections." + "</p>")
             }
             if (allHWMs.length > 0) {
                 buildDataTables("#hwmDataTableReg", allHWMs, "HWM Data");
+            } else {
+                $("#hwmDataTableReg").append("<p>" + "<b>" + "HWM Data" + "</b>" + "</p>" + "<p>" + "There is no HWM data based on selections." + "</p>")
+            }
+
+            // If there is no data, then printing will be disabled. 
+            if ((allPeaks.length === 0) && (allHWMs.length === 0)) {
+                document.getElementById("printRegionalReport").disabled = true;
+            } else {
+                document.getElementById("printRegionalReport").disabled = false;
             }
         }
 
@@ -1222,13 +1235,21 @@ $(document).ready(function () {
         peaksRegionalCSVData = [];
         allHWMs = [];
         allPeaks = [];
+        parksWithPeaks = [];
+        parksWithHWMs = [];
+        parksWithBaros = [];
 
         alreadyRan = false;
 
+        // If there is no data, then printing will be disabled. 
+        if ((allPeaks.length === 0) && (allHWMs.length === 0)) {
+            document.getElementById("printRegionalReport").disabled = true;
+        } else {
+            document.getElementById("printRegionalReport").disabled = false;
+        }
+
         // clearing tables
-        document.getElementById('summaryDataTable').innerHTML = '';
-        document.getElementById('peakDataTableReg').innerHTML = '';
-        document.getElementById('hwmDataTableReg').innerHTML = '';
+        $("#regionalPeakTable").find("table").empty();
 
         document.querySelector('.progress-bar-fill').style.width = "0%"
 
