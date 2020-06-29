@@ -1564,9 +1564,17 @@ $(document).ready(function () {
 		showPrintModal();
 		$("#reportFooter").hide();
 
+
+	
+
 		//Stream gages need to be checked on for the hydrographs to appear
 		var streamgageCheckBox = document.getElementById("streamGageToggle");
+		if (streamgageCheckBox.checked == true) {
+			USGSrtGages.clearLayers(map);
+			clickStreamGage();
+		}
 		if (streamgageCheckBox.checked == false) {
+			USGSrtGages.clearLayers(map);
 			streamgageCheckBox.checked = true;
 			clickStreamGage();
 		}
