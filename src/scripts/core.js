@@ -1557,27 +1557,48 @@ $(document).ready(function () {
 	var legendUrl;
 
 	$('#printNav').click(function () {
+		//clear out any previous stream gage info from report
 		$('#rtgraphs').children().remove();
 		identifiedUSGSrtGage = [];
+
 		showPrintModal();
 		$("#reportFooter").hide();
 
 
-		// cycling through each peak and seeing if it's inside the buffer
-		for (var i in USGSrtGages._layers) {
+	
 
-			// formatting point for turf
-			var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
-
-			var isItInside = turf.booleanPointInPolygon(cords, buffer);
-
-			// if true add it to an array containing all the 'true' peaks
-			if (isItInside) {
-				identifiedUSGSrtGage.push(USGSrtGages._layers[i])
-			}
+		//Stream gages need to be checked on for the hydrographs to appear
+		var streamgageCheckBox = document.getElementById("streamGageToggle");
+		if (streamgageCheckBox.checked == true) {
+			USGSrtGages.clearLayers(map);
+			clickStreamGage();
+		}
+		if (streamgageCheckBox.checked == false) {
+			USGSrtGages.clearLayers(map);
+			streamgageCheckBox.checked = true;
+			clickStreamGage();
 		}
 
-		displayRtGageReport(identifiedUSGSrtGage);
+		//Timeout required to make sure the gages are finished loading before querying the ones in the buffer
+		setTimeout(() => {
+			// cycling through each peak and seeing if it's inside the buffer
+			for (var i in USGSrtGages._layers) {
+
+				// formatting point for turf
+				var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
+
+				var isItInside = turf.booleanPointInPolygon(cords, buffer);
+
+				// if true add it to an array containing all the 'true' peaks
+				if (isItInside) {
+					identifiedUSGSrtGage.push(USGSrtGages._layers[i])
+				}
+			}
+
+			//function that displays hydrographs
+			displayRtGageReport(identifiedUSGSrtGage);
+
+		}, 1000);
 
 		var mapPreview = document.getElementById('reviewMap');
 		var legendPreview = document.getElementById('legendImage');

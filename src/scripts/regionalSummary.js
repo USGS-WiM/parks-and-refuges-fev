@@ -54,7 +54,6 @@ var peaksRegionalCSVData = [];
 var peakArrReg = [];
 var hwmArrReg = [];
 
-
 var fevRegional = fevRegional || {
     //Assign column names for the regional peak table csv download
     csvRegionalPeaksColumns: [
@@ -410,7 +409,6 @@ $(document).ready(function () {
                 }
             }
         }, 4000);
-
 
         // creating markers for peaks
         function getPeaks(url, markerIcon, eventName) {
