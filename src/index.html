@@ -150,32 +150,25 @@
                 <div class="modal-body">
                     <h4>Welcome to the USGS Flood Event Viewer. Please select a Park or Refuge to get started.</h4>
                     <br>
-                    <!--<div class="form-group" id="evtNameForm_welcomeModal">-->
-                    <!--&lt;!&ndash;<label for="evtSelect_welcomeModal"  class="col-sm-2 control-label filterForms">Event Name</label>&ndash;&gt;-->
-                    <!--<div class="col-sm-10 filterForms">-->
-                    <!--<select id="evtSelect_welcomeModal" class="evtSelect" style="width: 100%" multiple></select>-->
-                    <!--</div>-->
-                    <!--</div>-->
-                    <div class="input-group form-group">
+                    <form class="form-horizontal" role="form" id="regionalForm">
+                        <!-- <div class="form-group" id="evtNameForm_regionalModal">
+                            <label for="typeSelect_filterModal"
+                                class="col-sm-2 control-label filterForms">Lands Type: </label>
+                            <div class="col-sm-10 filterForms">
+                                <select id="typeSelect_filterModal" class="typeSelectFilter" multiple="multiple"
+                                    style="width: 100%"></select>
+                            </div>
+                        </div> -->
+                    </form>
+                    <!-- <div class="input-group form-group">
                         <span>Select a Park or Refuge: </span>
                         <div class="form-group" align="center">
                             <div id="search_container">
                                 <div style="left: -20px" id="search">
                                 </div>
                             </div>
-                            <!-- <div class="search-help" align="center"> </br>
-                            <b>Supported Search Strings:</b> </br>
-                            <code>Geographic Names</code>
-                            <code>Zip Codes</code>
-                            <code>States</code>
-                            <code>Street Address</code>
-                            <br />
-                            <br /> Search provided by
-                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript
-                                API</a>
-                        </div> -->
                         </div>
-                    </div>
+                    </div> -->
 
                     <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted
                         by start
@@ -229,16 +222,24 @@
                     <h4 class="modal-title">Filters</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="input-group form-group">
-                        <span>Select a Park or Refuge: </span>
-                        <div class="form-group" align="center">
-                            <div id="search_container">
-                                <div style="left: -20px" id="search_filter">
-                                </div>
+                    <form class="form-horizontal" role="form" id="filterForm">
+                        <div class="form-group" id="evtNameForm_filterModal">
+                            <label for="typeSelect_filterModal"
+                                class="col-sm-2 control-label filterForms">Lands Type: </label>
+                            <div class="col-sm-10 filterForms">
+                                <select id="typeSelect_filterModal" class="typeSelectFilter" multiple="multiple"
+                                    style="width: 100%"></select>
                             </div>
-
                         </div>
-                    </div>
+                        <div class="form-group" id="evtNameForm_filterModal">
+                            <label for="siteSelect_filterModal"
+                                class="col-sm-2 control-label filterForms">Site: </label>
+                            <div class="col-sm-10 filterForms">
+                                <select id="siteSelect_filterModal" class="siteSelect" multiple="multiple"
+                                    style="width: 100%"></select>
+                            </div>
+                        </div>
+                    </form>
                     <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted
                         by start
                         date.</span><br>

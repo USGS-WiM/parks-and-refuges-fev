@@ -2270,6 +2270,7 @@ $(document).ready(function () {
 		var where = "1=1";
 		var polys = [];
 		var regionName;
+		var sitetype = $('#typeSelectFilter_filterModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
 
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
@@ -2322,7 +2323,7 @@ $(document).ready(function () {
 			precision: 4,
 			where: "ORGNAME=" + name,
 			onEachFeature: function (feature, latlng) {
-				var popupContent = '<p>' + feature.properties.UNIT_NAME + '</p>';
+				var popupContent = '<p>' + feature.properties.ORGNAME + '</p>';
 				latlng.bindPopup(popupContent);
 				polys = feature.geometry;
 				// flattening the geometry for use in turf
