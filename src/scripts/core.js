@@ -522,6 +522,9 @@ $(document).ready(function () {
 				$('.parkRefSelectAlert').show();
 			}
 
+			//reset identified gages
+			identifiedUSGSrtGage = [];
+
 			//If the box is checked, re-add the rain or stream gages to the map when running Filters Modal
 			var streamgageCheckBox = document.getElementById("streamGageToggle");
 			var raingageCheckBox = document.getElementById("rainGageToggle");
@@ -1718,32 +1721,6 @@ $(document).ready(function () {
 			}, 3000);
 		}
 
-		//test function 
-		function export_table_to_csv() {
-			var csv = [];
-			var rows = hwmDataTable.querySelectorAll("table tr");
-			/*
-			console.log("here are the rows:", rows);
-			var cols = hwmDataTable.querySelectorAll("tr td");
-			console.log("here are the cols:", cols);
-		*/
-			for (var i = 0; i < rows.length; i++) {
-				var row = [];
-				var cols = rows[i].querySelectorAll("tr td");
-				console.log("cols here:", cols);
-				/*
-				for (var j = 0; j < cols.length; j++) 
-					row.push(cols[j].innerText);
-					console.log("new line", row );
-					*/
-
-				//csv.push(row.join(","));
-
-			}
-
-			//console.log("csv in table:", csv);
-		}
-		export_table_to_csv();
 
 		var hwmCSV = hwmDataTable.table2csv;
 		console.log("hwmDataTable", hwmDataTable);
@@ -2042,7 +2019,6 @@ $(document).ready(function () {
 	document.getElementById('fiftyKm').checked = false;
 	// 10 kilometers
 	$('#tenKm').click(function () {
-		console.log("10 button clicked");
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
@@ -2050,7 +2026,6 @@ $(document).ready(function () {
 	});
 	// 20 kilometers
 	$('#twentyKm').click(function () {
-		console.log("20 button clicked");
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('thirtyKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
@@ -2058,7 +2033,6 @@ $(document).ready(function () {
 	});
 	// 30 kilometers
 	$('#thirtyKm').click(function () {
-		console.log("30 button clicked");
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
@@ -2066,7 +2040,6 @@ $(document).ready(function () {
 	});
 	// 50 kilometers
 	$('#fiftyKm').click(function () {
-		console.log("50 button clicked");
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
