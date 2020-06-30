@@ -1083,6 +1083,13 @@ $(document).ready(function () {
 			});
 		};
 
+		// If there is no data, then printing will be disabled. 
+		if ((allPeaks.length === 0) && (allHWMs.length === 0)) {
+			document.getElementById("printRegionalReport").disabled = true;
+		} else {
+			document.getElementById("printRegionalReport").disabled = false;
+		}
+
 		$('#printRegionalReport').click(function () {
 			getRegionalMap();
 
@@ -1101,13 +1108,10 @@ $(document).ready(function () {
 					});
 					summaryRows.push(arrayItem);
 				});
-				// if ($('#summaryDataTable')[0].children.length === 0) {
-				// 	summaryRows.push({'Summary information': 'None available.'},{},{},{},{},{},{},{});
-				// }
 				return summaryRows;
-			}
-			// Build the table body for pdfMake of summary information - This is used for other tables where appropriate
-			function buildTableBody(data, columns) {
+			};
+			// Build the table body for pdfMake of summary information
+			function buildSummaryBody(data, columns) {
 				var body = [];
 				body.push(columns);
 				data.forEach(function (row) {
@@ -1118,20 +1122,20 @@ $(document).ready(function () {
 					body.push(dataRow);
 				});
 				return body;
-			}
+			};
 			// Insert tably body into pdfMake formatted table
 			function summaryTable(data, columns) {
 				return {
 					table: {
 						headerRows: 1,
-						widths: ['*', '*', '*', '*', '*', '*', '*', '*', '*'],
-						body: buildTableBody(data, columns),
+						widths: '*',
+						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max','90% Conf Low', '90% Conf High']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
 					margin: [0, 0, 0, 15]
-				};
-			}
+				};	
+			};
 			//// End of Summary Information table build ////
 
 			//// Get Peak Table information data to put into pdfMake /////
@@ -1149,25 +1153,51 @@ $(document).ready(function () {
 					});
 					peakData.push(arrayItem);
 				});
-				// if ($('#peakDataTableReg')[0].children.length === 0) {
-				// 	peakData.push({'There is no peak data available': '.'},{},{},{},{},{},{},{});
-				// }
 				return peakData;
 			};
 			// Build the table body for pdfMake of peak table information
+			function buildPeaksBody(data, columns) {
+				var body = [];
+				if (allPeaks.length === 0) {
+					body.push([
+						{ text: 'There is no Peak data based on selections.' }
+					])
+				} else {
+					body.push(columns);
+					data.forEach(function (row) {
+						var dataRow = [];
+						columns.forEach(function (column) {
+							dataRow.push(row[column].toString());
+						})
+						body.push(dataRow);
+					});
+				};
+				return body;
+			};
 			// Insert table body into pdfMake formatted table
 			function peaksTable(data, columns) {
-				return {
-					table: {
-						headerRows: 1,
-						widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
-						body: buildTableBody(data, columns),
-					},
-					layout: 'lightHorizontalLines',
-					style: 'smaller',
-					margin: [0, 0, 0, 15]
+				if (allPeaks.length === 0) {
+					return {
+						table: {
+							body: buildPeaksBody(data)
+						},
+						layout: 'noBorders',
+						style: 'smaller',
+						margin: [0, 0, 0, 15],
+					};
+				} else {
+					return {
+						table: {
+							headerRows: 1,
+							widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
+							body: buildPeaksBody(data, ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no','waterbody']),
+						},
+						layout: 'lightHorizontalLines',
+						style: 'smaller',
+						margin: [0, 0, 0, 15]
+					};
 				};
-			}
+			};
 			//// End of Peak Table information build ////
 
 			//// Get HWM Table information data to put into pdfMake /////
@@ -1187,15 +1217,17 @@ $(document).ready(function () {
 			// Build the table body for pdfMake of hwm table information
 			function buildHwmsTable() {
 				var body = [];
-				// if (hwmData.length === 0) {
-				// 	hwmData.push({'There is no HWM data available': '.'},{},{},{},{});
-				// } else {
-				for (var i in hwmData) {
+				if (allHWMs.length === 0) {
 					body.push([
-						{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
-						{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
-						{ text: 'Elevation(ft)', style: 'tableHeader' }, hwmData[i].elev_ft
-					],
+						{ text: 'There is no HWM data based on selections.'}
+					])
+				} else {
+					for (var i in hwmData) {
+						body.push([
+							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
+							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
+							{ text: 'Elevation(ft)', style: 'tableHeader' }, hwmData[i].elev_ft
+						],
 						[
 							{},
 							{ text: 'Event', style: 'tableHeader' }, hwmData[i].event,
@@ -1246,21 +1278,32 @@ $(document).ready(function () {
 							{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i].uncertainty,
 							{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
 						]);
+					}
 				}
-				//}
 				return body;
-			}
+			};
 			// Insert table body into pdfMake formatted table
 			function hwmsTable() {
-				return {
-					table: {
-						widths: ['auto', 'auto', '*', 'auto', '*'],
-						body: buildHwmsTable(),
-					},
-					style: 'smaller',
-					margin: [0, 0, 0, 15]
+				if (allHWMs.length === 0) {
+					return {
+						table: {
+							body: buildHwmsTable(),
+						},
+						layout: 'noBorders',
+						style: 'smaller',
+						margin: [0, 0, 0, 15],
+					};
+				} else {
+					return {
+						table: {
+							widths: ['auto', 'auto', '*', 'auto', '*'],
+							body: buildHwmsTable(),
+						},
+						style: 'smaller',
+						margin: [0, 0, 0, 15]
+					};
 				};
-			}
+			};
 			//// End of HWM Table information build ////
 
 			//// Get date and time of print click //// 
@@ -1452,10 +1495,10 @@ $(document).ready(function () {
 						},
 						//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
 						{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 5] },
-						summaryTable(summaryInfo(), ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max', '90% Conf Low', '90% Conf High']),
+						summaryTable(summaryInfo()),
 						{ text: 'Peak Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
-						peaksTable(getPeaksData(), ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
+						peaksTable(getPeaksData()),
 						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						hwmsTable()
 					],
@@ -1514,27 +1557,48 @@ $(document).ready(function () {
 	var legendUrl;
 
 	$('#printNav').click(function () {
+		//clear out any previous stream gage info from report
 		$('#rtgraphs').children().remove();
 		identifiedUSGSrtGage = [];
+
 		showPrintModal();
 		$("#reportFooter").hide();
 
 
-		// cycling through each peak and seeing if it's inside the buffer
-		for (var i in USGSrtGages._layers) {
+	
 
-			// formatting point for turf
-			var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
-
-			var isItInside = turf.booleanPointInPolygon(cords, buffer);
-
-			// if true add it to an array containing all the 'true' peaks
-			if (isItInside) {
-				identifiedUSGSrtGage.push(USGSrtGages._layers[i])
-			}
+		//Stream gages need to be checked on for the hydrographs to appear
+		var streamgageCheckBox = document.getElementById("streamGageToggle");
+		if (streamgageCheckBox.checked == true) {
+			USGSrtGages.clearLayers(map);
+			clickStreamGage();
+		}
+		if (streamgageCheckBox.checked == false) {
+			USGSrtGages.clearLayers(map);
+			streamgageCheckBox.checked = true;
+			clickStreamGage();
 		}
 
-		displayRtGageReport(identifiedUSGSrtGage);
+		//Timeout required to make sure the gages are finished loading before querying the ones in the buffer
+		setTimeout(() => {
+			// cycling through each peak and seeing if it's inside the buffer
+			for (var i in USGSrtGages._layers) {
+
+				// formatting point for turf
+				var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
+
+				var isItInside = turf.booleanPointInPolygon(cords, buffer);
+
+				// if true add it to an array containing all the 'true' peaks
+				if (isItInside) {
+					identifiedUSGSrtGage.push(USGSrtGages._layers[i])
+				}
+			}
+
+			//function that displays hydrographs
+			displayRtGageReport(identifiedUSGSrtGage);
+
+		}, 1000);
 
 		var mapPreview = document.getElementById('reviewMap');
 		var legendPreview = document.getElementById('legendImage');

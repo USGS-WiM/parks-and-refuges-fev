@@ -892,10 +892,8 @@ function queryNWISrtGages(bbox) {
     });
 }
 
-//use extent to get NWIS Rain gages based on bounding box, display on map
 
-
-//get data and generate graph of RDG water level time-series data
+//get data and generate graph of stream gage for Report
 function queryNWISgraphRDG(e) {
     var usgsSiteID;
 
@@ -1021,7 +1019,7 @@ function queryNWISgraphRDG(e) {
 }
 
 //get data and generate graph of real-time gage water level time-series data
-function displayRtGageReport(rainGagesInBuffer) {
+function displayRtGageReport(streamGagesInBuffer) {
 
     //Prevent the code before 'getJSON' to loop over before 'getJSON' has also run
     $.ajaxSetup({
@@ -1033,10 +1031,10 @@ function displayRtGageReport(rainGagesInBuffer) {
     //Stream gage layer must be turned on
     var gageGraphTitle = document.getElementById('gageGraphs');
     gageGraphTitle.innerHTML = ""
-    if (rainGagesInBuffer.length == 1) {
+    if (streamGagesInBuffer.length == 1) {
         gageGraphTitle.innerHTML = "Real-time Stream Gage";
     }
-    if (rainGagesInBuffer.length > 1) {
+    if (streamGagesInBuffer.length > 1) {
         gageGraphTitle.innerHTML = "Real-time Stream Gages";
     }
 
@@ -1045,7 +1043,7 @@ function displayRtGageReport(rainGagesInBuffer) {
     //Without this counter, only one graph/no data warning will appear
     var graphCounter = 0;
 
-    for (rainGage in rainGagesInBuffer) {
+    for (streamGage in streamGagesInBuffer) {
 
         //Turn the graphCounter into a string so that it can be added onto the name of the ID
         var graphCounterString = graphCounter.toString();
@@ -1087,10 +1085,10 @@ function displayRtGageReport(rainGagesInBuffer) {
         }
 
         //This is where the hydrograph title and graph or no data warning are added to the Report 
-        $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + rainGagesInBuffer[rainGage].data.siteName + " (Site" + "&nbsp" + rainGagesInBuffer[rainGage].data.siteCode + ")" + "</br>" + "</div>" + "<div id= " + tempNoDataID + " display:none;'></div>" + "<div id=" + tempID + " style='width:400px; height:250px;display:none;'>" + "</div>");
+        $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + streamGagesInBuffer[streamGage].data.siteName + " (Site" + "&nbsp" + streamGagesInBuffer[streamGage].data.siteCode + ")" + "</br>" + "</div>" + "<div id= " + tempNoDataID + " display:none;'></div>" + "<div id=" + tempID + " style='width:400px; height:250px;display:none;'>" + "</div>");
 
         //Get the data for the hydrograph
-        $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + rainGagesInBuffer[rainGage].data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
+        $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + streamGagesInBuffer[streamGage].data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
             
             //If there are no data to create a hydrograph, display the no data warning
             if (data.data == undefined) {
