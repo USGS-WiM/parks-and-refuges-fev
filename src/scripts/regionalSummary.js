@@ -145,9 +145,10 @@ $(document).ready(function () {
         document.querySelector('.progress-bar-fill').style.width = "100%"
 
         setTimeout(function(){  
+            //Enable peak toggle when loading bar is finished (30 seconds)
             var activatePeak = document.getElementById("peakCheckboxReg");
             activatePeak.disabled = false;
-            //var displayScroll = document.getElementById("regionalPeakTable");
+            //display scroll bar/data tables when loading bar is finished
             $('#regionalPeakTable').show();
         }, 30000);
 
