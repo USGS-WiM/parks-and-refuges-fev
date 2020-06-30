@@ -486,7 +486,7 @@ $(document).ready(function () {
 	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary, runningFilter) {
 		submitButton.click(function () {
 			//check if an event has been selected
-			if (($(evtSelect_Modal_Primary).val() !== null) && (searchResults !== undefined)) {
+			if (($(evtSelect_Modal_Primary).val() !== null)) {
 				//if event selected, hide welcome modal and begin filter process
 				$(chooseModal).modal('hide');
 				var eventID = $(evtSelect_Modal_Primary).val()[0];
@@ -2299,13 +2299,29 @@ $(document).ready(function () {
 		identifiedPeaks.length = 0;
 		identifiedMarks.length = 0;
 
-		var siteType = $('#typeSelect_filterModal').val()[0];
+		//If using the welcom modal, collect input from the welcome modal
+		if (runningFilter == false) {
+
+			//this element is populated with either 'parks' or refuges'
+		var siteType = $('#typeSelect_welcomeModal').val()[0];
 
 		// getting and setting park name from search
-		var name = $('#siteSelect_filterModal').val()[0];
+		var name = $('#siteSelect_welcomeModal').val()[0];
 
 		// setting the current Park or Refuge selected for the report
-		currentParkOrRefuge = $('#siteSelect_filterModal').val()[0];
+		currentParkOrRefuge = $('#siteSelect_welcomeModal').val()[0];
+		}
+
+		//If using the filter modal, collect input from the filter modal
+		if (runningFilter == true) {
+			var siteType = $('#typeSelect_filterModal').val()[0];
+
+			// getting and setting park name from search
+			var name = $('#siteSelect_filterModal').val()[0];
+	
+			// setting the current Park or Refuge selected for the report
+			currentParkOrRefuge = $('#siteSelect_filterModal').val()[0];
+		}
 		console.log(currentParkOrRefuge);
 
 		// formatiing park name for use in esri leaflet query
