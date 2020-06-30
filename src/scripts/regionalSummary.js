@@ -147,6 +147,8 @@ $(document).ready(function () {
         setTimeout(function(){  
             var activatePeak = document.getElementById("peakCheckboxReg");
             activatePeak.disabled = false;
+            //var displayScroll = document.getElementById("regionalPeakTable");
+            $('#regionalPeakTable').show();
         }, 30000);
 
         // setting buffer style
