@@ -772,11 +772,11 @@ a.lgi-zoom:hover {
 }
 
 
-[class*="col-"] {
+/* [class*="col-"] {
     background-color: #eee;
     border: 1px solid #E7E7E7;
     text-align: center;
-}
+} */
 
 #wim_logo {
     background: #000 0 0;

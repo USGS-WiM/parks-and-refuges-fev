@@ -150,15 +150,35 @@
                 <div class="modal-body">
                     <h4>Welcome to the USGS Flood Event Viewer. Please select a Park or Refuge to get started.</h4>
                     <br>
-                    <form class="form-horizontal" role="form" id="regionalForm">
-                        <!-- <div class="form-group" id="evtNameForm_regionalModal">
-                            <label for="typeSelect_filterModal"
-                                class="col-sm-2 control-label filterForms">Lands Type: </label>
-                            <div class="col-sm-10 filterForms">
-                                <select id="typeSelect_filterModal" class="typeSelectFilter" multiple="multiple"
+                    <form class="form-horizontal" role="form" id="welcomeForm">
+                        <div class="form-group" id="evtNameForm_welcomeModal">
+                            <label for="typeSelect_welcomeModal"
+                                class="col-sm-2 control-label welcomeForms">Lands Type: </label>
+                            <div class="col-sm-10 welcomeForms">
+                                <select id="typeSelect_welcomeModal" class="typeSelectwelcome" multiple="multiple"
                                     style="width: 100%"></select>
                             </div>
-                        </div> -->
+                        </div>
+                        <div class="form-group" id="evtNameForm_welcomeModal">
+                            <label for="siteSelect_welcomeModal"
+                                class="col-sm-2 control-label welcomeForms">Site: </label>
+                            <div class="col-sm-10 welcomeForms">
+                                <select id="siteSelect_welcomeModal" class="siteSelect" multiple="multiple"
+                                    style="width: 100%"></select>
+                            </div>
+                        </div>
+                        <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted
+                            by start
+                            date.</span><br>
+                        <div id="evtNameForm_welcomeModal" class="form-group">
+                            <label for="typeSelect_welcomeModal"
+                                class="col-sm-2 control-label welcomeForms">Event: </label>
+                            <!--<input type="text" class="form-control" placeholder="Search for...">-->
+                            <div class="col-sm-10 welcomeForms">
+                                <select id="evtSelect_welcomeModal" class="evtSelect form-control select" style="width: 400px"
+                                multiple></select>
+                            </div>
+                        </div>
                     </form>
                     <!-- <div class="input-group form-group">
                         <span>Select a Park or Refuge: </span>
@@ -169,18 +189,6 @@
                             </div>
                         </div>
                     </div> -->
-
-                    <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted
-                        by start
-                        date.</span><br>
-                    <div id="evtNameForm_welcomeModal" class="input-group form-group">
-                        <!--<input type="text" class="form-control" placeholder="Search for...">-->
-                        <select id="evtSelect_welcomeModal" class="evtSelect form-control select" style="width: 500px"
-                            multiple></select>
-                        <span class="input-group-btn">
-                            <!-- <button id="btnSubmitEvent" class="btn btn-secondary input-group-addon" type="button">Go</button> -->
-                        </span>
-                    </div>
                     <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
                             aria-hidden="true"></i> Please choose an event to proceed.</div>
                     <div id="evtNameForm_parks" class="input-group form-group">
@@ -200,9 +208,9 @@
                             </label>
                         </div>
                     </div>
-                    <div class="alert alert-danger parkRefSelectAlert" role="alert"><i
+                    <!-- <div class="alert alert-danger parkRefSelectAlert" role="alert"><i
                             class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose a Park or Refuge.
-                    </div>
+                    </div> -->
                 </div>
                 <div class="modal-footer">
                     <span><button id="btnSubmitEvent" class="btn btn-default" type="button" aria-hidden="true"
@@ -239,16 +247,18 @@
                                     style="width: 100%"></select>
                             </div>
                         </div>
+                        <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted
+                            by start
+                            date.</span><br>
+                        <div id="evtNameForm_updateFiltersModal" class="form-group">
+                            <label for="typeSelect_welcomeModal"
+                                class="col-sm-2 control-label filterForms">Event: </label>
+                                <div class="col-sm-10 filterForms">
+                                    <select id="evtSelect_updateFiltersModal" class="evtSelect_filter form-control select"
+                                    style="width: 400px" multiple></select>
+                                </div>
+                        </div>
                     </form>
-                    <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted
-                        by start
-                        date.</span><br>
-                    <div id="evtNameForm_updateFiltersModal" class="input-group form-group">
-                        <select id="evtSelect_updateFiltersModal" class="evtSelect_filter form-control select"
-                            style="width: 500px" multiple></select>
-                        <span class="input-group-btn">
-                        </span>
-                    </div>
                     <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
                             aria-hidden="true"></i> Please choose an event to proceed.</div>
                     <div id="evtNameForm_parks" class="input-group form-group">
@@ -268,14 +278,14 @@
                             </label>
                         </div>
                     </div>
-                    <div class="alert alert-danger parkRefSelectAlert" role="alert"><i
+                   <!--  <div class="alert alert-danger parkRefSelectAlert" role="alert"><i
                             class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose a Park or Refuge.
-                    </div>
+                    </div> -->
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="dismissbuttonfilter btn" data-dismiss="modal">Dismiss</button>
                     <span><button id="btnSubmitEvent_filter" class="btn btn-default" type="button" aria-hidden="true"
-                            style="color:gray;" class="btn btn-primary">Go</button></span>
+                        style="color:gray;" class="btn btn-primary">Go</button></span>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -330,9 +340,9 @@
                 <div class="modal-body" style="text-align: center;">
                     <p>Sorry, that site is not available. Please <a href="#openFiltersModal">try another site</a>.</p>
                 </div>
-                <form id="geosearch-form" class="form-inline">
+                <form id="invalid-form" class="form-inline">
 
-                    <button id="btnDismiss" type="submit" class="dismissbutton btn"
+                    <button id="btnDismissInvalid" type="submit" class="dismissbutton btn"
                         data-dismiss="modal">Dismiss</button>
                 </form>
             </div>
