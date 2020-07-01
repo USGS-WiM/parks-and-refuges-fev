@@ -1218,6 +1218,18 @@ a.lgi-zoom:hover {
 .parkRefSelectAlert{
     display: none;
 }
+.landsTypeSelectAlert{
+    display: none;
+}
+.eventSelectAlertWelcome{
+    display: none;
+}
+.parkRefSelectAlertWelcome{
+    display: none;
+}
+.landsTypeSelectAlertWelcome{
+    display: none;
+}
 
 .select {
     border-radius:0px !important;
