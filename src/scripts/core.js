@@ -2459,7 +2459,6 @@ $(document).ready(function () {
 						return L.circleMarker(latlng, labelMarkerOptions);
 					},
 				}).addTo(map);
-				map.fitBounds(bufferPoly.getBounds());
 
 				// cycling through each peak and seeing if it's inside the buffer
 				for (var i in peak._layers) {
@@ -2529,6 +2528,7 @@ $(document).ready(function () {
 					rdgCheckBox.checked = true;
 					clickRdg();
 				}
+				map.fitBounds(bufferPoly.getBounds());
 			}, 1000);
 			//$(inputModal).modal('hide');
 		}

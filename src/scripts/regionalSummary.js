@@ -254,8 +254,6 @@ $(document).ready(function () {
                 simpPoly.push(feat);
                 }
              );
-
-             
             
             // Identify parks/refuges in event in regions
             var allSites;
@@ -426,7 +424,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
                     getEventSpecificData();
                 }, 3000);
-
             }
 
             // looping through each event and sensor data
@@ -494,7 +491,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             getRDGs(fev.urls.rdgGeoJSONViewURL + sensorQueryString, regionalrdgMarkerIcon); */
 
                             setTimeout(() => {
-                                //regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                                regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                                 processData();
                             }, 5000);
 
@@ -1069,6 +1066,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         function processData() {
             $('#saveRegionalPeakCSV').removeAttr('disabled');
             $('#saveRegionalHWMCSV').removeAttr('disabled');
+            $('#printRegionalReport').removeAttr('disabled');
             var formattedPeaks = [];
             var formattedHWMS = [];
             var formattedSensors = [];
@@ -1296,6 +1294,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     $('#btnClearRegFilters').click(function () {
         $('#saveRegionalPeakCSV').attr('disabled', true);
         $('#saveRegionalHWMCSV').attr('disabled', true)
+        $('#printRegionalReport').attr('disabled', true)
         // removing all layers from the map regardless of type
         regionalMap.eachLayer(function (layer) {
             regionalMap.removeLayer(layer);
