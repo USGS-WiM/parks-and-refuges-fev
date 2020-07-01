@@ -121,6 +121,136 @@ $( document ).ready(function() {
     $('.typeSelect').append('<option value="parks">' + 'Parks' + '</option>');
     $('.typeSelect').append('<option value="refuges">' + 'Refuges' + '</option>');
 
+    // Lands type selector
+    $('.typeSelectFilter').select2({
+        placeholder: 'Select a type',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
+
+    $('.typeSelectwelcome').select2({
+        placeholder: 'Select a type',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
+
+    $('.typeSelectFilter').append('<option value="parks">' + 'Parks' + '</option>');
+    $('.typeSelectFilter').append('<option value="refuges">' + 'Refuges' + '</option>');
+
+    $('.typeSelectwelcome').append('<option value="parks">' + 'Parks' + '</option>');
+    $('.typeSelectwelcome').append('<option value="refuges">' + 'Refuges' + '</option>');
+
+    $('.siteSelectWelcome').select2({
+        placeholder: 'Select a site',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
+
+    $('.siteSelect').select2({
+        placeholder: 'Select a site',
+        allowClear: false,
+        maximumSelectionLength: 1
+    });
+
+    // region based on region type
+    $('#typeSelect_filterModal').change(function () {
+
+        // clearing out the results incase region type 
+        $('.siteSelect').empty();
+
+        // if it has a value, we query to get the region geometry
+        if (($('#typeSelect_filterModal').val()) === null) {
+           
+        } else {
+            if ($('#typeSelect_filterModal').val()[0] === "parks") {
+                $.ajax({
+                    dataType: 'json',
+                    type: 'GET',
+                    url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=UNIT_NAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    headers: {'Accept': '*/*'},
+                    success: function (data) {
+                        for (var i = 0; i < data.features.length; i++) {
+                            $('.siteSelect').append('<option value="' + data.features[i].attributes.UNIT_NAME + '">' + data.features[i].attributes.UNIT_NAME + '</option>');
+                            /* data[i].id = data[i].event_id;
+                            fev.data.events.push(data[i]); */
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error processing the JSON. The error is:' + error);
+                    }
+                });
+                
+                
+            } else if ($('#typeSelect_filterModal').val()[0] === "refuges") {
+                $.ajax({
+                    dataType: 'json',
+                    type: 'GET',
+                    url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=ORGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    headers: {'Accept': '*/*'},
+                    success: function (data) {
+                        for (var i = 0; i < data.features.length; i++) {
+                            $('.siteSelect').append('<option value="' + data.features[i].attributes.ORGNAME + '">' + data.features[i].attributes.ORGNAME + '</option>');
+                            /* data[i].id = data[i].event_id;
+                            fev.data.events.push(data[i]); */
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error processing the JSON. The error is:' + error);
+                    }
+                });
+            } 
+        }
+    });
+    // region based on region type
+    $('#typeSelect_welcomeModal').change(function () {
+
+        // clearing out the results incase region type 
+        $('.siteSelectWelcome').empty();
+
+        // if it has a value, we query to get the region geometry
+        if (($('#typeSelect_welcomeModal').val()) === null) {
+           
+        } else {
+            if ($('#typeSelect_welcomeModal').val()[0] === "parks") {
+                $.ajax({
+                    dataType: 'json',
+                    type: 'GET',
+                    url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=UNIT_NAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    headers: {'Accept': '*/*'},
+                    success: function (data) {
+                        for (var i = 0; i < data.features.length; i++) {
+                            $('.siteSelect').append('<option value="' + data.features[i].attributes.UNIT_NAME + '">' + data.features[i].attributes.UNIT_NAME + '</option>');
+                            /* data[i].id = data[i].event_id;
+                            fev.data.events.push(data[i]); */
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error processing the JSON. The error is:' + error);
+                    }
+                });
+                
+                
+            } else if ($('#typeSelect_welcomeModal').val()[0] === "refuges") {
+                $.ajax({
+                    dataType: 'json',
+                    type: 'GET',
+                    url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=ORGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    headers: {'Accept': '*/*'},
+                    success: function (data) {
+                        for (var i = 0; i < data.features.length; i++) {
+                            $('.siteSelect').append('<option value="' + data.features[i].attributes.ORGNAME + '">' + data.features[i].attributes.ORGNAME + '</option>');
+                            /* data[i].id = data[i].event_id;
+                            fev.data.events.push(data[i]); */
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error processing the JSON. The error is:' + error);
+                    }
+                });
+            } 
+        }
+    });
+
     $('.regionSelect').select2({
         placeholder: 'Select a region type',
         allowClear: false,
