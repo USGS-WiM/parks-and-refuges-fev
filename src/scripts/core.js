@@ -3298,14 +3298,6 @@ function clickHWM() {
 		$('#highWaterSymbology').children().remove();
 		hwmStart = 3;
 	}
-		var peaksCheckBox = document.getElementById("peaksToggle");
-		if (peaksCheckBox.checked == true) {
-			peaksCheckBox.checked = false;
-			clickPeaks();
-			peaksCheckBox.checked = true;
-			clickPeaks();
-			
-	}
 }
 
 //Display rapid deployment gage layer and legend item when corresponding box is checked
