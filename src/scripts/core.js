@@ -522,7 +522,7 @@ $(document).ready(function () {
 			} else {
 				//if no event selected, warn user with alert
 				// Also accounting for having an event selected but no parkref
-				if (($(evtSelect_Modal_Primary).val() !== null)) {
+				if ((($(evtSelect_Modal_Primary).val() !== null) && ($(typeSelect).val() !== null) && ($(siteSelect).val() !== null))) {
 					$('.eventSelectAlert').hide();
 				} else {
 					$('.eventSelectAlert').show();
@@ -2310,7 +2310,7 @@ $(document).ready(function () {
 
 		//If using the filter modal, collect input from the filter modal
 		if (runningFilter == true) {
-			$('.parkRefSelectAlert').hide();
+			$('.eventSelectAlert').hide();
 			map.fitBounds(usBounds);
 			var siteType = $('#typeSelect_filterModal').val()[0];
 
@@ -2531,7 +2531,6 @@ $(document).ready(function () {
 				}
 			}, 1000);
 			//$(inputModal).modal('hide');
-			$('.eventSelectAlert').hide();
 		}
 	};
 
