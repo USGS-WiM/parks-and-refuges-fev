@@ -211,6 +211,11 @@ var parksLayerGroup = L.featureGroup();
 var hwmCSVData = [];
 var peaksCSVData = [];
 
+// bounds of the continental US
+var usBounds = [
+    [20.499550, -130.276413], //Southwest
+    [55.162102, -52.233040]  //Northeast
+];
 
 // refuge layer
 /* var refuges = L.esri.dynamicMapLayer({
@@ -251,7 +256,7 @@ var noaaService = L.esri.dynamicMapLayer({
 	url: "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
 	opacity: 0.5,
 	f: 'image'
-})
+});
 
 var noAdvisories = false;
 var test;
@@ -309,7 +314,7 @@ var bounds = L.esri.featureLayer({
 	/* style: function (feature) {
 		return { color: 'brown', weight: 2 };
 	} */
-})
+});
 
 // Style for NPS Networks layer
 var npsNetStyle = {
@@ -364,7 +369,7 @@ var int = L.esri.featureLayer({
 			return { color: 'black', weight: 2, fillOpacity: 0 };
 		}
 	}
-})
+});
 
 
 
@@ -394,11 +399,11 @@ var doiRegions = L.esri.featureLayer({
 	url: "https://services.arcgis.com/4OV0eRKiLAYkbH2J/ArcGIS/rest/services/DOI_Unified_Regions/FeatureServer/0",
 	//opacity: 0.5,
 	minZoom: 5
-})
+});
 
 int.bindPopup(function (layer) {
 	return L.Util.template('<p>INTTYPE1: {INTTYPE1}', layer.properties);
-})
+});
 
 /* $.getJSON('https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time', {
 	async: false,
@@ -478,15 +483,15 @@ $(document).ready(function () {
 	});
 
 	//welcomeModal: set search for 'Go' click 
-	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_filterModal', false);
+	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_welcomeModal','#typeSelect_welcomeModal', '#siteSelect_welcomeModal', false);
 	//updateFiltersModal MODAL: set search for 'Go' click 
-	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', true);
+	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true);
 
 	//set search for 'Go' click
-	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary, runningFilter) {
+	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary, typeSelect, siteSelect, runningFilter) {
 		submitButton.click(function () {
 			//check if an event has been selected
-			if (($(evtSelect_Modal_Primary).val() !== null)) {
+			if ((($(evtSelect_Modal_Primary).val() !== null) && ($(typeSelect).val() !== null) && ($(siteSelect).val() !== null))) {
 				//if event selected, hide welcome modal and begin filter process
 				$(chooseModal).modal('hide');
 				var eventID = $(evtSelect_Modal_Primary).val()[0];
@@ -517,15 +522,11 @@ $(document).ready(function () {
 			} else {
 				//if no event selected, warn user with alert
 				// Also accounting for having an event selected but no parkref
-				if (($(evtSelect_Modal_Primary).val() !== null)) {
+				if ((($(evtSelect_Modal_Primary).val() !== null) && ($(typeSelect).val() !== null) && ($(siteSelect).val() !== null))) {
 					$('.eventSelectAlert').hide();
 				} else {
 					$('.eventSelectAlert').show();
 				}
-			}
-			if (searchResults !== undefined) {
-			} else {
-				$('.parkRefSelectAlert').show();
 			}
 
 			//reset identified gages
@@ -1129,12 +1130,12 @@ $(document).ready(function () {
 					table: {
 						headerRows: 1,
 						widths: '*',
-						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max','90% Conf Low', '90% Conf High']),
+						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max', '90% Conf Low', '90% Conf High']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
 					margin: [0, 0, 0, 15]
-				};	
+				};
 			};
 			//// End of Summary Information table build ////
 
@@ -1190,7 +1191,7 @@ $(document).ready(function () {
 						table: {
 							headerRows: 1,
 							widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
-							body: buildPeaksBody(data, ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no','waterbody']),
+							body: buildPeaksBody(data, ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
 						},
 						layout: 'lightHorizontalLines',
 						style: 'smaller',
@@ -1219,7 +1220,7 @@ $(document).ready(function () {
 				var body = [];
 				if (allHWMs.length === 0) {
 					body.push([
-						{ text: 'There is no HWM data based on selections.'}
+						{ text: 'There is no HWM data based on selections.' }
 					])
 				} else {
 					for (var i in hwmData) {
@@ -1228,56 +1229,56 @@ $(document).ready(function () {
 							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
 							{ text: 'Elevation(ft)', style: 'tableHeader' }, hwmData[i].elev_ft
 						],
-						[
-							{},
-							{ text: 'Event', style: 'tableHeader' }, hwmData[i].event,
-							{ text: 'Site Name', style: 'tableHeader' }, hwmData[i].site_name
-						],
-						[
-							{},
-							{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i].verticalDatumName + ", " + hwmData[i].verticalMethodName,
-							{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i].horizontalDatumName + ", " + hwmData[i].horizontalMethodName
-						],
-						[
-							{},
-							{ text: 'Type', style: 'tableHeader' }, hwmData[i].hwmTypeName,
-							{ text: 'Quality', style: 'tableHeader' }, hwmData[i].hwmQualityName
-						],
-						[
-							{},
-							{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i].waterbody,
-							{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i].sitePermHousing
-						],
-						[
-							{},
-							{ text: 'County', style: 'tableHeader' }, hwmData[i].county,
-							{ text: 'State', style: 'tableHeader' }, hwmData[i].state
-						],
-						[
-							{},
-							{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i].latitude_dd + ", " + hwmData[i].longitude_dd,
-							{ text: 'Site Description', style: 'tableHeader' }, hwmData[i].hwm_locationdescription
-						],
-						[
-							{},
-							{ text: 'Location Description', style: 'tableHeader' }, hwmData[i].siteDescription,
-							{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i].survey_date
-						],
-						[
-							{},
-							{ text: 'Bank', style: 'tableHeader' }, hwmData[i].bank,
-							{ text: 'Environment', style: 'tableHeader' }, hwmData[i].hwm_environment
-						],
-						[
-							{},
-							{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i].flag_date,
-							{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i].stillwater
-						],
-						[
-							{},
-							{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i].uncertainty,
-							{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
-						]);
+							[
+								{},
+								{ text: 'Event', style: 'tableHeader' }, hwmData[i].event,
+								{ text: 'Site Name', style: 'tableHeader' }, hwmData[i].site_name
+							],
+							[
+								{},
+								{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i].verticalDatumName + ", " + hwmData[i].verticalMethodName,
+								{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i].horizontalDatumName + ", " + hwmData[i].horizontalMethodName
+							],
+							[
+								{},
+								{ text: 'Type', style: 'tableHeader' }, hwmData[i].hwmTypeName,
+								{ text: 'Quality', style: 'tableHeader' }, hwmData[i].hwmQualityName
+							],
+							[
+								{},
+								{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i].waterbody,
+								{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i].sitePermHousing
+							],
+							[
+								{},
+								{ text: 'County', style: 'tableHeader' }, hwmData[i].county,
+								{ text: 'State', style: 'tableHeader' }, hwmData[i].state
+							],
+							[
+								{},
+								{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i].latitude_dd + ", " + hwmData[i].longitude_dd,
+								{ text: 'Site Description', style: 'tableHeader' }, hwmData[i].hwm_locationdescription
+							],
+							[
+								{},
+								{ text: 'Location Description', style: 'tableHeader' }, hwmData[i].siteDescription,
+								{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i].survey_date
+							],
+							[
+								{},
+								{ text: 'Bank', style: 'tableHeader' }, hwmData[i].bank,
+								{ text: 'Environment', style: 'tableHeader' }, hwmData[i].hwm_environment
+							],
+							[
+								{},
+								{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i].flag_date,
+								{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i].stillwater
+							],
+							[
+								{},
+								{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i].uncertainty,
+								{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
+							]);
 					}
 				}
 				return body;
@@ -1563,9 +1564,6 @@ $(document).ready(function () {
 
 		showPrintModal();
 		$("#reportFooter").hide();
-
-
-	
 
 		//Stream gages need to be checked on for the hydrographs to appear
 		var streamgageCheckBox = document.getElementById("streamGageToggle");
@@ -2014,13 +2012,6 @@ $(document).ready(function () {
 		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
 	});
-	$('a[href="#openFiltersModal"]').click(function () {
-		$('#invalidModal').modal('hide');
-		//parks.clearLayers();
-		//update the event select within the filters modal to reflect current event
-		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
-		showFiltersModal();
-	});
 
 	/* begin basemap controller */
 	function setBasemap(basemap) {
@@ -2294,7 +2285,12 @@ $(document).ready(function () {
 
 	//$('#btnSubmitEvent_filter').click(function() 
 	function searchComplete(runningFilter) {
-		var success = false;
+		bufferPoly = undefined;
+		parks = undefined;
+		refuges = undefined;
+		flattenedPoly = undefined;
+		buffer = undefined;
+		var polyDefined;
 		// Clearing identified peaks and identified marks arrays before buffer runs if array had previous values
 		identifiedPeaks.length = 0;
 		identifiedMarks.length = 0;
@@ -2303,22 +2299,24 @@ $(document).ready(function () {
 		if (runningFilter == false) {
 
 			//this element is populated with either 'parks' or refuges'
-		var siteType = $('#typeSelect_welcomeModal').val()[0];
+			var siteType = $('#typeSelect_welcomeModal').val()[0];
 
-		// getting and setting park name from search
-		var name = $('#siteSelect_welcomeModal').val()[0];
+			// getting and setting park name from search
+			var name = $('#siteSelect_welcomeModal').val()[0];
 
-		// setting the current Park or Refuge selected for the report
-		currentParkOrRefuge = $('#siteSelect_welcomeModal').val()[0];
+			// setting the current Park or Refuge selected for the report
+			currentParkOrRefuge = $('#siteSelect_welcomeModal').val()[0];
 		}
 
 		//If using the filter modal, collect input from the filter modal
 		if (runningFilter == true) {
+			$('.eventSelectAlert').hide();
+			map.fitBounds(usBounds);
 			var siteType = $('#typeSelect_filterModal').val()[0];
 
 			// getting and setting park name from search
 			var name = $('#siteSelect_filterModal').val()[0];
-	
+
 			// setting the current Park or Refuge selected for the report
 			currentParkOrRefuge = $('#siteSelect_filterModal').val()[0];
 		}
@@ -2343,10 +2341,8 @@ $(document).ready(function () {
 		};
 
 		// setting the where class for the query
-		// UNIT_NAME holds gnis major value of park name (I think)
 		var where = "1=1";
 		var polys = [];
-		var regionName;
 
 		if (siteType === "parks") {
 			where = "UNIT_NAME=" + name;
@@ -2361,37 +2357,18 @@ $(document).ready(function () {
 					latlng.bindPopup(popupContent);
 					polys = feature.geometry;
 					// flattening the geometry for use in turf
-					success = true;
 					flattenedPoly = turf.flatten(polys);
-					regionName = feature.properties.REGION;
-					if (regionName == "PW") {
-						regionName = "Pacific West";
+					if (flattenedPoly !== undefined) {
+						polyDefined = true;
 					}
-					if (regionName == "IM") {
-						regionName = "Intermountain";
-					}
-					if (regionName == "MW") {
-						regionName = "Midwest";
-					}
-					if (regionName == "NE") {
-						regionName = "Northeast";
-					}
-					if (regionName == "SE") {
-						regionName = "Southeast";
-					}
-					if (regionName == "AK") {
-						regionName = "Alaska";
-					}
-					if (regionName == "NC") {
-						regionName = "National Capital";
+					if (polyDefined === true) {
+						getSiteBuffers();
 					}
 				},
 				style: parkStyle
 			}).addTo(map);
-			parksLayerGroup.addLayer(parks);
-
+			
 		} else if (siteType === "refuges") {
-			var refCount = [];
 			where = "ORGNAME=" + name;
 			refuges = L.esri.featureLayer({
 				useCors: false,
@@ -2404,38 +2381,16 @@ $(document).ready(function () {
 					latlng.bindPopup(popupContent);
 					polys = feature.geometry;
 					// flattening the geometry for use in turf
-					success = true;
 					flattenedPoly = turf.flatten(polys);
-					refCount = 1;
-					regionName = feature.properties.FWSREGION;
-					if (regionName == "1") {
-						regionName = "Pacific";
+					if (flattenedPoly !== undefined) {
+						polyDefined = true;
 					}
-					if (regionName == "2") {
-						regionName = "Southwest";
-					}
-					if (regionName == "3") {
-						regionName = "Midwest";
-					}
-					if (regionName == "4") {
-						regionName = "Southeast";
-					}
-					if (regionName == "5") {
-						regionName = "Northeast";
-					}
-					if (regionName == "6") {
-						regionName = "Mountain-Prairie";
-					}
-					if (regionName == "7") {
-						regionName = "Alaska";
-					}
-					if (regionName == "8") {
-						regionName = "California";
+					if (polyDefined === true) {
+						getSiteBuffers();
 					}
 				},
 				style: parkStyle
 			}).addTo(map);
-
 			//if there was a name match with the refuge layer, this will not run
 			// disabling for now
 			/* setTimeout(() => {
@@ -2466,11 +2421,14 @@ $(document).ready(function () {
 		}
 
 		// account for a search that is not a park or refuge
-		setTimeout(() => {
-			if (success === true) {
+		function getSiteBuffers() {
 
-				var buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
-				var polysCount = flattenedPoly.features.length;
+
+			setTimeout(() => {
+				var buffered;
+				var polysCount;
+				buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
+				polysCount = flattenedPoly.features.length;
 				buffer = buffered;
 
 				// if there is more than one poly for a park we merge the buffers made for each park. can only do two at a time
@@ -2525,58 +2483,55 @@ $(document).ready(function () {
 						identifiedMarks.push(hwm._layers[i])
 					}
 				}
-			} else {
-				$('#invalidModal').modal('show');
-			}
-
-			if (runningFilter == true) {
-				//if the event is changed in the filters modal, the checkbox/legend symbols must be reset
-				var peaksCheckBox = document.getElementById("peaksToggle");
-				peaksCheckBox.checked = false;
-				clickPeaks();
-				peaksCheckBox.checked = true;
-				clickPeaks();
-
-				var baroCheckBox = document.getElementById("baroToggle");
-				baroCheckBox.checked = false;
-				clickBaro();
-				baroCheckBox.checked = true;
-				clickBaro();
-
-				var stormTideCheckBox = document.getElementById("stormTideToggle");
-				stormTideCheckBox.checked = false;
-				clickStormTide();
-				stormTideCheckBox.checked = true;
-				clickStormTide();
-
-				var metCheckBox = document.getElementById("metToggle");
-				metCheckBox.checked = false;
-				clickMet();
-				metCheckBox.checked = true;
-				clickMet();
-
-				var waveHeightCheckBox = document.getElementById("waveHeightToggle");
-				waveHeightCheckBox.checked = false;
-				clickWaveHeight();
-				waveHeightCheckBox.checked = true;
-				clickWaveHeight();
-
-				var HWMCheckBox = document.getElementById("HWMToggle");
-				HWMCheckBox.checked = false;
-				clickHWM();
-				HWMCheckBox.checked = true;
-				clickHWM();
-
-				var rdgCheckBox = document.getElementById("rdgToggle");
-				rdgCheckBox.checked = false;
-				clickRdg();
-				rdgCheckBox.checked = true;
-				clickRdg();
-			}
 
 
-		}, 1000);
-		//$(inputModal).modal('hide');
+				if (runningFilter == true) {
+					//if the event is changed in the filters modal, the checkbox/legend symbols must be reset
+					var peaksCheckBox = document.getElementById("peaksToggle");
+					peaksCheckBox.checked = false;
+					clickPeaks();
+					peaksCheckBox.checked = true;
+					clickPeaks();
+
+					var baroCheckBox = document.getElementById("baroToggle");
+					baroCheckBox.checked = false;
+					clickBaro();
+					baroCheckBox.checked = true;
+					clickBaro();
+
+					var stormTideCheckBox = document.getElementById("stormTideToggle");
+					stormTideCheckBox.checked = false;
+					clickStormTide();
+					stormTideCheckBox.checked = true;
+					clickStormTide();
+
+					var metCheckBox = document.getElementById("metToggle");
+					metCheckBox.checked = false;
+					clickMet();
+					metCheckBox.checked = true;
+					clickMet();
+
+					var waveHeightCheckBox = document.getElementById("waveHeightToggle");
+					waveHeightCheckBox.checked = false;
+					clickWaveHeight();
+					waveHeightCheckBox.checked = true;
+					clickWaveHeight();
+
+					var HWMCheckBox = document.getElementById("HWMToggle");
+					HWMCheckBox.checked = false;
+					clickHWM();
+					HWMCheckBox.checked = true;
+					clickHWM();
+
+					var rdgCheckBox = document.getElementById("rdgToggle");
+					rdgCheckBox.checked = false;
+					clickRdg();
+					rdgCheckBox.checked = true;
+					clickRdg();
+				}
+			}, 1000);
+			//$(inputModal).modal('hide');
+		}
 	};
 
 	//the geosearch (in the navbar) zooms to the input location and returns a popup with location name, county, state

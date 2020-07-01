@@ -152,31 +152,34 @@
                     <br>
                     <form class="form-horizontal" role="form" id="welcomeForm">
                         <div class="form-group" id="evtNameForm_welcomeModal">
-                            <label for="typeSelect_welcomeModal"
-                                class="col-sm-2 control-label welcomeForms">Lands Type: </label>
+                            <label for="typeSelect_welcomeModal" class="col-sm-2 control-label welcomeForms">Lands Type:
+                            </label>
                             <div class="col-sm-10 welcomeForms">
                                 <select id="typeSelect_welcomeModal" class="typeSelectwelcome" multiple="multiple"
                                     style="width: 100%"></select>
                             </div>
                         </div>
+
                         <div class="form-group" id="evtNameForm_welcomeModal">
-                            <label for="siteSelect_welcomeModal"
-                                class="col-sm-2 control-label welcomeForms">Site: </label>
+                            <label for="siteSelect_welcomeModal" class="col-sm-2 control-label welcomeForms">Site:
+                            </label>
                             <div class="col-sm-10 welcomeForms">
                                 <select id="siteSelect_welcomeModal" class="siteSelect" multiple="multiple"
                                     style="width: 100%"></select>
                             </div>
                         </div>
-                        <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted
+
+                        <span style="font-size: smaller">You may select from list or begin typing event name. Events
+                            sorted
                             by start
                             date.</span><br>
                         <div id="evtNameForm_welcomeModal" class="form-group">
-                            <label for="typeSelect_welcomeModal"
-                                class="col-sm-2 control-label welcomeForms">Event: </label>
+                            <label for="typeSelect_welcomeModal" class="col-sm-2 control-label welcomeForms">Event:
+                            </label>
                             <!--<input type="text" class="form-control" placeholder="Search for...">-->
                             <div class="col-sm-10 welcomeForms">
-                                <select id="evtSelect_welcomeModal" class="evtSelect form-control select" style="width: 400px"
-                                multiple></select>
+                                <select id="evtSelect_welcomeModal" class="evtSelect form-control select"
+                                    style="width: 400px" multiple></select>
                             </div>
                         </div>
                     </form>
@@ -189,8 +192,6 @@
                             </div>
                         </div>
                     </div> -->
-                    <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
-                            aria-hidden="true"></i> Please choose an event to proceed.</div>
                     <div id="evtNameForm_parks" class="input-group form-group">
                         <div class="form-group" id="bufferOptions" style="display: contents;">
                             <span>Select a buffer distance: &nbsp;&nbsp;</span>
@@ -208,9 +209,8 @@
                             </label>
                         </div>
                     </div>
-                    <!-- <div class="alert alert-danger parkRefSelectAlert" role="alert"><i
-                            class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose a Park or Refuge.
-                    </div> -->
+                    <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
+                        aria-hidden="true"></i> Please complete all fields in the form.</div>
                 </div>
                 <div class="modal-footer">
                     <span><button id="btnSubmitEvent" class="btn btn-default" type="button" aria-hidden="true"
@@ -232,35 +232,36 @@
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="filterForm">
                         <div class="form-group" id="evtNameForm_filterModal">
-                            <label for="typeSelect_filterModal"
-                                class="col-sm-2 control-label filterForms">Lands Type: </label>
+                            <label for="typeSelect_filterModal" class="col-sm-2 control-label filterForms">Lands Type:
+                            </label>
                             <div class="col-sm-10 filterForms">
                                 <select id="typeSelect_filterModal" class="typeSelectFilter" multiple="multiple"
                                     style="width: 100%"></select>
                             </div>
                         </div>
+
                         <div class="form-group" id="evtNameForm_filterModal">
-                            <label for="siteSelect_filterModal"
-                                class="col-sm-2 control-label filterForms">Site: </label>
+                            <label for="siteSelect_filterModal" class="col-sm-2 control-label filterForms">Site:
+                            </label>
                             <div class="col-sm-10 filterForms">
                                 <select id="siteSelect_filterModal" class="siteSelect" multiple="multiple"
                                     style="width: 100%"></select>
                             </div>
                         </div>
-                        <span style="font-size: smaller">You may select from list or begin typing event name. Events sorted
+                        <span style="font-size: smaller">You may select from list or begin typing event name. Events
+                            sorted
                             by start
                             date.</span><br>
                         <div id="evtNameForm_updateFiltersModal" class="form-group">
-                            <label for="typeSelect_welcomeModal"
-                                class="col-sm-2 control-label filterForms">Event: </label>
-                                <div class="col-sm-10 filterForms">
-                                    <select id="evtSelect_updateFiltersModal" class="evtSelect_filter form-control select"
+                            <label for="typeSelect_welcomeModal" class="col-sm-2 control-label filterForms">Event:
+                            </label>
+                            <div class="col-sm-10 filterForms">
+                                <select id="evtSelect_updateFiltersModal" class="evtSelect_filter form-control select"
                                     style="width: 400px" multiple></select>
-                                </div>
+                            </div>
                         </div>
                     </form>
-                    <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
-                            aria-hidden="true"></i> Please choose an event to proceed.</div>
+
                     <div id="evtNameForm_parks" class="input-group form-group">
                         <div class="form-group" id="bufferOptions" style="display: contents;">
                             <span>Select a buffer distance: &nbsp;&nbsp;</span>
@@ -278,14 +279,13 @@
                             </label>
                         </div>
                     </div>
-                   <!--  <div class="alert alert-danger parkRefSelectAlert" role="alert"><i
-                            class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please choose a Park or Refuge.
-                    </div> -->
                 </div>
+                <div class="alert alert-danger eventSelectAlert" role="alert"><i
+                    class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please complete all fields in the form.</div>
                 <div class="modal-footer">
                     <button type="submit" class="dismissbuttonfilter btn" data-dismiss="modal">Dismiss</button>
                     <span><button id="btnSubmitEvent_filter" class="btn btn-default" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn btn-primary">Go</button></span>
+                            style="color:gray;" class="btn btn-primary">Go</button></span>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -329,28 +329,6 @@
     </div>
     <!-- end Geosearch Modal -->
 
-    <!-- Invalid search Modal -->
-    <div class="modal fade overflow-y-hidden" id="invalidModal" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                    <h4 class="modal-title">Invalid Search</h4>
-                </div>
-                <div class="modal-body" style="text-align: center;">
-                    <p>Sorry, that site is not available. Please <a href="#openFiltersModal">try another site</a>.</p>
-                </div>
-                <form id="invalid-form" class="form-inline">
-
-                    <button id="btnDismissInvalid" type="submit" class="dismissbutton btn"
-                        data-dismiss="modal">Dismiss</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    <!-- end Invalid search Modal -->
-
-
     <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" aria-hidden="true">
         <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important">
             <div class="modal-content">
@@ -365,7 +343,7 @@
                     </div>
                     <div id="legendImage" class="report-inline-block"></div>
                     <div id="gageGraphs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
-                    <div id="rtgraphs" ></div>
+                    <div id="rtgraphs"></div>
                     <div class='reportInfo' id="peakTable">
                         <table class="table" id="peakDataTable"></table>
                     </div>
@@ -410,8 +388,8 @@
                                     <label for="typeSelect_regionalModal"
                                         class="col-sm-2 control-label filterForms">Lands Type: </label>
                                     <div class="col-sm-10 filterForms">
-                                        <select id="typeSelect_regionalModal" class="typeSelect clear" multiple="multiple"
-                                            style="width: 100%" onchange="formReady()"></select>
+                                        <select id="typeSelect_regionalModal" class="typeSelect clear"
+                                            multiple="multiple" style="width: 100%" onchange="formReady()"></select>
                                     </div>
                                 </div>
                                 <div class="form-group" id="evtNameForm_regionalModal">
@@ -454,7 +432,8 @@
                             <div style="text-align: left; display: inline-flex; margin-left: 115px"> Peak Labels
                                 <label class="switch" id="peakSizeCheckReg"
                                     style="display: inline-flex; margin-left: 10px">
-                                    <input type="checkbox" id="peakCheckboxReg" onclick="clickPeakLabelsReg()" disabled/>
+                                    <input type="checkbox" id="peakCheckboxReg" onclick="clickPeakLabelsReg()"
+                                        disabled />
                                     <span class="slider round"> </span>
                                 </label>
                             </div>
@@ -467,7 +446,7 @@
                                     </table>
                                     <table class="table" id="hwmDataTableReg">
                                     </table>
-                                    
+
                                 </div>
                             </div>
                             <!--
@@ -492,8 +471,8 @@
                         style="color:gray;" class="btn btn-primary" disabled>Peak CSV</button>
                     <button id="saveRegionalHWMCSV" class="btn close" type="button" aria-hidden="true"
                         style="color:gray;" class="btn btn-primary" disabled>HWM CSV</button>
-                    <button id="printRegionalReport" class="btn close" type="button" aria-hidden="true" 
-                        style="color:gray;" class="btn btn-primary" >Print</button>
+                    <button id="printRegionalReport" class="btn close" type="button" aria-hidden="true"
+                        style="color:gray;" class="btn btn-primary">Print</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
