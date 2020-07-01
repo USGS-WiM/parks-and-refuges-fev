@@ -2014,13 +2014,6 @@ $(document).ready(function () {
 		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
 	});
-	$('a[href="#openFiltersModal"]').click(function () {
-		$('#invalidModal').modal('hide');
-		//parks.clearLayers();
-		//update the event select within the filters modal to reflect current event
-		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
-		showFiltersModal();
-	});
 
 	/* begin basemap controller */
 	function setBasemap(basemap) {
@@ -2525,8 +2518,6 @@ $(document).ready(function () {
 						identifiedMarks.push(hwm._layers[i])
 					}
 				}
-			} else {
-				$('#invalidModal').modal('show');
 			}
 
 			if (runningFilter == true) {
