@@ -421,22 +421,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             checkLayerCount(layerCount);
         }
     });
-    //currentMarker.bindPopup("Peak");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ///this function sets the current event's start and end dates as global vars. may be better as a function called on demand when date compare needed for NWIS graph setup
 function populateEventDates(eventID) {
@@ -810,11 +795,6 @@ function filterMapData(event, isUrlParam) {
         if (layer.ID == 'hwm') displayHWMGeoJSON(layer.ID, layer.Name, fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
         if (layer.ID == 'peak') displayPeaksGeoJSON(layer.ID, layer.Name, fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
     });
-
-    console.log("fev.urls.peaksFilteredGeoJSONViewURL", fev.urls.peaksFilteredGeoJSONViewURL);
-    console.log("fev.queryStrings.peaksQueryString", fev.queryStrings.peaksQueryString);
-    console.log("fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString", fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString);
-
 } //end filterMapData function
 function queryNWISRainGages(bbox) {
     var NWISRainmarkers = {};
