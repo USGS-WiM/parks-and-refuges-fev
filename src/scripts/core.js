@@ -213,8 +213,8 @@ var peaksCSVData = [];
 
 // bounds of the continental US
 var usBounds = [
-    [20.499550, -130.276413], //Southwest
-    [55.162102, -52.233040]  //Northeast
+	[20.499550, -130.276413], //Southwest
+	[55.162102, -52.233040]  //Northeast
 ];
 
 // refuge layer
@@ -483,7 +483,7 @@ $(document).ready(function () {
 	});
 
 	//welcomeModal: set search for 'Go' click 
-	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_welcomeModal','#typeSelect_welcomeModal', '#siteSelect_welcomeModal', false);
+	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_welcomeModal', '#typeSelect_welcomeModal', '#siteSelect_welcomeModal', false);
 	//updateFiltersModal MODAL: set search for 'Go' click 
 	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true);
 
@@ -552,7 +552,20 @@ $(document).ready(function () {
 
 	$('#print').click(function () {
 		printReport();
+		setTimeout(() => {
+			location.reload();
+		}, 500);
 	});
+
+	$('#printClose').click(function () {
+		location.reload()
+	});
+
+	$('#printCloseTop').click(function () {
+		location.reload()
+	});
+
+
 
 	// $('#printRegionalReport').click(function () {
 	// 	setTimeout(() => {
@@ -583,8 +596,8 @@ $(document).ready(function () {
 		}
 	});
 
-	
-	
+
+
 	//'listener' for URL event params - sets event vars and passes event id to filterMapData function
 	if (window.location.hash) {
 		//user has arrived with an event name after the hash on the URL
@@ -1973,7 +1986,6 @@ $(document).ready(function () {
 		} else {
 			document.getElementById("print").disabled = false;
 		}
-
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -2368,7 +2380,7 @@ $(document).ready(function () {
 				},
 				style: parkStyle
 			}).addTo(map);
-			
+
 		} else if (siteType === "refuges") {
 			where = "ORGNAME=" + name;
 			refuges = L.esri.featureLayer({
@@ -2897,7 +2909,7 @@ $(document).ready(function () {
 	//This runs when clicking the 'Peak CSV' or 'HWM CSV' button on the Report modal
 	function downloadCSV(type) {
 		//Format name of park or refuge
-		var siteName = searchResults.result.properties.Name.split(" ").join("_");
+		var siteName = currentParkOrRefuge.split(" ").join("_");
 
 		switch (type) {
 			//If 'HWM CSV' is clicked, download the HWM table
@@ -3415,7 +3427,7 @@ function clickNOAA() {
 
 function enlargeImage() {
 	$('.imagepreview').attr('src', $('.hydroImage').attr('src'));
-	$('#imagemodal').modal('show');   
+	$('#imagemodal').modal('show');
 }
 
 
