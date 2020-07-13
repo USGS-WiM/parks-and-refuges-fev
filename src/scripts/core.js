@@ -583,7 +583,8 @@ $(document).ready(function () {
 		}
 	});
 
-
+	
+	
 	//'listener' for URL event params - sets event vars and passes event id to filterMapData function
 	if (window.location.hash) {
 		//user has arrived with an event name after the hash on the URL
@@ -3412,5 +3413,9 @@ function clickNOAA() {
 	}
 }
 
+function enlargeImage() {
+	$('.imagepreview').attr('src', $('.hydroImage').attr('src'));
+	$('#imagemodal').modal('show');   
+}
 
 

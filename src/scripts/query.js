@@ -33,63 +33,57 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
             return marker;
         },
         onEachFeature: function (feature, latlng) {
-            //add marker to overlapping marker spidifier
-            oms.addMarker(latlng);
-            //var popupContent = '';
-            if (type == 'rdg') { return };
-            var currentEvent = fev.vars.currentEventName;
-            var popupContent =
-                '<table class="table table-hover table-striped table-condensed wim-table">' +
-                '<caption class="popup-title">' + name + ' | <span style="color:gray"> ' + currentEvent + '</span></caption>' +
-                '<tr><td><strong>STN Site Number: </strong></td><td><span id="siteName">' + feature.properties.site_no + '</span></td></tr>' +
-                '<tr><td><strong>Status: </strong></td><td><span id="status">' + feature.properties.status + '</span></td></tr>' +
-                '<tr><td><strong>City: </strong></td><td><span id="city">' + (feature.properties.city == '' || feature.properties.city == null || feature.properties.city == undefined ? '<i>No city recorded</i>' : feature.properties.city) + '</span></td></tr>' +
-                '<tr><td><strong>County: </strong></td><td><span id="county">' + feature.properties.county + '</span></td></tr>' +
-                '<tr><td><strong>State: </strong></td><td><span id="state">' + feature.properties.state + '</span></td></tr>' +
-                '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">' + feature.properties.latitude_dd.toFixed(4) + ', ' + feature.properties.longitude_dd.toFixed(4) + '</span></td></tr>' +
-                '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + feature.properties.site_id + '&Sensor=' + feature.properties.instrument_id + '\>Sensor data page</a></b></span></td></tr>' +
-                '</table>';
-            ////logic to retrieve and display Rapid Deploy gage graph
-            // if (type == 'rdg') {
-            //
-            //     ///begin new logic here to retrieve RDG data form NWIS (or have separate function?)
-            //
-            //
-            //     var usgsSiteID;
-            //     $.getJSON(stnServicesURL + "/Sites/" + feature.properties.site_id + ".json", function(data) {
-            //         if (data.usgs_sid !== "") {
-            //             //sensor type is RDG, and there is a usgs id. proceed with retreiving and displaying graph.
-            //             usgsSiteID = data.usgs_sid;
-            //
-            //             //check if event is active and has a blank end date - in that case set ened of time query to current date
-            //             if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
-            //                 //use moment.js lib to get current system date string, properly formatted
-            //                 fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
-            //                 console.log("Selected event is active, so end date is today, " + fev.vars.currentEventEndDate_str)
-            //             }
-            //             //if there is no valid date string for start or end, there is no way to retrieve data - display NA message. Otherwise proceed.
-            //             if (fev.vars.currentEventStartDate_str == '' && fev.vars.currentEventEndDate_str == '') {
-            //                 var rdgGraphContent =
-            //                     '<div id="rdgChartDiv"><i>Missing valid event date range. Unable to display RDG Real-time graph.</i></div>';
-            //                 latlng.bindPopup(popupContent + rdgGraphContent);
-            //             } else {
-            //                 ///now have valid start and end date strings, so proceed with getting the graph
-            //                 var rdgGraphContent =
-            //                     '<div id="rdgChartDiv"><label>Water level elevation (ft)</label><img width="350" src="http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=' + usgsSiteID + '&parm_cd=62620&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str + '" alt="rapid deploy gage graph"></div>';
-            //                 latlng.bindPopup(popupContent + rdgGraphContent, {minWidth: 350})
-            //             }
-            //
-            //         } else {
-            //             //no usgs id, so no RDG data available - show message saying that
-            //             var rdgGraphContent =
-            //                 '<div id="rdgChartDiv"><i>Missing USGS Site ID. Unable to display RDG Real-time graph.</i></div>';
-            //             latlng.bindPopup(popupContent + rdgGraphContent);
-            //         }
-            //     });
-            // } else {
-            //     latlng.bindPopup(popupContent);
-            // }
-            latlng.bindPopup(popupContent);
+            var instrumentID = feature.properties.instrument_id;
+            var url = "https://stn.wim.usgs.gov/STNServices/Instruments/" + instrumentID + "/Files.json";
+            var data;
+
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                data: data,
+                headers: {'Accept': '*/*'},
+                success: function (data) {
+                    var hydrographURL = '';
+                    var hydrographElement;
+                    var containsHydrograph = false;
+                    var noHydrograph = '<span style="float: right;padding-right: 15px;">No graph available</span>';
+                    var hydroPopupText;
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].filetype_id === 13 ) {
+                            containsHydrograph = true;
+                            hydrographURL = "https://stn.wim.usgs.gov/STNServices/Files/" + data[i].file_id + "/Item";
+                            hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
+                        }
+                    }
+
+                    if (containsHydrograph === true) {
+                        hydroPopupText = hydrographElement;
+                    } else {
+                        hydroPopupText = noHydrograph
+                    }
+                    //add marker to overlapping marker spidifier
+                    oms.addMarker(latlng);
+                    //var popupContent = '';
+                    if (type == 'rdg') { return };
+                    var currentEvent = fev.vars.currentEventName;
+                    var popupContent =
+                        '<table class="table table-hover table-striped table-condensed wim-table">' +
+                        '<caption class="popup-title">' + name + ' | <span style="color:gray"> ' + currentEvent + '</span></caption>' +
+                        '<tr><td><strong>STN Site Number: </strong></td><td><span id="siteName">' + feature.properties.site_no + '</span></td></tr>' +
+                        '<tr><td><strong>Status: </strong></td><td><span id="status">' + feature.properties.status + '</span></td></tr>' +
+                        '<tr><td><strong>City: </strong></td><td><span id="city">' + (feature.properties.city == '' || feature.properties.city == null || feature.properties.city == undefined ? '<i>No city recorded</i>' : feature.properties.city) + '</span></td></tr>' +
+                        '<tr><td><strong>County: </strong></td><td><span id="county">' + feature.properties.county + '</span></td></tr>' +
+                        '<tr><td><strong>State: </strong></td><td><span id="state">' + feature.properties.state + '</span></td></tr>' +
+                        '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">' + feature.properties.latitude_dd.toFixed(4) + ', ' + feature.properties.longitude_dd.toFixed(4) + '</span></td></tr>' +
+                        '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + feature.properties.site_id + '&Sensor=' + feature.properties.instrument_id + '\>Sensor data page</a></b></span></td></tr>' +
+                        '<tr><td colspan="2"><strong>Hydrograph: </strong>' + hydroPopupText
+                        '</table>';
+                    latlng.bindPopup(popupContent);
+                },
+                error: function (error) {
+                    console.log('Error processing the JSON. The error is:' + error);
+                }
+            });
         }
     });
 

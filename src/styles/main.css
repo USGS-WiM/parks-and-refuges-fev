@@ -1552,3 +1552,20 @@ input[type='checkbox']{
   
   .show {display: block;}
 
+  .hydroImage {
+    height: 155px;
+    width: 255px;
+    border:1px solid #e1ebfc;
+}
+
+#imageModalDialog {
+    width: 60%;
+}
+
+@media (max-width: 768px) {
+    #imageModalDialog {
+      width: 100%;
+    }
+  }
+
+
