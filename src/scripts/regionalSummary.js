@@ -62,9 +62,8 @@ var fevRegional = fevRegional || {
     csvRegionalPeaksColumns: [
         { fieldName: 'site_name', colName: "Site Name" },
         { fieldName: 'event', colName: "Event" },
-        { fieldName: 'peak_stage', colName: "Peak Stage" },
+        { fieldName: 'peak_stage', colName: "Peak Stage (ft)" },
         { fieldName: 'county', colName: "County" },
-        { fieldName: 'peak_stage', colName: "Peak Stage" },
         { fieldName: 'latitude_dd', colName: "Latitude" },
         { fieldName: 'longitude_dd', colName: "Longitude" },
         { fieldName: 'site_no', colName: "Site Number" },
@@ -94,8 +93,8 @@ var fevRegional = fevRegional || {
         { fieldName: 'sitePermHousing', colName: "Permanent Housing Site" },
         { fieldName: 'county', colName: "County" },
         { fieldName: 'state', colName: "HWM State" },
-        { fieldName: 'latitude_dd', colName: "Latitude" },
-        { fieldName: 'longitude_dd', colName: "Longitude" },
+        { fieldName: 'latitude_dd', colName: "Latitude (DD)" },
+        { fieldName: 'longitude_dd', colName: "Longitude (DD)" },
         { fieldName: 'site_no', colName: "Site Number" },
         { fieldName: 'waterbody', colName: "Waterbody" },
     ],
@@ -1254,7 +1253,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     "Description": identifiedPeaks[i].feature.properties.description,
                     "State": identifiedPeaks[i].feature.properties.state,
                     "County": identifiedPeaks[i].feature.properties.county,
-                    "Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+                    "Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
                     "Peak Estimated": peakEstimated
                 });
             }

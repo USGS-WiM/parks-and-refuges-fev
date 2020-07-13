@@ -143,7 +143,7 @@ var fev = fev || {
 	csvHWMColumns: [
 		{ fieldName: 'STN Site No.', colName: "STN Site No." },
 		{ fieldName: 'HWM Label', colName: "HWM Label" },
-		{ fieldName: 'Elevation(ft)', colName: "Elevation(ft)" },
+		{ fieldName: 'Elevation (ft)', colName: "Elevation (ft)" },
 		{ fieldName: 'Vertical Datum', colName: "Vertical Datum" },
 		{ fieldName: 'Vertical Method', colName: "Vertical Method" },
 		{ fieldName: 'Horizontal Datum', colName: "Horizontal Datum" },
@@ -154,7 +154,7 @@ var fev = fev || {
 		{ fieldName: 'Permanent Housing', colName: "Permanent Housing" },
 		{ fieldName: 'County', colName: "County" },
 		{ fieldName: 'State', colName: "State" },
-		{ fieldName: 'Latitude, Longitude(DD)', colName: "Latitude, Longitude(DD)" },
+		{ fieldName: 'Latitude, Longitude(DD)', colName: "Latitude, Longitude (DD)" },
 		{ fieldName: 'Site Description', colName: "Site Description" },
 		{ fieldName: 'Location Description', colName: "Location Description" },
 		{ fieldName: 'Survey Date', colName: "Survey Date" },
@@ -170,7 +170,7 @@ var fev = fev || {
 		{ fieldName: 'Description', colName: "Description" },
 		{ fieldName: 'State', colName: "State" },
 		{ fieldName: 'County', colName: "County" },
-		{ fieldName: 'Peak Stage', colName: "Peak Stage" },
+		{ fieldName: 'Peak Stage', colName: "Peak Stage (ft)" },
 		{ fieldName: 'Peak Estimated', colName: "Peak Estimated" },
 	],
 
@@ -1241,7 +1241,7 @@ $(document).ready(function () {
 						body.push([
 							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
 							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
-							{ text: 'Elevation(ft)', style: 'tableHeader' }, hwmData[i].elev_ft
+							{ text: 'Elevation (ft)', style: 'tableHeader' }, hwmData[i].elev_ft
 						],
 							[
 								{},
@@ -1638,7 +1638,7 @@ $(document).ready(function () {
 				"Description": identifiedPeaks[i].feature.properties.description,
 				"State": identifiedPeaks[i].feature.properties.state,
 				"County": identifiedPeaks[i].feature.properties.county,
-				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
 				"Peak Estimated": peakEstimated
 			});
 		}
@@ -1709,7 +1709,7 @@ $(document).ready(function () {
 			hwmTableData.push({
 				"STN Site No.": identifiedMarks[i].feature.properties.site_no,
 				"HWM Label": identifiedMarks[i].feature.properties.hwm_label,
-				"Elevation(ft)": identifiedMarks[i].feature.properties.elev_ft,
+				"Elevation (ft)": identifiedMarks[i].feature.properties.elev_ft,
 				"Vertical Datum": identifiedMarks[i].feature.properties.verticalDatumName,
 				"Vertical Method": identifiedMarks[i].feature.properties.verticalMethodName,
 				"Horizontal Datum": identifiedMarks[i].feature.properties.horizontalDatumName,
