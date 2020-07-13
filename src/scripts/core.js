@@ -2897,7 +2897,7 @@ $(document).ready(function () {
 	//This runs when clicking the 'Peak CSV' or 'HWM CSV' button on the Report modal
 	function downloadCSV(type) {
 		//Format name of park or refuge
-		var siteName = searchResults.result.properties.Name.split(" ").join("_");
+		var siteName = currentParkOrRefuge.split(" ").join("_");
 
 		switch (type) {
 			//If 'HWM CSV' is clicked, download the HWM table
