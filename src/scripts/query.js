@@ -359,7 +359,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                         icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
                     }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
             }
-            if (thirdVal <= feature.properties.peak_stage <= twoThirdVal) {
+            if (thirdVal <= feature.properties.peak_stage && feature.properties.peak_stage <= twoThirdVal) {
                 var marker =
                     L.marker(latlng, {
                         icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
