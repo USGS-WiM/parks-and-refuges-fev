@@ -1337,12 +1337,26 @@ $(document).ready(function () {
 			var todayDate = date.today() + " at " + date.timeNow();
 			//// End of date/time ////
 
+			var selectionVarLen = $(".select2-selection__choice").length;
+			
 			//// Get summary of search selections ////
-			var landType = $(".select2-selection__choice")[0].title
-			var regionType = $(".select2-selection__choice")[1].title;
-			var regionSubType = $(".select2-selection__choice")[2].title;
-			var event = $(".select2-selection__choice")[3].title;
-			var buffer = $(".select2-selection__choice")[4].title;
+			//If there are existing event names, etc. saved from the welcome or filter modal, retrieve the variables from the end of the array
+			if (selectionVarLen > 5) {
+			var landType = $(".select2-selection__choice")[selectionVarLen - 6].title
+			var regionType = $(".select2-selection__choice")[selectionVarLen - 5].title;
+			var regionSubType = $(".select2-selection__choice")[selectionVarLen - 4].title;
+			var event = $(".select2-selection__choice")[selectionVarLen - 3].title;
+			var buffer = $(".select2-selection__choice")[selectionVarLen - 2].title;
+			}
+			//If the map is refreshed, there won't be search info added to .select2, so there will be only 5 items
+			if (selectionVarLen <=5 ) {
+				var landType = $(".select2-selection__choice")[0].title
+				var regionType = $(".select2-selection__choice")[1].title;
+				var regionSubType = $(".select2-selection__choice")[2].title;
+				var event = $(".select2-selection__choice")[3].title;
+				var buffer = $(".select2-selection__choice")[4].title;
+			}
+				
 			// Build summary selections table
 			function selectionsTable() {
 				return {
