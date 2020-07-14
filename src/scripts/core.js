@@ -1575,6 +1575,7 @@ $(document).ready(function () {
 	var legendUrl;
 
 	$('#printNav').click(function () {
+		//Add filter information to top of report
 		if (currentParkOrRefuge != "") {
 		$('#reportInfo').append("<div style='margin-left:15px; text-align: center; font-size: large;'>" + selectedEvent + "<br> </div><div style='text-align: center'>"+ currentParkOrRefuge + ", " + selectedBuffer + " buffer" + "<br>"  + "<div>");
 		}
