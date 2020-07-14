@@ -17,6 +17,8 @@ var identifiedPeaks = [];
 var identifiedMarks = [];
 var identifiedUSGSrtGage = [];
 var buffer;
+var selectedEvent;
+var selectedBuffer;
 var fev = fev || {
 	data: {
 		events: [],
@@ -625,6 +627,7 @@ $(document).ready(function () {
 		history.pushState(null, null, '#' + (event_name.replace(/\s+/g, '')));
 		//set current event name
 		fev.vars.currentEventName = event_name;
+		selectedEvent = event_name;
 		//set current event id string
 		fev.vars.currentEventID_str = event_id.toString();
 		//set currentEventActive boolean var based on event_status_id value
@@ -1572,6 +1575,12 @@ $(document).ready(function () {
 	var legendUrl;
 
 	$('#printNav').click(function () {
+		if (currentParkOrRefuge != "") {
+		$('#reportInfo').append("<div style='margin-left:15px; text-align: center; font-size: large;'>" + selectedEvent + "<br> </div><div style='text-align: center'>"+ currentParkOrRefuge + ", " + selectedBuffer + " buffer" + "<br>"  + "<div>");
+		}
+		if (currentParkOrRefuge == "") {
+			$('#reportInfo').append("<div style='margin-left:15px; text-align: center; font-size: large;'>" + selectedEvent + "<div>");
+		}
 		//clear out any previous stream gage info from report
 		$('#rtgraphs').children().remove();
 		identifiedUSGSrtGage = [];
@@ -2089,6 +2098,7 @@ $(document).ready(function () {
 	// setting checked values for Welcome Modal buffer radio buttons
 	document.getElementById('tenKm').checked = false;
 	document.getElementById('twentyKm').checked = true;
+	selectedBuffer = "20km";
 	document.getElementById('thirtyKm').checked = false;
 	document.getElementById('fiftyKm').checked = false;
 	// 10 kilometers
@@ -2097,6 +2107,7 @@ $(document).ready(function () {
 		document.getElementById('thirtyKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 10;
+		selectedBuffer = "10km";
 	});
 	// 20 kilometers
 	$('#twentyKm').click(function () {
@@ -2104,6 +2115,7 @@ $(document).ready(function () {
 		document.getElementById('thirtyKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 20;
+		selectedBuffer = "20km";
 	});
 	// 30 kilometers
 	$('#thirtyKm').click(function () {
@@ -2111,6 +2123,7 @@ $(document).ready(function () {
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 30;
+		selectedBuffer = "30km";
 	});
 	// 50 kilometers
 	$('#fiftyKm').click(function () {
@@ -2118,11 +2131,13 @@ $(document).ready(function () {
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
 		fev.vars.currentBufferSelection = 50;
+		selectedBuffer = "50km";
 	});
 
 	// setting checked values for Filter Modal buffer radio buttons
 	document.getElementById('tenKmFilter').checked = false;
 	document.getElementById('twentyKmFilter').checked = true;
+	selectedBuffer = "20km";
 	document.getElementById('thirtyKmFilter').checked = false;
 	document.getElementById('fiftyKmFilter').checked = false;
 	// 10 kilometers
@@ -2131,6 +2146,7 @@ $(document).ready(function () {
 		document.getElementById('thirtyKmFilter').checked = false;
 		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 10;
+		selectedBuffer = "10km";
 	});
 	// 20 kilometers
 	$('#twentyKmFilter').click(function () {
@@ -2138,6 +2154,7 @@ $(document).ready(function () {
 		document.getElementById('thirtyKmFilter').checked = false;
 		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 20;
+		selectedBuffer = "20km";
 	});
 	// 30 kilometers
 	$('#thirtyKmFilter').click(function () {
@@ -2145,6 +2162,7 @@ $(document).ready(function () {
 		document.getElementById('tenKmFilter').checked = false;
 		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 30;
+		selectedBuffer = "30km";
 	});
 	// 50 kilometers
 	$('#fiftyKmFilter').click(function () {
@@ -2152,6 +2170,7 @@ $(document).ready(function () {
 		document.getElementById('tenKmFilter').checked = false;
 		document.getElementById('thirtyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 50;
+		selectedBuffer = "50km";
 	});
 
 

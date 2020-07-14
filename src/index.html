@@ -210,7 +210,7 @@
                         </div>
                     </div>
                     <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
-                        aria-hidden="true"></i> Please complete all fields in the form.</div>
+                            aria-hidden="true"></i> Please complete all fields in the form.</div>
                 </div>
                 <div class="modal-footer">
                     <span><button id="btnSubmitEvent" class="btn btn-default" type="button" aria-hidden="true"
@@ -280,8 +280,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="alert alert-danger eventSelectAlert" role="alert"><i
-                    class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please complete all fields in the form.</div>
+                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
+                        aria-hidden="true"></i> Please complete all fields in the form.</div>
                 <div class="modal-footer">
                     <button type="submit" class="dismissbuttonfilter btn" data-dismiss="modal">Dismiss</button>
                     <span><button id="btnSubmitEvent_filter" class="btn btn-default" type="button" aria-hidden="true"
@@ -333,10 +333,13 @@
         <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button id="printCloseTop" type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    <button id="printCloseTop" type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">x</button>
                     <h4 class="modal-title">Report</h4>
                 </div>
+                <div id="reportInfo"></div>
                 <div class="modal-body" style="text-align: center; height: 700px; overflow-y: auto; overflow-x: auto;">
+                    
                     <div id="reviewMap" class="report-inline-block">
                         <div id='loader' class='imageLoader'></div>
                         <p id='loadingMessage'>loading image...</p>
@@ -356,14 +359,14 @@
                 </div> -->
                 </div>
                 <div class="modal-footer" id="reportFooter">
-                    <button id="printClose" class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
-                        style="color:gray;" class="btn btn-default">Close</button>
+                    <button id="printClose" class=" btn btn-default close" type="button" data-dismiss="modal"
+                        aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
                     <button class=" btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn"
                         id="saveHWMCSV">HWM CSV</button>
                     <button class=" btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn"
                         id="savePeakCSV">Peak CSV</button>
-                    <button class="btn btn-default" type="button" 
-                    style="color:gray;" class="btn btn-primary" id="print">Print</button>
+                    <button class="btn btn-default" type="button" style="color:gray;" class="btn btn-primary"
+                        id="print">Print</button>
 
                 </div>
             </div>
@@ -470,30 +473,32 @@
                     <button id="btnSubmitSelections" class="btn btn-primary btn-lg" type="button" aria-hidden="true"
                         style="color:gray;" class="btn btn-primary" disabled>Run</button>
 
-                        <button id="printRegionalReport" class="btn btn-default" type="button" aria-hidden="true"
+                    <button id="printRegionalReport" class="btn btn-default" type="button" aria-hidden="true"
                         style="color:gray;" class="btn btn-primary" disabled>Print</button>
 
                     <button id="saveRegionalPeakCSV" class="btn btn-default" type="button" aria-hidden="true"
                         style="color:gray;" class="btn btn-primary" disabled>Peak CSV</button>
-                        
+
                     <button id="saveRegionalHWMCSV" class="btn btn-default" type="button" aria-hidden="true"
                         style="color:gray;" class="btn btn-primary" disabled>HWM CSV</button>
-                    
+
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
 
-    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" id="imageModalDialog">
-          <div class="modal-content">              
-            <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-              <img src="" class="imagepreview" style="width: 100%;" >
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <img src="" class="imagepreview" style="width: 100%;">
+                </div>
             </div>
-          </div>
         </div>
-      </div>    
+    </div>
 
     <div id="aboutModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog  modal-lg">
