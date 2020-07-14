@@ -1155,14 +1155,14 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             //Create peak row in regional summary table
             getSummaryStats(peakArrReg);
             if (formattedPeaks.length > 0) {
-                peakSum = { "Type": "Peak", "Total Sites": numReg, "Max": maxReg, "Min": minReg, "Median": medianReg, "Mean": meanReg, "Standard Dev": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
             }
 
             //Create hwm row in regional summary table
             getSummaryStats(hwmArrReg);
             if (formattedHWMS.length > 0) {
-                hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max": maxReg, "Min": minReg, "Median": medianReg, "Mean": meanReg, "Standard Dev": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
             }
 
@@ -1228,7 +1228,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 buildDataTables("#peakDataTableReg", allPeaks, "Peak Data");
             }
             if (allHWMs.length > 0) {
-                buildDataTables("#hwmDataTableReg", allHWMs, "HWM Data");
+                buildDataTables("#hwmDataTableReg", allHWMs, "High Water Mark Data");
             }
             /*
             if (regionalStreamGages.length >0) {
