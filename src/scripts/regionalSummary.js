@@ -137,13 +137,13 @@ $(document).ready(function () {
 
     $('#btnSubmitSelections').click(function () {
 
-       
+
         /* $('.progress-bar-fill').delay(1000).queue(function () {
             $(this).css('width', '100%')
         }); */
         document.querySelector('.progress-bar-fill').style.width = "100%"
 
-        setTimeout(function(){  
+        setTimeout(function () {
             //Enable peak toggle when loading bar is finished (30 seconds)
             var activatePeak = document.getElementById("peakCheckboxReg");
             activatePeak.disabled = false;
@@ -243,17 +243,17 @@ $(document).ready(function () {
                     simplifiedRegionalPoly = turf.simplify(regionPoly);
                 }
             }).addTo(regionalMap);
-            
+
             regionLayerGroup.addLayer(regionBoundaries);
         }
         // TODO: explore options to avoid this timeout. dealing with motely crew of services that is making it difficult atm
         setTimeout(() => {
-            simplifiedRegionalPoly.coordinates.forEach(function(coords){
-                var feat = {'type':'Polygon','coordinates':coords};
+            simplifiedRegionalPoly.coordinates.forEach(function (coords) {
+                var feat = { 'type': 'Polygon', 'coordinates': coords };
                 simpPoly.push(feat);
-                }
-             );
-            
+            }
+            );
+
             // Identify parks/refuges in event in regions
             var allSites;
             if (selectedLandType[0] === "parks") {
@@ -280,7 +280,7 @@ $(document).ready(function () {
             if (flattenedRegionalPoly !== undefined) {
                 /* var box = turf.bbox(flattenedRegionalPoly);
                 var boxPoly = turf.bboxPolygon(box); */
-                for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {  
+                for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {
                     allSites.query()
                         //.within(flattenedRegionalPoly.features[p])
                         //.bboxIntersects(flattenedRegionalPoly.features[p])
@@ -365,31 +365,31 @@ $(document).ready(function () {
             }
             */
 
-         /*   
-function displayRegionalRtGageReport(regionalStreamGages) {
-
-    for (streamGage in regionalStreamGages) {
-
-        var parameterCodeList = '00065,62619,62620,63160,72279';
-
-        var timeQueryRange = '';
-        //if event has no end date
-        if (fev.vars.currentEventEndDate_str == '') {
-            //use moment.js lib to get current system date string, properly formatted, set currentEventEndDate var to current date
-            fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
-        }
-        //if no start date and
-        if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
-            timeQueryRange = '&period=P7D'
-        } else {
-            timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
-        }
-
-        //This is where the hydrograph title and graph or no data warning are added to the Report 
-        $('#hydrographTableReg').append("<div style='text-align: left'>" + "</br>" + regionalStreamGages[streamGage].data.siteName + " (Site" + "&nbsp" + regionalStreamGages[streamGage].data.siteCode + ")" + "</br>" + "</div>");
-    }
-}
-*/
+            /*   
+   function displayRegionalRtGageReport(regionalStreamGages) {
+   
+       for (streamGage in regionalStreamGages) {
+   
+           var parameterCodeList = '00065,62619,62620,63160,72279';
+   
+           var timeQueryRange = '';
+           //if event has no end date
+           if (fev.vars.currentEventEndDate_str == '') {
+               //use moment.js lib to get current system date string, properly formatted, set currentEventEndDate var to current date
+               fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+           }
+           //if no start date and
+           if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
+               timeQueryRange = '&period=P7D'
+           } else {
+               timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
+           }
+   
+           //This is where the hydrograph title and graph or no data warning are added to the Report 
+           $('#hydrographTableReg').append("<div style='text-align: left'>" + "</br>" + regionalStreamGages[streamGage].data.siteName + " (Site" + "&nbsp" + regionalStreamGages[streamGage].data.siteCode + ")" + "</br>" + "</div>");
+       }
+   }
+   */
 
 
 
@@ -439,21 +439,21 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             eventURL = eventURL + selectedEvents[e] + '.json';
                             var queryString = "?Event=" + selectedEvents[e] + "&States=&County=&StartDate=undefined&EndDate=undefined";
                             var sensorQueryString = "?Event=" + selectedEvents[e] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
-                        
-                                getEventName(function (output) {
-                                    eventName = output.event_name;
-                                    /*
-                                    queryStreamGages(regionBBox);
-                                    regionalStreamGages.addTo(regionalMap);
-                                    displayRegionalRtGageReport(regionalStreamGages);
-                                    */
-                                    getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
-                                    getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
 
-                                });
-                  
+                            getEventName(function (output) {
+                                eventName = output.event_name;
+                                /*
+                                queryStreamGages(regionBBox);
+                                regionalStreamGages.addTo(regionalMap);
+                                displayRegionalRtGageReport(regionalStreamGages);
+                                */
+                                getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
+                                getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
 
-                            
+                            });
+
+
+
                             // function for getting the event data
                             function getEventName(handleData) {
                                 var data;
@@ -470,9 +470,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                 });
                             }
                             // PEAKS
-                            
+
                             // HWMS
-                            
+
 
                             // BARO
                             //getBaros(fev.urls.baroGeoJSONViewURL + sensorQueryString, regionalbaroMarkerIcon);
@@ -530,7 +530,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     }
 
                     //sort array of peak values
-                    sortedPeaks = peakArrReg.sort(function(a, b){return a - b});
+                    sortedPeaks = peakArrReg.sort(function (a, b) { return a - b });
 
                     //find number of peak values
                     lengthPeak = peakArrReg.length;
@@ -1138,8 +1138,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             }
 
             //Sort peak and hwm arrays
-            peakArrReg = peakArrReg.sort(function(a, b){return a - b});
-            hwmArrReg = hwmArrReg.sort(function(a, b){return a - b});
+            peakArrReg = peakArrReg.sort(function (a, b) { return a - b });
+            hwmArrReg = hwmArrReg.sort(function (a, b) { return a - b });
             var sum = []
             var peakSum = {};
             var hwmSum = {};
