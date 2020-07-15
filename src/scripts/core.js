@@ -1607,6 +1607,7 @@ $(document).ready(function () {
 		var streamgageCheckBox = document.getElementById("streamGageToggle");
 		if (streamgageCheckBox.checked == true) {
 			USGSrtGages.clearLayers(map);
+			$('#streamGageSymbology').children().remove();
 			clickStreamGage();
 		}
 		if (streamgageCheckBox.checked == false) {
