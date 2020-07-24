@@ -2982,25 +2982,26 @@ $(document).ready(function () {
 		var todayDate = date.today() + " at " + date.timeNow();
 		//// End of date/time ////
 
-		
-	// Report selections table
-	function reportSelectionsTable() {
-		return {
-			table: {
-				widths: ['auto', 'auto'],
-				body: [
-					[{ colSpan: 2, border: [false, false, false, true], text: 'Report Selections: ', style: 'subHeader' }, ''],
-					[{ text: 'Event: ',  alignment: 'right' }, selectedEvent],
-					[{ text: 'Site: ', alignment: 'right' }, currentParkOrRefuge],
-					[{ text: 'Buffer: ', alignment: 'right' }, selectedBuffer]
-				]
-			},
-			layout: {
-				defaultBorder: false,
-			}
-		};
-	}
-	//// End of summary for search selections ////
+
+		// Report selections table
+		//Prints park/refuge, event, and buffer distance on left side of report
+		function reportSelectionsTable() {
+			return {
+				table: {
+					widths: ['auto', 'auto'],
+					body: [
+						[{ colSpan: 2, border: [false, false, false, true], text: 'Report Selections: ', style: 'subHeader' }, ''],
+						[{ text: 'Event: ', alignment: 'right' }, selectedEvent],
+						[{ text: 'Site: ', alignment: 'right' }, currentParkOrRefuge],
+						[{ text: 'Buffer: ', alignment: 'right' }, selectedBuffer]
+					]
+				},
+				layout: {
+					defaultBorder: false,
+				}
+			};
+		}
+		//// End of summary for search selections ////
 
 		const docDefinition = {
 			pageOrientation: 'landscape',
@@ -3023,7 +3024,6 @@ $(document).ready(function () {
 				}
 			},
 			content: [
-				//{ text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer', style: 'header', margin: [0, 0, 0, 10] },
 				{
 					table: {
 						widths: ['*'],
@@ -3037,17 +3037,14 @@ $(document).ready(function () {
 					},
 					margin: [0, 0, 0, 15]
 				},
-				//{ image: pdfMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
-				//{ image: legendUrl, width: 200, height: 200 },
 				{
 					table: {
 						body: [[
 							reportSelectionsTable(),
 							[{ image: pdfMapUrl, width: 300, height: 200 }],
 							[{ image: legendUrl, width: 125, height: 175 }],
-						
 						],
-					]
+						]
 					},
 					layout: 'noBorders',
 					margin: [0, 0, 0, 15]
