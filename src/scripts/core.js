@@ -1146,7 +1146,7 @@ $(document).ready(function () {
 					table: {
 						headerRows: 1,
 						widths: '*',
-						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max', '90% Conf Low', '90% Conf High']),
+						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
@@ -1207,7 +1207,7 @@ $(document).ready(function () {
 						table: {
 							headerRows: 1,
 							widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
-							body: buildPeaksBody(data, ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
+							body: buildPeaksBody(data, ['Site Name', 'Event', 'Peak Stage (ft)', 'County', 'Latitude (DD)', 'Longitude (DD)', 'Site Number', 'Waterbody']),
 						},
 						layout: 'lightHorizontalLines',
 						style: 'smaller',
@@ -1241,59 +1241,59 @@ $(document).ready(function () {
 				} else {
 					for (var i in hwmData) {
 						body.push([
-							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
-							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
-							{ text: 'Elevation (ft)', style: 'tableHeader' }, hwmData[i].elev_ft
+							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i]['Site Number'] },
+							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i]['HWM Label'],
+							{ text: 'Elevation (ft)', style: 'tableHeader' }, hwmData[i]['Elevation (ft)']
 						],
 							[
 								{},
-								{ text: 'Event', style: 'tableHeader' }, hwmData[i].event,
-								{ text: 'Site Name', style: 'tableHeader' }, hwmData[i].site_name
+								{ text: 'Event', style: 'tableHeader' }, hwmData[i]['Event'],
+								{ text: 'Site Name', style: 'tableHeader' }, hwmData[i]['Site Name']
 							],
 							[
 								{},
-								{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i].verticalDatumName + ", " + hwmData[i].verticalMethodName,
-								{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i].horizontalDatumName + ", " + hwmData[i].horizontalMethodName
+								{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i]['Vertical Datum'] + ", " + hwmData[i]['Vertical Method'],
+								{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i]['Horizontal Datum'] + ", " + hwmData[i]['Horizontal Datum']
 							],
 							[
 								{},
-								{ text: 'Type', style: 'tableHeader' }, hwmData[i].hwmTypeName,
-								{ text: 'Quality', style: 'tableHeader' }, hwmData[i].hwmQualityName
+								{ text: 'Type', style: 'tableHeader' }, hwmData[i]['HWM Type'],
+								{ text: 'Quality', style: 'tableHeader' }, hwmData[i]['HWM Quality']
 							],
 							[
 								{},
-								{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i].waterbody,
-								{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i].sitePermHousing
+								{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i]['Waterbody'],
+								{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i]['Site Perm Housing']
 							],
 							[
 								{},
-								{ text: 'County', style: 'tableHeader' }, hwmData[i].county,
-								{ text: 'State', style: 'tableHeader' }, hwmData[i].state
+								{ text: 'County', style: 'tableHeader' }, hwmData[i]['County'],
+								{ text: 'State', style: 'tableHeader' }, hwmData[i]['State']
 							],
 							[
 								{},
-								{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i].latitude_dd + ", " + hwmData[i].longitude_dd,
-								{ text: 'Site Description', style: 'tableHeader' }, hwmData[i].hwm_locationdescription
+								{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i]['Latitude (DD)'] + ", " + hwmData[i]['Longitude (DD)'],
+								{ text: 'Site Description', style: 'tableHeader' }, hwmData[i]['Site Description']
 							],
 							[
 								{},
-								{ text: 'Location Description', style: 'tableHeader' }, hwmData[i].siteDescription,
-								{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i].survey_date
+								{ text: 'Location Description', style: 'tableHeader' }, hwmData[i]['Location Description'],
+								{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i]['Survey Date']
 							],
 							[
 								{},
-								{ text: 'Bank', style: 'tableHeader' }, hwmData[i].bank,
-								{ text: 'Environment', style: 'tableHeader' }, hwmData[i].hwm_environment
+								{ text: 'Bank', style: 'tableHeader' }, hwmData[i]['Bank'],
+								{ text: 'Environment', style: 'tableHeader' }, hwmData[i]['Environment']
 							],
 							[
 								{},
-								{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i].flag_date,
-								{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i].stillwater
+								{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i]['Flag Date'],
+								{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i]['Stillwater']
 							],
 							[
 								{},
-								{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i].uncertainty,
-								{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
+								{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i]['Uncertainty'],
+								{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i]['HWM Uncertainty']
 							]);
 					}
 				}
