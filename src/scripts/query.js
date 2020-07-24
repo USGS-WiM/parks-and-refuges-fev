@@ -1141,15 +1141,6 @@ function displayRtGageReport(streamGagesInBuffer) {
     }
 }
 
-//Get hydrographs and put them below the stream gage graphs in the report modal
-function displayHWMGraphReport(hwmsInBuffer) {
-
-    //Prevent the code before 'getJSON' to loop over before 'getJSON' has also run
-    $.ajaxSetup({
-        async: false
-    });
-}
-
 //get data and generate graph of real-time gage water level time-series data
 function queryNWISgraph(e) {
     var popupContent = '';
