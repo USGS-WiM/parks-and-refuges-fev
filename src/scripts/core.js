@@ -336,7 +336,7 @@ var npsNetworks = L.esri.featureLayer({
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1",
 	//opacity: 0.5,
 	//minZoom: 9,
 	style: function (feature) {
@@ -1146,7 +1146,7 @@ $(document).ready(function () {
 					table: {
 						headerRows: 1,
 						widths: '*',
-						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max', '90% Conf Low', '90% Conf High']),
+						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
@@ -1207,7 +1207,7 @@ $(document).ready(function () {
 						table: {
 							headerRows: 1,
 							widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
-							body: buildPeaksBody(data, ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
+							body: buildPeaksBody(data, ['Site Name', 'Event', 'Peak Stage (ft)', 'County', 'Latitude (DD)', 'Longitude (DD)', 'Site Number', 'Waterbody']),
 						},
 						layout: 'lightHorizontalLines',
 						style: 'smaller',
@@ -1241,59 +1241,59 @@ $(document).ready(function () {
 				} else {
 					for (var i in hwmData) {
 						body.push([
-							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
-							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
-							{ text: 'Elevation (ft)', style: 'tableHeader' }, hwmData[i].elev_ft
+							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i]['Site Number'] },
+							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i]['HWM Label'],
+							{ text: 'Elevation (ft)', style: 'tableHeader' }, hwmData[i]['Elevation (ft)']
 						],
 							[
 								{},
-								{ text: 'Event', style: 'tableHeader' }, hwmData[i].event,
-								{ text: 'Site Name', style: 'tableHeader' }, hwmData[i].site_name
+								{ text: 'Event', style: 'tableHeader' }, hwmData[i]['Event'],
+								{ text: 'Site Name', style: 'tableHeader' }, hwmData[i]['Site Name']
 							],
 							[
 								{},
-								{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i].verticalDatumName + ", " + hwmData[i].verticalMethodName,
-								{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i].horizontalDatumName + ", " + hwmData[i].horizontalMethodName
+								{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i]['Vertical Datum'] + ", " + hwmData[i]['Vertical Method'],
+								{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i]['Horizontal Datum'] + ", " + hwmData[i]['Horizontal Datum']
 							],
 							[
 								{},
-								{ text: 'Type', style: 'tableHeader' }, hwmData[i].hwmTypeName,
-								{ text: 'Quality', style: 'tableHeader' }, hwmData[i].hwmQualityName
+								{ text: 'Type', style: 'tableHeader' }, hwmData[i]['HWM Type'],
+								{ text: 'Quality', style: 'tableHeader' }, hwmData[i]['HWM Quality']
 							],
 							[
 								{},
-								{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i].waterbody,
-								{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i].sitePermHousing
+								{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i]['Waterbody'],
+								{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i]['Site Perm Housing']
 							],
 							[
 								{},
-								{ text: 'County', style: 'tableHeader' }, hwmData[i].county,
-								{ text: 'State', style: 'tableHeader' }, hwmData[i].state
+								{ text: 'County', style: 'tableHeader' }, hwmData[i]['County'],
+								{ text: 'State', style: 'tableHeader' }, hwmData[i]['State']
 							],
 							[
 								{},
-								{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i].latitude_dd + ", " + hwmData[i].longitude_dd,
-								{ text: 'Site Description', style: 'tableHeader' }, hwmData[i].hwm_locationdescription
+								{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i]['Latitude (DD)'] + ", " + hwmData[i]['Longitude (DD)'],
+								{ text: 'Site Description', style: 'tableHeader' }, hwmData[i]['Site Description']
 							],
 							[
 								{},
-								{ text: 'Location Description', style: 'tableHeader' }, hwmData[i].siteDescription,
-								{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i].survey_date
+								{ text: 'Location Description', style: 'tableHeader' }, hwmData[i]['Location Description'],
+								{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i]['Survey Date']
 							],
 							[
 								{},
-								{ text: 'Bank', style: 'tableHeader' }, hwmData[i].bank,
-								{ text: 'Environment', style: 'tableHeader' }, hwmData[i].hwm_environment
+								{ text: 'Bank', style: 'tableHeader' }, hwmData[i]['Bank'],
+								{ text: 'Environment', style: 'tableHeader' }, hwmData[i]['Environment']
 							],
 							[
 								{},
-								{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i].flag_date,
-								{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i].stillwater
+								{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i]['Flag Date'],
+								{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i]['Stillwater']
 							],
 							[
 								{},
-								{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i].uncertainty,
-								{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
+								{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i]['Uncertainty'],
+								{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i]['HWM Uncertainty']
 							]);
 					}
 				}
@@ -1341,19 +1341,17 @@ $(document).ready(function () {
 			//// Get summary of search selections ////
 			//If there are existing event names, etc. saved from the welcome or filter modal, retrieve the variables from the end of the array
 			if (selectionVarLen > 5) {
-				var landType = $(".select2-selection__choice")[selectionVarLen - 6].title
-				var regionType = $(".select2-selection__choice")[selectionVarLen - 5].title;
-				var regionSubType = $(".select2-selection__choice")[selectionVarLen - 4].title;
-				var event = $(".select2-selection__choice")[selectionVarLen - 3].title;
-				var buffer = $(".select2-selection__choice")[selectionVarLen - 2].title;
+			var landType = $(".select2-selection__choice")[selectionVarLen - 6].title;
+			var regionSubType = $(".select2-selection__choice")[selectionVarLen - 5].title;
+			var event = $(".select2-selection__choice")[selectionVarLen - 3].title;
+			var buffer = $(".select2-selection__choice")[selectionVarLen - 2].title;
 			}
 			//If the map is refreshed, there won't be search info added to .select2, so there will be only 5 items
-			if (selectionVarLen <= 5) {
-				var landType = $(".select2-selection__choice")[0].title
-				var regionType = $(".select2-selection__choice")[1].title;
-				var regionSubType = $(".select2-selection__choice")[2].title;
-				var event = $(".select2-selection__choice")[3].title;
-				var buffer = $(".select2-selection__choice")[4].title;
+			if (selectionVarLen <=5 ) {
+				var landType = $(".select2-selection__choice")[0].title;
+				var regionSubType = $(".select2-selection__choice")[1].title;
+				var event = $(".select2-selection__choice")[2].title;
+				var buffer = $(".select2-selection__choice")[3].title;
 			}
 
 			// Build summary selections table
@@ -1364,7 +1362,6 @@ $(document).ready(function () {
 						body: [
 							[{ colSpan: 2, border: [false, false, false, true], text: 'Regional Report Selections: ', style: 'subHeader' }, ''],
 							[{ text: 'Land Type: ', style: 'selectHeader', alignment: 'right' }, landType],
-							[{ text: 'Region Type: ', style: 'selectHeader', alignment: 'right' }, regionType],
 							[{ text: 'Region: ', style: 'selectHeader', alignment: 'right' }, regionSubType],
 							[{ text: 'Event: ', style: 'selectHeader', alignment: 'right' }, event],
 							[{ text: 'Buffer Size: ', style: 'selectHeader', alignment: 'right' }, buffer]
@@ -2420,7 +2417,7 @@ $(document).ready(function () {
 			where = "ORGNAME=" + name;
 			refuges = L.esri.featureLayer({
 				useCors: false,
-				url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
+				url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1',
 				simplifyFactor: 0.5,
 				precision: 4,
 				where: "ORGNAME=" + name,
@@ -2446,7 +2443,7 @@ $(document).ready(function () {
 					where = "ORGNAME=" + name;
 					fwsInterest = L.esri.featureLayer({
 						useCors: false,
-						url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1',
+						url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1',
 						simplifyFactor: 0.5,
 						precision: 4,
 						where: "ORGNAME=" + name,

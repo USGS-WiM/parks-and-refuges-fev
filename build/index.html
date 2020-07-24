@@ -164,7 +164,7 @@
                         </div>
                     </div>
                     <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
-                        aria-hidden="true"></i> Please complete all fields in the form.</div>
+                            aria-hidden="true"></i> Please complete all fields in the form.</div>
                 </div>
                 <div class="modal-footer">
                     <span><button id="btnSubmitEvent" class="btn btn-default" type="button" aria-hidden="true"
@@ -234,8 +234,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="alert alert-danger eventSelectAlert" role="alert"><i
-                    class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please complete all fields in the form.</div>
+                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
+                        aria-hidden="true"></i> Please complete all fields in the form.</div>
                 <div class="modal-footer">
                     <button type="submit" class="dismissbuttonfilter btn" data-dismiss="modal">Dismiss</button>
                     <span><button id="btnSubmitEvent_filter" class="btn btn-default" type="button" aria-hidden="true"
@@ -283,14 +283,17 @@
     </div>
     <!-- end Geosearch Modal -->
 
-    <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" aria-hidden="true">
+    <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" data-backdrop="static" aria-hidden="true">
         <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                    <h4 class="modal-title"><span class="glyphicon glyphicon-print"></span>Print Map</h4>
+                    <button id="printCloseTop" type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">x</button>
+                    <h4 class="modal-title">Report</h4>
                 </div>
-                <div class="modal-body" style="text-align: center; height: 700px; overflow-y: auto; overflow-x: auto;">
+                <div id="reportInfo"></div>
+                <div class="modal-body" style="text-align: center; height: 600px; overflow-y: auto; overflow-x: auto;">
+                    
                     <div id="reviewMap" class="report-inline-block">
                         <div id='loader' class='imageLoader'></div>
                         <p id='loadingMessage'>loading image...</p>
@@ -301,7 +304,7 @@
                     <div class='reportInfo' id="peakTable">
                         <table class="table" id="peakDataTable"></table>
                     </div>
-                    <div class='reportInfo' id="hwmTable" style="width: 900px; overflow-x: scroll;">
+                    <div class='reportInfo' id="hwmTable" style="width: 900px; ">
                         <table class="table" id="hwmDataTable"></table>
                     </div>
                     <!-- <div id="reviewMapContainer">
@@ -310,14 +313,14 @@
                 </div> -->
                 </div>
                 <div class="modal-footer" id="reportFooter">
-                    <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
-                        style="color:gray;" class="btn btn-default">Close</button>
-                    <button class=" btn close" type="button" aria-hidden="true" style="color:gray;" class="btn"
+                    <button id="printClose" class=" btn btn-default close" type="button" data-dismiss="modal"
+                        aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
+                    <button class=" btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn"
                         id="saveHWMCSV">HWM CSV</button>
-                    <button class=" btn close" type="button" aria-hidden="true" style="color:gray;" class="btn"
+                    <button class=" btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn"
                         id="savePeakCSV">Peak CSV</button>
-                    <button class=" btn close" type="button" data-dismiss="modal" aria-hidden="true" style="color:gray;"
-                        class="btn" id="print">Print</button>
+                    <button class="btn btn-default" type="button" style="color:gray;" class="btn btn-primary"
+                        id="print">Print</button>
 
                 </div>
             </div>
@@ -325,14 +328,14 @@
     </div>
     </div>
 
-    <div id="regionalModal" class="modal fade" style="display: none;" aria-hidden="true" role="dialog">
+    <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                     <h4 class="modal-title">Regional Report</h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style='height: 600px; overflow-x: auto; overflow-y:auto;'>
                     <!-- begin filter panels -->
                     <div class="panel panel-default">
                         <div class="panel-body">
@@ -346,14 +349,14 @@
                                             multiple="multiple" style="width: 100%" onchange="formReady()"></select>
                                     </div>
                                 </div>
-                                <div class="form-group" id="evtNameForm_regionalModal">
+                                <!-- <div class="form-group" id="evtNameForm_regionalModal">
                                     <label for="regionType_regionalModal"
                                         class="col-sm-2 control-label filterForms">Region Type: </label>
                                     <div class="col-sm-10 filterForms">
                                         <select id="regionType_regionalModal" class="regionType clear" multiple
                                             style="width: 100%" onchange="formReady()"></select>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="form-group" id="evtNameForm_regionalModal">
                                     <label for="regionSelect_regionalModal"
                                         class="col-sm-2 control-label filterForms">Region: </label>
@@ -400,7 +403,6 @@
                                     </table>
                                     <table class="table" id="hwmDataTableReg">
                                     </table>
-
                                 </div>
                             </div>
                             <!--
@@ -417,19 +419,38 @@
                 <div class="modal-footer">
                     <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
                         style="color:gray;" class="btn btn-default">Close</button>
+
                     <button id="btnClearRegFilters" class="btn btn-default" type="button" aria-hidden="true"
                         style="color:gray;" id="btnClearRegFilters" class="btn btn-primary">Clear Selections</button>
+
                     <button id="btnSubmitSelections" class="btn btn-primary btn-lg" type="button" aria-hidden="true"
                         style="color:gray;" class="btn btn-primary" disabled>Run</button>
-                    <button id="saveRegionalPeakCSV" class="btn close" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn btn-primary" disabled>Peak CSV</button>
-                    <button id="saveRegionalHWMCSV" class="btn close" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn btn-primary" disabled>HWM CSV</button>
-                    <button id="printRegionalReport" class="btn close" type="button" aria-hidden="true"
+
+                    <button id="printRegionalReport" class="btn btn-default" type="button" aria-hidden="true"
                         style="color:gray;" class="btn btn-primary" disabled>Print</button>
+
+                    <button id="saveRegionalPeakCSV" class="btn btn-default" type="button" aria-hidden="true"
+                        style="color:gray;" class="btn btn-primary" disabled>Peak CSV</button>
+
+                    <button id="saveRegionalHWMCSV" class="btn btn-default" type="button" aria-hidden="true"
+                        style="color:gray;" class="btn btn-primary" disabled>HWM CSV</button>
+
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" id="imageModalDialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <img src="" class="imagepreview" style="width: 100%;">
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="aboutModal" class="modal fade" tabindex="-1" role="dialog">
