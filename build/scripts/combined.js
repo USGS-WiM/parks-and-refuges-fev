@@ -1739,6 +1739,7 @@ var tracts = L.esri.featureLayer({
 		}
 	}
 });
+console.log("TRACTS", tracts);
 
 // NPS Boundaries 
 var bounds = L.esri.featureLayer({

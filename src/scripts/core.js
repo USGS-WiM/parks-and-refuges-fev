@@ -333,7 +333,6 @@ var npsNetworks = L.esri.featureLayer({
 	style: npsNetStyle
 });
 
-
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
 	useCors: false,
@@ -1635,6 +1634,8 @@ $(document).ready(function () {
 			displayRtGageReport(identifiedUSGSrtGage);
 
 		}, 1000);
+
+		console.log("STORMTIDE", stormtide);
 
 		var mapPreview = document.getElementById('reviewMap');
 		var legendPreview = document.getElementById('legendImage');
@@ -2968,6 +2969,18 @@ $(document).ready(function () {
 	}
 
 	function printReport() {
+					//// Get date and time of print click //// 
+					var date = new Date();
+					// For today's date
+					Date.prototype.today = function () {
+						return (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + this.getFullYear();
+					}
+					// For current time
+					Date.prototype.timeNow = function () {
+						return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
+					}
+					var todayDate = date.today() + " at " + date.timeNow();
+					//// End of date/time ////
 		const docDefinition = {
 			pageOrientation: 'landscape',
 			pageMargins: [20, 20, 20, 35],
@@ -2996,7 +3009,7 @@ $(document).ready(function () {
 						body: [
 							[{
 								border: [false, false, false, true],
-								text: 'Data Summaries for ' + currentParkOrRefuge + ' within a ' + fev.vars.currentBufferSelection + ' Kilometer Buffer',
+								text: 'Regional Report - Printed: ' + todayDate,
 								style: 'header', alignment: 'center'
 							}]
 						]
