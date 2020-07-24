@@ -337,7 +337,7 @@ var npsNetworks = L.esri.featureLayer({
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1",
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1",
 	//opacity: 0.5,
 	//minZoom: 9,
 	style: function (feature) {
@@ -1342,19 +1342,17 @@ $(document).ready(function () {
 			//// Get summary of search selections ////
 			//If there are existing event names, etc. saved from the welcome or filter modal, retrieve the variables from the end of the array
 			if (selectionVarLen > 5) {
-			var landType = $(".select2-selection__choice")[selectionVarLen - 6].title
-			var regionType = $(".select2-selection__choice")[selectionVarLen - 5].title;
-			var regionSubType = $(".select2-selection__choice")[selectionVarLen - 4].title;
+			var landType = $(".select2-selection__choice")[selectionVarLen - 6].title;
+			var regionSubType = $(".select2-selection__choice")[selectionVarLen - 5].title;
 			var event = $(".select2-selection__choice")[selectionVarLen - 3].title;
 			var buffer = $(".select2-selection__choice")[selectionVarLen - 2].title;
 			}
 			//If the map is refreshed, there won't be search info added to .select2, so there will be only 5 items
 			if (selectionVarLen <=5 ) {
-				var landType = $(".select2-selection__choice")[0].title
-				var regionType = $(".select2-selection__choice")[1].title;
-				var regionSubType = $(".select2-selection__choice")[2].title;
-				var event = $(".select2-selection__choice")[3].title;
-				var buffer = $(".select2-selection__choice")[4].title;
+				var landType = $(".select2-selection__choice")[0].title;
+				var regionSubType = $(".select2-selection__choice")[1].title;
+				var event = $(".select2-selection__choice")[2].title;
+				var buffer = $(".select2-selection__choice")[3].title;
 			}
 				
 			// Build summary selections table
@@ -1365,7 +1363,6 @@ $(document).ready(function () {
 						body: [
 							[{ colSpan: 2, border: [false, false, false, true], text: 'Regional Report Selections: ', style: 'subHeader' }, ''],
 							[{ text: 'Land Type: ', style: 'selectHeader', alignment: 'right' }, landType],
-							[{ text: 'Region Type: ', style: 'selectHeader', alignment: 'right' }, regionType],
 							[{ text: 'Region: ', style: 'selectHeader', alignment: 'right' }, regionSubType],
 							[{ text: 'Event: ', style: 'selectHeader', alignment: 'right' }, event],
 							[{ text: 'Buffer Size: ', style: 'selectHeader', alignment: 'right' }, buffer]
@@ -2420,7 +2417,7 @@ $(document).ready(function () {
 			where = "ORGNAME=" + name;
 			refuges = L.esri.featureLayer({
 				useCors: false,
-				url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
+				url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1',
 				simplifyFactor: 0.5,
 				precision: 4,
 				where: "ORGNAME=" + name,
@@ -2446,7 +2443,7 @@ $(document).ready(function () {
 					where = "ORGNAME=" + name;
 					fwsInterest = L.esri.featureLayer({
 						useCors: false,
-						url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1',
+						url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1',
 						simplifyFactor: 0.5,
 						precision: 4,
 						where: "ORGNAME=" + name,

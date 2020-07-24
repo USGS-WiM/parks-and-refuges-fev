@@ -33,63 +33,57 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
             return marker;
         },
         onEachFeature: function (feature, latlng) {
-            //add marker to overlapping marker spidifier
-            oms.addMarker(latlng);
-            //var popupContent = '';
-            if (type == 'rdg') { return };
-            var currentEvent = fev.vars.currentEventName;
-            var popupContent =
-                '<table class="table table-hover table-striped table-condensed wim-table">' +
-                '<caption class="popup-title">' + name + ' | <span style="color:gray"> ' + currentEvent + '</span></caption>' +
-                '<tr><td><strong>STN Site Number: </strong></td><td><span id="siteName">' + feature.properties.site_no + '</span></td></tr>' +
-                '<tr><td><strong>Status: </strong></td><td><span id="status">' + feature.properties.status + '</span></td></tr>' +
-                '<tr><td><strong>City: </strong></td><td><span id="city">' + (feature.properties.city == '' || feature.properties.city == null || feature.properties.city == undefined ? '<i>No city recorded</i>' : feature.properties.city) + '</span></td></tr>' +
-                '<tr><td><strong>County: </strong></td><td><span id="county">' + feature.properties.county + '</span></td></tr>' +
-                '<tr><td><strong>State: </strong></td><td><span id="state">' + feature.properties.state + '</span></td></tr>' +
-                '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">' + feature.properties.latitude_dd.toFixed(4) + ', ' + feature.properties.longitude_dd.toFixed(4) + '</span></td></tr>' +
-                '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + feature.properties.site_id + '&Sensor=' + feature.properties.instrument_id + '\>Sensor data page</a></b></span></td></tr>' +
-                '</table>';
-            ////logic to retrieve and display Rapid Deploy gage graph
-            // if (type == 'rdg') {
-            //
-            //     ///begin new logic here to retrieve RDG data form NWIS (or have separate function?)
-            //
-            //
-            //     var usgsSiteID;
-            //     $.getJSON(stnServicesURL + "/Sites/" + feature.properties.site_id + ".json", function(data) {
-            //         if (data.usgs_sid !== "") {
-            //             //sensor type is RDG, and there is a usgs id. proceed with retreiving and displaying graph.
-            //             usgsSiteID = data.usgs_sid;
-            //
-            //             //check if event is active and has a blank end date - in that case set ened of time query to current date
-            //             if (fev.vars.currentEventActive == true && fev.vars.currentEventEndDate_str == '') {
-            //                 //use moment.js lib to get current system date string, properly formatted
-            //                 fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
-            //                 console.log("Selected event is active, so end date is today, " + fev.vars.currentEventEndDate_str)
-            //             }
-            //             //if there is no valid date string for start or end, there is no way to retrieve data - display NA message. Otherwise proceed.
-            //             if (fev.vars.currentEventStartDate_str == '' && fev.vars.currentEventEndDate_str == '') {
-            //                 var rdgGraphContent =
-            //                     '<div id="rdgChartDiv"><i>Missing valid event date range. Unable to display RDG Real-time graph.</i></div>';
-            //                 latlng.bindPopup(popupContent + rdgGraphContent);
-            //             } else {
-            //                 ///now have valid start and end date strings, so proceed with getting the graph
-            //                 var rdgGraphContent =
-            //                     '<div id="rdgChartDiv"><label>Water level elevation (ft)</label><img width="350" src="http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=' + usgsSiteID + '&parm_cd=62620&begin_date=' + fev.vars.currentEventStartDate_str + '&end_date=' + fev.vars.currentEventEndDate_str + '" alt="rapid deploy gage graph"></div>';
-            //                 latlng.bindPopup(popupContent + rdgGraphContent, {minWidth: 350})
-            //             }
-            //
-            //         } else {
-            //             //no usgs id, so no RDG data available - show message saying that
-            //             var rdgGraphContent =
-            //                 '<div id="rdgChartDiv"><i>Missing USGS Site ID. Unable to display RDG Real-time graph.</i></div>';
-            //             latlng.bindPopup(popupContent + rdgGraphContent);
-            //         }
-            //     });
-            // } else {
-            //     latlng.bindPopup(popupContent);
-            // }
-            latlng.bindPopup(popupContent);
+            var instrumentID = feature.properties.instrument_id;
+            var url = "https://stn.wim.usgs.gov/STNServices/Instruments/" + instrumentID + "/Files.json";
+            var data;
+
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                data: data,
+                headers: {'Accept': '*/*'},
+                success: function (data) {
+                    var hydrographURL = '';
+                    var hydrographElement;
+                    var containsHydrograph = false;
+                    var noHydrograph = '<span style="float: right;padding-right: 15px;">No graph available</span>';
+                    var hydroPopupText;
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].filetype_id === 13 ) {
+                            containsHydrograph = true;
+                            hydrographURL = "https://stn.wim.usgs.gov/STNServices/Files/" + data[i].file_id + "/Item";
+                            hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
+                        }
+                    }
+
+                    if (containsHydrograph === true) {
+                        hydroPopupText = hydrographElement;
+                    } else {
+                        hydroPopupText = noHydrograph
+                    }
+                    //add marker to overlapping marker spidifier
+                    oms.addMarker(latlng);
+                    //var popupContent = '';
+                    if (type == 'rdg') { return };
+                    var currentEvent = fev.vars.currentEventName;
+                    var popupContent =
+                        '<table class="table table-hover table-striped table-condensed wim-table">' +
+                        '<caption class="popup-title">' + name + ' | <span style="color:gray"> ' + currentEvent + '</span></caption>' +
+                        '<tr><td><strong>STN Site Number: </strong></td><td><span id="siteName">' + feature.properties.site_no + '</span></td></tr>' +
+                        '<tr><td><strong>Status: </strong></td><td><span id="status">' + feature.properties.status + '</span></td></tr>' +
+                        '<tr><td><strong>City: </strong></td><td><span id="city">' + (feature.properties.city == '' || feature.properties.city == null || feature.properties.city == undefined ? '<i>No city recorded</i>' : feature.properties.city) + '</span></td></tr>' +
+                        '<tr><td><strong>County: </strong></td><td><span id="county">' + feature.properties.county + '</span></td></tr>' +
+                        '<tr><td><strong>State: </strong></td><td><span id="state">' + feature.properties.state + '</span></td></tr>' +
+                        '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">' + feature.properties.latitude_dd.toFixed(4) + ', ' + feature.properties.longitude_dd.toFixed(4) + '</span></td></tr>' +
+                        '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + feature.properties.site_id + '&Sensor=' + feature.properties.instrument_id + '\>Sensor data page</a></b></span></td></tr>' +
+                        '<tr><td colspan="2"><strong>Hydrograph: </strong>' + hydroPopupText
+                        '</table>';
+                    latlng.bindPopup(popupContent);
+                },
+                error: function (error) {
+                    console.log('Error processing the JSON. The error is:' + error);
+                }
+            });
         }
     });
 
@@ -365,7 +359,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                         icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
                     }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
             }
-            if (thirdVal <= feature.properties.peak_stage <= twoThirdVal) {
+            if (thirdVal <= feature.properties.peak_stage && feature.properties.peak_stage <= twoThirdVal) {
                 var marker =
                     L.marker(latlng, {
                         icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
@@ -1452,6 +1446,8 @@ var identifiedPeaks = [];
 var identifiedMarks = [];
 var identifiedUSGSrtGage = [];
 var buffer;
+var selectedEvent;
+var selectedBuffer;
 var fev = fev || {
 	data: {
 		events: [],
@@ -1578,7 +1574,7 @@ var fev = fev || {
 	csvHWMColumns: [
 		{ fieldName: 'STN Site No.', colName: "STN Site No." },
 		{ fieldName: 'HWM Label', colName: "HWM Label" },
-		{ fieldName: 'Elevation(ft)', colName: "Elevation(ft)" },
+		{ fieldName: 'Elevation (ft)', colName: "Elevation (ft)" },
 		{ fieldName: 'Vertical Datum', colName: "Vertical Datum" },
 		{ fieldName: 'Vertical Method', colName: "Vertical Method" },
 		{ fieldName: 'Horizontal Datum', colName: "Horizontal Datum" },
@@ -1589,7 +1585,7 @@ var fev = fev || {
 		{ fieldName: 'Permanent Housing', colName: "Permanent Housing" },
 		{ fieldName: 'County', colName: "County" },
 		{ fieldName: 'State', colName: "State" },
-		{ fieldName: 'Latitude, Longitude(DD)', colName: "Latitude, Longitude(DD)" },
+		{ fieldName: 'Latitude, Longitude(DD)', colName: "Latitude, Longitude (DD)" },
 		{ fieldName: 'Site Description', colName: "Site Description" },
 		{ fieldName: 'Location Description', colName: "Location Description" },
 		{ fieldName: 'Survey Date', colName: "Survey Date" },
@@ -1605,7 +1601,7 @@ var fev = fev || {
 		{ fieldName: 'Description', colName: "Description" },
 		{ fieldName: 'State', colName: "State" },
 		{ fieldName: 'County', colName: "County" },
-		{ fieldName: 'Peak Stage', colName: "Peak Stage" },
+		{ fieldName: 'Peak Stage', colName: "Peak Stage (ft)" },
 		{ fieldName: 'Peak Estimated', colName: "Peak Estimated" },
 	],
 
@@ -1648,8 +1644,8 @@ var peaksCSVData = [];
 
 // bounds of the continental US
 var usBounds = [
-    [20.499550, -130.276413], //Southwest
-    [55.162102, -52.233040]  //Northeast
+	[20.499550, -130.276413], //Southwest
+	[55.162102, -52.233040]  //Northeast
 ];
 
 // refuge layer
@@ -1918,7 +1914,7 @@ $(document).ready(function () {
 	});
 
 	//welcomeModal: set search for 'Go' click 
-	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_welcomeModal','#typeSelect_welcomeModal', '#siteSelect_welcomeModal', false);
+	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_welcomeModal', '#typeSelect_welcomeModal', '#siteSelect_welcomeModal', false);
 	//updateFiltersModal MODAL: set search for 'Go' click 
 	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true);
 
@@ -1987,7 +1983,20 @@ $(document).ready(function () {
 
 	$('#print').click(function () {
 		printReport();
+		setTimeout(() => {
+			location.reload();
+		}, 500);
 	});
+
+	$('#printClose').click(function () {
+		location.reload()
+	});
+
+	$('#printCloseTop').click(function () {
+		location.reload()
+	});
+
+
 
 	// $('#printRegionalReport').click(function () {
 	// 	setTimeout(() => {
@@ -2019,6 +2028,7 @@ $(document).ready(function () {
 	});
 
 
+
 	//'listener' for URL event params - sets event vars and passes event id to filterMapData function
 	if (window.location.hash) {
 		//user has arrived with an event name after the hash on the URL
@@ -2046,6 +2056,7 @@ $(document).ready(function () {
 		history.pushState(null, null, '#' + (event_name.replace(/\s+/g, '')));
 		//set current event name
 		fev.vars.currentEventName = event_name;
+		selectedEvent = event_name;
 		//set current event id string
 		fev.vars.currentEventID_str = event_id.toString();
 		//set currentEventActive boolean var based on event_status_id value
@@ -2565,7 +2576,7 @@ $(document).ready(function () {
 					table: {
 						headerRows: 1,
 						widths: '*',
-						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev', 'Min', 'Median', 'Mean', 'Max', '90% Conf Low', '90% Conf High']),
+						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
@@ -2626,7 +2637,7 @@ $(document).ready(function () {
 						table: {
 							headerRows: 1,
 							widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
-							body: buildPeaksBody(data, ['site_name', 'event', 'peak_stage', 'county', 'latitude_dd', 'longitude_dd', 'site_no', 'waterbody']),
+							body: buildPeaksBody(data, ['Site Name', 'Event', 'Peak Stage (ft)', 'County', 'Latitude (DD)', 'Longitude (DD)', 'Site Number', 'Waterbody']),
 						},
 						layout: 'lightHorizontalLines',
 						style: 'smaller',
@@ -2660,59 +2671,59 @@ $(document).ready(function () {
 				} else {
 					for (var i in hwmData) {
 						body.push([
-							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i].site_no },
-							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i].hwm_label,
-							{ text: 'Elevation(ft)', style: 'tableHeader' }, hwmData[i].elev_ft
+							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i]['Site Number'] },
+							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i]['HWM Label'],
+							{ text: 'Elevation (ft)', style: 'tableHeader' }, hwmData[i]['Elevation (ft)']
 						],
 							[
 								{},
-								{ text: 'Event', style: 'tableHeader' }, hwmData[i].event,
-								{ text: 'Site Name', style: 'tableHeader' }, hwmData[i].site_name
+								{ text: 'Event', style: 'tableHeader' }, hwmData[i]['Event'],
+								{ text: 'Site Name', style: 'tableHeader' }, hwmData[i]['Site Name']
 							],
 							[
 								{},
-								{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i].verticalDatumName + ", " + hwmData[i].verticalMethodName,
-								{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i].horizontalDatumName + ", " + hwmData[i].horizontalMethodName
+								{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i]['Vertical Datum'] + ", " + hwmData[i]['Vertical Method'],
+								{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i]['Horizontal Datum'] + ", " + hwmData[i]['Horizontal Datum']
 							],
 							[
 								{},
-								{ text: 'Type', style: 'tableHeader' }, hwmData[i].hwmTypeName,
-								{ text: 'Quality', style: 'tableHeader' }, hwmData[i].hwmQualityName
+								{ text: 'Type', style: 'tableHeader' }, hwmData[i]['HWM Type'],
+								{ text: 'Quality', style: 'tableHeader' }, hwmData[i]['HWM Quality']
 							],
 							[
 								{},
-								{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i].waterbody,
-								{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i].sitePermHousing
+								{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i]['Waterbody'],
+								{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i]['Site Perm Housing']
 							],
 							[
 								{},
-								{ text: 'County', style: 'tableHeader' }, hwmData[i].county,
-								{ text: 'State', style: 'tableHeader' }, hwmData[i].state
+								{ text: 'County', style: 'tableHeader' }, hwmData[i]['County'],
+								{ text: 'State', style: 'tableHeader' }, hwmData[i]['State']
 							],
 							[
 								{},
-								{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i].latitude_dd + ", " + hwmData[i].longitude_dd,
-								{ text: 'Site Description', style: 'tableHeader' }, hwmData[i].hwm_locationdescription
+								{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i]['Latitude (DD)'] + ", " + hwmData[i]['Longitude (DD)'],
+								{ text: 'Site Description', style: 'tableHeader' }, hwmData[i]['Site Description']
 							],
 							[
 								{},
-								{ text: 'Location Description', style: 'tableHeader' }, hwmData[i].siteDescription,
-								{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i].survey_date
+								{ text: 'Location Description', style: 'tableHeader' }, hwmData[i]['Location Description'],
+								{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i]['Survey Date']
 							],
 							[
 								{},
-								{ text: 'Bank', style: 'tableHeader' }, hwmData[i].bank,
-								{ text: 'Environment', style: 'tableHeader' }, hwmData[i].hwm_environment
+								{ text: 'Bank', style: 'tableHeader' }, hwmData[i]['Bank'],
+								{ text: 'Environment', style: 'tableHeader' }, hwmData[i]['Environment']
 							],
 							[
 								{},
-								{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i].flag_date,
-								{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i].stillwater
+								{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i]['Flag Date'],
+								{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i]['Stillwater']
 							],
 							[
 								{},
-								{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i].uncertainty,
-								{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i].hwm_uncertainty
+								{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i]['Uncertainty'],
+								{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i]['HWM Uncertainty']
 							]);
 					}
 				}
@@ -2755,12 +2766,26 @@ $(document).ready(function () {
 			var todayDate = date.today() + " at " + date.timeNow();
 			//// End of date/time ////
 
+			var selectionVarLen = $(".select2-selection__choice").length;
+			
 			//// Get summary of search selections ////
-			var landType = $(".select2-selection__choice")[0].title
-			var regionType = $(".select2-selection__choice")[1].title;
-			var regionSubType = $(".select2-selection__choice")[2].title;
-			var event = $(".select2-selection__choice")[3].title;
-			var buffer = $(".select2-selection__choice")[4].title;
+			//If there are existing event names, etc. saved from the welcome or filter modal, retrieve the variables from the end of the array
+			if (selectionVarLen > 5) {
+			var landType = $(".select2-selection__choice")[selectionVarLen - 6].title
+			var regionType = $(".select2-selection__choice")[selectionVarLen - 5].title;
+			var regionSubType = $(".select2-selection__choice")[selectionVarLen - 4].title;
+			var event = $(".select2-selection__choice")[selectionVarLen - 3].title;
+			var buffer = $(".select2-selection__choice")[selectionVarLen - 2].title;
+			}
+			//If the map is refreshed, there won't be search info added to .select2, so there will be only 5 items
+			if (selectionVarLen <=5 ) {
+				var landType = $(".select2-selection__choice")[0].title
+				var regionType = $(".select2-selection__choice")[1].title;
+				var regionSubType = $(".select2-selection__choice")[2].title;
+				var event = $(".select2-selection__choice")[3].title;
+				var buffer = $(".select2-selection__choice")[4].title;
+			}
+				
 			// Build summary selections table
 			function selectionsTable() {
 				return {
@@ -2993,6 +3018,13 @@ $(document).ready(function () {
 	var legendUrl;
 
 	$('#printNav').click(function () {
+		//Add filter information to top of report
+		if (currentParkOrRefuge != "") {
+		$('#reportInfo').append("<div style='margin-left:15px; text-align: center; font-size: large;'>" + selectedEvent + "<br> </div><div style='text-align: center'>"+ currentParkOrRefuge + ", " + selectedBuffer + " buffer" + "<br>"  + "<div>");
+		}
+		if (currentParkOrRefuge == "") {
+			$('#reportInfo').append("<div style='margin-left:15px; text-align: center; font-size: large;'>" + selectedEvent + "<div>");
+		}
 		//clear out any previous stream gage info from report
 		$('#rtgraphs').children().remove();
 		identifiedUSGSrtGage = [];
@@ -3004,6 +3036,7 @@ $(document).ready(function () {
 		var streamgageCheckBox = document.getElementById("streamGageToggle");
 		if (streamgageCheckBox.checked == true) {
 			USGSrtGages.clearLayers(map);
+			$('#streamGageSymbology').children().remove();
 			clickStreamGage();
 		}
 		if (streamgageCheckBox.checked == false) {
@@ -3059,7 +3092,7 @@ $(document).ready(function () {
 				"Description": identifiedPeaks[i].feature.properties.description,
 				"State": identifiedPeaks[i].feature.properties.state,
 				"County": identifiedPeaks[i].feature.properties.county,
-				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
 				"Peak Estimated": peakEstimated
 			});
 		}
@@ -3130,7 +3163,7 @@ $(document).ready(function () {
 			hwmTableData.push({
 				"STN Site No.": identifiedMarks[i].feature.properties.site_no,
 				"HWM Label": identifiedMarks[i].feature.properties.hwm_label,
-				"Elevation(ft)": identifiedMarks[i].feature.properties.elev_ft,
+				"Elevation (ft)": identifiedMarks[i].feature.properties.elev_ft,
 				"Vertical Datum": identifiedMarks[i].feature.properties.verticalDatumName,
 				"Vertical Method": identifiedMarks[i].feature.properties.verticalMethodName,
 				"Horizontal Datum": identifiedMarks[i].feature.properties.horizontalDatumName,
@@ -3407,7 +3440,6 @@ $(document).ready(function () {
 		} else {
 			document.getElementById("print").disabled = false;
 		}
-
 	});
 
 	/* $('#printModal').bind('load',  function(){
@@ -3511,6 +3543,7 @@ $(document).ready(function () {
 	// setting checked values for Welcome Modal buffer radio buttons
 	document.getElementById('tenKm').checked = false;
 	document.getElementById('twentyKm').checked = true;
+	selectedBuffer = "20km";
 	document.getElementById('thirtyKm').checked = false;
 	document.getElementById('fiftyKm').checked = false;
 	// 10 kilometers
@@ -3519,6 +3552,7 @@ $(document).ready(function () {
 		document.getElementById('thirtyKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 10;
+		selectedBuffer = "10km";
 	});
 	// 20 kilometers
 	$('#twentyKm').click(function () {
@@ -3526,6 +3560,7 @@ $(document).ready(function () {
 		document.getElementById('thirtyKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 20;
+		selectedBuffer = "20km";
 	});
 	// 30 kilometers
 	$('#thirtyKm').click(function () {
@@ -3533,6 +3568,7 @@ $(document).ready(function () {
 		document.getElementById('tenKm').checked = false;
 		document.getElementById('fiftyKm').checked = false;
 		fev.vars.currentBufferSelection = 30;
+		selectedBuffer = "30km";
 	});
 	// 50 kilometers
 	$('#fiftyKm').click(function () {
@@ -3540,11 +3576,13 @@ $(document).ready(function () {
 		document.getElementById('twentyKm').checked = false;
 		document.getElementById('tenKm').checked = false;
 		fev.vars.currentBufferSelection = 50;
+		selectedBuffer = "50km";
 	});
 
 	// setting checked values for Filter Modal buffer radio buttons
 	document.getElementById('tenKmFilter').checked = false;
 	document.getElementById('twentyKmFilter').checked = true;
+	selectedBuffer = "20km";
 	document.getElementById('thirtyKmFilter').checked = false;
 	document.getElementById('fiftyKmFilter').checked = false;
 	// 10 kilometers
@@ -3553,6 +3591,7 @@ $(document).ready(function () {
 		document.getElementById('thirtyKmFilter').checked = false;
 		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 10;
+		selectedBuffer = "10km";
 	});
 	// 20 kilometers
 	$('#twentyKmFilter').click(function () {
@@ -3560,6 +3599,7 @@ $(document).ready(function () {
 		document.getElementById('thirtyKmFilter').checked = false;
 		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 20;
+		selectedBuffer = "20km";
 	});
 	// 30 kilometers
 	$('#thirtyKmFilter').click(function () {
@@ -3567,6 +3607,7 @@ $(document).ready(function () {
 		document.getElementById('tenKmFilter').checked = false;
 		document.getElementById('fiftyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 30;
+		selectedBuffer = "30km";
 	});
 	// 50 kilometers
 	$('#fiftyKmFilter').click(function () {
@@ -3574,6 +3615,7 @@ $(document).ready(function () {
 		document.getElementById('tenKmFilter').checked = false;
 		document.getElementById('thirtyKmFilter').checked = false;
 		fev.vars.currentBufferSelection = 50;
+		selectedBuffer = "50km";
 	});
 
 
@@ -3802,7 +3844,7 @@ $(document).ready(function () {
 				},
 				style: parkStyle
 			}).addTo(map);
-			
+
 		} else if (siteType === "refuges") {
 			where = "ORGNAME=" + name;
 			refuges = L.esri.featureLayer({
@@ -4170,7 +4212,7 @@ $(document).ready(function () {
 				"Description": identifiedPeaks[i].feature.properties.description,
 				"State": identifiedPeaks[i].feature.properties.state,
 				"County": identifiedPeaks[i].feature.properties.county,
-				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
 				"Peak Estimated": peakEstimated
 			});
 		}
@@ -4211,7 +4253,7 @@ $(document).ready(function () {
 				table: {
 					headerRows: 1,
 					widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto'],
-					body: buildTableBody(data, ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
+					body: buildTableBody(data, ['Site Number', 'Description', 'State', 'County', 'Peak Stage (ft)', 'Peak Estimated']),
 				},
 				layout: 'lightHorizontalLines',
 				style: 'smaller',
@@ -4331,7 +4373,7 @@ $(document).ready(function () {
 	//This runs when clicking the 'Peak CSV' or 'HWM CSV' button on the Report modal
 	function downloadCSV(type) {
 		//Format name of park or refuge
-		var siteName = searchResults.result.properties.Name.split(" ").join("_");
+		var siteName = currentParkOrRefuge.split(" ").join("_");
 
 		switch (type) {
 			//If 'HWM CSV' is clicked, download the HWM table
@@ -4847,6 +4889,10 @@ function clickNOAA() {
 	}
 }
 
+function enlargeImage() {
+	$('.imagepreview').attr('src', $('.hydroImage').attr('src'));
+	$('#imagemodal').modal('show');
+}
 
 
 
@@ -5603,7 +5649,6 @@ var peaksWithinBuffer = L.featureGroup();
 var hwmsWithinBuffer = L.featureGroup();
 var barosWithinBuffer = L.featureGroup();
 var sensorsWithinBuffer = L.featureGroup();
-var bufferedPolysLayerGroup = L.featureGroup();
 var bufferedPolys = [];
 var unbufferedPolys = [];
 var bufferSize;
@@ -5646,44 +5691,43 @@ var hwmArrReg = [];
 var fevRegional = fevRegional || {
     //Assign column names for the regional peak table csv download
     csvRegionalPeaksColumns: [
-        { fieldName: 'site_name', colName: "Site Name" },
-        { fieldName: 'event', colName: "Event" },
-        { fieldName: 'peak_stage', colName: "Peak Stage" },
-        { fieldName: 'county', colName: "County" },
-        { fieldName: 'peak_stage', colName: "Peak Stage" },
-        { fieldName: 'latitude_dd', colName: "Latitude" },
-        { fieldName: 'longitude_dd', colName: "Longitude" },
-        { fieldName: 'site_no', colName: "Site Number" },
-        { fieldName: 'waterbody', colName: "Waterbody" },
+        { fieldName: 'Site Name', colName: "Site Name" },
+        { fieldName: 'Event', colName: "Event" },
+        { fieldName: 'Peak Stage (ft)', colName: "Peak Stage (ft)" },
+        { fieldName: 'County', colName: "County" },
+        { fieldName: 'Latitude (DD)', colName: "Latitude (DD)" },
+        { fieldName: 'Longitude (DD)', colName: "Longitude (DD)" },
+        { fieldName: 'Site Number', colName: "Site Number" },
+        { fieldName: 'Waterbody', colName: "Waterbody" },
     ],
     //Assign column names for the regional hwm table csv download
     csvRegionalHWMColumns: [
-        { fieldName: 'site_name', colName: "Site Name" },
-        { fieldName: 'event', colName: "Event" },
-        { fieldName: 'elev_ft', colName: "Elevation" },
-        { fieldName: 'survey_date', colName: "Survey Date" },
-        { fieldName: 'bank', colName: "Bank" },
-        { fieldName: 'hwmQualityName', colName: "HWM Quality" },
-        { fieldName: 'hwmTypeName', colName: "HWM Type" },
-        { fieldName: 'verticalDatumName', colName: "Vertical Datum" },
-        { fieldName: 'verticalMethodName', colName: "Vertical Method" },
-        { fieldName: 'horizontalMethodName', colName: "Horizontal Method" },
-        { fieldName: 'horizontalDatumName', colName: "Horizontal Datum" },
-        { fieldName: 'hwm_locationdescription', colName: "HWM Location Description" },
-        { fieldName: 'hwm_environment', colName: "HWM Environment" },
-        { fieldName: 'stillwater', colName: "Stillwater" },
-        { fieldName: 'uncertainty', colName: "Uncertainty" },
-        { fieldName: 'hwm_uncertainty', colName: "HWM Uncertainty" },
-        { fieldName: 'hwm_label', colName: "HWM Label" },
-        { fieldName: 'flag_date', colName: "Flag Date" },
-        { fieldName: 'siteDescription', colName: "Site Description" },
-        { fieldName: 'sitePermHousing', colName: "Permanent Housing Site" },
-        { fieldName: 'county', colName: "County" },
-        { fieldName: 'state', colName: "HWM State" },
-        { fieldName: 'latitude_dd', colName: "Latitude" },
-        { fieldName: 'longitude_dd', colName: "Longitude" },
-        { fieldName: 'site_no', colName: "Site Number" },
-        { fieldName: 'waterbody', colName: "Waterbody" },
+        { fieldName: 'Site Name', colName: "Site Name" },
+        { fieldName: 'Event', colName: "Event" },
+        { fieldName: 'Elevation (ft)', colName: "Elevation" },
+        { fieldName: 'Survey Date', colName: "Survey Date" },
+        { fieldName: 'Bank', colName: "Bank" },
+        { fieldName: 'HWM Quality', colName: "HWM Quality" },
+        { fieldName: 'HWM Type', colName: "HWM Type" },
+        { fieldName: 'Vertical Datum', colName: "Vertical Datum" },
+        { fieldName: 'Vertical Method', colName: "Vertical Method" },
+        { fieldName: 'Horizontal Method', colName: "Horizontal Method" },
+        { fieldName: 'Horizontal Datum', colName: "Horizontal Datum" },
+        { fieldName: 'Location Description', colName: "HWM Location Description" },
+        { fieldName: 'Environment', colName: "HWM Environment" },
+        { fieldName: 'Stillwater', colName: "Stillwater" },
+        { fieldName: 'Uncertainty', colName: "Uncertainty" },
+        { fieldName: 'HWM Uncertainty', colName: "HWM Uncertainty" },
+        { fieldName: 'HWM Label', colName: "HWM Label" },
+        { fieldName: 'Flag Date', colName: "Flag Date" },
+        { fieldName: 'Site Description', colName: "Site Description" },
+        { fieldName: 'Site Perm Housing', colName: "Permanent Housing Site" },
+        { fieldName: 'County', colName: "County" },
+        { fieldName: 'State', colName: "HWM State" },
+        { fieldName: 'Latitude (DD)', colName: "Latitude (DD)" },
+        { fieldName: 'Longitude (DD)', colName: "Longitude (DD)" },
+        { fieldName: 'Site Number', colName: "Site Number" },
+        { fieldName: 'Waterbody', colName: "Waterbody" },
     ],
 }
 
@@ -5724,13 +5768,13 @@ $(document).ready(function () {
 
     $('#btnSubmitSelections').click(function () {
 
-       
+
         /* $('.progress-bar-fill').delay(1000).queue(function () {
             $(this).css('width', '100%')
         }); */
         document.querySelector('.progress-bar-fill').style.width = "100%"
 
-        setTimeout(function(){  
+        setTimeout(function () {
             //Enable peak toggle when loading bar is finished (30 seconds)
             var activatePeak = document.getElementById("peakCheckboxReg");
             activatePeak.disabled = false;
@@ -5830,17 +5874,17 @@ $(document).ready(function () {
                     simplifiedRegionalPoly = turf.simplify(regionPoly);
                 }
             }).addTo(regionalMap);
-            
+
             regionLayerGroup.addLayer(regionBoundaries);
         }
         // TODO: explore options to avoid this timeout. dealing with motely crew of services that is making it difficult atm
         setTimeout(() => {
-            simplifiedRegionalPoly.coordinates.forEach(function(coords){
-                var feat = {'type':'Polygon','coordinates':coords};
+            simplifiedRegionalPoly.coordinates.forEach(function (coords) {
+                var feat = { 'type': 'Polygon', 'coordinates': coords };
                 simpPoly.push(feat);
-                }
-             );
-            
+            }
+            );
+
             // Identify parks/refuges in event in regions
             var allSites;
             if (selectedLandType[0] === "parks") {
@@ -5867,7 +5911,7 @@ $(document).ready(function () {
             if (flattenedRegionalPoly !== undefined) {
                 /* var box = turf.bbox(flattenedRegionalPoly);
                 var boxPoly = turf.bboxPolygon(box); */
-                for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {  
+                for (var p = 0; p < flattenedRegionalPoly.features.length; p++) {
                     allSites.query()
                         //.within(flattenedRegionalPoly.features[p])
                         //.bboxIntersects(flattenedRegionalPoly.features[p])
@@ -5952,31 +5996,31 @@ $(document).ready(function () {
             }
             */
 
-         /*   
-function displayRegionalRtGageReport(regionalStreamGages) {
-
-    for (streamGage in regionalStreamGages) {
-
-        var parameterCodeList = '00065,62619,62620,63160,72279';
-
-        var timeQueryRange = '';
-        //if event has no end date
-        if (fev.vars.currentEventEndDate_str == '') {
-            //use moment.js lib to get current system date string, properly formatted, set currentEventEndDate var to current date
-            fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
-        }
-        //if no start date and
-        if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
-            timeQueryRange = '&period=P7D'
-        } else {
-            timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
-        }
-
-        //This is where the hydrograph title and graph or no data warning are added to the Report 
-        $('#hydrographTableReg').append("<div style='text-align: left'>" + "</br>" + regionalStreamGages[streamGage].data.siteName + " (Site" + "&nbsp" + regionalStreamGages[streamGage].data.siteCode + ")" + "</br>" + "</div>");
-    }
-}
-*/
+            /*   
+   function displayRegionalRtGageReport(regionalStreamGages) {
+   
+       for (streamGage in regionalStreamGages) {
+   
+           var parameterCodeList = '00065,62619,62620,63160,72279';
+   
+           var timeQueryRange = '';
+           //if event has no end date
+           if (fev.vars.currentEventEndDate_str == '') {
+               //use moment.js lib to get current system date string, properly formatted, set currentEventEndDate var to current date
+               fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+           }
+           //if no start date and
+           if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
+               timeQueryRange = '&period=P7D'
+           } else {
+               timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
+           }
+   
+           //This is where the hydrograph title and graph or no data warning are added to the Report 
+           $('#hydrographTableReg').append("<div style='text-align: left'>" + "</br>" + regionalStreamGages[streamGage].data.siteName + " (Site" + "&nbsp" + regionalStreamGages[streamGage].data.siteCode + ")" + "</br>" + "</div>");
+       }
+   }
+   */
 
 
 
@@ -5986,8 +6030,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 console.log(regionParksFC);
                 getbuffers();
             }, 15000);
-
-            
 
             //getbuffers();
             // getting the park buffers base on the buffer size selection value
@@ -6028,21 +6070,21 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             eventURL = eventURL + selectedEvents[e] + '.json';
                             var queryString = "?Event=" + selectedEvents[e] + "&States=&County=&StartDate=undefined&EndDate=undefined";
                             var sensorQueryString = "?Event=" + selectedEvents[e] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
-                        
-                                getEventName(function (output) {
-                                    eventName = output.event_name;
-                                    /*
-                                    queryStreamGages(regionBBox);
-                                    regionalStreamGages.addTo(regionalMap);
-                                    displayRegionalRtGageReport(regionalStreamGages);
-                                    */
-                                    getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
-                                    getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
 
-                                });
-                  
+                            getEventName(function (output) {
+                                eventName = output.event_name;
+                                /*
+                                queryStreamGages(regionBBox);
+                                regionalStreamGages.addTo(regionalMap);
+                                displayRegionalRtGageReport(regionalStreamGages);
+                                */
+                                getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName);
+                                getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName);
 
-                            
+                            });
+
+
+
                             // function for getting the event data
                             function getEventName(handleData) {
                                 var data;
@@ -6059,9 +6101,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                 });
                             }
                             // PEAKS
-                            
+
                             // HWMS
-                            
+
 
                             // BARO
                             //getBaros(fev.urls.baroGeoJSONViewURL + sensorQueryString, regionalbaroMarkerIcon);
@@ -6119,7 +6161,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     }
 
                     //sort array of peak values
-                    sortedPeaks = peakArrReg.sort(function(a, b){return a - b});
+                    sortedPeaks = peakArrReg.sort(function (a, b) { return a - b });
 
                     //find number of peak values
                     lengthPeak = peakArrReg.length;
@@ -6224,15 +6266,14 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                             parksWithPeaks.push({
                                                 "site_name": landsitetype,
                                                 data: {
-                                                    "site_name": landsitetype,
-                                                    "event": eventName,
-                                                    "peak_stage": regionalPeak._layers[i].peak_stage,
-                                                    "county": regionalPeak._layers[i].county,
-                                                    "peak_stage": regionalPeak._layers[i].peak_stage,
-                                                    "latitude_dd": regionalPeak._layers[i].latitude_dd,
-                                                    "longitude_dd": regionalPeak._layers[i].longitude_dd,
-                                                    "site_no": regionalPeak._layers[i].site_no,
-                                                    "waterbody": regionalPeak._layers[i].waterbody
+                                                    "Site Name": landsitetype,
+                                                    "Event": eventName,
+                                                    "Peak Stage (ft)": regionalPeak._layers[i].peak_stage,
+                                                    "County": regionalPeak._layers[i].county,
+                                                    "Latitude (DD)": regionalPeak._layers[i].latitude_dd,
+                                                    "Longitude (DD)": regionalPeak._layers[i].longitude_dd,
+                                                    "Site Number": regionalPeak._layers[i].site_no,
+                                                    "Waterbody": regionalPeak._layers[i].waterbody
                                                 }
                                             });
                                             allPeaks.push(parksWithPeaks[count].data);
@@ -6256,15 +6297,14 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                     parksWithPeaks.push({
                                         "site_name": landsitetype,
                                         data: {
-                                            "site_name": landsitetype,
-                                            "event": eventName,
-                                            "peak_stage": regionalPeak._layers[i].feature.properties.peak_stage,
-                                            "county": regionalPeak._layers[i].feature.properties.county,
-                                            "peak_stage": regionalPeak._layers[i].feature.properties.peak_stage,
-                                            "latitude_dd": regionalPeak._layers[i].feature.properties.latitude_dd,
-                                            "longitude_dd": regionalPeak._layers[i].feature.properties.longitude_dd,
-                                            "site_no": regionalPeak._layers[i].feature.properties.site_no,
-                                            "waterbody": regionalPeak._layers[i].feature.properties.waterbody
+                                            "Site Name": landsitetype,
+                                            "Event": eventName,
+                                            "Peak Stage (ft)": regionalPeak._layers[i].feature.properties.peak_stage,
+                                            "County": regionalPeak._layers[i].feature.properties.county,
+                                            "Latitude (DD)": regionalPeak._layers[i].feature.properties.latitude_dd,
+                                            "Longitude (DD)": regionalPeak._layers[i].feature.properties.longitude_dd,
+                                            "Site Number": regionalPeak._layers[i].feature.properties.site_no,
+                                            "Waterbody": regionalPeak._layers[i].feature.properties.waterbody
                                         }
                                     });
                                     allPeaks.push(parksWithPeaks[count].data);
@@ -6385,33 +6425,32 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                             parksWithHWMs.push({
                                                 "site_name": landsitetype,
                                                 data: {
-                                                    "site_name": landsitetype,
-                                                    "event": eventName,
-                                                    "elev_ft": regionalHWM._layers[i].feature.properties.elev_ft,
-                                                    "survey_date": regionalHWM._layers[i].feature.properties.survey_date,
-                                                    "bank": regionalHWM._layers[i].feature.properties.bank,
-                                                    "hwmQualityName": regionalHWM._layers[i].feature.properties.hwmQualityName,
-                                                    "hwmTypeName": regionalHWM._layers[i].feature.properties.hwmTypeName,
-                                                    "verticalDatumName": regionalHWM._layers[i].feature.properties.verticalDatumName,
-                                                    "verticalMethodName": regionalHWM._layers[i].feature.properties.verticalMethodName,
-                                                    "horizontalMethodName": regionalHWM._layers[i].feature.properties.horizontalMethodName,
-                                                    "horizontalDatumName": regionalHWM._layers[i].feature.properties.horizontalDatumName,
-                                                    "hwm_locationdescription": regionalHWM._layers[i].feature.properties.hwm_locationdescription,
-                                                    "hwm_environment": regionalHWM._layers[i].feature.properties.hwm_environment,
-                                                    "stillwater": regionalHWM._layers[i].feature.properties.stillwater,
-                                                    "uncertainty": regionalHWM._layers[i].feature.properties.uncertainty,
-                                                    "hwm_uncertainty": regionalHWM._layers[i].feature.properties.hwm_uncertainty,
-                                                    "hwm_label": regionalHWM._layers[i].feature.properties.hwm_label,
-                                                    "flag_date": regionalHWM._layers[i].feature.properties.flag_date,
-                                                    "site_no": regionalHWM._layers[i].feature.properties.site_no,
-                                                    "siteDescription": regionalHWM._layers[i].feature.properties.siteDescription,
-                                                    "sitePermHousing": regionalHWM._layers[i].feature.properties.sitePermHousing,
-                                                    "county": regionalHWM._layers[i].feature.properties.county,
-                                                    "state": regionalHWM._layers[i].feature.properties.stateName,
-                                                    "latitude_dd": regionalHWM._layers[i].feature.properties.latitude_dd,
-                                                    "longitude_dd": regionalHWM._layers[i].feature.properties.longitude_dd,
-                                                    "site_no": regionalHWM._layers[i].feature.properties.site_no,
-                                                    "waterbody": regionalHWM._layers[i].feature.properties.waterbody
+                                                    "Site Name": landsitetype,
+                                                    "Event": eventName,
+                                                    "Elevation (ft)": regionalHWM._layers[i].feature.properties.elev_ft,
+                                                    "Survey Date": regionalHWM._layers[i].feature.properties.survey_date,
+                                                    "Bank": regionalHWM._layers[i].feature.properties.bank,
+                                                    "HWM Quality": regionalHWM._layers[i].feature.properties.hwmQualityName,
+                                                    "HWM Type": regionalHWM._layers[i].feature.properties.hwmTypeName,
+                                                    "Vertical Datum": regionalHWM._layers[i].feature.properties.verticalDatumName,
+                                                    "Vertical Method": regionalHWM._layers[i].feature.properties.verticalMethodName,
+                                                    "Horizontal Method": regionalHWM._layers[i].feature.properties.horizontalMethodName,
+                                                    "Horizontal Datum": regionalHWM._layers[i].feature.properties.horizontalDatumName,
+                                                    "Location Description": regionalHWM._layers[i].feature.properties.hwm_locationdescription,
+                                                    "Environment": regionalHWM._layers[i].feature.properties.hwm_environment,
+                                                    "Stillwater": regionalHWM._layers[i].feature.properties.stillwater,
+                                                    "Uncertainty": regionalHWM._layers[i].feature.properties.uncertainty,
+                                                    "HWM Uncertainty": regionalHWM._layers[i].feature.properties.hwm_uncertainty,
+                                                    "HWM Label": regionalHWM._layers[i].feature.properties.hwm_label,
+                                                    "Flag Date": regionalHWM._layers[i].feature.properties.flag_date,
+                                                    "Site Description": regionalHWM._layers[i].feature.properties.siteDescription,
+                                                    "Site Perm Housing": regionalHWM._layers[i].feature.properties.sitePermHousing,
+                                                    "County": regionalHWM._layers[i].feature.properties.county,
+                                                    "State": regionalHWM._layers[i].feature.properties.stateName,
+                                                    "Latitude (DD)": regionalHWM._layers[i].feature.properties.latitude_dd,
+                                                    "Longitude (DD)": regionalHWM._layers[i].feature.properties.longitude_dd,
+                                                    "Site Number": regionalHWM._layers[i].feature.properties.site_no,
+                                                    "Waterbody": regionalHWM._layers[i].feature.properties.waterbody
                                                 }
                                             });
                                             allHWMs.push(parksWithHWMs[count].data);
@@ -6434,32 +6473,32 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                     parksWithHWMs.push({
                                         "site_name": landsitetype,
                                         data: {
-                                            "site_name": landsitetype,
-                                            "event": eventName,
-                                            "elev_ft": regionalHWM._layers[i].feature.properties.elev_ft,
-                                            "survey_date": regionalHWM._layers[i].feature.properties.survey_date,
-                                            "bank": regionalHWM._layers[i].feature.properties.bank,
-                                            "hwmQualityName": regionalHWM._layers[i].feature.properties.hwmQualityName,
-                                            "hwmTypeName": regionalHWM._layers[i].feature.properties.hwmTypeName,
-                                            "verticalDatumName": regionalHWM._layers[i].feature.properties.verticalDatumName,
-                                            "verticalMethodName": regionalHWM._layers[i].feature.properties.verticalMethodName,
-                                            "horizontalMethodName": regionalHWM._layers[i].feature.properties.horizontalMethodName,
-                                            "horizontalDatumName": regionalHWM._layers[i].feature.properties.horizontalDatumName,
-                                            "hwm_locationdescription": regionalHWM._layers[i].feature.properties.hwm_locationdescription,
-                                            "hwm_environment": regionalHWM._layers[i].feature.properties.hwm_environment,
-                                            "stillwater": regionalHWM._layers[i].feature.properties.stillwater,
-                                            "uncertainty": regionalHWM._layers[i].feature.properties.uncertainty,
-                                            "hwm_uncertainty": regionalHWM._layers[i].feature.properties.hwm_uncertainty,
-                                            "hwm_label": regionalHWM._layers[i].feature.properties.hwm_label,
-                                            "flag_date": regionalHWM._layers[i].feature.properties.flag_date,
-                                            "siteDescription": regionalHWM._layers[i].feature.properties.siteDescription,
-                                            "sitePermHousing": regionalHWM._layers[i].feature.properties.sitePermHousing,
-                                            "county": regionalHWM._layers[i].feature.properties.county,
-                                            "state": regionalHWM._layers[i].feature.properties.stateName,
-                                            "latitude_dd": regionalHWM._layers[i].feature.properties.latitude_dd,
-                                            "longitude_dd": regionalHWM._layers[i].feature.properties.longitude_dd,
-                                            "site_no": regionalHWM._layers[i].feature.properties.site_no,
-                                            "waterbody": regionalHWM._layers[i].feature.properties.waterbody
+                                            "Site Name": landsitetype,
+                                            "Event": eventName,
+                                            "Elevation (ft)": regionalHWM._layers[i].feature.properties.elev_ft,
+                                            "Survey Date": regionalHWM._layers[i].feature.properties.survey_date,
+                                            "Bank": regionalHWM._layers[i].feature.properties.bank,
+                                            "HWM Quality": regionalHWM._layers[i].feature.properties.hwmQualityName,
+                                            "HWM Type": regionalHWM._layers[i].feature.properties.hwmTypeName,
+                                            "Vertical Datum": regionalHWM._layers[i].feature.properties.verticalDatumName,
+                                            "Vertical Method": regionalHWM._layers[i].feature.properties.verticalMethodName,
+                                            "Horizontal Method": regionalHWM._layers[i].feature.properties.horizontalMethodName,
+                                            "Horizontal Datum": regionalHWM._layers[i].feature.properties.horizontalDatumName,
+                                            "Location Description": regionalHWM._layers[i].feature.properties.hwm_locationdescription,
+                                            "Environment": regionalHWM._layers[i].feature.properties.hwm_environment,
+                                            "Stillwater": regionalHWM._layers[i].feature.properties.stillwater,
+                                            "Uncertainty": regionalHWM._layers[i].feature.properties.uncertainty,
+                                            "HWM Uncertainty": regionalHWM._layers[i].feature.properties.hwm_uncertainty,
+                                            "HWM Label": regionalHWM._layers[i].feature.properties.hwm_label,
+                                            "Flag Date": regionalHWM._layers[i].feature.properties.flag_date,
+                                            "Site Description": regionalHWM._layers[i].feature.properties.siteDescription,
+                                            "Site Perm Housing": regionalHWM._layers[i].feature.properties.sitePermHousing,
+                                            "County": regionalHWM._layers[i].feature.properties.county,
+                                            "State": regionalHWM._layers[i].feature.properties.stateName,
+                                            "Latitude (DD)": regionalHWM._layers[i].feature.properties.latitude_dd,
+                                            "Longitude (DD)": regionalHWM._layers[i].feature.properties.longitude_dd,
+                                            "Site Number": regionalHWM._layers[i].feature.properties.site_no,
+                                            "Waterbody": regionalHWM._layers[i].feature.properties.waterbody
                                         }
                                     });
                                     allHWMs.push(parksWithHWMs[count].data);
@@ -6685,12 +6724,12 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     if (parksWithPeaks[peak].site_name === distinctPeaksByPark[site].site_name) {
                         var data = []
                         var peakdata = {
-                            "site_name": parksWithPeaks[peak].data.site_name,
-                            "peak_stage": parksWithPeaks[peak].data.peak_stage,
-                            "county": parksWithPeaks[peak].data.county,
-                            "height_above_gnd": parksWithPeaks[peak].data.height_above_gnd,
-                            "latitude_dd": parksWithPeaks[peak].data.latitude_dd,
-                            "longitude_dd": parksWithPeaks[peak].data.longitude_dd,
+                            "Site Name": parksWithPeaks[peak].data.site_name,
+                            "Peak Stage (ft)": parksWithPeaks[peak].data.peak_stage,
+                            "County": parksWithPeaks[peak].data.county,
+                            "Height Above Ground (ft)": parksWithPeaks[peak].data.height_above_gnd,
+                            "Latitude (DD)": parksWithPeaks[peak].data.latitude_dd,
+                            "Longitude (DD)": parksWithPeaks[peak].data.longitude_dd,
                             "site_no": parksWithPeaks[peak].data.site_no,
                             "waterbody": parksWithPeaks[peak].data.waterbody
                         };
@@ -6710,13 +6749,13 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     if (parksWithHWMs[hwm].site_name === distincthwmsByPark[site].site_name) {
                         var data = []
                         var hwmdata = {
-                            "site_name": parksWithHWMs[hwm].data.site_name,
-                            "elev_ft": parksWithHWMs[hwm].data.elev_ft,
-                            "county": parksWithHWMs[hwm].data.county,
-                            "latitude_dd": parksWithHWMs[hwm].data.latitude_dd,
-                            "longitude_dd": parksWithHWMs[hwm].data.longitude_dd,
-                            "site_no": parksWithHWMs[hwm].data.site_no,
-                            "waterbody": parksWithHWMs[hwm].data.waterbody
+                            "Site Name": parksWithHWMs[hwm].data.site_name,
+                            "Elevation (ft)": parksWithHWMs[hwm].data.elev_ft,
+                            "County": parksWithHWMs[hwm].data.county,
+                            "Latitude (DD)": parksWithHWMs[hwm].data.latitude_dd,
+                            "Longitude (DD)": parksWithHWMs[hwm].data.longitude_dd,
+                            "Site Number": parksWithHWMs[hwm].data.site_no,
+                            "Waterbody": parksWithHWMs[hwm].data.waterbody
                         };
                         formattedHWMS[site].data.push(hwmdata);
                     }
@@ -6727,8 +6766,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             }
 
             //Sort peak and hwm arrays
-            peakArrReg = peakArrReg.sort(function(a, b){return a - b});
-            hwmArrReg = hwmArrReg.sort(function(a, b){return a - b});
+            peakArrReg = peakArrReg.sort(function (a, b) { return a - b });
+            hwmArrReg = hwmArrReg.sort(function (a, b) { return a - b });
             var sum = []
             var peakSum = {};
             var hwmSum = {};
@@ -6744,14 +6783,14 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             //Create peak row in regional summary table
             getSummaryStats(peakArrReg);
             if (formattedPeaks.length > 0) {
-                peakSum = { "Type": "Peak", "Total Sites": numReg, "Max": maxReg, "Min": minReg, "Median": medianReg, "Mean": meanReg, "Standard Dev": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
             }
 
             //Create hwm row in regional summary table
             getSummaryStats(hwmArrReg);
             if (formattedHWMS.length > 0) {
-                hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max": maxReg, "Min": minReg, "Median": medianReg, "Mean": meanReg, "Standard Dev": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
             }
 
@@ -6817,7 +6856,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 buildDataTables("#peakDataTableReg", allPeaks, "Peak Data");
             }
             if (allHWMs.length > 0) {
-                buildDataTables("#hwmDataTableReg", allHWMs, "HWM Data");
+                buildDataTables("#hwmDataTableReg", allHWMs, "High Water Mark Data");
             }
             /*
             if (regionalStreamGages.length >0) {
@@ -6842,7 +6881,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     "Description": identifiedPeaks[i].feature.properties.description,
                     "State": identifiedPeaks[i].feature.properties.state,
                     "County": identifiedPeaks[i].feature.properties.county,
-                    "Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+                    "Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
                     "Peak Estimated": peakEstimated
                 });
             }

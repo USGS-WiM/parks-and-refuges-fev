@@ -2,9 +2,9 @@
  * Created by bdraper on 8/2/2016.
  */
 
-$( document ).ready(function() {
+$(document).ready(function () {
 
-    $('#btnClearFilters').click(function(){
+    $('#btnClearFilters').click(function () {
         //clear all text inputs
         $('.clearable').val('').trigger('change');
         //hide all checkmark icons
@@ -24,7 +24,7 @@ $( document ).ready(function() {
         dataType: 'json',
         type: 'GET',
         url: 'https://stn.wim.usgs.gov/STNServices/eventtypes.json',
-        headers: {'Accept': '*/*'},
+        headers: { 'Accept': '*/*' },
         success: function (data) {
             data.sort(function (a, b) {
                 var typeA = a.TYPE;
@@ -71,7 +71,7 @@ $( document ).ready(function() {
         dataType: 'json',
         type: 'GET',
         url: 'https://stn.wim.usgs.gov/STNServices/events.json',
-        headers: {'Accept': '*/*'},
+        headers: { 'Accept': '*/*' },
         success: function (data) {
             data.sort(function (a, b) {
                 // var eventA = a.event_name;
@@ -103,23 +103,27 @@ $( document ).ready(function() {
 
     // START REGIONAL SUMMARY
     // region type selector
-    $('.regionType').select2({
+   /*$('.regionType').select2({
         placeholder: 'Select type',
         allowClear: false,
         maximumSelectionLength: 1
-    });
-    $('.regionType').append('<option value="doi">' + 'DOI Regions' + '</option>');
-    $('.regionType').append('<option value="fws">' + 'FWS Legacy Regions' + '</option>');
-    $('.regionType').append('<option value="nps">' + 'NPS Networks' + '</option>');
+    }); */
+    //$('.regionType').append('<option value="doi">' + 'DOI Regions' + '</option>');
+    /* $('.regionType').append('<option value="fws">' + 'FWS Legacy Regions' + '</option>');
+    $('.regionType').append('<option value="nps">' + 'NPS Networks' + '</option>'); */
 
-     // Lands type selector
-     $('.typeSelect').select2({
+    // Lands type selector
+    $('.typeSelect').select2({
         placeholder: 'Select type',
         allowClear: false,
         maximumSelectionLength: 1
     });
     $('.typeSelect').append('<option value="parks">' + 'Parks' + '</option>');
     $('.typeSelect').append('<option value="refuges">' + 'Refuges' + '</option>');
+
+    $('#typeSelect_regionalModal').change(function () {
+
+    });
 
     // Lands type selector
     $('.typeSelectFilter').select2({
@@ -160,14 +164,14 @@ $( document ).ready(function() {
 
         // if it has a value, we query to get the region geometry
         if (($('#typeSelect_filterModal').val()) === null) {
-           
+
         } else {
             if ($('#typeSelect_filterModal').val()[0] === "parks") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
                     url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=UNIT_NAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
-                    headers: {'Accept': '*/*'},
+                    headers: { 'Accept': '*/*' },
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
                             $('.siteSelect').append('<option value="' + data.features[i].attributes.UNIT_NAME + '">' + data.features[i].attributes.UNIT_NAME + '</option>');
@@ -179,14 +183,14 @@ $( document ).ready(function() {
                         console.log('Error processing the JSON. The error is:' + error);
                     }
                 });
-                
-                
+
+
             } else if ($('#typeSelect_filterModal').val()[0] === "refuges") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
-                    url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=ORGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
-                    headers: {'Accept': '*/*'},
+                    url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=ORGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    headers: { 'Accept': '*/*' },
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
                             $('.siteSelect').append('<option value="' + data.features[i].attributes.ORGNAME + '">' + data.features[i].attributes.ORGNAME + '</option>');
@@ -198,7 +202,7 @@ $( document ).ready(function() {
                         console.log('Error processing the JSON. The error is:' + error);
                     }
                 });
-            } 
+            }
         }
     });
     // region based on region type
@@ -209,14 +213,14 @@ $( document ).ready(function() {
 
         // if it has a value, we query to get the region geometry
         if (($('#typeSelect_welcomeModal').val()) === null) {
-           
+
         } else {
             if ($('#typeSelect_welcomeModal').val()[0] === "parks") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
                     url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=UNIT_NAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
-                    headers: {'Accept': '*/*'},
+                    headers: { 'Accept': '*/*' },
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
                             $('.siteSelect').append('<option value="' + data.features[i].attributes.UNIT_NAME + '">' + data.features[i].attributes.UNIT_NAME + '</option>');
@@ -228,14 +232,14 @@ $( document ).ready(function() {
                         console.log('Error processing the JSON. The error is:' + error);
                     }
                 });
-                
-                
+
+
             } else if ($('#typeSelect_welcomeModal').val()[0] === "refuges") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
-                    url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=ORGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
-                    headers: {'Accept': '*/*'},
+                    url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=ORGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    headers: { 'Accept': '*/*' },
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
                             $('.siteSelect').append('<option value="' + data.features[i].attributes.ORGNAME + '">' + data.features[i].attributes.ORGNAME + '</option>');
@@ -247,7 +251,7 @@ $( document ).ready(function() {
                         console.log('Error processing the JSON. The error is:' + error);
                     }
                 });
-            } 
+            }
         }
     });
 
@@ -258,40 +262,32 @@ $( document ).ready(function() {
     });
 
     // region based on region type
-    $('#regionType_regionalModal').change(function () {
+    $('#typeSelect_regionalModal').change(function () {
 
         // clearing out the results incase region type 
         $('.regionSelect').empty();
 
         // if it has a value, we query to get the region geometry
-        if (($('#regionType_regionalModal').val()) === null) {
-           
-        } else {
-            if ($('#regionType_regionalModal').val()[0] === "doi") {
+            /* if ($('#regionType_regionalModal').val()[0] === "doi") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
                     url: 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/ArcGIS/rest/services/DOI_Unified_Regions/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
-                    headers: {'Accept': '*/*'},
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
                             $('.regionSelect').append('<option value="' + data.features[i].attributes.REG_NUM + '">' + data.features[i].attributes.REG_NAME + '</option>');
-                            /* data[i].id = data[i].event_id;
-                            fev.data.events.push(data[i]); */
                         }
                     },
                     error: function (error) {
                         console.log('Error processing the JSON. The error is:' + error);
                     }
-                });
-                
-                
-            } else if ($('#regionType_regionalModal').val()[0] === "fws") {
+                });              
+            } */ if ($('#typeSelect_regionalModal').val()[0] === "refuges") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
-                    url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
-                    headers: {'Accept': '*/*'},
+                    url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=REGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=true&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    headers: { 'Accept': '*/*' },
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
                             $('.regionSelect').append('<option value="' + data.features[i].attributes.REGNAME + '">' + data.features[i].attributes.REGNAME + '</option>');
@@ -303,22 +299,21 @@ $( document ).ready(function() {
                         console.log('Error processing the JSON. The error is:' + error);
                     }
                 });
-            } else if ($('#regionType_regionalModal').val()[0] === "nps") {
+            } else if ($('#typeSelect_regionalModal').val()[0] === "parks") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
-                    url: 'https://irmaservices.nps.gov/arcgis/rest/services/NPSData/NPS_MonitoringNetworks/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&having=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&f=pjson',
-                    headers: {'Accept': '*/*'},
+                    url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/nps_regions_rev/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=reg_name&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    headers: { 'Accept': '*/*' },
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
-                            $('.regionSelect').append('<option value="' + data.features[i].attributes.NetworkName + '">' + data.features[i].attributes.NetworkName + '</option>');
+                            $('.regionSelect').append('<option value="' + data.features[i].attributes.reg_name + '">' + data.features[i].attributes.reg_name + '</option>');
                         }
                     },
                     error: function (error) {
                         console.log('Error processing the JSON. The error is:' + error);
                     }
                 });
-            }
         }
     });
 
@@ -344,7 +339,7 @@ $( document ).ready(function() {
         dataType: 'json',
         type: 'GET',
         url: 'https://stn.wim.usgs.gov/STNServices/Sites/States.json',
-        headers: {'Accept': '*/*'},
+        headers: { 'Accept': '*/*' },
         success: function (data) {
             data.sort(function (a, b) {
                 var stateA = a.state_name;
@@ -377,7 +372,7 @@ $( document ).ready(function() {
     });
 
     $('#countySelect').on('select2:select select2:unselect', function (selection) {
-       //will need special treatment for display string creation
+        //will need special treatment for display string creation
     });
 
 
@@ -390,7 +385,7 @@ $( document ).ready(function() {
         dataType: 'json',
         type: 'GET',
         url: 'https://stn.wim.usgs.gov/STNServices/sensortypes.json',
-        headers: {'Accept': '*/*'},
+        headers: { 'Accept': '*/*' },
         success: function (data) {
             data.sort(function (a, b) {
                 var typeA = a.TYPE;
@@ -424,7 +419,7 @@ $( document ).ready(function() {
         dataType: 'json',
         type: 'GET',
         url: 'https://stn.wim.usgs.gov/STNServices/statustypes.json',
-        headers: {'Accept': '*/*'},
+        headers: { 'Accept': '*/*' },
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
                 $('#sensorStatusSelect').append('<option value="' + data[i].status_type_id + '">' + data[i].status + '</option>');
@@ -445,7 +440,7 @@ $( document ).ready(function() {
         dataType: 'json',
         type: 'GET',
         url: 'https://stn.wim.usgs.gov/STNServices/InstrCollectConditions.json',
-        headers: {'Accept': '*/*'},
+        headers: { 'Accept': '*/*' },
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
                 $('#collectionConditionSelect').append('<option value="' + data[i].id + '">' + data[i].condition + '</option>');
@@ -466,7 +461,7 @@ $( document ).ready(function() {
         dataType: 'json',
         type: 'GET',
         url: 'https://stn.wim.usgs.gov/STNServices/deploymenttypes.json',
-        headers: {'Accept': '*/*'},
+        headers: { 'Accept': '*/*' },
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
                 $('#deployTypeSelect').append('<option value="' + data[i].deployment_type_id + '">' + data[i].method + '</option>');
@@ -487,7 +482,7 @@ $( document ).ready(function() {
         dataType: 'json',
         type: 'GET',
         url: 'https://stn.wim.usgs.gov/STNServices/hwmtypes.json',
-        headers: {'Accept': '*/*'},
+        headers: { 'Accept': '*/*' },
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
                 $('#hwmTypeSelect').append('<option value="' + data[i].hwm_type_id + '">' + data[i].hwm_type + '</option>');
@@ -509,7 +504,7 @@ $( document ).ready(function() {
         dataType: 'json',
         type: 'GET',
         url: 'https://stn.wim.usgs.gov/STNServices/hwmqualities.json',
-        headers: {'Accept': '*/*'},
+        headers: { 'Accept': '*/*' },
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
                 $('#hwmQualitySelect').append('<option value="' + data[i].hwm_quality_id + '">' + data[i].hwm_quality + '</option>');
@@ -522,15 +517,15 @@ $( document ).ready(function() {
         }
     });
 
-    var populateCountiesArray =  function  () {
-        for (var i=0; i<fev.data.states.length; i++) {
+    var populateCountiesArray = function () {
+        for (var i = 0; i < fev.data.states.length; i++) {
             $.ajax({
                 dataType: 'json',
                 type: 'GET',
-                url: 'https://stn.wim.usgs.gov/STNServices/Sites/CountiesByState.json?StateAbbrev=' + fev.data.states[i].state_abbrev ,
-                headers: {'Accept': '*/*'},
+                url: 'https://stn.wim.usgs.gov/STNServices/Sites/CountiesByState.json?StateAbbrev=' + fev.data.states[i].state_abbrev,
+                headers: { 'Accept': '*/*' },
                 currentState: fev.data.states[i].state_abbrev,
-                success: function (data)  {
+                success: function (data) {
                     fev.data.counties[(this.currentState)] = data;
                     //console.log("Loaded counties for: ",this.currentState)
                 },
@@ -638,14 +633,14 @@ $( document ).ready(function() {
     //begin onChange function for state form (updates county options based on state selection)
     $('#stateSelect').on('select2:select select2:unselect', function (evt) {
         var currentSelection = $(this).val();
-        if ( (!currentSelection > 0) || currentSelection === null) {
+        if ((!currentSelection > 0) || currentSelection === null) {
             $('#countySelect').html('');
             $('#countySelect').append('<option value=null>Please select state(s) first </option>');
             return;
         }
         var currentCounties = [];
-        for (var key in fev.data.counties){
-            for(var i=0; i<fev.data.counties[key].length; i++ ){
+        for (var key in fev.data.counties) {
+            for (var i = 0; i < fev.data.counties[key].length; i++) {
 
                 var value = fev.data.counties[key][i].county_name;
                 if (currentSelection.indexOf(key) > -1) {
