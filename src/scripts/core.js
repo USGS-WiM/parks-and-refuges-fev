@@ -3043,7 +3043,9 @@ $(document).ready(function () {
 					table: {
 						body: [[
 							reportSelectionsTable(),
-							[{ image: pdfMapUrl, width: 300, height: 200 }, { image: legendUrl, width: 125, height: 175 }]
+							[{ image: pdfMapUrl, width: 300, height: 200 }],
+							[{ image: legendUrl, width: 125, height: 175 }],
+						
 						],
 					]
 					},
