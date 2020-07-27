@@ -1209,7 +1209,7 @@ $(document).ready(function () {
 			var peakHeaders = [];
 			// Get table values from peak table
 			function getPeaksData() {
-				$('#peakDataTableReg th').each(function (index, item) {
+				/* $('#peakDataTableReg th').each(function (index, item) {
 					peakHeaders[index] = $(item).html();
 				});
 				$('#peakDataTableReg tr').has('td').each(function () {
@@ -1218,7 +1218,8 @@ $(document).ready(function () {
 						arrayItem[peakHeaders[index]] = $(item).html();
 					});
 					peakData.push(arrayItem);
-				});
+				}); */
+				peakData = allPeaks;
 				return peakData;
 			};
 			// Build the table body for pdfMake of peak table information
