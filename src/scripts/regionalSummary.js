@@ -10,6 +10,8 @@ var regionBoundaries;
 var flattenedRegionalPoly;
 var simplifiedRegionalPoly;
 var simpPoly = [];
+var peakSiteSummaries = [];
+var hwmSiteSummaries = [];
 var regionLayerGroup = L.layerGroup();
 var where = "";
 var eventName;
@@ -781,6 +783,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             }
                         }
                     }
+                    // Filtering out duplicates that fall within 2 different buffers
                     allPeaks = allPeaks.filter((v, i, a) => a.findIndex(t => (JSON.stringify(t) === JSON.stringify(v))) === i);
                     // transfer data to the peaks csv data table
                     peaksRegionalCSVData = allPeaks;
@@ -878,7 +881,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     // looping through each park buffer
                     for (var p = 0; p < bufferedPolys.length; p++) {
                         var buffer = bufferedPolys[p];
-
+                        console.log(buffer);
                         // check incase there are any multipolys and convert them to simple polys
                         if (buffer.geometry.type === "MultiPolygon") {
                             var feat;
@@ -976,19 +979,15 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             }
                         }
                     }
+                    // Filtering out duplicates that fall within 2 different buffers
                     allHWMs = allHWMs.filter((v, i, a) => a.findIndex(t => (JSON.stringify(t) === JSON.stringify(v))) === i);
                     // transfer data to the peaks csv data table
                     hwmRegionalCSVData = allHWMs;
-
-
                     //regionaltableData.removeLayer(regionalPeak);
                     hwmsWithinBuffer.addTo(regionalMap);
                 }
             });
         }
-
-        // Filtering out duplicates that fall within 2 different buffers
-
 
         //Transfer data to the csv table variable
 
@@ -1171,6 +1170,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 }
             }); */
 
+            // getting distinct sites based on name
             function filterResults(array) {
                 var result = Array.from(new Set(array.map(s => s.site_name))).map(site_name => {
                     return {
@@ -1183,24 +1183,36 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             distinctPeaksByPark = filterResults(parksWithPeaks);
             distincthwmsByPark = filterResults(parksWithHWMs);
 
+            // calculating summary stats
+            var siteSumPeakVals = [];
+            var siteSumHWMVals = [];
+
             for (var site in distinctPeaksByPark) {
+                siteSumPeakVals.push({
+                    "site_name": distinctPeaksByPark[site].site_name,
+                    data: []
+                });
                 formattedPeaks.push({
                     "site_name": distinctPeaksByPark[site].site_name,
                     data: []
-                })
+                });
                 for (var peak in parksWithPeaks) {
                     if (parksWithPeaks[peak].site_name === distinctPeaksByPark[site].site_name) {
-                        var data = []
                         var peakdata = {
-                            "Site Name": parksWithPeaks[peak].data.site_name,
-                            "Peak Stage (ft)": parksWithPeaks[peak].data.peak_stage,
-                            "County": parksWithPeaks[peak].data.county,
-                            "Height Above Ground (ft)": parksWithPeaks[peak].data.height_above_gnd,
-                            "Latitude (DD)": parksWithPeaks[peak].data.latitude_dd,
-                            "Longitude (DD)": parksWithPeaks[peak].data.longitude_dd,
-                            "site_no": parksWithPeaks[peak].data.site_no,
-                            "waterbody": parksWithPeaks[peak].data.waterbody
+                            "Site Name": parksWithPeaks[peak].data['Site Name'],
+                            "Peak Stage (ft)": parksWithPeaks[peak].data['Peak Stage (ft)'],
+                            "County": parksWithPeaks[peak].data['County'],
+                            "Height Above Ground (ft)": parksWithPeaks[peak].data['Height Above Ground (ft)'],
+                            "Latitude (DD)": parksWithPeaks[peak].data['Latitude (DD)'],
+                            "Longitude (DD)": parksWithPeaks[peak].data['Longitude (DD)'],
+                            "Site Number": parksWithPeaks[peak].data['Site Number'],
+                            "Waterbody": parksWithPeaks[peak].data['Waterbody']
                         };
+
+                        if(parksWithPeaks[peak].data['Peak Stage (ft)'] !== undefined) {
+                            siteSumPeakVals[site].data.push(parksWithPeaks[peak].data['Peak Stage (ft)']);
+                        }
+                        
                         formattedPeaks[site].data.push(peakdata);
                     }
                     if (parksWithPeaks[peak].site_name !== distinctPeaksByPark[site].site_name) {
@@ -1209,6 +1221,10 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 }
             }
             for (var site in distincthwmsByPark) {
+                siteSumHWMVals.push({
+                    "site_name": distinctPeaksByPark[site].site_name,
+                    data: []
+                });
                 formattedHWMS.push({
                     "site_name": distincthwmsByPark[site].site_name,
                     data: []
@@ -1217,14 +1233,18 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     if (parksWithHWMs[hwm].site_name === distincthwmsByPark[site].site_name) {
                         var data = []
                         var hwmdata = {
-                            "Site Name": parksWithHWMs[hwm].data.site_name,
-                            "Elevation (ft)": parksWithHWMs[hwm].data.elev_ft,
-                            "County": parksWithHWMs[hwm].data.county,
-                            "Latitude (DD)": parksWithHWMs[hwm].data.latitude_dd,
-                            "Longitude (DD)": parksWithHWMs[hwm].data.longitude_dd,
-                            "Site Number": parksWithHWMs[hwm].data.site_no,
-                            "Waterbody": parksWithHWMs[hwm].data.waterbody
+                            "Site Name": parksWithHWMs[hwm].data['Site Name'],
+                            "Elevation (ft)": parksWithHWMs[hwm].data['Elevation (ft)'],
+                            "County": parksWithHWMs[hwm].data['County'],
+                            "Latitude (DD)": parksWithHWMs[hwm].data['Latitude (DD)'],
+                            "Longitude (DD)": parksWithHWMs[hwm].data['Longitude (DD)'],
+                            "Site Number": parksWithHWMs[hwm].data['Site Number'],
+                            "Waterbody": parksWithHWMs[hwm].data['Waterbody']
                         };
+
+                        if(parksWithHWMs[hwm].data['Elevation (ft)'] !== undefined) {
+                            siteSumHWMVals[site].data.push(parksWithHWMs[hwm].data['Elevation (ft)']);
+                        }    
                         formattedHWMS[site].data.push(hwmdata);
                     }
                     if (parksWithHWMs[hwm].site_name !== distincthwmsByPark[site].site_name) {
@@ -1232,6 +1252,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     }
                 }
             }
+
+            // getting the summary statistics for each site 
+            getSiteSummaryValues();
 
             //Sort peak and hwm arrays
             peakArrReg = peakArrReg.sort(function (a, b) { return a - b });
@@ -1262,6 +1285,21 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 sum.push(hwmSum);
             }
 
+            function getSiteSummaryValues() {
+                siteSumPeakVals.forEach(function (item, idx) {
+                    var dataArray;
+                    dataArray = item.data.sort(function (a, b) { return a - b });
+                    getSummaryStats(dataArray);
+                    peakSiteSummaries.push({ "Site Name": item.site_name ,"Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                });
+                siteSumHWMVals.forEach(function (item, idx) {
+                    var dataArray;
+                    dataArray = item.data.sort(function (a, b) { return a - b });
+                    getSummaryStats(dataArray);
+                    hwmSiteSummaries.push({ "Site Name": item.site_name ,"Type": "HWM", "Total HWMs": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                });
+            }
+
             //Summary stats to populate regional report summary table
             function getSummaryStats(dataArray) {
                 meanReg = numbers.statistic.mean(dataArray);
@@ -1280,7 +1318,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
                 confIntNinetyLow = confIntNinetyLow.toFixed(3);
             }
-
 
             // Builds the HTML Table
             function buildDataTables(table, data, type) {
@@ -1320,12 +1357,20 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             if (sum.length > 0) {
                 buildDataTables("#summaryDataTable", sum, "Summary Information");
             }
-            if (allPeaks.length > 0) {
+            if (siteSumPeakVals.length > 0) {
+                buildDataTables("#siteSummaryPeakDataTable", peakSiteSummaries, "Site Summary Peak Information");
+            }
+            if (siteSumHWMVals.length > 0) {
+                buildDataTables("#siteSummaryHWMDataTable", hwmSiteSummaries, "Site Summary HWM Information");
+            }
+
+            // Displays tables in modal, no longer desired in the regional report. 
+            /* if (allPeaks.length > 0) {
                 buildDataTables("#peakDataTableReg", allPeaks, "Peak Data");
             }
             if (allHWMs.length > 0) {
                 buildDataTables("#hwmDataTableReg", allHWMs, "High Water Mark Data");
-            }
+            } */
             /*
             if (regionalStreamGages.length >0) {
                 $('#hydrographTableReg').append(<div>Real-time Stream Gages</div>);
@@ -1421,6 +1466,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         sensorTableData = [];
         hwmRegionalCSVData = [];
         peaksRegionalCSVData = [];
+        peakSiteSummaries = [];
+        hwmSiteSummaries = [];
         allHWMs = [];
         allPeaks = [];
 
@@ -1428,8 +1475,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
         // clearing tables
         document.getElementById('summaryDataTable').innerHTML = '';
-        document.getElementById('peakDataTableReg').innerHTML = '';
-        document.getElementById('hwmDataTableReg').innerHTML = '';
+        document.getElementById('siteSummaryPeakDataTable').innerHTML = '';
+        document.getElementById('siteSummaryHWMDataTable').innerHTML = '';
 
         document.querySelector('.progress-bar-fill').style.width = "0%"
         var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
