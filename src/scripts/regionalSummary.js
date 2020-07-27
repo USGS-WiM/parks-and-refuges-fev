@@ -881,7 +881,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     // looping through each park buffer
                     for (var p = 0; p < bufferedPolys.length; p++) {
                         var buffer = bufferedPolys[p];
-                        console.log(buffer);
+
                         // check incase there are any multipolys and convert them to simple polys
                         if (buffer.geometry.type === "MultiPolygon") {
                             var feat;
@@ -1479,17 +1479,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         document.getElementById('siteSummaryHWMDataTable').innerHTML = '';
 
         document.querySelector('.progress-bar-fill').style.width = "0%"
-        var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         clearSelects()
         // adding the basemap back to the map
         setTimeout(() => {
             var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         }, 500);
-
-        
-
-           
-
     });
 
 
