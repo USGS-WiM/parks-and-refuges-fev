@@ -1341,13 +1341,13 @@ $(document).ready(function () {
 			//// Get summary of search selections ////
 			//If there are existing event names, etc. saved from the welcome or filter modal, retrieve the variables from the end of the array
 			if (selectionVarLen > 5) {
-			var landType = $(".select2-selection__choice")[selectionVarLen - 6].title;
-			var regionSubType = $(".select2-selection__choice")[selectionVarLen - 5].title;
-			var event = $(".select2-selection__choice")[selectionVarLen - 3].title;
-			var buffer = $(".select2-selection__choice")[selectionVarLen - 2].title;
+				var landType = $(".select2-selection__choice")[selectionVarLen - 6].title;
+				var regionSubType = $(".select2-selection__choice")[selectionVarLen - 5].title;
+				var event = $(".select2-selection__choice")[selectionVarLen - 3].title;
+				var buffer = $(".select2-selection__choice")[selectionVarLen - 2].title;
 			}
 			//If the map is refreshed, there won't be search info added to .select2, so there will be only 5 items
-			if (selectionVarLen <=5 ) {
+			if (selectionVarLen <= 5) {
 				var landType = $(".select2-selection__choice")[0].title;
 				var regionSubType = $(".select2-selection__choice")[1].title;
 				var event = $(".select2-selection__choice")[2].title;
@@ -1666,6 +1666,75 @@ $(document).ready(function () {
 		}
 		peaksCSVData = peakTableData;
 
+//These variables will have the heights/elevation for each peak/hwm in the buffered area
+		var peakArrReport = [];
+		var hwmArrReport = [];
+
+		//Getting the heights to populate arrays
+		for (peak in identifiedPeaks) {
+			peakArrReport.push(identifiedPeaks[peak].feature.properties.peak_stage);
+		}
+		for (hwm in identifiedMarks) {
+			hwmArrReport.push(identifiedMarks[hwm].feature.properties.elev_ft);
+		}
+
+		//Display no data notice in report if there aren't any peaks or hwms
+		if (peakArrReport == 0 && hwmArrReport == 0) {
+			$('#reportSummaryTitle').children().remove();
+			$('#reportSummaryTitle').append("Summary Information");
+			$('#reportSummaryNoData').append("No summary data for this site.");
+		}
+
+		//Sort peak and hwm arrays
+		peakArrReport = peakArrReport.sort(function (a, b) { return a - b });
+		hwmArrReport = hwmArrReport.sort(function (a, b) { return a - b });
+		var sum = []
+		var peakSum = {};
+		var hwmSum = {};
+
+		//variables for report summary table
+		var meanReport;
+		var minReport;
+		var maxReport;
+		var medianReport;
+		var confIntNinetyHigh;
+		var confIntNinetyLow;
+		var numReport;
+		var standReport;
+
+		//Create peak row in report summary table
+		getReportSummaryStats(peakArrReport);
+		if (peakArrReport.length > 0) {
+			peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+			sum.push(peakSum);
+		}
+
+		//Create hwm row in report summary table
+		getReportSummaryStats(hwmArrReport);
+		if (hwmArrReport.length > 0) {
+			hwmSum = { "Type": "HWM", "Total Sites": numReport, "Max (ft)": maxReport, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+			sum.push(hwmSum);
+		}
+
+		//Summary stats to populate report report summary table
+		function getReportSummaryStats(dataArray) {
+			meanReport = numbers.statistic.mean(dataArray);
+			medianReport = numbers.statistic.median(dataArray);
+			minReport = numbers.basic.min(dataArray);
+			maxReport = numbers.basic.max(dataArray);
+			numReport = dataArray.length;
+			standReport = numbers.statistic.standardDev(dataArray);
+			var confIntTemp = 1.645 * (standReport / Math.sqrt(numReport));
+			confIntNinetyHigh = meanReport + confIntTemp;
+			confIntNinetyLow = meanReport - confIntTemp;
+
+			//Round Results
+			meanReport = meanReport.toFixed(3);
+			standReport = standReport.toFixed(3);
+			confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
+			confIntNinetyLow = confIntNinetyLow.toFixed(3);
+		}
+
 		// Builds the HTML Table for peaks
 		function buildHtmlTable() {
 			//Empty text from previous report, if it was run
@@ -1690,6 +1759,39 @@ $(document).ready(function () {
 			}
 		}
 
+		// Builds the HTML Table
+		function buildRegionalDataTables(title, table, data, type) {
+			$(title).append(type);
+			var columns = addAllDataColumnHeaders(table, data);
+
+			for (var i = 0; i < data.length; i++) {
+				var row$ = $('<tr/>');
+				for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+					var cellValue = data[i][columns[colIndex]];
+
+					if (cellValue == null) { cellValue = ""; }
+
+					row$.append($('<td/>').html(cellValue));
+				}
+				$(table).append(row$);
+			}
+		}
+		function addAllDataColumnHeaders(table, data) {
+			var columnSet = [];
+			var headerTr$ = $('<tr/>');
+
+			for (var i = 0; i < data.length; i++) {
+				var rowHash = data[i];
+				for (var key in rowHash) {
+					if ($.inArray(key, columnSet) == -1) {
+						columnSet.push(key);
+						headerTr$.append($('<th/>').html(key));
+					}
+				}
+			}
+			$(table).append(headerTr$);
+			return columnSet;
+		}
 		function addAllColumnHeaders(peakTableData) {
 			var columnSet = [];
 			var headerTr$ = $('<tr/>');
@@ -1707,6 +1809,19 @@ $(document).ready(function () {
 			return columnSet;
 		}
 
+		//If the report summary has data, display title and build table
+		if (sum.length > 0) {
+			$('#reportSummaryTitle').children().remove();
+			buildRegionalDataTables('#reportSummaryTitle', "#reportSummaryDataTable", sum, "Summary Information");
+		}
+
+		//If report summary does not have data, make sure old table does not display 
+		//(if the map refresh on close is still used, that should take care of it too)
+		if (sum.length == 0) {
+			$('#reportSummaryTitle').children().remove();
+		}
+
+
 		if (peakTableData.length > 0) {
 			buildHtmlTable();
 		} else {
@@ -1717,6 +1832,7 @@ $(document).ready(function () {
 				$("#peakTable").append("<p>" + "There are no Peaks at this Site." + "</p>");
 			}, 3000);
 		}
+
 
 		//setting up HWM data for table
 		var hwmTableData = [];
@@ -2966,6 +3082,46 @@ $(document).ready(function () {
 	}
 
 	function printReport() {
+		var summaryRows = [];
+		var sumHeaders = [];
+		function reportSummaryInfo() {
+			$('#reportSummaryDataTable th').each(function (index, item) {
+				sumHeaders[index] = $(item).html();
+			});
+			$('#reportSummaryDataTable tr').has('td').each(function () {
+				var arrayItem = {};
+				$('td', $(this)).each(function (index, item) {
+					arrayItem[sumHeaders[index]] = $(item).html();
+				});
+				summaryRows.push(arrayItem);
+			});
+			return summaryRows;
+		};
+		// Build the table body for pdfMake of summary information
+		function buildSummaryBody(data, columns) {
+			var body = [];
+			body.push(columns);
+			data.forEach(function (row) {
+				var dataRow = [];
+				columns.forEach(function (column) {
+					dataRow.push(row[column].toString());
+				})
+				body.push(dataRow);
+			});
+			return body;
+		};
+		function summaryTable(data, columns) {
+			return {
+				table: {
+					headerRows: 1,
+					widths: '*',
+					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
+				},
+				layout: 'lightHorizontalLines',
+				style: 'smaller',
+				margin: [0, 0, 0, 15]
+			};
+		};
 		//// Get date and time of print click //// 
 		var date = new Date();
 		// For today's date
@@ -3046,6 +3202,8 @@ $(document).ready(function () {
 					layout: 'noBorders',
 					margin: [0, 0, 0, 15]
 				},
+				{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 5] },
+				summaryTable(reportSummaryInfo()),
 				{ text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 				peakTable(bodyData()),
 				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 5] },
