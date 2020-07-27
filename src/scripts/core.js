@@ -1666,15 +1666,23 @@ $(document).ready(function () {
 		}
 		peaksCSVData = peakTableData;
 
-
+//These variables will have the heights/elevation for each peak/hwm in the buffered area
 		var peakArrReport = [];
 		var hwmArrReport = [];
 
+		//Getting the heights to populate arrays
 		for (peak in identifiedPeaks) {
 			peakArrReport.push(identifiedPeaks[peak].feature.properties.peak_stage);
 		}
 		for (hwm in identifiedMarks) {
 			hwmArrReport.push(identifiedMarks[hwm].feature.properties.elev_ft);
+		}
+
+		//Display no data notice in report if there aren't any peaks or hwms
+		if (peakArrReport == 0 && hwmArrReport == 0) {
+			$('#reportSummaryTitle').children().remove();
+			$('#reportSummaryTitle').append("Summary Information");
+			$('#reportSummaryNoData').append("No summary data for this site.");
 		}
 
 		//Sort peak and hwm arrays
@@ -1684,7 +1692,7 @@ $(document).ready(function () {
 		var peakSum = {};
 		var hwmSum = {};
 
-		//variables for regional summary table
+		//variables for report summary table
 		var meanReport;
 		var minReport;
 		var maxReport;
@@ -1694,22 +1702,22 @@ $(document).ready(function () {
 		var numReport;
 		var standReport;
 
-		//Create peak row in regional summary table
-		getSummaryStats(peakArrReport);
+		//Create peak row in report summary table
+		getReportSummaryStats(peakArrReport);
 		if (peakArrReport.length > 0) {
 			peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 			sum.push(peakSum);
 		}
 
-		//Create hwm row in regional summary table
-		getSummaryStats(hwmArrReport);
+		//Create hwm row in report summary table
+		getReportSummaryStats(hwmArrReport);
 		if (hwmArrReport.length > 0) {
 			hwmSum = { "Type": "HWM", "Total Sites": numReport, "Max (ft)": maxReport, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 			sum.push(hwmSum);
 		}
 
-		//Summary stats to populate regional report summary table
-		function getSummaryStats(dataArray) {
+		//Summary stats to populate report report summary table
+		function getReportSummaryStats(dataArray) {
 			meanReport = numbers.statistic.mean(dataArray);
 			medianReport = numbers.statistic.median(dataArray);
 			minReport = numbers.basic.min(dataArray);
@@ -1752,7 +1760,7 @@ $(document).ready(function () {
 		}
 
 		// Builds the HTML Table
-		function buildDataTables(title, table, data, type) {
+		function buildRegionalDataTables(title, table, data, type) {
 			$(title).append(type);
 			var columns = addAllDataColumnHeaders(table, data);
 
@@ -1801,10 +1809,14 @@ $(document).ready(function () {
 			return columnSet;
 		}
 
+		//If the report summary has data, display title and build table
 		if (sum.length > 0) {
 			$('#reportSummaryTitle').children().remove();
-			buildDataTables('#reportSummaryTitle', "#reportSummaryDataTable", sum, "Summary Information");
+			buildRegionalDataTables('#reportSummaryTitle', "#reportSummaryDataTable", sum, "Summary Information");
 		}
+
+		//If report summary does not have data, make sure old table does not display 
+		//(if the map refresh on close is still used, that should take care of it too)
 		if (sum.length == 0) {
 			$('#reportSummaryTitle').children().remove();
 		}
