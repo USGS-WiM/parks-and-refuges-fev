@@ -553,9 +553,6 @@ $(document).ready(function () {
 
 	$('#print').click(function () {
 		printReport();
-		setTimeout(() => {
-			location.reload();
-		}, 500);
 	});
 
 	$('#printClose').click(function () {
@@ -1112,6 +1109,8 @@ $(document).ready(function () {
 
 			//// Get Summary Information Table data to put into pdfMake table ////
 			var summaryRows = [];
+			var peakSummaryRows = [];
+			var hwmSummaryRows = [];
 			var sumHeaders = [];
 			// Get table values from summary information table
 			function summaryInfo() {
@@ -1126,6 +1125,32 @@ $(document).ready(function () {
 					summaryRows.push(arrayItem);
 				});
 				return summaryRows;
+			};
+			function summaryPeakInfo() {
+				$('#siteSummaryPeakDataTable th').each(function (index, item) {
+					sumHeaders[index] = $(item).html();
+				});
+				$('#siteSummaryPeakDataTable tr').has('td').each(function () {
+					var arrayItem = {};
+					$('td', $(this)).each(function (index, item) {
+						arrayItem[sumHeaders[index]] = $(item).html();
+					});
+					peakSummaryRows.push(arrayItem);
+				});
+				return peakSummaryRows;
+			};
+			function summaryHWMInfo() {
+				$('#siteSummaryHWMDataTable th').each(function (index, item) {
+					sumHeaders[index] = $(item).html();
+				});
+				$('#siteSummaryHWMDataTable tr').has('td').each(function () {
+					var arrayItem = {};
+					$('td', $(this)).each(function (index, item) {
+						arrayItem[sumHeaders[index]] = $(item).html();
+					});
+					hwmSummaryRows.push(arrayItem);
+				});
+				return hwmSummaryRows;
 			};
 			// Build the table body for pdfMake of summary information
 			function buildSummaryBody(data, columns) {
@@ -1147,6 +1172,30 @@ $(document).ready(function () {
 						headerRows: 1,
 						widths: '*',
 						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
+					},
+					layout: 'lightHorizontalLines',
+					style: 'smaller',
+					margin: [0, 0, 0, 15]
+				};
+			};
+			function summaryPeakTable(data, columns) {
+				return {
+					table: {
+						headerRows: 1,
+						widths: 'auto',
+						body: buildSummaryBody(data, ['Site Name', 'Type', 'Total Peaks', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
+					},
+					layout: 'lightHorizontalLines',
+					style: 'smaller',
+					margin: [0, 0, 0, 15]
+				};
+			};
+			function summaryHWMTable(data, columns) {
+				return {
+					table: {
+						headerRows: 1,
+						widths: 'auto',
+						body: buildSummaryBody(data, ['Site Name', 'Type', 'Total HWMs', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
@@ -1524,6 +1573,10 @@ $(document).ready(function () {
 						//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
 						{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 5] },
 						summaryTable(summaryInfo()),
+						{ text: 'Site Summary Peak Information', style: 'subHeader', margin: [0, 0, 0, 5] },
+						summaryPeakTable(summaryPeakInfo()),
+						{ text: 'Site Summary HWM Information', style: 'subHeader', margin: [0, 0, 0, 5] },
+						summaryHWMTable(summaryHWMInfo()),
 						{ text: 'Peak Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 						peaksTable(getPeaksData()),
@@ -3202,11 +3255,11 @@ $(document).ready(function () {
 					layout: 'noBorders',
 					margin: [0, 0, 0, 15]
 				},
-				{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 5] },
+				{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 15] },
 				summaryTable(reportSummaryInfo()),
 				{ text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 				peakTable(bodyData()),
-				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 5] },
+				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 15] },
 				hwmTable(),
 			],
 			styles: {
