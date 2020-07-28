@@ -1561,6 +1561,11 @@ input[type='checkbox']{
     width: 60%;
 }
 
+.siteGraphDisplay {
+    float: left;
+    margin: 20px;
+}
+
 @media (max-width: 768px) {
     #imageModalDialog {
       width: 100%;

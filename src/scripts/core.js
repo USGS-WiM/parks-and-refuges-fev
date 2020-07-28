@@ -1671,7 +1671,7 @@ $(document).ready(function () {
 						if (data[i].filetype_id === 13) {
 							containsHydrograph = true;
 							hydrographURL = "https://stn.wim.usgs.gov/STNServices/Files/" + data[i].file_id + "/Item";
-							$('#stgraphs').append('<img class="hydroImage" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeImage()" src=' + hydrographURL + '\>');
+							$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
 							//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
 							hydroUrls.push(hydrographURL);
 						}
@@ -3780,4 +3780,8 @@ function enlargeImage() {
 	$('.imagepreview').attr('src', $('.hydroImage').attr('src'));
 	$('#imagemodal').modal('show');
 }
-
+function enlargeHydroImage(event) {
+	var image = "." + event.currentTarget.className;
+	$('.imagepreview').attr('src', $(image).attr('src'));
+	$('#imagemodal').modal('show');
+}
