@@ -565,12 +565,6 @@ $(document).ready(function () {
 		location.reload()
 	});
 
-	function downloadCanvas(link, canvasId, filename) {
-		link.href = $('.hydroImage').src;
-		link.download = "filename";
-	}
-
-
 	// $('#printRegionalReport').click(function () {
 	// 	setTimeout(() => {
 	// 		printRegionalReport();
