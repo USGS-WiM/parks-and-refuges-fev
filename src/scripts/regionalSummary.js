@@ -341,7 +341,7 @@ $(document).ready(function () {
                     }
                 }
             };
-        }, 3000);
+        }, 5000);
 
 
 
@@ -881,7 +881,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     // looping through each park buffer
                     for (var p = 0; p < bufferedPolys.length; p++) {
                         var buffer = bufferedPolys[p];
-                        console.log(buffer);
+
                         // check incase there are any multipolys and convert them to simple polys
                         if (buffer.geometry.type === "MultiPolygon") {
                             var feat;
@@ -1222,7 +1222,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             }
             for (var site in distincthwmsByPark) {
                 siteSumHWMVals.push({
-                    "site_name": distinctPeaksByPark[site].site_name,
+                    "site_name": distincthwmsByPark[site].site_name,
                     data: []
                 });
                 formattedHWMS.push({
@@ -1241,7 +1241,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             "Site Number": parksWithHWMs[hwm].data['Site Number'],
                             "Waterbody": parksWithHWMs[hwm].data['Waterbody']
                         };
-
+                        
                         if(parksWithHWMs[hwm].data['Elevation (ft)'] !== undefined) {
                             siteSumHWMVals[site].data.push(parksWithHWMs[hwm].data['Elevation (ft)']);
                         }    
@@ -1290,13 +1290,17 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     var dataArray;
                     dataArray = item.data.sort(function (a, b) { return a - b });
                     getSummaryStats(dataArray);
-                    peakSiteSummaries.push({ "Site Name": item.site_name ,"Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                    if (confIntNinetyHigh !== "NaN") {
+                        peakSiteSummaries.push({ "Site Name": item.site_name ,"Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                    }       
                 });
                 siteSumHWMVals.forEach(function (item, idx) {
                     var dataArray;
                     dataArray = item.data.sort(function (a, b) { return a - b });
                     getSummaryStats(dataArray);
-                    hwmSiteSummaries.push({ "Site Name": item.site_name ,"Type": "HWM", "Total HWMs": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                    if (confIntNinetyHigh !== "NaN") {
+                        hwmSiteSummaries.push({ "Site Name": item.site_name ,"Type": "HWM", "Total HWMs": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                    }          
                 });
             }
 
@@ -1479,17 +1483,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         document.getElementById('siteSummaryHWMDataTable').innerHTML = '';
 
         document.querySelector('.progress-bar-fill').style.width = "0%"
-        var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         clearSelects()
         // adding the basemap back to the map
         setTimeout(() => {
             var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         }, 500);
-
-        
-
-           
-
     });
 
 

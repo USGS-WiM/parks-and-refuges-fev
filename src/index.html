@@ -330,7 +330,7 @@
     <!-- end Geosearch Modal -->
 
     <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" data-backdrop="static" aria-hidden="true">
-        <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important">
+        <div class="modal-dialog" style="width: 1100px; overflow-y: initial !important">
             <div class="modal-content">
                 <div class="modal-header">
                     <button id="printCloseTop" type="button" class="close" data-dismiss="modal"
@@ -345,8 +345,6 @@
                         <p id='loadingMessage'>loading image...</p>
                     </div>
                     <div id="legendImage" class="report-inline-block"></div>
-                    <div id="gageGraphs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
-                    <div id="rtgraphs"></div>
                     <br>
                     <div style='text-align: center; font-weight:bold' id='reportSummaryTitle'></div>
                     <br><div style='text-align: center;' id='reportSummaryNoData'></div>
@@ -357,9 +355,14 @@
                     <div class='reportInfo' id="peakTable">
                         <table class="table" id="peakDataTable"></table>
                     </div>
+                    <p style="font-weight: bold;">Storm Tide Hydrographs</p>
+                    <div id="hydrographs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
+                    <div id="graphSite"><div id="stgraphs"></div></div>
                     <div class='reportInfo' id="hwmTable" style="width: 900px; ">
                         <table class="table" id="hwmDataTable"></table>
                     </div>
+                    <div id="gageGraphs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
+                    <div id="rtgraphs"></div>
                     <!-- <div id="reviewMapContainer">
                     <div id="reviewMap">
                     </div>
@@ -382,7 +385,7 @@
     </div>
 
     <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true" role="dialog">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg" style="width: 1100px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
@@ -504,7 +507,7 @@
                 <div class="modal-body">
                     <button type="button" class="close" data-dismiss="modal"><span
                             aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <img src="" class="imagepreview" style="width: 100%;">
+                    <img id="hImage" src="" class="imagepreview" style="width: 100%;">
                 </div>
             </div>
         </div>

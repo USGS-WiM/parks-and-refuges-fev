@@ -15,6 +15,8 @@ var bbox;
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var identifiedMarks = [];
+var identifiedST = [];
+var hydroUrls = [];
 var identifiedUSGSrtGage = [];
 var buffer;
 var selectedEvent;
@@ -172,7 +174,7 @@ var fev = fev || {
 		{ fieldName: 'Description', colName: "Description" },
 		{ fieldName: 'State', colName: "State" },
 		{ fieldName: 'County', colName: "County" },
-		{ fieldName: 'Peak Stage', colName: "Peak Stage (ft)" },
+		{ fieldName: 'Peak Stage (ft)', colName: "Peak Stage (ft)" },
 		{ fieldName: 'Peak Estimated', colName: "Peak Estimated" },
 	],
 
@@ -562,8 +564,6 @@ $(document).ready(function () {
 	$('#printCloseTop').click(function () {
 		location.reload()
 	});
-
-
 
 	// $('#printRegionalReport').click(function () {
 	// 	setTimeout(() => {
@@ -1639,6 +1639,50 @@ $(document).ready(function () {
 	var legendUrl;
 
 	$('#printNav').click(function () {
+		var peaksArray = [];
+		var stArray = [];
+		hydroUrls = [];
+
+		identifiedPeaks.forEach(function (p) {
+			peaksArray.push(p.feature.properties);
+		});
+
+		console.log(peaksArray);
+
+		identifiedST.forEach(function (st) {
+			stArray.push(st.feature.properties);
+		});
+
+		let result = peaksArray.map(a => ({ ...stArray.find(p => a.site_no === p.site_no), ...a }));
+		result.forEach(function (st) {
+			var instrumentID = st.instrument_id;
+			var url = "https://stn.wim.usgs.gov/STNServices/Instruments/" + instrumentID + "/Files.json";
+			var data;
+
+			$.ajax({
+				url: url,
+				dataType: 'json',
+				data: data,
+				headers: { 'Accept': '*/*' },
+				success: function (data) {
+					var hydrographURL = '';
+					var containsHydrograph = false;
+					for (var i = 0; i < data.length; i++) {
+						if (data[i].filetype_id === 13) {
+							containsHydrograph = true;
+							hydrographURL = "https://stn.wim.usgs.gov/STNServices/Files/" + data[i].file_id + "/Item";
+							$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
+							//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
+							hydroUrls.push(hydrographURL);
+						}
+					}
+				},
+				error: function (error) {
+					console.log('Error processing the JSON. The error is:' + error);
+				}
+			});
+		});
+
 		//Add filter information to top of report
 		if (currentParkOrRefuge != "") {
 			$('#reportInfo').append("<div style='margin-left:15px; text-align: center; font-size: large;'>" + selectedEvent + "<br> </div><div style='text-align: center'>" + currentParkOrRefuge + ", " + selectedBuffer + " buffer" + "<br>" + "<div>");
@@ -1720,7 +1764,7 @@ $(document).ready(function () {
 		}
 		peaksCSVData = peakTableData;
 
-//These variables will have the heights/elevation for each peak/hwm in the buffered area
+		//These variables will have the heights/elevation for each peak/hwm in the buffered area
 		var peakArrReport = [];
 		var hwmArrReport = [];
 
@@ -2698,6 +2742,14 @@ $(document).ready(function () {
 					}
 				}
 
+				for (var i in stormtide._layers) {
+					var cords = ([stormtide._layers[i]._latlng.lng, stormtide._layers[i]._latlng.lat]);
+					var isItInside = turf.booleanPointInPolygon(cords, buffer);
+					if (isItInside) {
+						identifiedST.push(stormtide._layers[i])
+					}
+				}
+
 
 				if (runningFilter == true) {
 					//if the event is changed in the filters modal, the checkbox/legend symbols must be reset
@@ -2975,6 +3027,26 @@ $(document).ready(function () {
 		};
 		return body;
 	};
+
+	// code for converting hydroImages to dataurls
+	function getBase64Image(image) {
+		var canvas = document.createElement("canvas");
+		var ctx = canvas.getContext("2d");
+
+		make_base();
+
+		function make_base() {
+			var base_image = new Image();
+			base_image.src = 'https://stn.wim.usgs.gov/STNServices/Files/118901/Item';
+			base_image.onload = function () {
+				ctx.drawImage(base_image, 0, 0);
+			}
+		}
+		var jpegUrl = canvas.toDataURL("image/jpeg");
+		var pngUrl = canvas.toDataURL("image/png");
+		return pngUrl;
+	}
+
 	//Put table body within pdfMake formatted table
 	function peakTable(data, columns) {
 		if (identifiedPeaks.length === 0) {
@@ -3136,6 +3208,7 @@ $(document).ready(function () {
 	}
 
 	function printReport() {
+		//var hydro = getBase64Image();
 		var summaryRows = [];
 		var sumHeaders = [];
 		function reportSummaryInfo() {
@@ -3707,5 +3780,8 @@ function enlargeImage() {
 	$('.imagepreview').attr('src', $('.hydroImage').attr('src'));
 	$('#imagemodal').modal('show');
 }
-
-
+function enlargeHydroImage(event) {
+	var image = "." + event.currentTarget.className;
+	$('.imagepreview').attr('src', $(image).attr('src'));
+	$('#imagemodal').modal('show');
+}
