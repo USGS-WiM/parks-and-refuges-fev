@@ -125,10 +125,6 @@ $(document).ready(function () {
 
     });
 
-    //Attempts at autopoulating selection
-    //$.fn.select2.defaults.set("typeSelectwelcome", "parks");
-    //$.fn.select2.defaults.set($('.typeSelectwelcome'), "parks");
-
     // Lands type selector
     $('.typeSelectFilter').select2({
         placeholder: 'Select a type',
