@@ -1291,7 +1291,10 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     dataArray = item.data.sort(function (a, b) { return a - b });
                     getSummaryStats(dataArray);
                     if (confIntNinetyHigh !== "NaN") {
-                        peakSiteSummaries.push({ "Site Name": item.site_name ,"Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                        var medReg = medianReg.toFixed(3);
+                        // var mean = meanReg.toFixed(3); -- is string so unnecesary 
+                        //var sd = standReg.toFixed(3); -- is string so unnecesary 
+                        peakSiteSummaries.push({ "Site Name": item.site_name ,"Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
                     }       
                 });
                 siteSumHWMVals.forEach(function (item, idx) {
@@ -1299,7 +1302,10 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     dataArray = item.data.sort(function (a, b) { return a - b });
                     getSummaryStats(dataArray);
                     if (confIntNinetyHigh !== "NaN") {
-                        hwmSiteSummaries.push({ "Site Name": item.site_name ,"Type": "HWM", "Total HWMs": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                        // var mean = meanReg.toFixed(3); -- is string so unnecesary 
+                        //var sd = standReg.toFixed(3); -- is string so unnecesary 
+                        var medReg = medianReg.toFixed(3);
+                        hwmSiteSummaries.push({ "Site Name": item.site_name ,"Type": "HWM", "Total HWMs": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
                     }          
                 });
             }
