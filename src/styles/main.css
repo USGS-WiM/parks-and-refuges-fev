@@ -941,6 +941,22 @@ a.lgi-zoom:hover {
 
 /*Additions - Samuels 10/27*/
 /*Sidebar*/
+.site-name{
+    color: #6F7192;
+    font-size: 12.5pt;
+    box-sizing: border-box;
+    padding: 12px 0 0 0;
+}
+.site-name small{
+    font-size: 9pt;
+    box-sizing: border-box;
+    color: #6F7192;
+    padding: 0 0 7px 0;
+    display: block;
+    text-transform: uppercase;
+    font-weight: bolder;
+    opacity: 0.5;
+}
 .event-name{
     color: #6F7192;
     font-size: 12.5pt;
