@@ -467,6 +467,14 @@ body {
     padding:2px;
 }
 
+#btnChooseRegion {
+    background-color: #345EBD;
+    color:white; 
+}
+#btnChooseSite {
+    background-color: #345EBD;
+    color:white; 
+}
 #sidebar .filtersBtn {
     border: none;
     outline: none;
@@ -1258,6 +1266,7 @@ a.lgi-zoom:hover {
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
+    color: white;
     background-color: #345EBD;
     border: 1px solid transparent;
     white-space: nowrap;
@@ -1275,6 +1284,7 @@ a.lgi-zoom:hover {
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
+    color: white;
     background-color: #345EBD;
     border: 1px solid transparent;
     white-space: nowrap;

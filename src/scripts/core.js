@@ -23,7 +23,6 @@ var buffer;
 var selectedEvent;
 var selectedBuffer;
 var welcomeBuffer;
-var hasWelcomeModalRun = false;
 var welcomeSite = "";
 var fev = fev || {
 	data: {
@@ -493,40 +492,19 @@ $(document).ready(function () {
 		$('#updateFiltersModal').modal('show');
 		$('#welcomeModal').modal('hide');
 	});
+	$('#btnChooseRegion').click(function() {
+		$('#regionalModal').modal('show');
+	})
 
-	//welcomeModal: set search for 'Go' click 
-	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_welcomeModal', '#typeSelect_welcomeModal', '#siteSelect_welcomeModal', false);
-	//updateFiltersModal MODAL: set search for 'Go' click 
-	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true);
-	submitSearch($('#btnActiveSiteReport'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true);
+	//updateFiltersModal: set search for 'Explore Map' click 
+	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true, true);
+	//updateFiltersModal: set search for 'Generate Report' click 
+	submitSearch($('#btnActiveSiteReport'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true, false);
 
-	//set search for 'Go' click
-	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary, typeSelect, siteSelect, runningFilter) {
+	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary, typeSelect, siteSelect, runningFilter, exploreMap) {
 
 		submitButton.click(function () {
 			siteSelected = true;
-			//$('#largeSiteNameDisplay').html($('#siteSelect_filterModal').val()[0]);
-			//if the welcome modal has run, set to true
-			//get parameters to populate filters modal
-			if (runningFilter == false) {
-				hasWelcomeModalRun = true;
-				welcomeSite = $('#siteSelect_welcomeModal').select2('data')[0].id;
-				if (document.getElementById('tenKm').checked == true) {
-					welcomeBuffer = 'tenKmFilter';
-				}
-				if (document.getElementById('twentyKm').checked == true) {
-					welcomeBuffer = 'twentyKmFilter';
-				}
-				if (document.getElementById('thirtyKm').checked == true) {
-					welcomeBuffer = 'thirtyKmFilter';
-				}
-				if (document.getElementById('fiftyKm').checked == true) {
-					welcomeBuffer = 'fiftyKmFilter';
-				}
-			}
-			if (runningFilter == true) {
-				hasWelcomeModalRun = false;
-			}
 
 			//check if an event has been selected
 			if ((($(evtSelect_Modal_Primary).val() !== null) && ($(typeSelect).val() !== null) && ($(siteSelect).val() !== null))) {
@@ -586,13 +564,13 @@ $(document).ready(function () {
 				USGSrtGages.addTo(map);
 			}
 
+			//Give the map elements time to load before creating site report
+			if (exploreMap == false) {
 			setTimeout(() => {
-				if (submitButton != $('#btnActiveSiteReport')) {
-					console.log('the button has been clicked');
 					$('#printModal').modal('show');
 					generateSiteReport();
-				}
 			}, 10000);
+		}
 		
 		});
 	}
@@ -2308,30 +2286,6 @@ $(document).ready(function () {
 		$('#updateFiltersModal').modal('show');
 	}
 	$('#btnChangeFilters').click(function () {
-
-		//If it's the first time using the filter modal, and the page has not refreshed since running the welcome modal, 
-		//get welcome modal selections
-		if (hasWelcomeModalRun == true) {
-			//Get the lands type from the welcome modal
-			$('#typeSelect_filterModal').val($('#typeSelect_welcomeModal').select2('data')[0].id);
-			$('#typeSelect_filterModal').trigger('change');
-
-			//get event from welcome modal
-			$('#evtSelect_updateFiltersModal').val($('#evtSelect_welcomeModal').select2('data')[0].id);
-			$('#evtSelect_updateFiltersModal').trigger('change');
-
-			//because the site options change depending on lands type selection, a timeout is needed to get to the correct list of sites
-			setTimeout(() => {
-				$('#siteSelect_filterModal').val(welcomeSite);
-				$('#siteSelect_filterModal').trigger('change');
-			}, 800);
-
-			//Set buffer distance
-			document.getElementById(welcomeBuffer).checked = true;
-		}
-
-
-		//parks.clearLayers();
 		//update the event select within the filters modal to reflect current event
 		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
