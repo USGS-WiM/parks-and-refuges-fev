@@ -499,7 +499,7 @@ $(document).ready(function () {
 
 		submitButton.click(function () {
 			siteSelected = true;
-			$('#largeSiteNameDisplay').html($('#siteSelect_filterModal').val()[0]);
+			//$('#largeSiteNameDisplay').html($('#siteSelect_filterModal').val()[0]);
 			//if the welcome modal has run, set to true
 			//get parameters to populate filters modal
 			if (runningFilter == false) {
