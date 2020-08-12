@@ -489,10 +489,16 @@ $(document).ready(function () {
 		todayHighlight: true
 	});
 
+	$('#btnChooseSite').click(function() {
+		$('#updateFiltersModal').modal('show');
+		$('#welcomeModal').modal('hide');
+	});
+
 	//welcomeModal: set search for 'Go' click 
 	submitSearch($('#btnSubmitEvent'), '#evtSelect_welcomeModal', '#welcomeModal', '#evtSelect_welcomeModal', '#typeSelect_welcomeModal', '#siteSelect_welcomeModal', false);
 	//updateFiltersModal MODAL: set search for 'Go' click 
 	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true);
+	submitSearch($('#btnActiveSiteReport'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true);
 
 	//set search for 'Go' click
 	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary, typeSelect, siteSelect, runningFilter) {
@@ -579,6 +585,15 @@ $(document).ready(function () {
 				queryNWISrtGages(bbox);
 				USGSrtGages.addTo(map);
 			}
+
+			setTimeout(() => {
+				if (submitButton != $('#btnActiveSiteReport')) {
+					console.log('the button has been clicked');
+					$('#printModal').modal('show');
+					generateSiteReport();
+				}
+			}, 10000);
+		
 		});
 	}
 
@@ -1669,7 +1684,7 @@ $(document).ready(function () {
 	var pdfMapUrl;
 	var legendUrl;
 
-	$('#printNav').click(function () {
+	function generateSiteReport() {
 		map.fitBounds(bufferPoly.getBounds());
 
 		setTimeout(() => {
@@ -2258,7 +2273,7 @@ $(document).ready(function () {
 			}
 		}, 1000);
 
-	});
+	};
 
 	/* $('#printModal').bind('load',  function(){
 		reviewMap = L.map('reviewMap').setView([39.833333, -98.583333], 4);
@@ -2382,44 +2397,7 @@ $(document).ready(function () {
 		queryNWISRaingraph();
 		//clickPeakLabels();
 	}
-	// setting checked values for Welcome Modal buffer radio buttons
-	document.getElementById('tenKm').checked = false;
-	document.getElementById('twentyKm').checked = true;
-	selectedBuffer = "20km";
-	document.getElementById('thirtyKm').checked = false;
-	document.getElementById('fiftyKm').checked = false;
-	// 10 kilometers
-	$('#tenKm').click(function () {
-		document.getElementById('twentyKm').checked = false;
-		document.getElementById('thirtyKm').checked = false;
-		document.getElementById('fiftyKm').checked = false;
-		fev.vars.currentBufferSelection = 10;
-		selectedBuffer = "10km";
-	});
-	// 20 kilometers
-	$('#twentyKm').click(function () {
-		document.getElementById('tenKm').checked = false;
-		document.getElementById('thirtyKm').checked = false;
-		document.getElementById('fiftyKm').checked = false;
-		fev.vars.currentBufferSelection = 20;
-		selectedBuffer = "20km";
-	});
-	// 30 kilometers
-	$('#thirtyKm').click(function () {
-		document.getElementById('twentyKm').checked = false;
-		document.getElementById('tenKm').checked = false;
-		document.getElementById('fiftyKm').checked = false;
-		fev.vars.currentBufferSelection = 30;
-		selectedBuffer = "30km";
-	});
-	// 50 kilometers
-	$('#fiftyKm').click(function () {
-		document.getElementById('tenKm').checked = false;
-		document.getElementById('twentyKm').checked = false;
-		document.getElementById('tenKm').checked = false;
-		fev.vars.currentBufferSelection = 50;
-		selectedBuffer = "50km";
-	});
+	
 
 	// setting checked values for Filter Modal buffer radio buttons
 	document.getElementById('tenKmFilter').checked = false;
