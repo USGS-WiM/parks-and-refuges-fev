@@ -1129,7 +1129,7 @@ $(document).ready(function () {
 		};
 
 		// If there is no data, then printing will be disabled. 
-		if ((allPeaks.length === 0) && (allHWMs.length === 0)) {
+		if ((allPeaksEOne.length === 0) && (allHWMEOne.length === 0)) {
 			document.getElementById("printRegionalReport").disabled = true;
 		} else {
 			document.getElementById("printRegionalReport").disabled = false;
@@ -1145,10 +1145,10 @@ $(document).ready(function () {
 			var sumHeaders = [];
 			// Get table values from summary information table
 			function summaryInfo() {
-				$('#summaryDataTable th').each(function (index, item) {
+				$('#summaryDataTableEOne th').each(function (index, item) {
 					sumHeaders[index] = $(item).html();
 				});
-				$('#summaryDataTable tr').has('td').each(function () {
+				$('#summaryDataTableEOne tr').has('td').each(function () {
 					var arrayItem = {};
 					$('td', $(this)).each(function (index, item) {
 						arrayItem[sumHeaders[index]] = $(item).html();
@@ -1158,10 +1158,10 @@ $(document).ready(function () {
 				return summaryRows;
 			};
 			function summaryPeakInfo() {
-				$('#siteSummaryPeakDataTable th').each(function (index, item) {
+				$('#siteSummaryPeakDataTableEOne th').each(function (index, item) {
 					sumHeaders[index] = $(item).html();
 				});
-				$('#siteSummaryPeakDataTable tr').has('td').each(function () {
+				$('#siteSummaryPeakDataTableEOne tr').has('td').each(function () {
 					var arrayItem = {};
 					$('td', $(this)).each(function (index, item) {
 						arrayItem[sumHeaders[index]] = $(item).html();
@@ -1250,13 +1250,13 @@ $(document).ready(function () {
 					});
 					peakData.push(arrayItem);
 				}); */
-				peakData = allPeaks;
+				peakData = allPeaksEOne;
 				return peakData;
 			};
 			// Build the table body for pdfMake of peak table information
 			function buildPeaksBody(data, columns) {
 				var body = [];
-				if (allPeaks.length === 0) {
+				if (allPeaksEOne.length === 0) {
 					body.push([
 						{ text: 'There is no Peak data based on selections.' }
 					])
@@ -1274,7 +1274,7 @@ $(document).ready(function () {
 			};
 			// Insert table body into pdfMake formatted table
 			function peaksTable(data, columns) {
-				if (allPeaks.length === 0) {
+				if (allPeaksEOne.length === 0) {
 					return {
 						table: {
 							body: buildPeaksBody(data)
@@ -1300,7 +1300,7 @@ $(document).ready(function () {
 
 			//// Get HWM Table information data to put into pdfMake /////
 			var hwmData;
-			hwmData = allHWMs;
+			hwmData = allHWMEOne;
 			// Data has some undefined and null values, this replaces those values with empty string/no value
 			for (var obj of hwmData) {
 				if (typeof obj !== 'object') continue;
@@ -1315,7 +1315,7 @@ $(document).ready(function () {
 			// Build the table body for pdfMake of hwm table information
 			function buildHwmsTable() {
 				var body = [];
-				if (allHWMs.length === 0) {
+				if (allHWMEOne.length === 0) {
 					body.push([
 						{ text: 'There is no HWM data based on selections.' }
 					])
@@ -1382,7 +1382,7 @@ $(document).ready(function () {
 			};
 			// Insert table body into pdfMake formatted table
 			function hwmsTable() {
-				if (allHWMs.length === 0) {
+				if (allHWMEOne.length === 0) {
 					return {
 						table: {
 							body: buildHwmsTable(),
