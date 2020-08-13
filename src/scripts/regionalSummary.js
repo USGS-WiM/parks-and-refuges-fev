@@ -4,6 +4,7 @@ var alreadyRan = false;
 var layerCountReg = 0;
 var selectedRegion = "";
 var selectedEvents = [];
+var selectedEventsNames = [];
 var selectedLandType;
 var regionPoly = [];
 var regionBoundaries;
@@ -544,6 +545,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
                 getEventName(function (output) {
                     eventName = output.event_name;
+                    selectedEventsNames.push(eventName);
                     /*
                     queryStreamGages(regionBBox);
                     regionalStreamGages.addTo(regionalMap);

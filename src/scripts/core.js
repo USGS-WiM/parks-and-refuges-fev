@@ -1253,6 +1253,20 @@ $(document).ready(function () {
 				peakData = allPeaksEOne;
 				return peakData;
 			};
+			function getPeaksDataTwo() {
+				/* $('#peakDataTableReg th').each(function (index, item) {
+					peakHeaders[index] = $(item).html();
+				});
+				$('#peakDataTableReg tr').has('td').each(function () {
+					var arrayItem = {};
+					$('td', $(this)).each(function (index, item) {
+						arrayItem[peakHeaders[index]] = $(item).html();
+					});
+					peakData.push(arrayItem);
+				}); */
+				peakData = allPeaksETwo;
+				return peakData;
+			};
 			// Build the table body for pdfMake of peak table information
 			function buildPeaksBody(data, columns) {
 				var body = [];
@@ -1425,14 +1439,19 @@ $(document).ready(function () {
 				var landType = $(".select2-selection__choice")[selectionVarLen - 6].title;
 				var regionSubType = $(".select2-selection__choice")[selectionVarLen - 5].title;
 				var event = $(".select2-selection__choice")[selectionVarLen - 3].title;
-				var buffer = $(".select2-selection__choice")[selectionVarLen - 2].title;
+				var bufferReg = $(".select2-selection__choice")[selectionVarLen - 2].title;
 			}
 			//If the map is refreshed, there won't be search info added to .select2, so there will be only 5 items
 			if (selectionVarLen <= 5) {
+				var event;
+				if (selectedEvents.length == 2) {
+					event = $(".select2-selection__choice")[3].title  + ', ' + $(".select2-selection__choice")[2].title;
+				} else {
+					var event = $(".select2-selection__choice")[3].title;
+				}
 				var landType = $(".select2-selection__choice")[0].title;
 				var regionSubType = $(".select2-selection__choice")[1].title;
-				var event = $(".select2-selection__choice")[2].title;
-				var buffer = $(".select2-selection__choice")[3].title;
+				var bufferReg = $(".select2-selection__choice")[4].title;
 			}
 
 			// Build summary selections table
@@ -1445,7 +1464,7 @@ $(document).ready(function () {
 							[{ text: 'Land Type: ', style: 'selectHeader', alignment: 'right' }, landType],
 							[{ text: 'Region: ', style: 'selectHeader', alignment: 'right' }, regionSubType],
 							[{ text: 'Event: ', style: 'selectHeader', alignment: 'right' }, event],
-							[{ text: 'Buffer Size: ', style: 'selectHeader', alignment: 'right' }, buffer]
+							[{ text: 'Buffer Size: ', style: 'selectHeader', alignment: 'right' }, bufferReg]
 						]
 					},
 					layout: {
@@ -1612,6 +1631,8 @@ $(document).ready(function () {
 						{ text: 'Peak Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 						peaksTable(getPeaksData()),
+						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5] },
+						peaksTable(getPeaksDataTwo()),
 						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5] },
 						hwmsTable()
 					],
