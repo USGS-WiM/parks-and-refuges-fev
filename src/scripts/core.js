@@ -1157,6 +1157,20 @@ $(document).ready(function () {
 				});
 				return summaryRows;
 			};
+			function summaryInfoTwo() {
+				summaryRows = [];
+				$('#summaryDataTableETwo th').each(function (index, item) {
+					sumHeaders[index] = $(item).html();
+				});
+				$('#summaryDataTableETwo tr').has('td').each(function () {
+					var arrayItem = {};
+					$('td', $(this)).each(function (index, item) {
+						arrayItem[sumHeaders[index]] = $(item).html();
+					});
+					summaryRows.push(arrayItem);
+				});
+				return summaryRows;
+			};
 			function summaryPeakInfo() {
 				$('#siteSummaryPeakDataTableEOne th').each(function (index, item) {
 					sumHeaders[index] = $(item).html();
@@ -1170,11 +1184,39 @@ $(document).ready(function () {
 				});
 				return peakSummaryRows;
 			};
-			function summaryHWMInfo() {
-				$('#siteSummaryHWMDataTable th').each(function (index, item) {
+			function summaryPeakInfoTwo() {
+				peakSummaryRows = [];
+				$('#siteSummaryPeakDataTableETwo th').each(function (index, item) {
 					sumHeaders[index] = $(item).html();
 				});
-				$('#siteSummaryHWMDataTable tr').has('td').each(function () {
+				$('#siteSummaryPeakDataTableETwo tr').has('td').each(function () {
+					var arrayItem = {};
+					$('td', $(this)).each(function (index, item) {
+						arrayItem[sumHeaders[index]] = $(item).html();
+					});
+					peakSummaryRows.push(arrayItem);
+				});
+				return peakSummaryRows;
+			};
+			function summaryHWMInfo() {
+				$('#siteSummaryHWMDataTableEOne th').each(function (index, item) {
+					sumHeaders[index] = $(item).html();
+				});
+				$('#siteSummaryHWMDataTableEOne tr').has('td').each(function () {
+					var arrayItem = {};
+					$('td', $(this)).each(function (index, item) {
+						arrayItem[sumHeaders[index]] = $(item).html();
+					});
+					hwmSummaryRows.push(arrayItem);
+				});
+				return hwmSummaryRows;
+			};
+			function summaryHWMInfoTwo() {
+				hwmSummaryRows = [];
+				$('#siteSummaryHWMDataTableETwo th').each(function (index, item) {
+					sumHeaders[index] = $(item).html();
+				});
+				$('#siteSummaryHWMDataTableETwo tr').has('td').each(function () {
 					var arrayItem = {};
 					$('td', $(this)).each(function (index, item) {
 						arrayItem[sumHeaders[index]] = $(item).html();
@@ -1198,6 +1240,18 @@ $(document).ready(function () {
 			};
 			// Insert tably body into pdfMake formatted table
 			function summaryTable(data, columns) {
+				return {
+					table: {
+						headerRows: 1,
+						widths: '*',
+						body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
+					},
+					layout: 'lightHorizontalLines',
+					style: 'smaller',
+					margin: [0, 0, 0, 15]
+				};
+			};
+			function eventSummaryTable(data, columns) {
 				return {
 					table: {
 						headerRows: 1,
@@ -1240,30 +1294,10 @@ $(document).ready(function () {
 			var peakHeaders = [];
 			// Get table values from peak table
 			function getPeaksData() {
-				/* $('#peakDataTableReg th').each(function (index, item) {
-					peakHeaders[index] = $(item).html();
-				});
-				$('#peakDataTableReg tr').has('td').each(function () {
-					var arrayItem = {};
-					$('td', $(this)).each(function (index, item) {
-						arrayItem[peakHeaders[index]] = $(item).html();
-					});
-					peakData.push(arrayItem);
-				}); */
 				peakData = allPeaksEOne;
 				return peakData;
 			};
 			function getPeaksDataTwo() {
-				/* $('#peakDataTableReg th').each(function (index, item) {
-					peakHeaders[index] = $(item).html();
-				});
-				$('#peakDataTableReg tr').has('td').each(function () {
-					var arrayItem = {};
-					$('td', $(this)).each(function (index, item) {
-						arrayItem[peakHeaders[index]] = $(item).html();
-					});
-					peakData.push(arrayItem);
-				}); */
 				peakData = allPeaksETwo;
 				return peakData;
 			};
@@ -1288,7 +1322,7 @@ $(document).ready(function () {
 			};
 			// Insert table body into pdfMake formatted table
 			function peaksTable(data, columns) {
-				if (allPeaksEOne.length === 0) {
+				if (data.length === 0) {
 					return {
 						table: {
 							body: buildPeaksBody(data)
@@ -1313,10 +1347,23 @@ $(document).ready(function () {
 			//// End of Peak Table information build ////
 
 			//// Get HWM Table information data to put into pdfMake /////
-			var hwmData;
-			hwmData = allHWMEOne;
+			var hwmDataEOne;
+			hwmDataEOne = allHWMEOne;
 			// Data has some undefined and null values, this replaces those values with empty string/no value
-			for (var obj of hwmData) {
+			for (var obj of hwmDataEOne) {
+				if (typeof obj !== 'object') continue;
+				for (var k in obj) {
+					if (!obj.hasOwnProperty(k)) continue;
+					var v = obj[k];
+					if (v === null || v === undefined) {
+						obj[k] = "";
+					}
+				}
+			}
+			var hwmDataETwo;
+			hwmDataETwo = allHWMETwo;
+			// Data has some undefined and null values, this replaces those values with empty string/no value
+			for (var obj of hwmDataETwo) {
 				if (typeof obj !== 'object') continue;
 				for (var k in obj) {
 					if (!obj.hasOwnProperty(k)) continue;
@@ -1327,79 +1374,94 @@ $(document).ready(function () {
 				}
 			}
 			// Build the table body for pdfMake of hwm table information
-			function buildHwmsTable() {
+			function buildHwmsTable(eNumber) {
+				var num = eNumber;
+				var data;
+				if (num == 1) {
+					data = hwmDataEOne
+				}
+				if (num == 2) {
+					data = hwmDataETwo
+				}
 				var body = [];
-				if (allHWMEOne.length === 0) {
+				if (data.length === 0) {
 					body.push([
 						{ text: 'There is no HWM data based on selections.' }
 					])
 				} else {
-					for (var i in hwmData) {
+					for (var i in data) {
 						body.push([
-							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + hwmData[i]['Site Number'] },
-							{ text: 'HWM Label', style: 'tableHeader' }, hwmData[i]['HWM Label'],
-							{ text: 'Elevation (ft)', style: 'tableHeader' }, hwmData[i]['Elevation (ft)']
+							{ rowSpan: 11, style: 'tableHeader', text: 'Site No.: ' + data[i]['Site Number'] },
+							{ text: 'HWM Label', style: 'tableHeader' }, data[i]['HWM Label'],
+							{ text: 'Elevation (ft)', style: 'tableHeader' }, data[i]['Elevation (ft)']
 						],
 							[
 								{},
-								{ text: 'Event', style: 'tableHeader' }, hwmData[i]['Event'],
-								{ text: 'Site Name', style: 'tableHeader' }, hwmData[i]['Site Name']
+								{ text: 'Event', style: 'tableHeader' }, data[i]['Event'],
+								{ text: 'Site Name', style: 'tableHeader' }, data[i]['Site Name']
 							],
 							[
 								{},
-								{ text: 'Vertical Datum, Method', style: 'tableHeader' }, hwmData[i]['Vertical Datum'] + ", " + hwmData[i]['Vertical Method'],
-								{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, hwmData[i]['Horizontal Datum'] + ", " + hwmData[i]['Horizontal Datum']
+								{ text: 'Vertical Datum, Method', style: 'tableHeader' }, data[i]['Vertical Datum'] + ", " + data[i]['Vertical Method'],
+								{ text: 'Horizontal Datum, Method', style: 'tableHeader' }, data[i]['Horizontal Datum'] + ", " + data[i]['Horizontal Datum']
 							],
 							[
 								{},
-								{ text: 'Type', style: 'tableHeader' }, hwmData[i]['HWM Type'],
-								{ text: 'Quality', style: 'tableHeader' }, hwmData[i]['HWM Quality']
+								{ text: 'Type', style: 'tableHeader' }, data[i]['HWM Type'],
+								{ text: 'Quality', style: 'tableHeader' }, data[i]['HWM Quality']
 							],
 							[
 								{},
-								{ text: 'Waterbody', style: 'tableHeader' }, hwmData[i]['Waterbody'],
-								{ text: 'Permanent Housing', style: 'tableHeader' }, hwmData[i]['Site Perm Housing']
+								{ text: 'Waterbody', style: 'tableHeader' }, data[i]['Waterbody'],
+								{ text: 'Permanent Housing', style: 'tableHeader' }, data[i]['Site Perm Housing']
 							],
 							[
 								{},
-								{ text: 'County', style: 'tableHeader' }, hwmData[i]['County'],
-								{ text: 'State', style: 'tableHeader' }, hwmData[i]['State']
+								{ text: 'County', style: 'tableHeader' }, data[i]['County'],
+								{ text: 'State', style: 'tableHeader' }, data[i]['State']
 							],
 							[
 								{},
-								{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, hwmData[i]['Latitude (DD)'] + ", " + hwmData[i]['Longitude (DD)'],
-								{ text: 'Site Description', style: 'tableHeader' }, hwmData[i]['Site Description']
+								{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, data[i]['Latitude (DD)'] + ", " + data[i]['Longitude (DD)'],
+								{ text: 'Site Description', style: 'tableHeader' }, data[i]['Site Description']
 							],
 							[
 								{},
-								{ text: 'Location Description', style: 'tableHeader' }, hwmData[i]['Location Description'],
-								{ text: 'Survey Date', style: 'tableHeader' }, hwmData[i]['Survey Date']
+								{ text: 'Location Description', style: 'tableHeader' }, data[i]['Location Description'],
+								{ text: 'Survey Date', style: 'tableHeader' }, data[i]['Survey Date']
 							],
 							[
 								{},
-								{ text: 'Bank', style: 'tableHeader' }, hwmData[i]['Bank'],
-								{ text: 'Environment', style: 'tableHeader' }, hwmData[i]['Environment']
+								{ text: 'Bank', style: 'tableHeader' }, data[i]['Bank'],
+								{ text: 'Environment', style: 'tableHeader' }, data[i]['Environment']
 							],
 							[
 								{},
-								{ text: 'Flag Date', style: 'tableHeader' }, hwmData[i]['Flag Date'],
-								{ text: 'Stillwater', style: 'tableHeader' }, hwmData[i]['Stillwater']
+								{ text: 'Flag Date', style: 'tableHeader' }, data[i]['Flag Date'],
+								{ text: 'Stillwater', style: 'tableHeader' }, data[i]['Stillwater']
 							],
 							[
 								{},
-								{ text: 'Uncertainty', style: 'tableHeader' }, hwmData[i]['Uncertainty'],
-								{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmData[i]['HWM Uncertainty']
+								{ text: 'Uncertainty', style: 'tableHeader' }, data[i]['Uncertainty'],
+								{ text: 'HWM Uncertainty', style: 'tableHeader' }, data[i]['HWM Uncertainty']
 							]);
 					}
 				}
 				return body;
 			};
 			// Insert table body into pdfMake formatted table
-			function hwmsTable() {
-				if (allHWMEOne.length === 0) {
+			function hwmsTable(event) {
+				var lengthCheck;
+				var eNumber = event;
+				if (event == 1) {
+					lengthCheck = allHWMEOne;
+				} else if (event == 2) {
+					lengthCheck = allHWMETwo;
+				}
+				if (lengthCheck.length === 0) {
 					return {
 						table: {
-							body: buildHwmsTable(),
+							body: buildHwmsTable(eNumber),
 						},
 						layout: 'noBorders',
 						style: 'smaller',
@@ -1409,7 +1471,7 @@ $(document).ready(function () {
 					return {
 						table: {
 							widths: ['auto', 'auto', '*', 'auto', '*'],
-							body: buildHwmsTable(),
+							body: buildHwmsTable(eNumber),
 						},
 						style: 'smaller',
 						margin: [0, 0, 0, 15]
@@ -1576,6 +1638,16 @@ $(document).ready(function () {
 
 			//// Function to create pdfMake pdf of Regional Report ////
 			function printRegionalReport() {
+				var eventOne;
+				var eventTwo;
+				var eventOneNum = 1;
+				var eventTwoNum = 2;
+				if (allPeaksEOne.length > 0) {
+					eventOne = allPeaksEOne[0].Event
+				}
+				if (allPeaksETwo.length > 0) {
+					eventTwo = allPeaksETwo[0].Event
+				}
 				const docDefinition = {
 					pageOrientation: 'landscape',
 					pageMargins: [20, 20, 20, 35],
@@ -1622,19 +1694,29 @@ $(document).ready(function () {
 							margin: [0, 0, 0, 15]
 						},
 						//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
-						{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 5] },
+						{ text: 'Summary Information for Events: ' + eventOne + ' and ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
+						eventSummaryTable(eventsPeakRange),
+						{ text: 'Summary Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 						summaryTable(summaryInfo()),
-						{ text: 'Site Summary Peak Information', style: 'subHeader', margin: [0, 0, 0, 5] },
+						{ text: 'Summary Information for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
+						summaryTable(summaryInfoTwo()),
+						{ text: 'Site Summary Peak Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 						summaryPeakTable(summaryPeakInfo()),
-						{ text: 'Site Summary HWM Information', style: 'subHeader', margin: [0, 0, 0, 5] },
+						{ text: 'Site Summary Peak Information for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
+						summaryPeakTable(summaryPeakInfoTwo()),
+						{ text: 'Site Summary HWM Information for ' + eventOne , style: 'subHeader', margin: [0, 0, 0, 5] },
 						summaryHWMTable(summaryHWMInfo()),
-						{ text: 'Peak Data', style: 'subHeader', margin: [0, 0, 0, 5] },
+						{ text: 'Site Summary HWM Information for ' + eventTwo , style: 'subHeader', margin: [0, 0, 0, 5] },
+						summaryHWMTable(summaryHWMInfoTwo()),
+						{ text: 'Peak Data for '+ eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 						//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 						peaksTable(getPeaksData()),
-						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5] },
+						{ text: 'Peak Data for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 						peaksTable(getPeaksDataTwo()),
-						{ text: 'HWM Data', style: 'subHeader', margin: [0, 0, 0, 5] },
-						hwmsTable()
+						{ text: 'HWM Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+						hwmsTable(eventOneNum),
+						{ text: 'HWM Data for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
+						hwmsTable(eventTwoNum)
 					],
 					styles: {
 						header: {
@@ -1855,13 +1937,18 @@ $(document).ready(function () {
 			var numReport;
 			var standReport;
 
-			//Create peak row in report summary table
+			
+			// removing any undefined values incase there are some
+			peakArrReport = peakArrReport.filter(e => e);
+			// Create peak row in report summary table
 			getReportSummaryStats(peakArrReport);
 			if (peakArrReport.length > 0) {
 				peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(peakSum);
 			}
 
+			// removing any undefined values incase there are some
+			hwmArrReport = hwmArrReport.filter(e => e);
 			//Create hwm row in report summary table
 			getReportSummaryStats(hwmArrReport);
 			if (hwmArrReport.length > 0) {

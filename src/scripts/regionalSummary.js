@@ -53,6 +53,9 @@ var allHWMEOne = [];
 var allHWMETwo = [];
 var allPeaksEOne = [];
 var allPeaksETwo = [];
+var eventsPeakRange = []
+var totalSites = [];
+var siteList = [];
 var hwmRegionalCSVData = [];
 var peaksRegionalCSVData = [];
 //This array will be populated with the peak values from peaks within the buffered regions
@@ -524,13 +527,13 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         //var simplified = turf.simplify(feature, options);
                         var buffered = turf.buffer(feature, bufferSize, { units: 'kilometers' });
                         bufferedPolys.push(buffered);
-    
+
                     }
-    
+
                 }
                 L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
                 getEventSpecificData();
-            }, 2000); 
+            }, 2000);
         }
 
 
@@ -604,6 +607,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
                 getEventName(function (output) {
                     eventName = output.event_name;
+                    selectedEventsNames.push(eventName);
                     /*
                     queryStreamGages(regionBBox);
                     regionalStreamGages.addTo(regionalMap);
@@ -644,6 +648,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
                     getEventName(function (output) {
                         eventName = output.event_name;
+                        selectedEventsNames.push(eventName);
                         /*
                         queryStreamGages(regionBBox);
                         regionalStreamGages.addTo(regionalMap);
@@ -952,7 +957,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         allPeaksEOne = allPeaksStorage;
                         parksWithPeaksEOne = parksWPeakStorage;
                     } else if (eventNumber == 2) {
-                        allPeaksETwo == allPeaksStorage;
+                        allPeaksETwo = allPeaksStorage;
                         parksWithPeaksETwo = parksWPeakStorage;
                     }
 
@@ -1148,7 +1153,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         allHWMEOne = allHWMStorage;
                         parksWithHWMsEOne = parksWHWMStorage;
                     } else if (eventNumber == 2) {
-                        allHWMETwo == allHWMStorage;
+                        allHWMETwo = allHWMStorage;
                         parksWithHWMsETwo = parksWHWMStorage;
                     }
 
@@ -1458,6 +1463,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             }
 
             function getSiteSummaryValues() {
+                var peakRange = {};
                 peakSiteSummaries = [];
                 hwmSiteSummaries - [];
                 siteSumPeakVals.forEach(function (item, idx) {
@@ -1468,7 +1474,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         var medReg = medianReg.toFixed(3);
                         // var mean = meanReg.toFixed(3); -- is string so unnecesary 
                         //var sd = standReg.toFixed(3); -- is string so unnecesary 
+                        /* peakRange = {"Site Name": eventName , "Range": minReg + '-' + maxReg, "Event": eventName};
+                        eventsPeakRange.push(peakRange); */
                         peakSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                        siteList.push({ "Site Name": item.site_name});
+                        totalSites.push({ "Site Name": item.site_name, "Range": minReg + '-' + maxReg, "Event": eventName });
                     }
                 });
                 siteSumHWMVals.forEach(function (item, idx) {
@@ -1482,6 +1492,48 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         hwmSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "HWM", "Total HWMs": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
                     }
                 });
+            }
+
+            function getEventsSiteSummary() {
+                var tableData = [];
+                var buckets = [];
+                var eOne = [];
+                var eTwo = [];
+                var siteList = [];
+                siteList = siteList.reduce((unique, o) => {
+                    if(!unique.some(obj => obj['Site Name'] === o['Site Name'])) {
+                      unique.push(o);
+                    }
+                    return unique;
+                },[]);
+
+                totalSites.forEach(function (item, idx) {
+                    if (item.Event === selectedEventsNames[0]) {
+                        eOne.push(item);
+                    } else {
+                        eTwo.push(item);
+                    }
+                });
+
+                siteList.forEach(function (siteItem, idx) {
+                    eOne.forEach(function (item, idx) {
+                        if (item['Site Name'] === siteItem['Site Name']) {
+                            //tableData.push({"Site Name": item['Site Name']})
+                            siteItem['Range'] = item['Range'];
+                        } else {
+                            siteItem['Range'] = 'NA';
+                        }
+                    });
+                    eTwo.forEach(function (item, idx) {
+                        if (item['Site Name'] === siteItem['Site Name']) {
+                            //tableData.push({"Site Name": item['Site Name']})
+                            siteItem['Range'] = item['Range'];
+                        } else {
+                            siteItem['Range'] = 'NA';
+                        }
+                    });
+                });
+
             }
 
             //Summary stats to populate regional report summary table
@@ -1537,11 +1589,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 $(table).append(headerTr$);
                 return columnSet;
             }
-            if (eventName === "2019 Hurricane Dorian") {
+            if (eventNumber == 1) {
                 var tableSumID = "#summaryDataTableEOne";
                 var tablePeaksID = "#siteSummaryPeakDataTableEOne";
                 var tableHWMsID = "#siteSummaryHWMDataTableEOne";
-            } else {
+            } else if (eventNumber == 2) {
                 var tableSumID = "#summaryDataTableETwo";
                 var tablePeaksID = "#siteSummaryPeakDataTableETwo";
                 var tableHWMsID = "#siteSummaryHWMDataTableETwo";
@@ -1569,6 +1621,55 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             }
             */
             showTable();
+
+            function getEventsSiteSummary() {
+                var tableData = [];
+                var buckets = [];
+                var eOne = [];
+                var eTwo = [];
+                siteList = siteList.reduce((unique, o) => {
+                    if(!unique.some(obj => obj['Site Name'] === o['Site Name'])) {
+                      unique.push(o);
+                    }
+                    return unique;
+                },[]);
+
+                totalSites.forEach(function (item, idx) {
+                    if (item.Event === selectedEventsNames[0]) {
+                        eOne.push(item);
+                    } else {
+                        eTwo.push(item);
+                    }
+                });
+
+                // creating array for table with site name, and ranges by event
+                siteList.forEach(function (siteItem, idx) {
+                    var eventOneFilter = eOne[eOne.map(function (item) { return item['Site Name']; }).indexOf(siteItem['Site Name'])];
+                    if (eventOneFilter == undefined) {
+                        siteItem['RangeEventOne'] = 'NA';
+                    } else {
+                        siteItem['RangeEventOne'] = eventOneFilter['Range'];
+                    }
+
+                    var eventTwoFilter = eTwo[eTwo.map(function (item) { return item['Site Name']; }).indexOf(siteItem['Site Name'])];
+                    if (eventTwoFilter == undefined) {
+                        siteItem['RangeEventTwo'] = 'NA';
+                    } else {
+                        siteItem['RangeEventTwo'] = eventTwoFilter['Range'];
+                    }
+                });
+
+                console.log(siteList);
+
+                var tableEventsSumID = "#eventsSummaryTable";
+                buildDataTables(tableEventsSumID, siteList, "Summary Information for Events : " + selectedEventsNames[0] + ' and ' + selectedEventsNames[1]);
+            
+
+            }
+
+            if (eventNumber == 2 ) {
+                getEventsSiteSummary();
+            }
         }
 
         function showTable() {
@@ -1669,6 +1770,10 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         document.getElementById('summaryDataTableEOne').innerHTML = '';
         document.getElementById('siteSummaryPeakDataTableEOne').innerHTML = '';
         document.getElementById('siteSummaryHWMDataTableEOne').innerHTML = '';
+        document.getElementById('summaryDataTableETwo').innerHTML = '';
+        document.getElementById('siteSummaryPeakDataTableETwo').innerHTML = '';
+        document.getElementById('siteSummaryHWMDataTableETwo').innerHTML = '';
+        document.getElementById('eventsSummaryTable').innerHTML = '';
 
         document.querySelector('.progress-bar-fill').style.width = "0%"
         clearSelects()
