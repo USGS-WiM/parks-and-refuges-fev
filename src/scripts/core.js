@@ -576,7 +576,6 @@ $(document).ready(function () {
 					generateSiteReport();
 				}, 13000);
 			}
-
 		});
 	}
 
@@ -1003,6 +1002,12 @@ $(document).ready(function () {
 	}
 
 	var pdfRegionalMapUrl;
+
+	$('#printNav').click(function () {
+		$('#printModal').modal('show');
+		generateSiteReport();
+	});
+
 	$('#regionalReportNav').click(function () {
 		showRegionalModal();
 
