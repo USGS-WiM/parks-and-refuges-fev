@@ -567,8 +567,10 @@ $(document).ready(function () {
 			$('siteReportLoading').modal('show');
 			//Give the map elements time to load before creating site report
 			if (exploreMap == false) {
+				//show load warning message while waiting for layers to load and report to generate
 				$('#siteReportLoading').modal('show');
 				setTimeout(() => {
+					//remove loading message, show site report modal
 					$('#siteReportLoading').modal('hide');
 					$('#printModal').modal('show');
 					generateSiteReport();
