@@ -148,11 +148,12 @@
                     <h4 class="modal-title">USGS Flood Event Viewer</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Welcome to the USGS Flood Event Viewer. <br>Would you like to run a report for a region or a specific site?</h4>
+                    <h4>Welcome to the USGS Flood Event Viewer. <br>Would you like to run a report for a region or a
+                        specific site?</h4>
                     <br>
                     <span><button id="btnChooseRegion" class="btn btn-default" type="button" aria-hidden="true"
-                        style="color:white; text-align: center;" class="btn btn-primary">Region</button></span>
-                        <span><button id="btnChooseSite" class="btn btn-default" type="button" aria-hidden="true"
+                            style="color:white; text-align: center;" class="btn btn-primary">Region</button></span>
+                    <span><button id="btnChooseSite" class="btn btn-default" type="button" aria-hidden="true"
                             style="color:white; align-self: center;" class="btn btn-primary">Site</button></span>
                 </div>
             </div><!-- /.modal-content -->
@@ -160,6 +161,18 @@
     </div>
     <!-- end of welcome modal -->
 
+    <!-- start Load warning for site report-->
+    <div class="modal fade overflow-y-hidden" id="siteReportLoading" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="text-align: center;">Please wait while site report loads</h4>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <!-- end Load warning for site report-->
 
     <!-- start updateFiltersModal -->
     <div class="modal fade overflow-y-hidden" id="updateFiltersModal" style="display: none;" aria-hidden="true">
@@ -224,9 +237,9 @@
                 <div class="modal-footer">
                     <button type="submit" class="dismissbuttonfilter btn" data-dismiss="modal">Dismiss</button>
                     <span><button id="btnSubmitEvent_filter" class="btn btn-default" type="button" aria-hidden="true"
-                             class="btn btn-primary">Explore Map</button></span>
-                            <span><button id="btnActiveSiteReport" class="btn btn-default" type="button" aria-hidden="true"
-                                class="btn btn-primary">Generate Report</button></span>
+                            class="btn btn-primary">Explore Map</button></span>
+                    <span><button id="btnActiveSiteReport" class="btn btn-default" type="button" aria-hidden="true"
+                            class="btn btn-primary">Generate Report</button></span>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -270,7 +283,8 @@
     </div>
     <!-- end Geosearch Modal -->
 
-    <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" data-backdrop="static" aria-hidden="true">
+    <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" data-backdrop="static"
+        aria-hidden="true">
         <div class="modal-dialog" style="width: 1100px; overflow-y: initial !important">
             <div class="modal-content">
                 <div class="modal-header">
@@ -280,7 +294,7 @@
                 </div>
                 <div id="reportInfo"></div>
                 <div class="modal-body" style="text-align: center; height: 600px; overflow-y: auto; overflow-x: auto;">
-                    
+
                     <div id="reviewMap" class="report-inline-block">
                         <div id='loader' class='imageLoader'></div>
                         <p id='loadingMessage'>loading image...</p>
@@ -288,17 +302,20 @@
                     <div id="legendImage" class="report-inline-block"></div>
                     <br>
                     <div style='text-align: center; font-weight:bold' id='reportSummaryTitle'></div>
-                    <br><div style='text-align: center;' id='reportSummaryNoData'></div>
+                    <br>
+                    <div style='text-align: center;' id='reportSummaryNoData'></div>
                     <div class='reportInfo' id="sumTable">
                         <table class="table" id="reportSummaryDataTable">
                         </table>
-                        </div>
+                    </div>
                     <div class='reportInfo' id="peakTable">
                         <table class="table" id="peakDataTable"></table>
                     </div>
                     <p style="font-weight: bold;">Storm Tide Hydrographs</p>
                     <div id="hydrographs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
-                    <div id="graphSite"><div id="stgraphs"></div></div>
+                    <div id="graphSite">
+                        <div id="stgraphs"></div>
+                    </div>
                     <div class='reportInfo' id="hwmTable" style="width: 900px; ">
                         <table class="table" id="hwmDataTable"></table>
                     </div>
@@ -325,7 +342,8 @@
     </div>
     </div>
 
-    <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true" role="dialog">
+    <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true"
+        role="dialog">
         <div class="modal-dialog modal-lg" style="width: 1100px;">
             <div class="modal-content">
                 <div class="modal-header">

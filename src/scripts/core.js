@@ -488,11 +488,11 @@ $(document).ready(function () {
 		todayHighlight: true
 	});
 
-	$('#btnChooseSite').click(function() {
+	$('#btnChooseSite').click(function () {
 		$('#updateFiltersModal').modal('show');
 		$('#welcomeModal').modal('hide');
 	});
-	$('#btnChooseRegion').click(function() {
+	$('#btnChooseRegion').click(function () {
 		$('#regionalModal').modal('show');
 	})
 
@@ -564,14 +564,19 @@ $(document).ready(function () {
 				USGSrtGages.addTo(map);
 			}
 
+			$('siteReportLoading').modal('show');
 			//Give the map elements time to load before creating site report
 			if (exploreMap == false) {
-			setTimeout(() => {
+				//show load warning message while waiting for layers to load and report to generate
+				$('#siteReportLoading').modal('show');
+				setTimeout(() => {
+					//remove loading message, show site report modal
+					$('#siteReportLoading').modal('hide');
 					$('#printModal').modal('show');
 					generateSiteReport();
-			}, 10000);
-		}
-		
+				}, 13000);
+			}
+
 		});
 	}
 
@@ -979,6 +984,7 @@ $(document).ready(function () {
 
 	});
 	function showPrintModal() {
+
 		$('#printModal').modal('show');
 
 		/* setTimeout(() => {
@@ -2351,7 +2357,7 @@ $(document).ready(function () {
 		queryNWISRaingraph();
 		//clickPeakLabels();
 	}
-	
+
 
 	// setting checked values for Filter Modal buffer radio buttons
 	document.getElementById('tenKmFilter').checked = false;
