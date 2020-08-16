@@ -1478,7 +1478,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         eventsPeakRange.push(peakRange); */
                         peakSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
                         siteList.push({ "Site Name": item.site_name});
-                        totalSites.push({ "Site Name": item.site_name, "Range": minReg + '-' + maxReg, "Event": eventName });
+                        totalSites.push({ "Site Name": item.site_name, "Range": minReg + ' - ' + maxReg, "Event": eventName });
                     }
                 });
                 siteSumHWMVals.forEach(function (item, idx) {
@@ -1646,25 +1646,25 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 siteList.forEach(function (siteItem, idx) {
                     var eventOneFilter = eOne[eOne.map(function (item) { return item['Site Name']; }).indexOf(siteItem['Site Name'])];
                     if (eventOneFilter == undefined) {
-                        siteItem['RangeEventOne'] = 'NA';
+                        siteItem[selectedEventsNames[0]] = 'NA';
                     } else {
-                        siteItem['RangeEventOne'] = eventOneFilter['Range'];
+                        siteItem[selectedEventsNames[0]] = eventOneFilter['Range'];
                     }
 
                     var eventTwoFilter = eTwo[eTwo.map(function (item) { return item['Site Name']; }).indexOf(siteItem['Site Name'])];
                     if (eventTwoFilter == undefined) {
-                        siteItem['RangeEventTwo'] = 'NA';
+                        siteItem[selectedEventsNames[1]] = 'NA';
                     } else {
-                        siteItem['RangeEventTwo'] = eventTwoFilter['Range'];
+                        siteItem[selectedEventsNames[1]] = eventTwoFilter['Range'];
                     }
                 });
 
                 console.log(siteList);
 
                 var tableEventsSumID = "#eventsSummaryTable";
-                buildDataTables(tableEventsSumID, siteList, "Summary Information for Events : " + selectedEventsNames[0] + ' and ' + selectedEventsNames[1]);
-            
-
+                buildDataTables(tableEventsSumID, siteList, "");
+                var getTitle = document.getElementById("eventsSummaryTitle");
+                getTitle.append("Summary of Peaks measured within a " + bufferSize + "km Buffer for Events: " + selectedEventsNames[0] + ' and ' + selectedEventsNames[1])
             }
 
             if (eventNumber == 2 ) {

@@ -1145,10 +1145,25 @@ $(document).ready(function () {
 			var sumHeaders = [];
 			// Get table values from summary information table
 			function summaryInfo() {
+				summaryRows = [];
 				$('#summaryDataTableEOne th').each(function (index, item) {
 					sumHeaders[index] = $(item).html();
 				});
 				$('#summaryDataTableEOne tr').has('td').each(function () {
+					var arrayItem = {};
+					$('td', $(this)).each(function (index, item) {
+						arrayItem[sumHeaders[index]] = $(item).html();
+					});
+					summaryRows.push(arrayItem);
+				});
+				return summaryRows;
+			};
+			function summaryPeaksRangeInfo() {
+				summaryRows = [];
+				$('#eventsSummaryTable th').each(function (index, item) {
+					sumHeaders[index] = $(item).html();
+				});
+				$('#eventsSummaryTable tr').has('td').each(function () {
 					var arrayItem = {};
 					$('td', $(this)).each(function (index, item) {
 						arrayItem[sumHeaders[index]] = $(item).html();
@@ -1273,6 +1288,18 @@ $(document).ready(function () {
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
 					margin: [0, 0, 0, 15]
+				};
+			};
+			function summaryEventsTable(data, columns) {
+				return {
+					table: {
+						headerRows: 1,
+						widths: [200, 100, 100],
+						body: buildSummaryBody(data, ['Site Name', document.querySelector("#eventsSummaryTable > tbody > tr:nth-child(1) > th:nth-child(2)").innerText, document.querySelector("#eventsSummaryTable > tbody > tr:nth-child(1) > th:nth-child(3)").innerText]),
+					},
+					layout: 'lightHorizontalLines',
+					style: 'smaller',
+					margin: [175, 0, 0, 0]
 				};
 			};
 			function summaryHWMTable(data, columns) {
@@ -1509,11 +1536,16 @@ $(document).ready(function () {
 				if (selectedEvents.length == 2) {
 					event = $(".select2-selection__choice")[3].title  + ', ' + $(".select2-selection__choice")[2].title;
 				} else {
-					var event = $(".select2-selection__choice")[3].title;
+					var event = $(".select2-selection__choice")[2].title;
 				}
 				var landType = $(".select2-selection__choice")[0].title;
 				var regionSubType = $(".select2-selection__choice")[1].title;
-				var bufferReg = $(".select2-selection__choice")[4].title;
+				if (selectedEvents.length == 2) { 
+					var bufferReg = $(".select2-selection__choice")[4].title;
+				} else {
+					var bufferReg = $(".select2-selection__choice")[3].title;
+				}
+				
 			}
 
 			// Build summary selections table
@@ -1636,8 +1668,9 @@ $(document).ready(function () {
 			}
 			//// End of Legend build ////
 
-			//// Function to create pdfMake pdf of Regional Report ////
-			function printRegionalReport() {
+			function getContent() {
+				// returning appropriate tables based on number of events selected
+
 				var eventOne;
 				var eventTwo;
 				var eventOneNum = 1;
@@ -1648,27 +1681,8 @@ $(document).ready(function () {
 				if (allPeaksETwo.length > 0) {
 					eventTwo = allPeaksETwo[0].Event
 				}
-				const docDefinition = {
-					pageOrientation: 'landscape',
-					pageMargins: [20, 20, 20, 35],
-					footer: function (currentPage, pageCount) {
-						return {
-							margin: [20, 0, 20, 0],
-							style: 'footer',
-							columns: [
-								{
-									width: 700,
-									text: ['Report generated ']
-								}
-							]
-						},
-						{
-							width: 50,
-							alignment: 'center',
-							text: 'Page ' + currentPage.toString()
-						}
-					},
-					content: [
+				if (selectedEvents.length === 1) {
+					return [
 						//{ text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center', margin: [0, 0, 0, 15] },
 						{
 							table: {
@@ -1694,8 +1708,48 @@ $(document).ready(function () {
 							margin: [0, 0, 0, 15]
 						},
 						//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
-						{ text: 'Summary Information for Events: ' + eventOne + ' and ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
-						eventSummaryTable(eventsPeakRange),
+						{ text: 'Summary Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+						summaryTable(summaryInfo()),
+						{ text: 'Site Summary Peak Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+						summaryPeakTable(summaryPeakInfo()),
+						{ text: 'Site Summary HWM Information for ' + eventOne , style: 'subHeader', margin: [0, 0, 0, 5] },
+						summaryHWMTable(summaryHWMInfo()),
+						{ text: 'Peak Data for '+ eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+						//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
+						peaksTable(getPeaksData()),
+						{ text: 'HWM Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+						hwmsTable(eventOneNum),
+					]
+				} else if (selectedEvents.length === 2) {
+					return [
+						//{ text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center', margin: [0, 0, 0, 15] },
+						{
+							table: {
+								widths: ['*'],
+								body: [
+									[{ border: [false, false, false, true], text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center' }]
+								]
+							},
+							margin: [0, 0, 0, 15]
+						},
+						{
+							//table with columns: selections table, map image, legend
+							table: {
+								body: [
+									[
+										selectionsTable(),
+										{ image: pdfRegionalMapUrl, width: 300, height: 200 },
+										legendTable()
+									],
+								]
+							},
+							layout: 'noBorders',
+							margin: [0, 0, 0, 15]
+						},
+						//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
+						//summaryEventsPeakTable(),
+						{ text: 'Summary of Peaks measured within a ' + bufferSize + 'km Buffer for ' + eventOne + ' and ' + eventTwo, style: 'subHeader', margin: [150, 0, 0, 5] },
+						summaryEventsTable(summaryPeaksRangeInfo()),
 						{ text: 'Summary Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 						summaryTable(summaryInfo()),
 						{ text: 'Summary Information for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
@@ -1717,7 +1771,34 @@ $(document).ready(function () {
 						hwmsTable(eventOneNum),
 						{ text: 'HWM Data for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 						hwmsTable(eventTwoNum)
-					],
+					]
+
+				}
+			}
+
+			//// Function to create pdfMake pdf of Regional Report ////
+			function printRegionalReport() {
+				const docDefinition = {
+					pageOrientation: 'landscape',
+					pageMargins: [20, 20, 20, 35],
+					footer: function (currentPage, pageCount) {
+						return {
+							margin: [20, 0, 20, 0],
+							style: 'footer',
+							columns: [
+								{
+									width: 700,
+									text: ['Report generated ']
+								}
+							]
+						},
+						{
+							width: 50,
+							alignment: 'center',
+							text: 'Page ' + currentPage.toString()
+						}
+					},
+					content: getContent(),
 					styles: {
 						header: {
 							fontSize: 15,
