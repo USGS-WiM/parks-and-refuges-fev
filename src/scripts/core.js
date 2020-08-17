@@ -660,8 +660,7 @@ $(document).ready(function () {
 	function setEventIndicators(eventName, eventID, eventStartDateStr, eventEndDateStr, siteName) {
 		$('#eventNameDisplay').html(eventName);
 		$('#largeEventNameDisplay').html(eventName);
-		$('#siteNameDisplay').html(welcomeSite);
-		$('#largeSiteNameDisplay').html(welcomeSite);
+		$('#largeSiteNameDisplay').html(currentParkOrRefuge);
 		//TODO: determine why this is not working, though its same code and input as in the btnSubmitEvent function above
 		var eventValue = [eventID.toString()];
 		$('#evtSelect_filterModal').val([eventValue]).trigger("change");
@@ -682,6 +681,9 @@ $(document).ready(function () {
 	map = L.map('mapDiv', {
 		maxZoom: 15
 	}).setView([39.833333, -98.583333], 4);
+
+	// adds scale bar to map
+	L.control.scale().addTo(map);
 
 	var layer = L.esri.basemapLayer('Topographic').addTo(map);
 	var layerLabels;
@@ -1900,7 +1902,7 @@ $(document).ready(function () {
 
 		// adding the peak and hwm icons to the legend
 		$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
-		$('#highWaterSymbology').append(highWaterSymbologyInterior);
+		//$('#highWaterSymbology').append(highWaterSymbologyInterior);
 
 		setTimeout(() => {
 			var peaksArray = [];
