@@ -1024,10 +1024,13 @@ function displayRtGageReport(streamGagesInBuffer) {
     var gageGraphTitle = document.getElementById('gageGraphs');
     gageGraphTitle.innerHTML = ""
     if (streamGagesInBuffer.length == 1) {
-        gageGraphTitle.innerHTML = "Real-time Stream Gage";
+        gageGraphTitle.innerHTML = "<br> Real-time Stream Gage";
     }
     if (streamGagesInBuffer.length > 1) {
-        gageGraphTitle.innerHTML = "Real-time Stream Gages";
+        gageGraphTitle.innerHTML = "<br> Real-time Stream Gages";
+    }
+    if (streamGagesInBuffer.length == 0) {
+        gageGraphTitle.innerHTML = "<br>  Real-time Stream Gages <br> </div> <div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p>";
     }
 
     //Keeps track of how many graphs were generated (or attempted to generate)

@@ -276,6 +276,7 @@
     </div>
     <!-- end Geosearch Modal -->
 
+    <!-- start of site report modal-->
     <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" data-backdrop="static"
         aria-hidden="true">
         <div class="modal-dialog" style="width: 1100px; overflow-y: initial !important">
@@ -288,32 +289,90 @@
                 <div id="reportInfo"></div>
                 <div class="modal-body" style="text-align: center; height: 600px; overflow-y: auto; overflow-x: auto;">
 
-                    <div id="reviewMap" class="report-inline-block">
-                        <div id='loader' class='imageLoader'></div>
-                        <p id='loadingMessage'>loading image...</p>
+                    <div id="reportMapLegend" >
+                        <div id="reviewMap" class="report-inline-block">
+                            <div id='loader' class='imageLoader'></div>
+                            <p id='loadingMessage'>loading image...</p>
+                        </div>
+                        <div id="legendImage" class="report-inline-block"></div>
                     </div>
-                    <div id="legendImage" class="report-inline-block"></div>
                     <br>
-                    <div style='text-align: center; font-weight:bold' id='reportSummaryTitle'></div>
                     <br>
-                    <div style='text-align: center;' id='reportSummaryNoData'></div>
-                    <div class='reportInfo' id="sumTable">
-                        <table class="table" id="reportSummaryDataTable">
-                        </table>
+                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
+                        <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportSummarySection"
+                            aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left"><p
+                                style="font-size: 13pt; text-align: left">Summary Data <i
+                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
                     </div>
-                    <div class='reportInfo' id="peakTable">
-                        <table class="table" id="peakDataTable"></table>
+                    <div id="reportSummarySection">
+                        <div style='text-align: center; font-weight:bold' id='reportSummaryTitle'></div>
+                        <br>
+                        <div style='text-align: center;' id='reportSummaryNoData'></div>
+                        <div class='reportInfo' id="sumTable">
+                            <table class="table" id="reportSummaryDataTable">
+                            </table>
+                        </div>
                     </div>
-                    <p style="font-weight: bold;">Storm Tide Hydrographs</p>
-                    <div id="hydrographs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
-                    <div id="graphSite">
-                        <div id="stgraphs"></div>
+                    <br>
+                    <br>
+                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
+                        <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportPeakSection"
+                            aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left"><p 
+                                style="font-size: 13pt; text-align: left">Peak Data <i
+                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
                     </div>
-                    <div class='reportInfo' id="hwmTable" style="width: 900px; ">
-                        <table class="table" id="hwmDataTable"></table>
+                    <div id="reportPeakSection">
+
+                        <div class='reportInfo' id="peakTable">
+                            <table class="table" id="peakDataTable"></table>
+                        </div>
                     </div>
-                    <div id="gageGraphs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
-                    <div id="rtgraphs"></div>
+
+                    <br>
+                    <br>
+                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
+                        <button class="groupToggle btnReport " data-toggle="collapse" data-target="#reportHWMSection"
+                            aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left"><p 
+                                style="font-size: 13pt; text-align: left">HWM Data <i
+                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                    </div>
+                    <div id="reportHWMSection">
+                        <div class='reportInfo' id="hwmTable" style="width: 900px; ">
+                            <table class="table" id="hwmDataTable"></table>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
+                        <button class="groupToggle btnReport btn-dafault" data-toggle="collapse" data-target="#reportRTSection"
+                            aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left"><p 
+                                style="font-size: 13pt; text-align: left">Stream Gage Hydrographs <i
+                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                    </div>
+                    <div id="reportRTSection">
+                        <div id="gageGraphs" style="text-align: center; font-size: medium; font-weight:bold;"></div>
+                        <div id="rtgraphs"></div>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
+                        <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportHydrographSection"
+                            aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left"><p
+                                style="font-size: 13pt; text-align: left">Storm Tide Hydrographs <i
+                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                    </div>
+                    <div id="reportHydrographSection">
+                        <p style="font-weight: bold;">Storm Tide Hydrographs</p>
+                        <div id="hydrographs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
+                        <div id="graphSite">
+                            <div id="stgraphs"></div>
+                        </div>
+                    </div>
                     <!-- <div id="reviewMapContainer">
                     <div id="reviewMap">
                     </div>
@@ -334,6 +393,7 @@
         </div>
     </div>
     </div>
+<!-- end of site report modal -->
 
     <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true"
         role="dialog">

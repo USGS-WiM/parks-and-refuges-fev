@@ -2045,7 +2045,7 @@ $(document).ready(function () {
 			//Display no data notice in report if there aren't any peaks or hwms
 			if (peakArrReport == 0 && hwmArrReport == 0) {
 				$('#reportSummaryTitle').children().remove();
-				$('#reportSummaryTitle').append("Summary Information");
+				$('#reportSummaryTitle').append("<br><br> Summary Information");
 				$('#reportSummaryNoData').append("No summary data for this site.");
 			}
 
@@ -2109,7 +2109,7 @@ $(document).ready(function () {
 			function buildHtmlTable() {
 				//Empty text from previous report, if it was run
 				$("#peakTable").find("p").remove();
-				$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>")
+				$("#peakTable").prepend("<p>" + "<b>" + "<br> Peak Summary Site Information" + "</b>" + "</p>")
 
 				//Empty peak data table from previous report, if it was run
 				$("#peakDataTable").empty();
@@ -2262,7 +2262,7 @@ $(document).ready(function () {
 			function buildHwmHtmlTable() {
 				//Empty text from previous report, if was run
 				$("#hwmTable").find("p").remove();
-				$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>")
+				$("#hwmTable").prepend("<p>" + "<b>" + "<br> High Water Mark Site Information" + "</b>" + "</p>")
 
 				//Empty hwm data table from previous report, if it was run
 				$("#hwmDataTable").empty();
@@ -2306,7 +2306,7 @@ $(document).ready(function () {
 				$("#hwmTable").find("p").remove();
 				$("#hwmDataTable").empty();
 				setTimeout(() => {
-					$("#hwmTable").prepend("<p>" + "<b>" + "High Water Mark Site Information" + "</b>" + "</p>");
+					$("#hwmTable").prepend("<p>" + "<b>" + "<br> High Water Mark Site Information" + "</b>" + "</p>");
 					$("#hwmTable").append("<p>" + "There are no High Water Marks at this Site." + "</p>");
 				}, 3000);
 			}
