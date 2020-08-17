@@ -591,12 +591,6 @@ $(document).ready(function () {
 		location.reload()
 	});
 
-	// $('#printRegionalReport').click(function () {
-	// 	setTimeout(() => {
-	// 		printRegionalReport();
-	// 	}, 3000)
-	// });
-
 	//Corresponds with the 'HWM CSV' button on the report modal
 	$('#saveHWMCSV').click(function () {
 		//if there is a hwm table, download as csv
@@ -1004,6 +998,7 @@ $(document).ready(function () {
 	var pdfRegionalMapUrl;
 
 	$('#printNav').click(function () {
+		map.dragging.disable();
 		$('#printModal').modal('show');
 		generateSiteReport();
 	});
@@ -1012,7 +1007,7 @@ $(document).ready(function () {
 		showRegionalModal();
 
 		// Get image of map from Regional Report for pdfMake pdf
-		
+
 
 		// If there is no data, then printing will be disabled. 
 		if ((allPeaksEOne.length === 0) && (allHWMEOne.length === 0)) {
@@ -1021,7 +1016,7 @@ $(document).ready(function () {
 			document.getElementById("printRegionalReport").disabled = false;
 		}
 
-		
+
 	});
 
 	function getRegionalMap() {
@@ -1543,18 +1538,18 @@ $(document).ready(function () {
 		if (selectionVarLen <= 5) {
 			var event;
 			if (selectedEvents.length == 2) {
-				event = $(".select2-selection__choice")[3].title  + ', ' + $(".select2-selection__choice")[2].title;
+				event = $(".select2-selection__choice")[3].title + ', ' + $(".select2-selection__choice")[2].title;
 			} else {
 				var event = $(".select2-selection__choice")[2].title;
 			}
 			var landType = $(".select2-selection__choice")[0].title;
 			var regionSubType = $(".select2-selection__choice")[1].title;
-			if (selectedEvents.length == 2) { 
+			if (selectedEvents.length == 2) {
 				var bufferReg = $(".select2-selection__choice")[4].title;
 			} else {
 				var bufferReg = $(".select2-selection__choice")[3].title;
 			}
-			
+
 		}
 
 		// Build summary selections table
@@ -1721,9 +1716,9 @@ $(document).ready(function () {
 					summaryTable(summaryInfo()),
 					{ text: 'Site Summary Peak Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfo()),
-					{ text: 'Site Summary HWM Information for ' + eventOne , style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Site Summary HWM Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
-					{ text: 'Peak Data for '+ eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Peak Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 					peaksTable(getPeaksData()),
 					{ text: 'HWM Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
@@ -1767,11 +1762,11 @@ $(document).ready(function () {
 					summaryPeakTable(summaryPeakInfo()),
 					{ text: 'Site Summary Peak Information for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfoTwo()),
-					{ text: 'Site Summary HWM Information for ' + eventOne , style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Site Summary HWM Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
-					{ text: 'Site Summary HWM Information for ' + eventTwo , style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Site Summary HWM Information for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfoTwo()),
-					{ text: 'Peak Data for '+ eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Peak Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 					peaksTable(getPeaksData()),
 					{ text: 'Peak Data for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
@@ -2026,7 +2021,7 @@ $(document).ready(function () {
 			var numReport;
 			var standReport;
 
-			
+
 			// removing any undefined values incase there are some
 			peakArrReport = peakArrReport.filter(e => e);
 			// Create peak row in report summary table
@@ -2060,6 +2055,7 @@ $(document).ready(function () {
 				//Round Results
 				meanReport = meanReport.toFixed(3);
 				standReport = standReport.toFixed(3);
+				medianReport = medianReport.toFixed(3);
 				confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
 				confIntNinetyLow = confIntNinetyLow.toFixed(3);
 			}
@@ -2444,6 +2440,14 @@ $(document).ready(function () {
 
 			setTimeout(() => {
 				$("#reportFooter").show();
+
+				//disable csv and print buttons if there are not data
+				if (hwmCSVData.length == 0) {
+					document.getElementById("saveHWMCSV").disabled = true;
+				}
+				if (peaksCSVData.length == 0) {
+					document.getElementById("savePeakCSV").disabled = true;
+				}
 			}, 4500);
 
 			// If there is no data, then printing will be disabled. 
