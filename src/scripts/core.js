@@ -565,12 +565,11 @@ $(document).ready(function () {
 				queryNWISrtGages(bbox);
 				USGSrtGages.addTo(map);
 			}
-			$('#siteReportLoading').modal({backdrop: 'static', keyboard: false})  
 			//$('siteReportLoading').modal('show');
 			//Give the map elements time to load before creating site report
 			if (exploreMap == false) {
 				//show load warning message while waiting for layers to load and report to generate
-				$('#siteReportLoading').modal('show');
+				$('#siteReportLoading').modal('show', {backdrop: 'static', keyboard: false});
 				setTimeout(() => {
 					//remove loading message, show site report modal
 					$('#siteReportLoading').modal('hide');
@@ -1875,8 +1874,6 @@ $(document).ready(function () {
 		if (document.getElementById('peakCheckbox').checked === false) {
 			$('#peakCheckbox').click();
 		}
-		document.getElementById('noaaToggle').checked = false;
-		
 
 		bufferPeak.addTo(map);
 		//bufferHWM.addTo(map);
@@ -3609,7 +3606,7 @@ $(document).ready(function () {
 						body: [[
 							[{ text: '', width: 300, height: 200 }],
 							reportSelectionsTable(),
-							[{ image: legendUrl, width: 200, height: 175 }],
+							[{ image: legendUrl, width: 150, height: 135 }],
 						],
 						]
 					},

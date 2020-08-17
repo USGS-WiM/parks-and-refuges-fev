@@ -1997,12 +1997,11 @@ $(document).ready(function () {
 				queryNWISrtGages(bbox);
 				USGSrtGages.addTo(map);
 			}
-			$('#siteReportLoading').modal({backdrop: 'static', keyboard: false})  
 			//$('siteReportLoading').modal('show');
 			//Give the map elements time to load before creating site report
 			if (exploreMap == false) {
 				//show load warning message while waiting for layers to load and report to generate
-				$('#siteReportLoading').modal('show');
+				$('#siteReportLoading').modal('show', {backdrop: 'static', keyboard: false});
 				setTimeout(() => {
 					//remove loading message, show site report modal
 					$('#siteReportLoading').modal('hide');
@@ -3301,6 +3300,9 @@ $(document).ready(function () {
 		if (document.getElementById('stormTideToggle').checked) {
 			$('#stormTideToggle').click();
 		}
+		if (document.getElementById('noaaToggle').checked) {
+			$('#noaaToggle').click();
+		}
 		if (document.getElementById('peakCheckbox').checked === false) {
 			$('#peakCheckbox').click();
 		}
@@ -3330,8 +3332,15 @@ $(document).ready(function () {
 		var sTwoThirdVal = sorted[sThirdLength * 2 - 1];
 
 		var peaksCheckBox = document.getElementById("peaksToggle");
-		var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
-
+		var PeakSummarySymbologyInterior;
+		if (sThirdVal != undefined) {
+		PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
+		}
+		/*
+		if (sThirdVal == undefined) {
+			PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img></div>"
+		}
+		*/
 		// adding the peak and hwm icons to the legend
 		$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
 		//$('#highWaterSymbology').append(highWaterSymbologyInterior);
@@ -3425,6 +3434,10 @@ $(document).ready(function () {
 
 				//function that displays hydrographs
 				displayRtGageReport(identifiedUSGSrtGage);
+
+				if (document.getElementById('streamGageToggle').checked) {
+					$('#streamGageToggle').click();
+				}
 
 			}, 1000);
 
@@ -5025,7 +5038,7 @@ $(document).ready(function () {
 						body: [[
 							[{ text: '', width: 300, height: 200 }],
 							reportSelectionsTable(),
-							[{ image: legendUrl, width: 200, height: 175 }],
+							[{ image: legendUrl, width: 150, height: 135 }],
 						],
 						]
 					},
