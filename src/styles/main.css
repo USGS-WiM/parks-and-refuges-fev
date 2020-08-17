@@ -466,6 +466,29 @@ body {
     margin-bottom: 2px;
     padding:2px;
 }
+.btnReport {
+    font-weight: 100;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    font-size: 14px;
+}
+.btnReport:hover {
+    font-weight: 100;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border-color: #ccc;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+
 
 #btnChooseRegion {
     background-color: #345EBD;
