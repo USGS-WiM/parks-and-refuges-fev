@@ -148,79 +148,31 @@
                     <h4 class="modal-title">USGS Flood Event Viewer</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Welcome to the USGS Flood Event Viewer. Please select a Park or Refuge to get started.</h4>
+                    <h4>Welcome to the USGS Flood Event Viewer. <br>Would you like to run a report for a region or a
+                        specific site?</h4>
                     <br>
-                    <form class="form-horizontal" role="form" id="welcomeForm">
-                        <div class="form-group" id="evtNameForm_welcomeModal">
-                            <label for="typeSelect_welcomeModal" class="col-sm-2 control-label welcomeForms">Lands Type:
-                            </label>
-                            <div class="col-sm-10 welcomeForms">
-                                <select id="typeSelect_welcomeModal" class="typeSelectwelcome" multiple="multiple"
-                                    style="width: 100%"></select>
-                            </div>
-                        </div>
-
-                        <div class="form-group" id="evtNameForm_welcomeModal">
-                            <label for="siteSelect_welcomeModal" class="col-sm-2 control-label welcomeForms">Site:
-                            </label>
-                            <div class="col-sm-10 welcomeForms">
-                                <select id="siteSelect_welcomeModal" class="siteSelect" multiple="multiple"
-                                    style="width: 100%"></select>
-                            </div>
-                        </div>
-
-                        <span style="font-size: smaller">You may select from list or begin typing event name. Events
-                            sorted
-                            by start
-                            date.</span><br>
-                        <div id="evtNameForm_welcomeModal" class="form-group">
-                            <label for="typeSelect_welcomeModal" class="col-sm-2 control-label welcomeForms">Event:
-                            </label>
-                            <!--<input type="text" class="form-control" placeholder="Search for...">-->
-                            <div class="col-sm-10 welcomeForms">
-                                <select id="evtSelect_welcomeModal" class="evtSelect form-control select"
-                                    style="width: 400px" multiple></select>
-                            </div>
-                        </div>
-                    </form>
-                    <!-- <div class="input-group form-group">
-                        <span>Select a Park or Refuge: </span>
-                        <div class="form-group" align="center">
-                            <div id="search_container">
-                                <div style="left: -20px" id="search">
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
-                    <div id="evtNameForm_parks" class="input-group form-group">
-                        <div class="form-group" id="bufferOptions" style="display: contents;">
-                            <span>Select a buffer distance: &nbsp;&nbsp;</span>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="fiftyKm" value="option4"> 50 KM
-                            </label>
-                        </div>
-                    </div>
-                    <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
-                            aria-hidden="true"></i> Please complete all fields in the form.</div>
-                </div>
-                <div class="modal-footer">
-                    <span><button id="btnSubmitEvent" class="btn btn-default" type="button" aria-hidden="true"
-                            style="color:gray;" class="btn btn-primary">Go</button></span>
+                    <span><button id="btnChooseRegion" class="btn btn-default" type="button" aria-hidden="true"
+                            style="color:white; text-align: center;" class="btn btn-primary">Region</button></span>
+                    <span><button id="btnChooseSite" class="btn btn-default" type="button" aria-hidden="true"
+                            style="color:white; align-self: center;" class="btn btn-primary">Site</button></span>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
     <!-- end of welcome modal -->
 
+    <!-- start Load warning for site report-->
+    <div class="modal fade overflow-y-hidden" id="siteReportLoading" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="text-align: center;">Please wait while site report loads</h4>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <!-- end Load warning for site report-->
 
     <!-- start updateFiltersModal -->
     <div class="modal fade overflow-y-hidden" id="updateFiltersModal" style="display: none;" aria-hidden="true">
@@ -285,7 +237,9 @@
                 <div class="modal-footer">
                     <button type="submit" class="dismissbuttonfilter btn" data-dismiss="modal">Dismiss</button>
                     <span><button id="btnSubmitEvent_filter" class="btn btn-default" type="button" aria-hidden="true"
-                            style="color:gray;" class="btn btn-primary">Go</button></span>
+                            class="btn btn-primary">Explore Map</button></span>
+                    <span><button id="btnActiveSiteReport" class="btn btn-default" type="button" aria-hidden="true"
+                            class="btn btn-primary">Generate Report</button></span>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -329,7 +283,8 @@
     </div>
     <!-- end Geosearch Modal -->
 
-    <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" data-backdrop="static" aria-hidden="true">
+    <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" data-backdrop="static"
+        aria-hidden="true">
         <div class="modal-dialog" style="width: 1100px; overflow-y: initial !important">
             <div class="modal-content">
                 <div class="modal-header">
@@ -339,7 +294,7 @@
                 </div>
                 <div id="reportInfo"></div>
                 <div class="modal-body" style="text-align: center; height: 600px; overflow-y: auto; overflow-x: auto;">
-                    
+
                     <div id="reviewMap" class="report-inline-block">
                         <div id='loader' class='imageLoader'></div>
                         <p id='loadingMessage'>loading image...</p>
@@ -347,17 +302,20 @@
                     <div id="legendImage" class="report-inline-block"></div>
                     <br>
                     <div style='text-align: center; font-weight:bold' id='reportSummaryTitle'></div>
-                    <br><div style='text-align: center;' id='reportSummaryNoData'></div>
+                    <br>
+                    <div style='text-align: center;' id='reportSummaryNoData'></div>
                     <div class='reportInfo' id="sumTable">
                         <table class="table" id="reportSummaryDataTable">
                         </table>
-                        </div>
+                    </div>
                     <div class='reportInfo' id="peakTable">
                         <table class="table" id="peakDataTable"></table>
                     </div>
                     <p style="font-weight: bold;">Storm Tide Hydrographs</p>
                     <div id="hydrographs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
-                    <div id="graphSite"><div id="stgraphs"></div></div>
+                    <div id="graphSite">
+                        <div id="stgraphs"></div>
+                    </div>
                     <div class='reportInfo' id="hwmTable" style="width: 900px; ">
                         <table class="table" id="hwmDataTable"></table>
                     </div>
@@ -384,7 +342,8 @@
     </div>
     </div>
 
-    <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true" role="dialog">
+    <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true"
+        role="dialog">
         <div class="modal-dialog modal-lg" style="width: 1100px;">
             <div class="modal-content">
                 <div class="modal-header">
