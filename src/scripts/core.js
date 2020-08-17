@@ -1898,8 +1898,13 @@ $(document).ready(function () {
 		var sTwoThirdVal = sorted[sThirdLength * 2 - 1];
 
 		var peaksCheckBox = document.getElementById("peaksToggle");
-		var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
-
+		var PeakSummarySymbologyInterior;
+		if (sThirdVal != undefined) {
+		PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
+		}
+		if (sThirdVal == undefined) {
+			PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img></div>"
+		}
 		// adding the peak and hwm icons to the legend
 		$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
 		//$('#highWaterSymbology').append(highWaterSymbologyInterior);
