@@ -1349,7 +1349,47 @@ a.lgi-zoom:hover {
     transition: 0.2s !important;
     background-color: rgba(52,94,189, 0.8) !important;
 }
+#printNav{
+    display: block;
+    width: 100% !important;
+    margin: 15px auto 15px auto;
+    box-sizing: border-box;
+    padding: 10px !important;
+    transition: 0.2s;
+    /*border-radius: 5px !important;*/
+    text-align: center !important;
+    background-color: #0071BC !important;
+    color: #FFF !important;
+    border-left: none !important;
+    border: 2px solid #00568F !important;
+    margin-bottom: 16px !important;
+}
+#printNav:hover{
+    cursor: pointer;
+    transition: 0.2s !important;
+    background-color: rgba(52,94,189, 0.8) !important;
+}
 
+#btnStartOver{
+    display: block;
+    width: 100% !important;
+    margin: 15px auto 15px auto;
+    box-sizing: border-box;
+    padding: 10px !important;
+    transition: 0.2s;
+    /*border-radius: 5px !important;*/
+    text-align: center !important;
+    background-color: rgb(68, 65, 59) !important;
+    color: #FFF !important;
+    border-left: none !important;
+    border: 2px solid #000000 !important;
+    margin-bottom: 16px !important;
+}
+#btnStartOver:hover{
+    cursor: pointer;
+    transition: 0.2s !important;
+    background-color: rgba(114, 113, 111, 0.8) !important;
+}
 
 .panel-body h3{
     display: block;

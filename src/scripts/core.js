@@ -2498,6 +2498,9 @@ $(document).ready(function () {
 		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
 		showFiltersModal();
 	});
+	$('#btnStartOver').click(function () {
+		$('#welcomeModal').modal('show');
+	});
 
 	/* begin basemap controller */
 	function setBasemap(basemap) {
