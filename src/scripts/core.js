@@ -593,12 +593,6 @@ $(document).ready(function () {
 		location.reload()
 	});
 
-	// $('#printRegionalReport').click(function () {
-	// 	setTimeout(() => {
-	// 		printRegionalReport();
-	// 	}, 3000)
-	// });
-
 	//Corresponds with the 'HWM CSV' button on the report modal
 	$('#saveHWMCSV').click(function () {
 		//if there is a hwm table, download as csv
@@ -1006,6 +1000,7 @@ $(document).ready(function () {
 	var pdfRegionalMapUrl;
 
 	$('#printNav').click(function () {
+		map.dragging.disable();
 		$('#printModal').modal('show');
 		generateSiteReport();
 	});
@@ -2119,6 +2114,7 @@ $(document).ready(function () {
 				//Round Results
 				meanReport = meanReport.toFixed(3);
 				standReport = standReport.toFixed(3);
+				medianReport = medianReport.toFixed(3);
 				confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
 				confIntNinetyLow = confIntNinetyLow.toFixed(3);
 			}
@@ -2503,6 +2499,14 @@ $(document).ready(function () {
 
 			setTimeout(() => {
 				$("#reportFooter").show();
+
+				//disable csv and print buttons if there are not data
+				if (hwmCSVData.length == 0) {
+					document.getElementById("saveHWMCSV").disabled = true;
+				}
+				if (peaksCSVData.length == 0) {
+					document.getElementById("savePeakCSV").disabled = true;
+				}
 			}, 4500);
 
 			// If there is no data, then printing will be disabled. 
