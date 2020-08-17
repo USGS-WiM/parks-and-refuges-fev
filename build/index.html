@@ -58,21 +58,13 @@
                 <a class="navbar-brand" href="https://www.usgs.gov">
                     <img alt="USGS logo" height="38px" src="images/USGS_ID_white.png">
                     <span class='hidden-xs' style='font-size:20px;display:inline-block;'>&nbsp;&nbsp;Flood Events at
-                        Parks and Refuges</span>
+                        National Wildlife Refuges and National Park Service Lands</span>
                 </a>
             </div>
 
             <button id="geosearchNav" type="button" class="btn btn-primary navbar-btn pull-right">
                 <span class="glyphicon glyphicon-search"></span>
                 <span id="geosearchButtonText"> Geosearch</span>
-            </button>
-            <button id="printNav" type="button" class="btn btn-primary navbar-btn pull-right">
-                <span class="glyphicon glyphicon-search"></span>
-                <span id="printButtonText">Report</span>
-            </button>
-            <button id="regionalReportNav" type="button" class="btn btn-primary navbar-btn pull-right">
-                <span style="padding-top: 5px;" class="glyphicon glyphicon-search"></span>
-                <span id="regionalReportText" style="font-size: 10px;">Regional<br>Report</span>
             </button>
             <button id="aboutNav" class="btn btn-default navbar-btn pull-right">
                 <i class="fa fa-question-circle"></i><span class="hidden-xs">&nbsp;&nbsp;About</span>
@@ -99,82 +91,35 @@
                 <div class="modal-header">
                     <!-- X close button - removed to prevent user from avoiding event selection -->
                     <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>-->
-                    <h4 class="modal-title">USGS Flood Event Viewer</h4>
+                    <h4 class="modal-title">Flood Events at National Wildlife Refuges and National Park Service Lands Viewer</h4>
                 </div>
                 <div class="modal-body">
-                    <h4>Welcome to the USGS Flood Event Viewer. Please select a Park or Refuge to get started.</h4>
+                    <h4>Would you like to run a report for a region or a specific site?</h4>
                     <br>
-                    <form class="form-horizontal" role="form" id="welcomeForm">
-                        <div class="form-group" id="evtNameForm_welcomeModal">
-                            <label for="typeSelect_welcomeModal" class="col-sm-2 control-label welcomeForms">Lands Type:
-                            </label>
-                            <div class="col-sm-10 welcomeForms">
-                                <select id="typeSelect_welcomeModal" class="typeSelectwelcome" multiple="multiple"
-                                    style="width: 100%"></select>
-                            </div>
-                        </div>
-
-                        <div class="form-group" id="evtNameForm_welcomeModal">
-                            <label for="siteSelect_welcomeModal" class="col-sm-2 control-label welcomeForms">Site:
-                            </label>
-                            <div class="col-sm-10 welcomeForms">
-                                <select id="siteSelect_welcomeModal" class="siteSelect" multiple="multiple"
-                                    style="width: 100%"></select>
-                            </div>
-                        </div>
-
-                        <span style="font-size: smaller">You may select from list or begin typing event name. Events
-                            sorted
-                            by start
-                            date.</span><br>
-                        <div id="evtNameForm_welcomeModal" class="form-group">
-                            <label for="typeSelect_welcomeModal" class="col-sm-2 control-label welcomeForms">Event:
-                            </label>
-                            <!--<input type="text" class="form-control" placeholder="Search for...">-->
-                            <div class="col-sm-10 welcomeForms">
-                                <select id="evtSelect_welcomeModal" class="evtSelect form-control select"
-                                    style="width: 400px" multiple></select>
-                            </div>
-                        </div>
-                    </form>
-                    <!-- <div class="input-group form-group">
-                        <span>Select a Park or Refuge: </span>
-                        <div class="form-group" align="center">
-                            <div id="search_container">
-                                <div style="left: -20px" id="search">
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
-                    <div id="evtNameForm_parks" class="input-group form-group">
-                        <div class="form-group" id="bufferOptions" style="display: contents;">
-                            <span>Select a buffer distance: &nbsp;&nbsp;</span>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="tenKm" value="option1"> 10 KM
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="twentyKm" value="option2"> 20 KM
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="thirtyKm" value="option3"> 30 KM
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="fiftyKm" value="option4"> 50 KM
-                            </label>
-                        </div>
+                    <div style="text-align: center;">
+                        <span><button id="btnChooseRegion" class="btn btn-default" type="button" aria-hidden="true"
+                        style="color:white; text-align: center;" class="btn btn-primary">Region</button></span>
+                        <span><button id="btnChooseSite" class="btn btn-default" type="button" aria-hidden="true"
+                        style="color:white; align-self: center;" class="btn btn-primary">Site</button></span>
                     </div>
-                    <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
-                            aria-hidden="true"></i> Please complete all fields in the form.</div>
-                </div>
-                <div class="modal-footer">
-                    <span><button id="btnSubmitEvent" class="btn btn-default" type="button" aria-hidden="true"
-                            style="color:gray;" class="btn btn-primary">Go</button></span>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
     <!-- end of welcome modal -->
 
+    <!-- start Load warning for site report-->
+    <div class="modal fade overflow-y-hidden" id="siteReportLoading" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="text-align: center;">Please wait while site report loads</h4>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- end Load warning for site report-->
 
     <!-- start updateFiltersModal -->
     <div class="modal fade overflow-y-hidden" id="updateFiltersModal" style="display: none;" aria-hidden="true">
@@ -239,7 +184,9 @@
                 <div class="modal-footer">
                     <button type="submit" class="dismissbuttonfilter btn" data-dismiss="modal">Dismiss</button>
                     <span><button id="btnSubmitEvent_filter" class="btn btn-default" type="button" aria-hidden="true"
-                            style="color:gray;" class="btn btn-primary">Go</button></span>
+                            class="btn btn-primary">Explore Map</button></span>
+                    <span><button id="btnActiveSiteReport" class="btn btn-default" type="button" aria-hidden="true"
+                            class="btn btn-primary">Generate Report</button></span>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -283,8 +230,10 @@
     </div>
     <!-- end Geosearch Modal -->
 
-    <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" data-backdrop="static" aria-hidden="true">
-        <div class="modal-dialog" style="width: 1000px; overflow-y: initial !important">
+    <!-- start of site report modal-->
+    <div class="modal fade overflow-y-hidden" id="printModal" style="display: none; height: 90%;" data-backdrop="static"
+        aria-hidden="true">
+        <div class="modal-dialog" style="width: 1100px; overflow-y: initial !important">
             <div class="modal-content">
                 <div class="modal-header">
                     <button id="printCloseTop" type="button" class="close" data-dismiss="modal"
@@ -293,19 +242,90 @@
                 </div>
                 <div id="reportInfo"></div>
                 <div class="modal-body" style="text-align: center; height: 600px; overflow-y: auto; overflow-x: auto;">
-                    
-                    <div id="reviewMap" class="report-inline-block">
-                        <div id='loader' class='imageLoader'></div>
-                        <p id='loadingMessage'>loading image...</p>
+
+                    <div id="reportMapLegend" >
+                        <div id="reviewMap" class="report-inline-block">
+                            <div id='loader' class='imageLoader'></div>
+                            <p id='loadingMessage'>loading image...</p>
+                        </div>
+                        <div id="legendImage" class="report-inline-block"></div>
                     </div>
-                    <div id="legendImage" class="report-inline-block"></div>
-                    <div id="gageGraphs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
-                    <div id="rtgraphs"></div>
-                    <div class='reportInfo' id="peakTable">
-                        <table class="table" id="peakDataTable"></table>
+                    <br>
+                    <br>
+                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
+                        <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportSummarySection"
+                            aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left"><p
+                                style="font-size: 13pt; text-align: left">Summary Data <i
+                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
                     </div>
-                    <div class='reportInfo' id="hwmTable" style="width: 900px; ">
-                        <table class="table" id="hwmDataTable"></table>
+                    <div id="reportSummarySection">
+                        <div style='text-align: center; font-weight:bold' id='reportSummaryTitle'></div>
+                        <br>
+                        <div style='text-align: center;' id='reportSummaryNoData'></div>
+                        <div class='reportInfo' id="sumTable">
+                            <table class="table" id="reportSummaryDataTable">
+                            </table>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
+                        <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportPeakSection"
+                            aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left"><p 
+                                style="font-size: 13pt; text-align: left">Peak Data <i
+                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                    </div>
+                    <div id="reportPeakSection">
+
+                        <div class='reportInfo' id="peakTable">
+                            <table class="table" id="peakDataTable"></table>
+                        </div>
+                    </div>
+
+                    <br>
+                    <br>
+                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
+                        <button class="groupToggle btnReport " data-toggle="collapse" data-target="#reportHWMSection"
+                            aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left"><p 
+                                style="font-size: 13pt; text-align: left">HWM Data <i
+                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                    </div>
+                    <div id="reportHWMSection">
+                        <div class='reportInfo' id="hwmTable" style="width: 900px; ">
+                            <table class="table" id="hwmDataTable"></table>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
+                        <button class="groupToggle btnReport btn-dafault" data-toggle="collapse" data-target="#reportRTSection"
+                            aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left"><p 
+                                style="font-size: 13pt; text-align: left">Stream Gage Hydrographs <i
+                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                    </div>
+                    <div id="reportRTSection">
+                        <div id="gageGraphs" style="text-align: center; font-size: medium; font-weight:bold;"></div>
+                        <div id="rtgraphs"></div>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
+                        <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportHydrographSection"
+                            aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left"><p
+                                style="font-size: 13pt; text-align: left">Storm Tide Hydrographs <i
+                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                    </div>
+                    <div id="reportHydrographSection">
+                        <p style="font-weight: bold;">Storm Tide Hydrographs</p>
+                        <div id="hydrographs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
+                        <div id="graphSite">
+                            <div id="stgraphs"></div>
+                        </div>
                     </div>
                     <!-- <div id="reviewMapContainer">
                     <div id="reviewMap">
@@ -327,9 +347,11 @@
         </div>
     </div>
     </div>
+<!-- end of site report modal -->
 
-    <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true" role="dialog">
-        <div class="modal-dialog modal-lg">
+    <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true"
+        role="dialog">
+        <div class="modal-dialog modal-lg" style="width: 1100px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
@@ -397,12 +419,25 @@
                             <div id="data">
                                 <div class='dataSection' id="regionalPeakTable"
                                     style="width: 850px; overflow-x: scroll; display:none;">
-                                    <table class="table" id="summaryDataTable">
+                                    <p id="eventsSummaryTitle" style="font-weight: bold;"></p>
+                                    <table class="table" style="table-layout: fixed;" id="eventsSummaryTable">
                                     </table>
-                                    <table class="table" id="peakDataTableReg">
+                                    <table class="table" id="summaryDataTableEOne">
+                                    </table>
+                                    <table class="table" id="summaryDataTableETwo">
+                                    </table>
+                                    <table class="table" id="siteSummaryPeakDataTableEOne">
+                                    </table>
+                                    <table class="table" id="siteSummaryPeakDataTableETwo">
+                                    </table>
+                                    <table class="table" id="siteSummaryHWMDataTableEOne">
+                                    </table>
+                                    <table class="table" id="siteSummaryHWMDataTableETwo">
+                                    </table>
+                                    <!-- <table class="table" id="peakDataTableReg">
                                     </table>
                                     <table class="table" id="hwmDataTableReg">
-                                    </table>
+                                    </table> -->
                                 </div>
                             </div>
                             <!--
@@ -447,7 +482,7 @@
                 <div class="modal-body">
                     <button type="button" class="close" data-dismiss="modal"><span
                             aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <img src="" class="imagepreview" style="width: 100%;">
+                    <img id="hImage" src="" class="imagepreview" style="width: 100%;">
                 </div>
             </div>
         </div>
@@ -775,8 +810,25 @@
             <!--<div id="sidebar" class="col-xs-7 col-sm-3 col-md-3 sidebar sidebar-left sidebar-animate sidebar-md-show no-col-padding">-->
             <div id="sidebar"
                 class="col-xs-11 col-sm-10 col-md-3 col-lg-2 sidebar sidebar-left sidebar-animate sidebar-md-show no-col-padding">
+                <h4 class="site-name"><small>Site:</small><b><span id="largeSiteNameDisplay"></span></b></h4>
                 <h4 class="event-name"><small>Event:</small><b><span id="largeEventNameDisplay"></span></b></h4>
                 <h4 class="event-range"><span id="largeEventDateRangeDisplay"></span></h4>
+
+                <div class="panel-body panel-default wim-sidebar-panel collapse in">
+
+                    <button id="printNav" type="button" class="btn btn-default filtersBtn" disabled>
+                        <span id="printButtonText">Site Report</span>
+                    </button>
+                    <button id="btnChangeFilters" class="btn btn-default filtersBtn">
+                        <span id="queryButtonText">Query a New Site</span></button>
+
+                        <button id="btnStartOver" class="btn btn-default filtersBtn">
+                            <span id="startOverButtonText">Start Over</span></button>
+                </div>
+
+
+
+
                 <div class="panel panel-default wim-sidebar-panel">
                     <div class="panel panel-default wim-sidebar-panel">
                         <div class="panel-heading" id="mapLayerHeader">
@@ -1027,120 +1079,6 @@
                 <!--<div id="toggle" style="padding: 2px 2px;"></div>-->
                 <!--</div>-->
                 <!--</div>-->
-                <div class="panel panel-default wim-sidebar-panel">
-                    <div class="panel-heading" id="filtersHeader">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" href="#filtersPanel" aria-expanded="false"
-                                aria-controls="filtersPanel">
-                                Filters
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="filtersPanel" class="panel-collapse" role="tabpanel" aria-labelledby="filtersHeader">
-                        <!------------------------------------------------------------------------------------------>
-
-
-                        <div class="panel-body collapse in">
-
-                            <button id="btnChangeFilters" class="btn btn-default filtersBtn">Change Filters</button><br>
-                            <div id="currentFiltersHeading">Current Filters</div>
-
-                            <!--<div style="float:left;"><label id="currentFiltersHeading" style="font-size:large;">Current Filters</label></div><div style="float:right"><button id="btnChangeFilters" class="btn btn-default filtersBtn">Change Filters</button></div>-->
-
-                            <div id="eventGroupDiv">
-                                <!--<label for="eventGroup">Event</label>-->
-                                <ul class="list-group" id="eventGroup" style="list-style-type:none">
-                                    <!--<li class="list-group-item col-lg-12 filterItems esconder">Event Type: <span id="eventTypeDisplay"></span></li>-->
-                                    <li class="list-group-item col-lg-12 filterItems">Event <span
-                                            id="eventNameDisplay"></span></li>
-                                    <!--<li class="list-group-item col-lg-12 filterItems esconder">Event Status: <span id="eventStatusDisplay"></span></li>-->
-                                </ul>
-                            </div>
-
-                            <div id="locationGroupDiv" class="esconder">
-                                <label for="locationGroup">Location</label>
-                                <ul class="list-group" id="locationGroup" style="list-style-type:none">
-                                    <li id="stateDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="stateDisplay">States</label><span id="stateDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                    <li id="countyDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="countyDisplay">Counties</label><span id="countyDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                </ul>
-                            </div>
-
-
-                            <div id="sensorsGroupDiv" class="esconder">
-                                <label for="sensorsGroup">Sensors</label>
-                                <ul class="list-group" id="sensorsGroup" style="list-style-type:none">
-                                    <li id="sensorTypeDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="sensorTypeDisplay">Sensor Type</label><span id="sensorTypeDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                    <li id="sensorStatusDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="sensorStatusDisplay">Sensor Status</label><span
-                                            id="sensorStatusDisplay" class="labelSpan"></span>
-                                    </li>
-                                    <li id="collectConditionDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="collectConditionDisplay">Collection Condition</label><span
-                                            id="collectConditionDisplay" class="labelSpan"></span>
-                                    </li>
-                                    <li id="deployTypeDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="deployTypeDisplay">Deployment Type</label><span
-                                            id="deployTypeDisplay" class="labelSpan"></span>
-                                    </li>
-                                </ul>
-                            </div>
-
-
-                            <div id="hwmGroupDiv" class="esconder">
-                                <label for="hwmGroup">High-Water Marks</label>
-                                <ul class="list-group" id="hwmGroup" style="list-style-type:none">
-                                    <li id="hwmTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="hwmTypeDisplay">HWM Type</label><span id="hwmTypeDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                    <li id="hwmQualityDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="hwmQualityDisplay">Quality</label><span id="hwmQualityDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                    <li id="hwmEnvDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="hwmEnvDisplay">Environment</label><span id="hwmEnvDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                    <li id="hwmSurveyCompDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="hwmSurveyCompDisplay">Survey Completed</label><span
-                                            id="hwmSurveyCompDisplay" class="labelSpan"></span>
-                                    </li>
-                                    <li id="hwmStillWaterDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="hwmStillWaterDisplay">Stillwater Location</label><span
-                                            id="hwmStillWaterDisplay" class="labelSpan"></span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div id="peaksGroupDiv" class="esconder">
-                                <label for="peaksGroup">Peak Dates</label>
-                                <ul class="list-group" id="peaksGroup" style="list-style-type:none">
-                                    <li id="peakStartDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        Start Date: <span id="peakStartDisplay"></span></li>
-                                    <li id="peakEndDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        End Date: <span id="peakEndDisplay"></span></li>
-                                </ul>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
 
 
                 <!-- # closing div tag for accordion style panels -->
@@ -1150,7 +1088,7 @@
             </div>
             <div id="mapContainer" class="col-md-9 col-lg-10 col-md-offset-3 col-lg-offset-2 no-col-padding keepit100">
                 <div id="mapDiv">
-                    <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"><i
+                    <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert" data-html2canvas-ignore="true"><i
                             class="fa fa-lg fa-cog fa-spin fa-fw"></i><span>Loading Layers...</span></div>
                 </div>
                 <div id="latLngScale" class="latLngScale">

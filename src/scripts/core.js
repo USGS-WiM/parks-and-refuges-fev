@@ -565,8 +565,8 @@ $(document).ready(function () {
 				queryNWISrtGages(bbox);
 				USGSrtGages.addTo(map);
 			}
-			/* $('#siteReportLoading').modal({backdrop: 'static', keyboard: false})  
-			$('siteReportLoading').modal('show'); */
+			$('#siteReportLoading').modal({backdrop: 'static', keyboard: false})  
+			//$('siteReportLoading').modal('show');
 			//Give the map elements time to load before creating site report
 			if (exploreMap == false) {
 				//show load warning message while waiting for layers to load and report to generate
@@ -1869,6 +1869,9 @@ $(document).ready(function () {
 		if (document.getElementById('stormTideToggle').checked) {
 			$('#stormTideToggle').click();
 		}
+		if (document.getElementById('noaaToggle').checked) {
+			$('#noaaToggle').click();
+		}
 		if (document.getElementById('peakCheckbox').checked === false) {
 			$('#peakCheckbox').click();
 		}
@@ -1993,6 +1996,10 @@ $(document).ready(function () {
 
 				//function that displays hydrographs
 				displayRtGageReport(identifiedUSGSrtGage);
+
+				if (document.getElementById('streamGageToggle').checked) {
+					$('#streamGageToggle').click();
+				}
 
 			}, 1000);
 
