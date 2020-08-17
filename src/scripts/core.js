@@ -1003,22 +1003,6 @@ $(document).ready(function () {
 		generateSiteReport();
 	});
 
-	$('#regionalReportNav').click(function () {
-		showRegionalModal();
-
-		// Get image of map from Regional Report for pdfMake pdf
-
-
-		// If there is no data, then printing will be disabled. 
-		if ((allPeaksEOne.length === 0) && (allHWMEOne.length === 0)) {
-			document.getElementById("printRegionalReport").disabled = true;
-		} else {
-			document.getElementById("printRegionalReport").disabled = false;
-		}
-
-
-	});
-
 	function getRegionalMap() {
 		let mapPane;
 		//mapPane = $('.leaflet-map-pane')[0];
