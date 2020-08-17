@@ -103,21 +103,14 @@
                 </button>
                 <a class="navbar-brand" href="https://www.usgs.gov">
                     <img alt="USGS logo" height="38px" src="images/USGS_ID_white.png">
-                    <span class='hidden-xs' style='font-size:20px;display:inline-block;'>&nbsp;&nbsp;Flood Events at National Wildlife Refuges and National Park Service Lands</span>
+                    <span class='hidden-xs' style='font-size:20px;display:inline-block;'>&nbsp;&nbsp;Flood Events at
+                        National Wildlife Refuges and National Park Service Lands</span>
                 </a>
             </div>
 
             <button id="geosearchNav" type="button" class="btn btn-primary navbar-btn pull-right">
                 <span class="glyphicon glyphicon-search"></span>
                 <span id="geosearchButtonText"> Geosearch</span>
-            </button>
-            <button id="printNav" type="button" class="btn btn-primary navbar-btn pull-right" disabled>
-                <span class="glyphicon glyphicon-search"></span>
-                <span id="printButtonText" style="font-size: 10px;">Site<br>Report</span>
-            </button>
-            <button id="regionalReportNav" type="button" class="btn btn-primary navbar-btn pull-right">
-                <span style="padding-top: 5px;" class="glyphicon glyphicon-search"></span>
-                <span id="regionalReportText" style="font-size: 10px;">Regional<br>Report</span>
             </button>
             <button id="aboutNav" class="btn btn-default navbar-btn pull-right">
                 <i class="fa fa-question-circle"></i><span class="hidden-xs">&nbsp;&nbsp;About</span>
@@ -167,7 +160,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title" style="text-align: center;">Please wait while site report loads</h4>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -805,6 +798,22 @@
                 <h4 class="site-name"><small>Site:</small><b><span id="largeSiteNameDisplay"></span></b></h4>
                 <h4 class="event-name"><small>Event:</small><b><span id="largeEventNameDisplay"></span></b></h4>
                 <h4 class="event-range"><span id="largeEventDateRangeDisplay"></span></h4>
+
+                <div class="panel-body panel-default wim-sidebar-panel collapse in">
+
+                    <button id="printNav" type="button" class="btn btn-default filtersBtn" disabled>
+                        <span id="printButtonText">Site Report</span>
+                    </button>
+                    <button id="btnChangeFilters" class="btn btn-default filtersBtn">
+                        <span id="queryButtonText">Query a New Site</span></button>
+
+                        <button id="btnStartOver" class="btn btn-default filtersBtn">
+                            <span id="startOverButtonText">Start Over</span></button>
+                </div>
+
+
+
+
                 <div class="panel panel-default wim-sidebar-panel">
                     <div class="panel panel-default wim-sidebar-panel">
                         <div class="panel-heading" id="mapLayerHeader">
@@ -1055,120 +1064,6 @@
                 <!--<div id="toggle" style="padding: 2px 2px;"></div>-->
                 <!--</div>-->
                 <!--</div>-->
-                <div class="panel panel-default wim-sidebar-panel">
-                    <div class="panel-heading" id="filtersHeader">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" href="#filtersPanel" aria-expanded="false"
-                                aria-controls="filtersPanel">
-                                Filters
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="filtersPanel" class="panel-collapse" role="tabpanel" aria-labelledby="filtersHeader">
-                        <!------------------------------------------------------------------------------------------>
-
-
-                        <div class="panel-body collapse in">
-
-                            <button id="btnChangeFilters" class="btn btn-default filtersBtn">Query a Site</button><br>
-                            <div id="currentFiltersHeading">Query a Site</div>
-
-                            <!--<div style="float:left;"><label id="currentFiltersHeading" style="font-size:large;">Current Filters</label></div><div style="float:right"><button id="btnChangeFilters" class="btn btn-default filtersBtn">Change Filters</button></div>-->
-
-                            <div id="eventGroupDiv">
-                                <!--<label for="eventGroup">Event</label>-->
-                                <ul class="list-group" id="eventGroup" style="list-style-type:none">
-                                    <!--<li class="list-group-item col-lg-12 filterItems esconder">Event Type: <span id="eventTypeDisplay"></span></li>-->
-                                    <li class="list-group-item col-lg-12 filterItems">Event <span
-                                            id="eventNameDisplay"></span></li>
-                                    <!--<li class="list-group-item col-lg-12 filterItems esconder">Event Status: <span id="eventStatusDisplay"></span></li>-->
-                                </ul>
-                            </div>
-
-                            <div id="locationGroupDiv" class="esconder">
-                                <label for="locationGroup">Location</label>
-                                <ul class="list-group" id="locationGroup" style="list-style-type:none">
-                                    <li id="stateDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="stateDisplay">States</label><span id="stateDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                    <li id="countyDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="countyDisplay">Counties</label><span id="countyDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                </ul>
-                            </div>
-
-
-                            <div id="sensorsGroupDiv" class="esconder">
-                                <label for="sensorsGroup">Sensors</label>
-                                <ul class="list-group" id="sensorsGroup" style="list-style-type:none">
-                                    <li id="sensorTypeDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="sensorTypeDisplay">Sensor Type</label><span id="sensorTypeDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                    <li id="sensorStatusDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="sensorStatusDisplay">Sensor Status</label><span
-                                            id="sensorStatusDisplay" class="labelSpan"></span>
-                                    </li>
-                                    <li id="collectConditionDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="collectConditionDisplay">Collection Condition</label><span
-                                            id="collectConditionDisplay" class="labelSpan"></span>
-                                    </li>
-                                    <li id="deployTypeDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="deployTypeDisplay">Deployment Type</label><span
-                                            id="deployTypeDisplay" class="labelSpan"></span>
-                                    </li>
-                                </ul>
-                            </div>
-
-
-                            <div id="hwmGroupDiv" class="esconder">
-                                <label for="hwmGroup">High-Water Marks</label>
-                                <ul class="list-group" id="hwmGroup" style="list-style-type:none">
-                                    <li id="hwmTypeDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="hwmTypeDisplay">HWM Type</label><span id="hwmTypeDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                    <li id="hwmQualityDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="hwmQualityDisplay">Quality</label><span id="hwmQualityDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                    <li id="hwmEnvDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="hwmEnvDisplay">Environment</label><span id="hwmEnvDisplay"
-                                            class="labelSpan"></span>
-                                    </li>
-                                    <li id="hwmSurveyCompDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="hwmSurveyCompDisplay">Survey Completed</label><span
-                                            id="hwmSurveyCompDisplay" class="labelSpan"></span>
-                                    </li>
-                                    <li id="hwmStillWaterDisplay_li"
-                                        class="list-group-item col-lg-12 filterItems esconder">
-                                        <label for="hwmStillWaterDisplay">Stillwater Location</label><span
-                                            id="hwmStillWaterDisplay" class="labelSpan"></span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div id="peaksGroupDiv" class="esconder">
-                                <label for="peaksGroup">Peak Dates</label>
-                                <ul class="list-group" id="peaksGroup" style="list-style-type:none">
-                                    <li id="peakStartDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        Start Date: <span id="peakStartDisplay"></span></li>
-                                    <li id="peakEndDisplay_li" class="list-group-item col-lg-12 filterItems esconder">
-                                        End Date: <span id="peakEndDisplay"></span></li>
-                                </ul>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
 
 
                 <!-- # closing div tag for accordion style panels -->
