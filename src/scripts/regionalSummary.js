@@ -1615,7 +1615,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 buildDataTables(tablePeaksID, peakSiteSummaries, "Site Summary Peak Information " + eventName);
             }
             if (siteSumHWMVals.length > 0) {
-                buildDataTables(tableHWMsID, hwmSiteSummaries, "Site Summary HWM Information " + eventName);
+                buildDataTables(tableHWMsID, hwmSiteSummaries, "Site Summary High Water Mark Information " + eventName);
             }
 
             // Displays tables in modal, no longer desired in the regional report. 
