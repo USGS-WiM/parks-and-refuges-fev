@@ -1872,6 +1872,8 @@ $(document).ready(function () {
 		if (document.getElementById('peakCheckbox').checked === false) {
 			$('#peakCheckbox').click();
 		}
+		document.getElementById('noaaToggle').checked = false;
+		
 
 		bufferPeak.addTo(map);
 		//bufferHWM.addTo(map);
