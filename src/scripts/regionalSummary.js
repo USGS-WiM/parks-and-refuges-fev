@@ -1453,13 +1453,23 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             if (formattedPeaks.length > 0) {
                 peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
+                document.getElementById("saveRegionalPeakCSV").disabled = false;
             }
+            if (formattedPeaks.length == 0) {
+                document.getElementById("saveRegionalPeakCSV").disabled = true;
+            }
+        
 
             //Create hwm row in regional summary table
             getSummaryStats(hwmArrReg);
             if (formattedHWMS.length > 0) {
                 hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
+                document.getElementById("saveRegionalHWMCSV").disabled = false;
+            }
+            if (formattedHWMS.length == 0) {
+                document.getElementById("saveRegionalHWMCSV").disabled = true;
+                
             }
 
             function getSiteSummaryValues() {
