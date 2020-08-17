@@ -1674,7 +1674,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 var tableEventsSumID = "#eventsSummaryTable";
                 buildDataTables(tableEventsSumID, siteList, "");
                 var getTitle = document.getElementById("eventsSummaryTitle");
-                getTitle.append("Summary of Peaks measured within a " + bufferSize + "km Buffer for Events: " + selectedEventsNames[0] + ' and ' + selectedEventsNames[1])
+                getTitle.append("Summary of Peaks measured within a " + bufferSize + "km Buffer for " + selectedEventsNames[0] + ' and ' + selectedEventsNames[1])
             }
 
             if (eventNumber == 2 ) {
