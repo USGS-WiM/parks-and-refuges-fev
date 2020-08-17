@@ -1774,6 +1774,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         document.getElementById('siteSummaryPeakDataTableETwo').innerHTML = '';
         document.getElementById('siteSummaryHWMDataTableETwo').innerHTML = '';
         document.getElementById('eventsSummaryTable').innerHTML = '';
+        document.getElementById('eventsSummaryTitle').innerHTML = '';
 
         document.querySelector('.progress-bar-fill').style.width = "0%"
         clearSelects()
