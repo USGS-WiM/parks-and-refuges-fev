@@ -208,6 +208,8 @@ var met = L.layerGroup();
 var waveheight = L.layerGroup();
 var hwm = L.layerGroup();
 var peak = L.layerGroup();
+var bufferPeak = L.layerGroup();
+var bufferHWM = L.layerGroup();
 var appr = L.layerGroup();
 var int = L.layerGroup();
 var tracts = L.layerGroup();
@@ -563,8 +565,8 @@ $(document).ready(function () {
 				queryNWISrtGages(bbox);
 				USGSrtGages.addTo(map);
 			}
-
-			$('siteReportLoading').modal('show');
+			/* $('#siteReportLoading').modal({backdrop: 'static', keyboard: false})  
+			$('siteReportLoading').modal('show'); */
 			//Give the map elements time to load before creating site report
 			if (exploreMap == false) {
 				//show load warning message while waiting for layers to load and report to generate
@@ -1012,7 +1014,7 @@ $(document).ready(function () {
 		showRegionalModal();
 
 		// Get image of map from Regional Report for pdfMake pdf
-		
+
 
 		// If there is no data, then printing will be disabled. 
 		if ((allPeaksEOne.length === 0) && (allHWMEOne.length === 0)) {
@@ -1021,7 +1023,7 @@ $(document).ready(function () {
 			document.getElementById("printRegionalReport").disabled = false;
 		}
 
-		
+
 	});
 
 	function getRegionalMap() {
@@ -1543,18 +1545,18 @@ $(document).ready(function () {
 		if (selectionVarLen <= 5) {
 			var event;
 			if (selectedEvents.length == 2) {
-				event = $(".select2-selection__choice")[3].title  + ', ' + $(".select2-selection__choice")[2].title;
+				event = $(".select2-selection__choice")[3].title + ', ' + $(".select2-selection__choice")[2].title;
 			} else {
 				var event = $(".select2-selection__choice")[2].title;
 			}
 			var landType = $(".select2-selection__choice")[0].title;
 			var regionSubType = $(".select2-selection__choice")[1].title;
-			if (selectedEvents.length == 2) { 
+			if (selectedEvents.length == 2) {
 				var bufferReg = $(".select2-selection__choice")[4].title;
 			} else {
 				var bufferReg = $(".select2-selection__choice")[3].title;
 			}
-			
+
 		}
 
 		// Build summary selections table
@@ -1721,9 +1723,9 @@ $(document).ready(function () {
 					summaryTable(summaryInfo()),
 					{ text: 'Site Summary Peak Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfo()),
-					{ text: 'Site Summary HWM Information for ' + eventOne , style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Site Summary HWM Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
-					{ text: 'Peak Data for '+ eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Peak Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 					peaksTable(getPeaksData()),
 					{ text: 'HWM Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
@@ -1767,11 +1769,11 @@ $(document).ready(function () {
 					summaryPeakTable(summaryPeakInfo()),
 					{ text: 'Site Summary Peak Information for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfoTwo()),
-					{ text: 'Site Summary HWM Information for ' + eventOne , style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Site Summary HWM Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
-					{ text: 'Site Summary HWM Information for ' + eventTwo , style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Site Summary HWM Information for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfoTwo()),
-					{ text: 'Peak Data for '+ eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Peak Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 					peaksTable(getPeaksData()),
 					{ text: 'Peak Data for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
@@ -1863,6 +1865,63 @@ $(document).ready(function () {
 
 	function generateSiteReport() {
 		map.fitBounds(bufferPoly.getBounds());
+
+		// toggling off these layers so they aren't the map print out on the pdf
+		if (document.getElementById('baroToggle').checked) {
+			$('#baroToggle').click();
+		}
+		if (document.getElementById('metToggle').checked) {
+			$('#metToggle').click();
+		}
+		if (document.getElementById('rdgToggle').checked) {
+			$('#rdgToggle').click();
+		}
+		if (document.getElementById('peaksToggle').checked) {
+			$('#peaksToggle').click();
+		}
+		if (document.getElementById('HWMToggle').checked) {
+			$('#HWMToggle').click();
+		}
+		if (document.getElementById('waveHeightToggle').checked) {
+			$('#waveHeightToggle').click();
+		}
+		if (document.getElementById('stormTideToggle').checked) {
+			$('#stormTideToggle').click();
+		}
+		if (document.getElementById('peakCheckbox').checked === false) {
+			$('#peakCheckbox').click();
+		}
+
+		bufferPeak.addTo(map);
+		//bufferHWM.addTo(map);
+
+		// displaying labels for print image
+		bufferPeak.eachLayer(function (myMarker) { myMarker.showLabel(); });
+
+		var identifedPeakArray = [];
+		var getLayers = bufferPeak.getLayers();
+
+		getLayers.forEach(function (p) {
+			identifedPeakArray.push(p.feature.properties.peak_stage)
+		});
+
+		var sorted = identifedPeakArray.sort(function (a, b) { return a - b });
+		//find number of peak values
+		var lengthPeak = sorted.length;
+
+		//divide the array into 3 equal sections
+		//find the maximum peak value of each of those sections
+		var sThirdLength = Math.round(lengthPeak / 3);
+		//subtract one, because the first index starts at zero
+		var sThirdVal = sorted[sThirdLength - 1];
+		var sTwoThirdVal = sorted[sThirdLength * 2 - 1];
+
+		var peaksCheckBox = document.getElementById("peaksToggle");
+		var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
+
+		// adding the peak and hwm icons to the legend
+		$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
+		$('#highWaterSymbology').append(highWaterSymbologyInterior);
 
 		setTimeout(() => {
 			var peaksArray = [];
@@ -2026,7 +2085,7 @@ $(document).ready(function () {
 			var numReport;
 			var standReport;
 
-			
+
 			// removing any undefined values incase there are some
 			peakArrReport = peakArrReport.filter(e => e);
 			// Create peak row in report summary table
@@ -2925,6 +2984,7 @@ $(document).ready(function () {
 					// if true add it to an array containing all the 'true' peaks
 					if (isItInside) {
 						identifiedPeaks.push(peak._layers[i])
+						peak._layers[i].addTo(bufferPeak);
 					}
 				}
 
@@ -2934,6 +2994,7 @@ $(document).ready(function () {
 					var isItInside = turf.booleanPointInPolygon(cords, buffer);
 					if (isItInside) {
 						identifiedMarks.push(hwm._layers[i])
+						hwm._layers[i].addTo(bufferHWM);
 					}
 				}
 
@@ -3508,6 +3569,25 @@ $(document).ready(function () {
 						body: [
 							[{
 								border: [false, false, false, true],
+								text: selectedEvent + ', ' + currentParkOrRefuge + ', ' + selectedBuffer + 'Buffer',
+								style: 'header', alignment: 'center'
+							}]
+						]
+					},
+					margin: [0, 0, 0, 15]
+				},
+				{
+					image: pdfMapUrl,
+					width: 800,
+					height: 500,
+					pageBreak: 'after'
+				},
+				{
+					table: {
+						widths: ['*'],
+						body: [
+							[{
+								border: [false, false, false, true],
 								text: 'Report - Printed: ' + todayDate,
 								style: 'header', alignment: 'center'
 							}]
@@ -3518,9 +3598,9 @@ $(document).ready(function () {
 				{
 					table: {
 						body: [[
+							[{ text: '', width: 300, height: 200 }],
 							reportSelectionsTable(),
-							[{ image: pdfMapUrl, width: 300, height: 200 }],
-							[{ image: legendUrl, width: 125, height: 175 }],
+							[{ image: legendUrl, width: 200, height: 175 }],
 						],
 						]
 					},
