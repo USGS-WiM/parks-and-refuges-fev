@@ -114,7 +114,7 @@ var parksURL = "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/servic
 var peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.json?Event=";
 
 $(document).ready(function () {
-    $('#regionalReportNav').click(function () {
+    $('#btnChooseRegion').click(function () {
 
         // for some reason tableData loading incompletely without timeout
         setTimeout(() => {

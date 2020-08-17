@@ -467,6 +467,14 @@ body {
     padding:2px;
 }
 
+#btnChooseRegion {
+    background-color: #345EBD;
+    color:white; 
+}
+#btnChooseSite {
+    background-color: #345EBD;
+    color:white; 
+}
 #sidebar .filtersBtn {
     border: none;
     outline: none;
@@ -1252,16 +1260,36 @@ a.lgi-zoom:hover {
     background-color: #1E3668;
     transition: 0.2s;
 }
+#btnActiveSiteReport{
+    float: right;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    color: white;
+    background-color: #345EBD;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    font-size: 14px;
+    margin-left: 20px;
+}
+#btnActiveSiteReport:hover{
+    cursor: pointer;
+    background-color: #1E3668;
+    transition: 0.2s;
+}
 #btnSubmitEvent_filter {
     float: right;
     font-weight: 400;
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
+    color: white;
     background-color: #345EBD;
     border: 1px solid transparent;
     white-space: nowrap;
     font-size: 14px;
+    margin-left: 20px;
 }
 #btnSubmitEvent_filter:hover{
     cursor: pointer;
