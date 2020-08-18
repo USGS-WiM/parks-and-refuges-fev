@@ -389,6 +389,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
 
         if (data.length == 0) {
             console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+            //If there are no peaks, turn off and disable the peak checkbox and the label slider
             var peaksCheckBox = document.getElementById("peaksToggle");
             peaksCheckBox.checked = false;
             var peakLabels = document.getElementById("peakCheckbox");
@@ -426,9 +427,11 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             if (peakStart == 0) {
                 var peaksCheckBox = document.getElementById("peaksToggle");
                 peaksCheckBox.checked = true;
+                //If there are more than 2 peaks, keep the legend broken into 3 categories
                 if (data.features.length > 2) {
                     var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + thirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + thirdVal + " - " + twoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + twoThirdVal + "</div>";
                 }
+                //If there are only 1 or 2 peaks, display the peak marker in the legend just like the other layers (icon on left, label on right)
                 if (data.features.length < 3) {
                     var PeakSummarySymbologyInterior = "<div>" + "<img class='peakMedium' src='images/peak.png'></img>" + "<b>Peak Summary</b>" + "</div>";
                 }
