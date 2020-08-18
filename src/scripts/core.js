@@ -1899,16 +1899,16 @@ $(document).ready(function () {
 		var sThirdVal = sorted[sThirdLength - 1];
 		var sTwoThirdVal = sorted[sThirdLength * 2 - 1];
 
-		var peaksCheckBox = document.getElementById("peaksToggle");
+		console.log("sorted length", sorted.length);
 		var PeakSummarySymbologyInterior;
-		if (sThirdVal != undefined) {
-			PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
+		if (lengthPeak > 0) {
+			if (lengthPeak > 2) {
+				PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
+			}
+			if (lengthPeak < 3) {
+				PeakSummarySymbologyInterior = "<div>" + "<img class='peakMedium' src='images/peak.png'></img>" + "<b>Peak Summary</b>" + "</div>";
+			}
 		}
-		/*
-		if (sThirdVal == undefined) {
-			PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img></div>"
-		}
-		*/
 		// adding the peak and hwm icons to the legend
 		$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
 		//$('#highWaterSymbology').append(highWaterSymbologyInterior);
@@ -2049,10 +2049,14 @@ $(document).ready(function () {
 
 			//Getting the heights to populate arrays
 			for (peak in identifiedPeaks) {
-				peakArrReport.push(identifiedPeaks[peak].feature.properties.peak_stage);
+				if (identifiedPeaks[peak].feature.properties.peak_stage != undefined) {
+					peakArrReport.push(identifiedPeaks[peak].feature.properties.peak_stage);
+				}
 			}
 			for (hwm in identifiedMarks) {
-				hwmArrReport.push(identifiedMarks[hwm].feature.properties.elev_ft);
+				if (identifiedMarks[hwm].feature.properties.elev_ft != undefined) {
+					hwmArrReport.push(identifiedMarks[hwm].feature.properties.elev_ft);
+				}
 			}
 
 			//Display no data notice in report if there aren't any peaks or hwms
@@ -2226,6 +2230,8 @@ $(document).ready(function () {
 					"STN Site No.": identifiedMarks[i].feature.properties.site_no
 				})
 			}
+
+			//findUndefined(identifiedMarks[i].features.properties.site_no);
 			for (var i in identifiedMarks) {
 				hwmTableData.push({
 					"STN Site No.": identifiedMarks[i].feature.properties.site_no,
@@ -2989,8 +2995,11 @@ $(document).ready(function () {
 
 					// if true add it to an array containing all the 'true' peaks
 					if (isItInside) {
-						identifiedPeaks.push(peak._layers[i])
-						peak._layers[i].addTo(bufferPeak);
+						//only include the peaks that have values that aren't undefined
+						if (peak._layers[i].feature.properties.peak_stage != undefined) {
+							identifiedPeaks.push(peak._layers[i])
+							peak._layers[i].addTo(bufferPeak);
+						}
 					}
 				}
 
@@ -2999,8 +3008,11 @@ $(document).ready(function () {
 					var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
 					var isItInside = turf.booleanPointInPolygon(cords, buffer);
 					if (isItInside) {
-						identifiedMarks.push(hwm._layers[i])
-						hwm._layers[i].addTo(bufferHWM);
+						//only include the hwms that have values
+						if (hwm._layers[i].feature.properties.elev_ft != undefined) {
+							identifiedMarks.push(hwm._layers[i])
+							hwm._layers[i].addTo(bufferHWM);
+						}
 					}
 				}
 
@@ -3689,22 +3701,22 @@ $(document).ready(function () {
 
 //function for toggling peak labels
 function clickPeakLabels() {
-		var checkBox = document.getElementById("peakCheckbox");
-		//Prevent user from using toggle when zoom is less than 8
-		if (map.getZoom() < 8) {
-			checkBox.checked = false;
-		}
-		//Display peak labels when toggle is on
-		if (checkBox.checked == true) {
-			peak.eachLayer(function (myMarker) {
-				myMarker.showLabel();
-			});
-			//Remove peak labels when toggle is off
-		} else {
-			peak.eachLayer(function (myMarker) {
-				myMarker.hideLabel();
-			});
-		}
+	var checkBox = document.getElementById("peakCheckbox");
+	//Prevent user from using toggle when zoom is less than 8
+	if (map.getZoom() < 8) {
+		checkBox.checked = false;
+	}
+	//Display peak labels when toggle is on
+	if (checkBox.checked == true) {
+		peak.eachLayer(function (myMarker) {
+			myMarker.showLabel();
+		});
+		//Remove peak labels when toggle is off
+	} else {
+		peak.eachLayer(function (myMarker) {
+			myMarker.hideLabel();
+		});
+	}
 }
 
 
