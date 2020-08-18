@@ -15,6 +15,7 @@ var hwmStart = 0;
 var rdgStart = 0;
 var peakStart = 0;
 var noaaStart = 0;
+var noPeaks = false;
 
 
 
@@ -41,7 +42,7 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
                 url: url,
                 dataType: 'json',
                 data: data,
-                headers: {'Accept': '*/*'},
+                headers: { 'Accept': '*/*' },
                 success: function (data) {
                     var hydrographURL = '';
                     var hydrographElement;
@@ -49,7 +50,7 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
                     var noHydrograph = '<span style="float: right;padding-right: 15px;">No graph available</span>';
                     var hydroPopupText;
                     for (var i = 0; i < data.length; i++) {
-                        if (data[i].filetype_id === 13 ) {
+                        if (data[i].filetype_id === 13) {
                             containsHydrograph = true;
                             hydrographURL = "https://stn.wim.usgs.gov/STNServices/Files/" + data[i].file_id + "/Item";
                             hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
@@ -77,7 +78,7 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
                         '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">' + feature.properties.latitude_dd.toFixed(4) + ', ' + feature.properties.longitude_dd.toFixed(4) + '</span></td></tr>' +
                         '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + feature.properties.site_id + '&Sensor=' + feature.properties.instrument_id + '\>Sensor data page</a></b></span></td></tr>' +
                         '<tr><td colspan="2"><strong>Hydrograph: </strong>' + hydroPopupText
-                        '</table>';
+                    '</table>';
                     latlng.bindPopup(popupContent);
                 },
                 error: function (error) {
@@ -352,36 +353,54 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             markerCoords.push(latlng);
             var labelText = feature.properties.peak_stage !== undefined ? feature.properties.peak_stage.toString() : 'No Value';
             //console.log("Ranges for peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
-            //Create 3 categories for marker size          
-            if (feature.properties.peak_stage < thirdVal) {
-                var marker =
-                    L.marker(latlng, {
-                        icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
-                    }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+            //Create 3 categories for marker size 
+            if (sortedPeaks.length > 2) {
+                if (feature.properties.peak_stage < thirdVal) {
+                    var marker =
+                        L.marker(latlng, {
+                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
+                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                }
+                if (thirdVal <= feature.properties.peak_stage && feature.properties.peak_stage <= twoThirdVal) {
+                    var marker =
+                        L.marker(latlng, {
+                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                }
+                if (feature.properties.peak_stage > twoThirdVal) {
+                    var marker =
+                        L.marker(latlng, {
+                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
+                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                }
+                return marker;
             }
-            if (thirdVal <= feature.properties.peak_stage && feature.properties.peak_stage <= twoThirdVal) {
+            if (sortedPeaks.length < 3) {
                 var marker =
                     L.marker(latlng, {
                         icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
                     }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
             }
-            if (feature.properties.peak_stage > twoThirdVal) {
-                var marker =
-                    L.marker(latlng, {
-                        icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
-                    }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
-            }
-            return marker;
         }
+
     });
 
     $.getJSON(url, function (data) {
 
         if (data.length == 0) {
             console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+            var peaksCheckBox = document.getElementById("peaksToggle");
+            peaksCheckBox.checked = false;
+            var peakLabels = document.getElementById("peakCheckbox");
+            peakLabels.checked = false;
+            document.getElementById("peakCheckbox").disabled = true;
+            document.getElementById("peaksToggle").disabled = true;
             return
         }
         if (data.features.length > 0) {
+            console.log("There are this many peaks:", data.features.length);
+            document.getElementById("peakCheckbox").disabled = false;
+            document.getElementById("peaksToggle").disabled = false;
             console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
@@ -407,8 +426,12 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             if (peakStart == 0) {
                 var peaksCheckBox = document.getElementById("peaksToggle");
                 peaksCheckBox.checked = true;
-                var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + thirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + thirdVal + " - " + twoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + twoThirdVal + "</div>";
-
+                if (data.features.length > 2) {
+                    var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + thirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + thirdVal + " - " + twoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + twoThirdVal + "</div>";
+                }
+                if (data.features.length < 3) {
+                    var PeakSummarySymbologyInterior = "<div>" + "<img class='peakMedium' src='images/peak.png'></img>" + "<b>Peak Summary</b>" + "</div>";
+                }
                 $('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
                 peakStart = 1;
             }
@@ -1084,7 +1107,7 @@ function displayRtGageReport(streamGagesInBuffer) {
 
         //Get the data for the hydrograph
         $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + streamGagesInBuffer[streamGage].data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
-            
+
             //If there are no data to create a hydrograph, display the no data warning
             if (data.data == undefined) {
                 $(tempNoDataHash).append("<div style= text-align:left;>" + "No NWIS data available for this time period" + "<div>");
