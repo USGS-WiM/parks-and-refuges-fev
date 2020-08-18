@@ -1679,6 +1679,25 @@ $(document).ready(function () {
 						table: {
 							widths: ['*'],
 							body: [
+								[{
+									border: [false, false, false, true],
+									text: bufferSize + 'Report for + ' + eventOne + 'with a ' + selectedBuffer + 'km Buffer',
+									style: 'header', alignment: 'center'
+								}]
+							]
+						},
+						margin: [0, 0, 0, 15]
+					},
+					{
+						image: pdfRegionalMapUrl,
+						width: 800,
+						height: 500,
+						pageBreak: 'after'
+					},
+					{
+						table: {
+							widths: ['*'],
+							body: [
 								[{ border: [false, false, false, true], text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center' }]
 							]
 						},
@@ -1690,7 +1709,7 @@ $(document).ready(function () {
 							body: [
 								[
 									selectionsTable(),
-									{ image: pdfRegionalMapUrl, width: 300, height: 200 },
+									//{ image: pdfRegionalMapUrl, width: 300, height: 200 },
 									legendTable()
 								],
 							]
@@ -1713,7 +1732,25 @@ $(document).ready(function () {
 				]
 			} else if (selectedEvents.length === 2) {
 				return [
-					//{ text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center', margin: [0, 0, 0, 15] },
+					{
+						table: {
+							widths: ['*'],
+							body: [
+								[{
+									border: [false, false, false, true],
+									text: selectedRegion + 'Report for + ' + eventOne + ' and ' + eventTwo + 'with a ' + selectedBuffer + 'km Buffer',
+									style: 'header', alignment: 'center'
+								}]
+							]
+						},
+						margin: [0, 0, 0, 15]
+					},
+					{
+						image: pdfRegionalMapUrl,
+						width: 800,
+						height: 500,
+						pageBreak: 'after'
+					},
 					{
 						table: {
 							widths: ['*'],
@@ -1729,7 +1766,7 @@ $(document).ready(function () {
 							body: [
 								[
 									selectionsTable(),
-									{ image: pdfRegionalMapUrl, width: 300, height: 200 },
+									//{ image: pdfRegionalMapUrl, width: 300, height: 200 },
 									legendTable()
 								],
 							]

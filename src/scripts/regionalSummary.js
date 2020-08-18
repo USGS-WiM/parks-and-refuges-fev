@@ -597,6 +597,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 setTimeout(() => {
                     regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                     processData(eventNumber);
+                    regionalMap.zoomIn();
                 }, 2000);
             } else if (selectedEvents.length === 2) {
                 var eventNumber = 1;
@@ -677,6 +678,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     setTimeout(() => {
                         regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                         processData(eventNumber);
+                        regionalMap.zoomIn();
                     }, 2000);
                 }
 
