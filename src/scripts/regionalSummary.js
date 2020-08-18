@@ -123,12 +123,12 @@ $(document).ready(function () {
                 zoomControl: false
             }).setView([39.833333, -98.583333], 3);
 
-            /* regionalMap.dragging.disable();
+            regionalMap.dragging.disable();
             regionalMap.touchZoom.disable();
             regionalMap.doubleClickZoom.disable();
             regionalMap.scrollWheelZoom.disable();
             regionalMap.boxZoom.disable();
-            regionalMap.keyboard.disable(); */
+            regionalMap.keyboard.disable();
 
             var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         }, 800);

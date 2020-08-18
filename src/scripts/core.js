@@ -569,7 +569,7 @@ $(document).ready(function () {
 			//Give the map elements time to load before creating site report
 			if (exploreMap == false) {
 				//show load warning message while waiting for layers to load and report to generate
-				$('#siteReportLoading').modal('show', {backdrop: 'static', keyboard: false});
+				$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
 				setTimeout(() => {
 					//remove loading message, show site report modal
 					$('#siteReportLoading').modal('hide');
@@ -1902,7 +1902,7 @@ $(document).ready(function () {
 		var peaksCheckBox = document.getElementById("peaksToggle");
 		var PeakSummarySymbologyInterior;
 		if (sThirdVal != undefined) {
-		PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
+			PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
 		}
 		/*
 		if (sThirdVal == undefined) {
@@ -3689,22 +3689,22 @@ $(document).ready(function () {
 
 //function for toggling peak labels
 function clickPeakLabels() {
-	var checkBox = document.getElementById("peakCheckbox");
-	//Prevent user from using toggle when zoom is less than 8
-	if (map.getZoom() < 8) {
-		checkBox.checked = false;
-	}
-	//Display peak labels when toggle is on
-	if (checkBox.checked == true) {
-		peak.eachLayer(function (myMarker) {
-			myMarker.showLabel();
-		});
-		//Remove peak labels when toggle is off
-	} else {
-		peak.eachLayer(function (myMarker) {
-			myMarker.hideLabel();
-		});
-	}
+		var checkBox = document.getElementById("peakCheckbox");
+		//Prevent user from using toggle when zoom is less than 8
+		if (map.getZoom() < 8) {
+			checkBox.checked = false;
+		}
+		//Display peak labels when toggle is on
+		if (checkBox.checked == true) {
+			peak.eachLayer(function (myMarker) {
+				myMarker.showLabel();
+			});
+			//Remove peak labels when toggle is off
+		} else {
+			peak.eachLayer(function (myMarker) {
+				myMarker.hideLabel();
+			});
+		}
 }
 
 
@@ -3739,6 +3739,8 @@ function clickPeaks() {
 	if (peaksCheckBox.checked == false) {
 		$('#PeakSummarySymbology').children().remove();
 		peak.clearLayers();
+		var peakLabels = document.getElementById("peakCheckbox");
+		peakLabels.checked = false;
 		peakStart = 0;
 	}
 }
