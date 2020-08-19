@@ -595,7 +595,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 getRDGs(fev.urls.rdgGeoJSONViewURL + sensorQueryString, regionalrdgMarkerIcon); */
 
                 setTimeout(() => {
-                    console.log("peaksWithinBuffer", peaksWithinBuffer);
                     regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                     processData(eventNumber);
                     regionalMap.zoomIn();
