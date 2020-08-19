@@ -361,7 +361,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                             icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
                         }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                 }
-                if (thirdVal <= feature.properties.peak_stage && feature.properties.peak_stage <= twoThirdVal) {
+                if (thirdVal <= feature.properties.peak_stage <= twoThirdVal) {
                     var marker =
                         L.marker(latlng, {
                             icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
@@ -373,16 +373,15 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                             icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
                         }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                 }
-                return marker;
             }
             if (sortedPeaks.length < 3) {
                 var marker =
-                    L.marker(latlng, {
-                        icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
-                    }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                        L.marker(latlng, {
+                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
             }
+            return marker;
         }
-
     });
 
     $.getJSON(url, function (data) {
@@ -390,18 +389,17 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
         if (data.length == 0) {
             console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
             //If there are no peaks, turn off and disable the peak checkbox and the label slider
-            var peaksCheckBox = document.getElementById("peaksToggle");
+            /* var peaksCheckBox = document.getElementById("peaksToggle");
             peaksCheckBox.checked = false;
             var peakLabels = document.getElementById("peakCheckbox");
             peakLabels.checked = false;
             document.getElementById("peakCheckbox").disabled = true;
-            document.getElementById("peaksToggle").disabled = true;
+            document.getElementById("peaksToggle").disabled = true; */
             return
         }
         if (data.features.length > 0) {
-            console.log("There are this many peaks:", data.features.length);
-            document.getElementById("peakCheckbox").disabled = false;
-            document.getElementById("peaksToggle").disabled = false;
+            //document.getElementById("peakCheckbox").disabled = false;
+            //document.getElementById("peaksToggle").disabled = false;
             console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
@@ -419,6 +417,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                 }
             }
             createPeakArray.addData(data);
+            console.log("peak current marker", currentMarker);
             currentMarker.addData(data);
             currentMarker.eachLayer(function (layer) {
                 layer.addTo(peak);
@@ -428,7 +427,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                 var peaksCheckBox = document.getElementById("peaksToggle");
                 peaksCheckBox.checked = true;
                 //If there are more than 2 peaks, keep the legend broken into 3 categories
-                if (data.features.length > 2) {
+               if (data.features.length > 2) {
                     var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + thirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + thirdVal + " - " + twoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + twoThirdVal + "</div>";
                 }
                 //If there are only 1 or 2 peaks, display the peak marker in the legend just like the other layers (icon on left, label on right)
@@ -442,6 +441,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
         }
     });
 }
+
 
 ///this function sets the current event's start and end dates as global vars. may be better as a function called on demand when date compare needed for NWIS graph setup
 function populateEventDates(eventID) {
