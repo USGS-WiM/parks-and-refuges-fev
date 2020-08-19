@@ -405,8 +405,8 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             return
         }
         if (data.features.length > 0) {
-            //document.getElementById("peakCheckbox").disabled = false;
-            //document.getElementById("peaksToggle").disabled = false;
+            document.getElementById("peakCheckbox").disabled = false;
+            document.getElementById("peaksToggle").disabled = false;
             console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
