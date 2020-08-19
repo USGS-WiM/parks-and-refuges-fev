@@ -396,12 +396,12 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
         if (data.length == 0) {
             console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
             //If there are no peaks, turn off and disable the peak checkbox and the label slider
-            /* var peaksCheckBox = document.getElementById("peaksToggle");
+            var peaksCheckBox = document.getElementById("peaksToggle");
             peaksCheckBox.checked = false;
             var peakLabels = document.getElementById("peakCheckbox");
             peakLabels.checked = false;
             document.getElementById("peakCheckbox").disabled = true;
-            document.getElementById("peaksToggle").disabled = true; */
+            document.getElementById("peaksToggle").disabled = true;
             return
         }
         if (data.features.length > 0) {
