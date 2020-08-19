@@ -362,18 +362,24 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                         }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                 }
                 if (thirdVal <= feature.properties.peak_stage && feature.properties.peak_stage <= twoThirdVal) {
-                    var marker =
-                        L.marker(latlng, {
-                            icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
-                        }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
-                }
+                        var marker =
+                            L.marker(latlng, {
+                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                            }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                    }
                 if (feature.properties.peak_stage > twoThirdVal) {
                     var marker =
                         L.marker(latlng, {
                             icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
                         }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                 }
-                return marker;
+               //undefined peak receive a medium sized blue label with a 'No Value' label
+                else {
+                    var marker =
+                            L.marker(latlng, {
+                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                            }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                }
             }
             if (sortedPeaks.length < 3) {
                 var marker =
@@ -381,8 +387,8 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                         icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
                     }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
             }
+            return marker;
         }
-
     });
 
     $.getJSON(url, function (data) {
@@ -399,7 +405,6 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
             return
         }
         if (data.features.length > 0) {
-            console.log("There are this many peaks:", data.features.length);
             document.getElementById("peakCheckbox").disabled = false;
             document.getElementById("peaksToggle").disabled = false;
             console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
@@ -442,6 +447,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
         }
     });
 }
+
 
 ///this function sets the current event's start and end dates as global vars. may be better as a function called on demand when date compare needed for NWIS graph setup
 function populateEventDates(eventID) {
