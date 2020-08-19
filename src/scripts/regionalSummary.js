@@ -71,6 +71,7 @@ var fevRegional = fevRegional || {
         { fieldName: 'Site Name', colName: "Site Name" },
         { fieldName: 'Event', colName: "Event" },
         { fieldName: 'Peak Stage (ft)', colName: "Peak Stage (ft)" },
+        { fieldName: 'Peak Date', colName: "Peak Date" },
         { fieldName: 'County', colName: "County" },
         { fieldName: 'Latitude (DD)', colName: "Latitude (DD)" },
         { fieldName: 'Longitude (DD)', colName: "Longitude (DD)" },
@@ -905,6 +906,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                                 "Site Name": landsitetype,
                                                 "Event": eventName,
                                                 "Peak Stage (ft)": regionalPeak._layers[i].peak_stage,
+                                                "Peak Date": moment(regionalPeak._layers[i].peak_date).format("MM/DD/YYYY, h:mm a"),
                                                 "County": regionalPeak._layers[i].county,
                                                 "Latitude (DD)": regionalPeak._layers[i].latitude_dd,
                                                 "Longitude (DD)": regionalPeak._layers[i].longitude_dd,
@@ -936,6 +938,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                         "Site Name": landsitetype,
                                         "Event": eventName,
                                         "Peak Stage (ft)": regionalPeak._layers[i].feature.properties.peak_stage,
+                                        "Peak Date": moment(regionalPeak._layers[i].feature.properties.peak_date).format("MM/DD/YYYY, h:mm a"),
                                         "County": regionalPeak._layers[i].feature.properties.county,
                                         "Latitude (DD)": regionalPeak._layers[i].feature.properties.latitude_dd,
                                         "Longitude (DD)": regionalPeak._layers[i].feature.properties.longitude_dd,
@@ -1380,6 +1383,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         var peakdata = {
                             "Site Name": peakStorage[peak].data['Site Name'],
                             "Peak Stage (ft)": peakStorage[peak].data['Peak Stage (ft)'],
+                            "Peak Date": moment(peakStorage[peak].data['Peak Date']).format("MM/DD/YYYY, h:mm a"),
                             "County": peakStorage[peak].data['County'],
                             "Height Above Ground (ft)": peakStorage[peak].data['Height Above Ground (ft)'],
                             "Latitude (DD)": peakStorage[peak].data['Latitude (DD)'],
@@ -1691,29 +1695,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             //display scroll bar/data tables when loading bar is finished
             $('#regionalPeakTable').show();
         };
-        // PEAK FUNCTIONS
-        var peaksTableData = [];
-        function bodyData() {
-            for (var i in identifiedPeaks) {
-                var peakEstimated = "";
-                if (identifiedPeaks[i].feature.properties.is_peak_stage_estimated === 0) {
-                    peakEstimated = "no";
-                } else {
-                    peakEstimated = "yes"
-                }
-
-                peaksTableData.push({
-                    "Site Number": identifiedPeaks[i].feature.properties.site_no,
-                    "Description": identifiedPeaks[i].feature.properties.description,
-                    "State": identifiedPeaks[i].feature.properties.state,
-                    "County": identifiedPeaks[i].feature.properties.county,
-                    "Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
-                    "Peak Estimated": peakEstimated
-                });
-            }
-            return peaksTableData;
-        }
-        //peaksRegionalCSVData = peaksDataTable;
 
         function buildTableBody(data, columns) {
             var body = [];

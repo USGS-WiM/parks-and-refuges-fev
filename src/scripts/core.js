@@ -178,6 +178,7 @@ var fev = fev || {
 		{ fieldName: 'State', colName: "State" },
 		{ fieldName: 'County', colName: "County" },
 		{ fieldName: 'Peak Stage (ft)', colName: "Peak Stage (ft)" },
+		{ fieldName: 'Peak Date', colName: "Peak Date" },
 		{ fieldName: 'Peak Estimated', colName: "Peak Estimated" },
 	],
 
@@ -1353,8 +1354,8 @@ $(document).ready(function () {
 				return {
 					table: {
 						headerRows: 1,
-						widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
-						body: buildPeaksBody(data, ['Site Name', 'Event', 'Peak Stage (ft)', 'County', 'Latitude (DD)', 'Longitude (DD)', 'Site Number', 'Waterbody']),
+						widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
+						body: buildPeaksBody(data, ['Site Name', 'Event', 'Peak Stage (ft)', 'Peak Date', 'County', 'Latitude (DD)', 'Longitude (DD)', 'Site Number', 'Waterbody']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
@@ -2075,6 +2076,7 @@ $(document).ready(function () {
 					"State": identifiedPeaks[i].feature.properties.state,
 					"County": identifiedPeaks[i].feature.properties.county,
 					"Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
+					"Peak Date": moment(identifiedPeaks[i].feature.properties.peak_date).format("MM/DD/YYYY, h:mm a"),
 					"Peak Estimated": peakEstimated
 				});
 			}
@@ -3316,7 +3318,8 @@ $(document).ready(function () {
 				"Description": identifiedPeaks[i].feature.properties.description,
 				"State": identifiedPeaks[i].feature.properties.state,
 				"County": identifiedPeaks[i].feature.properties.county,
-				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Date": moment(identifiedPeaks[i].feature.properties.peak_date).format("MM/DD/YYYY, h:mm a"),
 				"Peak Estimated": peakEstimated
 			});
 		}
@@ -3376,8 +3379,8 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto'],
-					body: buildTableBody(data, ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
+					widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto', 'auto'],
+					body: buildTableBody(data, ['Site Number', 'Description', 'State', 'County', 'Peak Stage (ft)', 'Peak Date', 'Peak Estimated']),
 				},
 				layout: 'lightHorizontalLines',
 				style: 'smaller',
@@ -3655,7 +3658,7 @@ $(document).ready(function () {
 						body: [[
 							[{ text: '', width: 300, height: 200 }],
 							reportSelectionsTable(),
-							[{ image: legendUrl, width: 150, height: 135 }],
+							[{ image: legendUrl, width: 100, height: 100 }],
 						],
 						]
 					},
