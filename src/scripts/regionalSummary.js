@@ -822,22 +822,37 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     markerCoords.push(latlng);
                     //console.log("Ranges for regional peak legend. Small: <=", thirdVal, "Medium: >", thirdVal, "<=", twoThirdVal, "Large: >", twoThirdVal);
                     //Create 3 categories for marker size          
-                    if (feature.properties.peak_stage <= thirdVal) {
-                        var marker =
-                            L.marker(latlng, {
-                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
-                            }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                    if (sortedPeaks.length > 2) {
+                        if (feature.properties.peak_stage < thirdVal) {
+                            var marker =
+                                L.marker(latlng, {
+                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
+                                }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                        }
+                        if (thirdVal <= feature.properties.peak_stage && feature.properties.peak_stage <= twoThirdVal) {
+                                var marker =
+                                    L.marker(latlng, {
+                                        icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                                    }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                            }
+                        if (feature.properties.peak_stage > twoThirdVal) {
+                            var marker =
+                                L.marker(latlng, {
+                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
+                                }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                        }
+                       //undefined peak receive a medium sized blue label with a 'No Value' label
+                        else {
+                            var marker =
+                                    L.marker(latlng, {
+                                        icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                                    }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                        }
                     }
-                    if (thirdVal < feature.properties.peak_stage <= twoThirdVal) {
+                    if (sortedPeaks.length < 3) {
                         var marker =
                             L.marker(latlng, {
                                 icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
-                            }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
-                    }
-                    if (feature.properties.peak_stage > twoThirdVal) {
-                        var marker =
-                            L.marker(latlng, {
-                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
                             }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                     }
                     return marker;
@@ -899,7 +914,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                     // if true add it to an array containing all the 'true' regionalPeaks
                                     if (isItInside) {
                                         var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
-                                        regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                        if (regionalPeak._layers[i].peak_stage != undefined) {
+                                            regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                        }
                                         parksWPeakStorage.push({
                                             "site_name": landsitetype,
                                             data: {
@@ -913,6 +930,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                                 "Site Number": regionalPeak._layers[i].site_no,
                                                 "Waterbody": regionalPeak._layers[i].waterbody
                                             }
+                                        
                                         });
                                         allPeaksStorage.push(parksWPeakStorage[count].data);
                                         //peaksRegionalCSVData = parksWithPeaksEOne;
@@ -931,7 +949,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             if (isItInside) {
                                 //peaksWithinBuffer.push(regionalPeak._layers[i]);
                                 var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
-                                regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                if (regionalPeak._layers[i].feature.properties.peak_stage != undefined) {
+                                    regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                }
                                 parksWPeakStorage.push({
                                     "site_name": landsitetype,
                                     data: {
@@ -1062,7 +1082,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                     var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
                                     // if true add it to an array containing all the 'true' regionalHWM
                                     if (isItInside) {
-                                        regionalHWM._layers[i].addTo(hwmsWithinBuffer);
+                                        if (regionalHWM._layers[i].feature.properties.elev_ft != undefined) {
+                                            regionalHWM._layers[i].addTo(hwmsWithinBuffer);
+                                        }
                                         var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                                         parksWHWMStorage.push({
                                             "site_name": landsitetype,
@@ -1111,7 +1133,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             if (isItInside) {
                                 //peaksWithinBuffer.push(regionalHWM._layers[i]);
                                 var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
-                                regionalHWM._layers[i].addTo(hwmsWithinBuffer);
+                                if (regionalHWM._layers[i].feature.properties.elev_ft != undefined) {
+                                    regionalHWM._layers[i].addTo(hwmsWithinBuffer);
+                                }
                                 parksWHWMStorage.push({
                                     "site_name": landsitetype,
                                     data: {
@@ -1469,7 +1493,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             if (formattedPeaks.length == 0) {
                 document.getElementById("saveRegionalPeakCSV").disabled = true;
             }
-        
+
 
             //Create hwm row in regional summary table
             getSummaryStats(hwmArrReg);
@@ -1484,7 +1508,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             }
             if (formattedHWMS.length == 0) {
                 document.getElementById("saveRegionalHWMCSV").disabled = true;
-                
+
             }
 
             function getSiteSummaryValues() {
@@ -1502,7 +1526,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         /* peakRange = {"Site Name": eventName , "Range": minReg + '-' + maxReg, "Event": eventName};
                         eventsPeakRange.push(peakRange); */
                         peakSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
-                        siteList.push({ "Site Name": item.site_name});
+                        siteList.push({ "Site Name": item.site_name });
                         totalSites.push({ "Site Name": item.site_name, "Range": minReg + ' - ' + maxReg, "Event": eventName });
                     }
                 });
@@ -1526,11 +1550,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 var eTwo = [];
                 var siteList = [];
                 siteList = siteList.reduce((unique, o) => {
-                    if(!unique.some(obj => obj['Site Name'] === o['Site Name'])) {
-                      unique.push(o);
+                    if (!unique.some(obj => obj['Site Name'] === o['Site Name'])) {
+                        unique.push(o);
                     }
                     return unique;
-                },[]);
+                }, []);
 
                 totalSites.forEach(function (item, idx) {
                     if (item.Event === selectedEventsNames[0]) {
@@ -1653,11 +1677,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 var eOne = [];
                 var eTwo = [];
                 siteList = siteList.reduce((unique, o) => {
-                    if(!unique.some(obj => obj['Site Name'] === o['Site Name'])) {
-                      unique.push(o);
+                    if (!unique.some(obj => obj['Site Name'] === o['Site Name'])) {
+                        unique.push(o);
                     }
                     return unique;
-                },[]);
+                }, []);
 
                 totalSites.forEach(function (item, idx) {
                     if (item.Event === selectedEventsNames[0]) {
@@ -1692,7 +1716,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 getTitle.append("Summary of Peaks measured within a " + bufferSize + "km Buffer for " + selectedEventsNames[0] + ' and ' + selectedEventsNames[1])
             }
 
-            if (eventNumber == 2 ) {
+            if (eventNumber == 2) {
                 getEventsSiteSummary();
             }
         }
