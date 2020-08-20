@@ -1769,8 +1769,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     });
 
     $('#btnClearRegFilters').click(function () {
-        $('#noPeaksRegional').hide();
-        $('#noHwmsRegional').hide();
         $('#saveRegionalPeakCSV').attr('disabled', true);
         $('#saveRegionalHWMCSV').attr('disabled', true);
         $('#printRegionalReport').attr('disabled', true);
