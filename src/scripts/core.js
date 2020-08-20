@@ -1250,8 +1250,8 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: '*',
-					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
+						widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
+					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', 'Max Date', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
 				style: 'smaller',
@@ -1262,7 +1262,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: '*',
+					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto'],
 					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1274,7 +1274,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: 'auto',
+					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto'],
 					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total Peaks', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1298,7 +1298,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: 'auto',
+					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto'],
 					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total HWMs', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -2128,7 +2128,8 @@ $(document).ready(function () {
 			// Create peak row in report summary table
 			getReportSummaryStats(peakArrReport);
 			if (peakArrReport.length > 0) {
-				peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+				var maxDate = Math.max.apply(Math, allPeaksEOne.map(function(o) { return o.peak_stage; }));
+				peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Max Peak Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(peakSum);
 			}
 
@@ -2137,7 +2138,8 @@ $(document).ready(function () {
 			//Create hwm row in report summary table
 			getReportSummaryStats(hwmArrReport);
 			if (hwmArrReport.length > 0) {
-				hwmSum = { "Type": "HWM", "Total Sites": numReport, "Max (ft)": maxReport, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+				var maxDate = Math.max.apply(Math, allPeaksEOne.map(function(o) { return o.elevation; }));
+				hwmSum = { "Type": "HWM", "Total Sites": numReport, "Max (ft)": maxReport, "Max HWM Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(hwmSum);
 			}
 
@@ -3559,7 +3561,7 @@ $(document).ready(function () {
 				table: {
 					headerRows: 1,
 					widths: '*',
-					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
+					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', 'Max Date', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
 				style: 'smaller',

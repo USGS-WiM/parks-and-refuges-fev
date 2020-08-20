@@ -1418,6 +1418,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         var hwmdata = {
                             "Site Name": hwmStorage[hwm].data['Site Name'],
                             "Elevation (ft)": hwmStorage[hwm].data['Elevation (ft)'],
+                            "Flag Date": moment(hwmStorage[hwm].data['Flag Date']).format("MM/DD/YYYY, h:mm a"),
                             "County": hwmStorage[hwm].data['County'],
                             "Latitude (DD)": hwmStorage[hwm].data['Latitude (DD)'],
                             "Longitude (DD)": hwmStorage[hwm].data['Longitude (DD)'],
@@ -1457,7 +1458,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             //Create peak row in regional summary table
             getSummaryStats(peakArrReg);
             if (formattedPeaks.length > 0) {
-                peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                // getting the record with the max peak
+                var maxDate = allPeaksEOne.filter(x => x['Peak Stage (ft)'] === maxReg);
+                // setting Max Date
+                maxDate = maxDate[0]['Peak Date'];
+                peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
                 document.getElementById("saveRegionalPeakCSV").disabled = false;
             }
@@ -1469,7 +1474,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             //Create hwm row in regional summary table
             getSummaryStats(hwmArrReg);
             if (formattedHWMS.length > 0) {
-                hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                // getting the record with the max hwm
+                var maxDate = allHWMEOne.filter(x => x['Elevation (ft)'] === maxReg);
+                // setting Max Date
+                maxDate = maxDate[0]['Flag Date'];
+                hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
                 document.getElementById("saveRegionalHWMCSV").disabled = false;
             }
@@ -1487,9 +1496,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     dataArray = item.data.sort(function (a, b) { return a - b });
                     getSummaryStats(dataArray);
                     if (confIntNinetyHigh !== "NaN") {
-                        var medReg = medianReg.toFixed(3);
-                        // var mean = meanReg.toFixed(3); -- is string so unnecesary 
-                        //var sd = standReg.toFixed(3); -- is string so unnecesary 
+                        var medReg = medianReg.toFixed(2);
+                        // var mean = meanReg.toFixed(2); -- is string so unnecesary 
+                        //var sd = standReg.toFixed(2); -- is string so unnecesary 
                         /* peakRange = {"Site Name": eventName , "Range": minReg + '-' + maxReg, "Event": eventName};
                         eventsPeakRange.push(peakRange); */
                         peakSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
@@ -1502,9 +1511,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     dataArray = item.data.sort(function (a, b) { return a - b });
                     getSummaryStats(dataArray);
                     if (confIntNinetyHigh !== "NaN") {
-                        // var mean = meanReg.toFixed(3); -- is string so unnecesary 
-                        //var sd = standReg.toFixed(3); -- is string so unnecesary 
-                        var medReg = medianReg.toFixed(3);
+                        // var mean = meanReg.toFixed(2); -- is string so unnecesary 
+                        //var sd = standReg.toFixed(2); -- is string so unnecesary 
+                        var medReg = medianReg.toFixed(2);
                         hwmSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "HWM", "Total HWMs": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
                     }
                 });
@@ -1565,10 +1574,10 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 confIntNinetyLow = meanReg - confIntTemp;
 
                 //Round Results
-                meanReg = meanReg.toFixed(3);
-                standReg = standReg.toFixed(3);
-                confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
-                confIntNinetyLow = confIntNinetyLow.toFixed(3);
+                meanReg = meanReg.toFixed(2);
+                standReg = standReg.toFixed(2);
+                confIntNinetyHigh = confIntNinetyHigh.toFixed(2);
+                confIntNinetyLow = confIntNinetyLow.toFixed(2);
             }
 
             // Builds the HTML Table
