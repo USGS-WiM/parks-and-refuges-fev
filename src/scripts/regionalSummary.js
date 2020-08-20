@@ -595,9 +595,15 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 getRDGs(fev.urls.rdgGeoJSONViewURL + sensorQueryString, regionalrdgMarkerIcon); */
 
                 setTimeout(() => {
-                    regionalMap.fitBounds(peaksWithinBuffer.getBounds());
-                    processData(eventNumber);
-                    regionalMap.zoomIn();
+                    if (peakArrReg.length == 0) {
+                        console.log("There are no peak data to display");
+                    }
+                    if (peakArrReg.length != 0) {
+                        regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                        processData(eventNumber);
+                        regionalMap.zoomIn();
+                    }
+
                 }, 2000);
             } else if (selectedEvents.length === 2) {
                 var eventNumber = 1;
@@ -635,8 +641,13 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 }
 
                 setTimeout(() => {
-                    regionalMap.fitBounds(peaksWithinBuffer.getBounds());
-                    processData(eventNumber);
+                    if (peakArrReg.length == 0) {
+                        console.log("There are no peak data to display");
+                    }
+                    if (peakArrReg.length != 0) {
+                        regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                        processData(eventNumber);
+                    }
                     nextEvent();
                 }, 2000);
 
@@ -829,23 +840,23 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                 }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                         }
                         if (thirdVal <= feature.properties.peak_stage && feature.properties.peak_stage <= twoThirdVal) {
-                                var marker =
-                                    L.marker(latlng, {
-                                        icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
-                                    }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
-                            }
+                            var marker =
+                                L.marker(latlng, {
+                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                                }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                        }
                         if (feature.properties.peak_stage > twoThirdVal) {
                             var marker =
                                 L.marker(latlng, {
                                     icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
                                 }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                         }
-                       //undefined peak receive a medium sized blue label with a 'No Value' label
+                        //undefined peak receive a medium sized blue label with a 'No Value' label
                         else {
                             var marker =
-                                    L.marker(latlng, {
-                                        icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
-                                    }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
+                                L.marker(latlng, {
+                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                                }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                         }
                     }
                     if (sortedPeaks.length < 3) {
@@ -928,7 +939,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                                 "Site Number": regionalPeak._layers[i].site_no,
                                                 "Waterbody": regionalPeak._layers[i].waterbody
                                             }
-                                        
+
                                         });
                                         allPeaksStorage.push(parksWPeakStorage[count].data);
                                         //peaksRegionalCSVData = parksWithPeaksEOne;
