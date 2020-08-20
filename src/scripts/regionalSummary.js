@@ -595,14 +595,21 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 getRDGs(fev.urls.rdgGeoJSONViewURL + sensorQueryString, regionalrdgMarkerIcon); */
 
                 setTimeout(() => {
+                    /*
                     if (peakArrReg.length == 0) {
                         console.log("There are no peak data to display");
+                        $('#noPeaksRegional').show();
                     }
+                    if (hwmArrReg.length == 0) {
+                        console.log("There are no peak data to display");
+                        $('#noHwmsRegional').show();
+                    } */
                     if (peakArrReg.length != 0) {
                         regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                    }
                         processData(eventNumber);
                         regionalMap.zoomIn();
-                    }
+                    
 
                 }, 2000);
             } else if (selectedEvents.length === 2) {
@@ -641,13 +648,15 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 }
 
                 setTimeout(() => {
-                    if (peakArrReg.length == 0) {
-                        console.log("There are no peak data to display");
-                    }
-                    if (peakArrReg.length != 0) {
-                        regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                   // if (peakArrReg.length == 0) {
+                    //    console.log("There are no peak data to display");
+                   /// }
+                   if (peakArrReg.length != 0) {
+                    regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                }
+                        
                         processData(eventNumber);
-                    }
+                
                     nextEvent();
                 }, 2000);
 
@@ -687,9 +696,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     }
 
                     setTimeout(() => {
+                      //  if (peakArrReg.length != 0) {
                         regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                         processData(eventNumber);
                         regionalMap.zoomIn();
+                      //  }
                     }, 2000);
                 }
 
@@ -1780,6 +1791,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     });
 
     $('#btnClearRegFilters').click(function () {
+        $('#noPeaksRegional').hide();
+        $('#noHwmsRegional').hide();
         $('#saveRegionalPeakCSV').attr('disabled', true);
         $('#saveRegionalHWMCSV').attr('disabled', true);
         $('#printRegionalReport').attr('disabled', true);
