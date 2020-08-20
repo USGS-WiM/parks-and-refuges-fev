@@ -1106,7 +1106,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                                 "Uncertainty": regionalHWM._layers[i].feature.properties.uncertainty,
                                                 "HWM Uncertainty": regionalHWM._layers[i].feature.properties.hwm_uncertainty,
                                                 "HWM Label": regionalHWM._layers[i].feature.properties.hwm_label,
-                                                "Flag Date": regionalHWM._layers[i].feature.properties.flag_date,
+                                                "Flag Date": moment(regionalHWM._layers[i].feature.properties.flag_date).format("MM/DD/YYYY, h:mm a"),
                                                 "Site Description": regionalHWM._layers[i].feature.properties.siteDescription,
                                                 "Site Perm Housing": regionalHWM._layers[i].feature.properties.sitePermHousing,
                                                 "County": regionalHWM._layers[i].feature.properties.county,
@@ -1156,7 +1156,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                         "Uncertainty": regionalHWM._layers[i].feature.properties.uncertainty,
                                         "HWM Uncertainty": regionalHWM._layers[i].feature.properties.hwm_uncertainty,
                                         "HWM Label": regionalHWM._layers[i].feature.properties.hwm_label,
-                                        "Flag Date": regionalHWM._layers[i].feature.properties.flag_date,
+                                        "Flag Date": moment(regionalHWM._layers[i].feature.properties.flag_date).format("MM/DD/YYYY, h:mm a"),
                                         "Site Description": regionalHWM._layers[i].feature.properties.siteDescription,
                                         "Site Perm Housing": regionalHWM._layers[i].feature.properties.sitePermHousing,
                                         "County": regionalHWM._layers[i].feature.properties.county,
@@ -1481,9 +1481,19 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
             //Create peak row in regional summary table
             getSummaryStats(peakArrReg);
+            var eventPeaks;
+            var eventHWMs;
+            if (eventNumber == 1) {
+                eventPeaks = allPeaksEOne;
+                eventHWMs = allHWMEOne;
+            } else if (eventNumber == 2) {
+                eventPeaks = allPeaksETwo;
+                eventHWMs = allHWMETwo;
+            }
+
             if (formattedPeaks.length > 0) {
                 // getting the record with the max peak
-                var maxDate = allPeaksEOne.filter(x => x['Peak Stage (ft)'] === maxReg);
+                var maxDate = eventPeaks.filter(x => x['Peak Stage (ft)'] === maxReg);
                 // setting Max Date
                 maxDate = maxDate[0]['Peak Date'];
                 peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
@@ -1499,7 +1509,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             getSummaryStats(hwmArrReg);
             if (formattedHWMS.length > 0) {
                 // getting the record with the max hwm
-                var maxDate = allHWMEOne.filter(x => x['Elevation (ft)'] === maxReg);
+                var maxDate = eventHWMs.filter(x => x['Elevation (ft)'] === maxReg);
                 // setting Max Date
                 maxDate = maxDate[0]['Flag Date'];
                 hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };

@@ -1274,7 +1274,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto'],
+					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
 					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total Peaks', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1298,7 +1298,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto'],
+					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto', 'auto'],
 					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total HWMs', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1953,11 +1953,15 @@ $(document).ready(function () {
 
 		setTimeout(() => {
 			var peaksArray = [];
+			var hwmArray = [];
 			var stArray = [];
 			hydroUrls = [];
 
 			identifiedPeaks.forEach(function (p) {
 				peaksArray.push(p.feature.properties);
+			});
+			identifiedMarks.forEach(function (p) {
+				hwmArray.push(p.feature.properties);
 			});
 
 			console.log(peaksArray);
@@ -2128,8 +2132,10 @@ $(document).ready(function () {
 			// Create peak row in report summary table
 			getReportSummaryStats(peakArrReport);
 			if (peakArrReport.length > 0) {
-				var maxDate = Math.max.apply(Math, allPeaksEOne.map(function(o) { return o.peak_stage; }));
-				peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Max Peak Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+				var maxDate = peaksArray.filter(x => x.peak_stage === maxReport);
+                // setting Max Date
+                maxDate = moment(maxDate[0].peak_date).format("MM/DD/YYYY, h:mm a");
+				peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(peakSum);
 			}
 
@@ -2138,8 +2144,10 @@ $(document).ready(function () {
 			//Create hwm row in report summary table
 			getReportSummaryStats(hwmArrReport);
 			if (hwmArrReport.length > 0) {
-				var maxDate = Math.max.apply(Math, allPeaksEOne.map(function(o) { return o.elevation; }));
-				hwmSum = { "Type": "HWM", "Total Sites": numReport, "Max (ft)": maxReport, "Max HWM Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+				var maxDate = hwmArray.filter(x => x.elev_ft === maxReport);
+                // setting Max Date
+                maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
+				hwmSum = { "Type": "HWM", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(hwmSum);
 			}
 
@@ -3560,7 +3568,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: '*',
+					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
 					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', 'Max Date', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
