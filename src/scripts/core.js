@@ -178,6 +178,7 @@ var fev = fev || {
 		{ fieldName: 'State', colName: "State" },
 		{ fieldName: 'County', colName: "County" },
 		{ fieldName: 'Peak Stage (ft)', colName: "Peak Stage (ft)" },
+		{ fieldName: 'Peak Date', colName: "Peak Date" },
 		{ fieldName: 'Peak Estimated', colName: "Peak Estimated" },
 	],
 
@@ -1249,8 +1250,8 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: '*',
-					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
+						widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
+					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', 'Max Date', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
 				style: 'smaller',
@@ -1261,7 +1262,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: '*',
+					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto'],
 					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1273,7 +1274,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: 'auto',
+					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
 					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total Peaks', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1297,7 +1298,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: 'auto',
+					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto', 'auto'],
 					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total HWMs', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1353,8 +1354,8 @@ $(document).ready(function () {
 				return {
 					table: {
 						headerRows: 1,
-						widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
-						body: buildPeaksBody(data, ['Site Name', 'Event', 'Peak Stage (ft)', 'County', 'Latitude (DD)', 'Longitude (DD)', 'Site Number', 'Waterbody']),
+						widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
+						body: buildPeaksBody(data, ['Site Name', 'Event', 'Peak Stage (ft)', 'Peak Date', 'County', 'Latitude (DD)', 'Longitude (DD)', 'Site Number', 'Waterbody']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
@@ -1952,11 +1953,15 @@ $(document).ready(function () {
 
 		setTimeout(() => {
 			var peaksArray = [];
+			var hwmArray = [];
 			var stArray = [];
 			hydroUrls = [];
 
 			identifiedPeaks.forEach(function (p) {
 				peaksArray.push(p.feature.properties);
+			});
+			identifiedMarks.forEach(function (p) {
+				hwmArray.push(p.feature.properties);
 			});
 
 			console.log(peaksArray);
@@ -2075,6 +2080,7 @@ $(document).ready(function () {
 					"State": identifiedPeaks[i].feature.properties.state,
 					"County": identifiedPeaks[i].feature.properties.county,
 					"Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
+					"Peak Date": moment(identifiedPeaks[i].feature.properties.peak_date).format("MM/DD/YYYY, h:mm a"),
 					"Peak Estimated": peakEstimated
 				});
 			}
@@ -2126,7 +2132,10 @@ $(document).ready(function () {
 			// Create peak row in report summary table
 			getReportSummaryStats(peakArrReport);
 			if (peakArrReport.length > 0) {
-				peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+				var maxDate = peaksArray.filter(x => x.peak_stage === maxReport);
+                // setting Max Date
+                maxDate = moment(maxDate[0].peak_date).format("MM/DD/YYYY, h:mm a");
+				peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(peakSum);
 			}
 
@@ -2135,7 +2144,10 @@ $(document).ready(function () {
 			//Create hwm row in report summary table
 			getReportSummaryStats(hwmArrReport);
 			if (hwmArrReport.length > 0) {
-				hwmSum = { "Type": "HWM", "Total Sites": numReport, "Max (ft)": maxReport, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+				var maxDate = hwmArray.filter(x => x.elev_ft === maxReport);
+                // setting Max Date
+                maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
+				hwmSum = { "Type": "HWM", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(hwmSum);
 			}
 
@@ -3316,7 +3328,8 @@ $(document).ready(function () {
 				"Description": identifiedPeaks[i].feature.properties.description,
 				"State": identifiedPeaks[i].feature.properties.state,
 				"County": identifiedPeaks[i].feature.properties.county,
-				"Peak Stage": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
+				"Peak Date": moment(identifiedPeaks[i].feature.properties.peak_date).format("MM/DD/YYYY, h:mm a"),
 				"Peak Estimated": peakEstimated
 			});
 		}
@@ -3376,8 +3389,8 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto'],
-					body: buildTableBody(data, ['Site Number', 'Description', 'State', 'County', 'Peak Stage', 'Peak Estimated']),
+					widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto', 'auto'],
+					body: buildTableBody(data, ['Site Number', 'Description', 'State', 'County', 'Peak Stage (ft)', 'Peak Date', 'Peak Estimated']),
 				},
 				layout: 'lightHorizontalLines',
 				style: 'smaller',
@@ -3555,8 +3568,8 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: '*',
-					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
+					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
+					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', 'Max Date', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
 				style: 'smaller',
@@ -3655,7 +3668,7 @@ $(document).ready(function () {
 						body: [[
 							[{ text: '', width: 300, height: 200 }],
 							reportSelectionsTable(),
-							[{ image: legendUrl, width: 150, height: 135 }],
+							[{ image: legendUrl, width: 100, height: 100 }],
 						],
 						]
 					},
