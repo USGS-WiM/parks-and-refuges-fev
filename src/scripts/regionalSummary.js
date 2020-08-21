@@ -1769,6 +1769,10 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     });
 
     $('#btnClearRegFilters').click(function () {
+        clearRegOutput()
+    });
+
+    function clearRegOutput() {
         $('#saveRegionalPeakCSV').attr('disabled', true);
         $('#saveRegionalHWMCSV').attr('disabled', true);
         $('#printRegionalReport').attr('disabled', true);
@@ -1818,8 +1822,17 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         setTimeout(() => {
             var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         }, 500);
+    }
+
+    //Clear regional report output when modal is closed by clicking the 'Close' button
+    $('#regReportClose').click(function () {
+        clearRegOutput();
     });
 
+    //Clear regional report output when modal is closed by clicking 'X' button
+    $('#regReportCloseX').click(function () {
+        clearRegOutput();
+    });
 
     //Corresponds with the 'HWM CSV' button on the regional report modal
     $('#saveRegionalHWMCSV').click(function () {
