@@ -1491,7 +1491,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 eventHWMs = allHWMETwo;
             }
 
-            if (formattedPeaks.length > 0) {
                 // getting the record with the max peak
                 var maxDate = eventPeaks.filter(x => x['Peak Stage (ft)'] === maxReg);
                 // setting Max Date
@@ -1499,27 +1498,15 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
                 document.getElementById("saveRegionalPeakCSV").disabled = false;
-            }
-            if (formattedPeaks.length == 0) {
-                document.getElementById("saveRegionalPeakCSV").disabled = true;
-            }
-
 
             //Create hwm row in regional summary table
             getSummaryStats(hwmArrReg);
-            if (formattedHWMS.length > 0) {
                 // getting the record with the max hwm
                 var maxDate = eventHWMs.filter(x => x['Elevation (ft)'] === maxReg);
                 // setting Max Date
                 maxDate = maxDate[0]['Flag Date'];
                 hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
-                document.getElementById("saveRegionalHWMCSV").disabled = false;
-            }
-            if (formattedHWMS.length == 0) {
-                document.getElementById("saveRegionalHWMCSV").disabled = true;
-
-            }
 
             function getSiteSummaryValues() {
                 var peakRange = {};
@@ -1834,6 +1821,12 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         clearRegOutput();
     });
 
+    if (hwmRegionalCSVData.length == 0) {
+        document.getElementById("saveRegionalHWMCSV").disabled = true;
+    }
+    if (hwmRegionalCSVData.length > 0) {
+        $('#saveRegionalHWMCSV').removeAttr('disabled');
+    }
     //Corresponds with the 'HWM CSV' button on the regional report modal
     $('#saveRegionalHWMCSV').click(function () {
         //if there is a hwm table, download as csv
@@ -1851,6 +1844,18 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             console.log("There are no hwm datapoints.")
         }
     });
+
+    //enable peaks button when there are peaks data
+    if (peaksRegionalCSVData.length > 0) {
+        $('#saveRegionalPeakCSV').removeAttr('disabled');
+    }
+
+    //disable peaks button when there are no peaks data
+    if (peaksRegionalCSVData.length == 0) {
+        document.getElementById("saveRegionalHWMCSV").disabled = true;
+    }
+
+
     //Corresponds with the 'Peak CSV' button on the regional report modal
     $('#saveRegionalPeakCSV').click(function () {
         //if there is a hwm table, download as csv
