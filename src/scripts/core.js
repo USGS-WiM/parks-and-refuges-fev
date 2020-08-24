@@ -1661,7 +1661,10 @@ $(document).ready(function () {
 
 		function getContent() {
 			// returning appropriate tables based on number of events selected
-
+			var siteType = $('#typeSelect_regionalModal').val()[0];
+			if (siteType === "NPS") {
+				siteType = "NPS Sites"
+			}
 			var eventOne;
 			var eventTwo;
 			var eventOneNum = 1;
@@ -1681,7 +1684,7 @@ $(document).ready(function () {
 							body: [
 								[{
 									border: [false, false, false, true],
-									text: bufferSize + 'Report for + ' + eventOne + 'with a ' + selectedBuffer + 'km Buffer',
+									text: 'Summary of Peak Water Levels within ' + bufferSize + ' km of ' + siteType + ' during ' + eventOne,
 									style: 'header', alignment: 'center'
 								}]
 							]
@@ -1698,7 +1701,7 @@ $(document).ready(function () {
 						table: {
 							widths: ['*'],
 							body: [
-								[{ border: [false, false, false, true], text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center' }]
+								[{ border: [false, false, false, true], text: 'Printed: ' + todayDate, style: 'header', alignment: 'center' }]
 							]
 						},
 						margin: [0, 0, 0, 15]
@@ -1738,7 +1741,7 @@ $(document).ready(function () {
 							body: [
 								[{
 									border: [false, false, false, true],
-									text: selectedRegion + 'Report for + ' + eventOne + ' and ' + eventTwo + 'with a ' + selectedBuffer + 'km Buffer',
+									text: 'Summary of Peak Water Levels within ' + bufferSize + ' km of ' + siteType + ' during ' + eventOne + ' & ' + eventTwo,
 									style: 'header', alignment: 'center'
 								}]
 							]
@@ -1829,7 +1832,7 @@ $(document).ready(function () {
 				content: getContent(),
 				styles: {
 					header: {
-						fontSize: 15,
+						fontSize: 13,
 						bold: true
 					},
 					tableHeader: {
@@ -2861,7 +2864,7 @@ $(document).ready(function () {
 		//If using the welcom modal, collect input from the welcome modal
 		if (runningFilter == false) {
 
-			//this element is populated with either 'parks' or refuges'
+			//this element is populated with either 'NPS' or NWR'
 			var siteType = $('#typeSelect_welcomeModal').val()[0];
 
 			// getting and setting park name from search
@@ -2906,7 +2909,7 @@ $(document).ready(function () {
 		var where = "1=1";
 		var polys = [];
 
-		if (siteType === "parks") {
+		if (siteType === "NPS") {
 			where = "UNIT_NAME=" + name;
 			parks = L.esri.featureLayer({
 				useCors: false,
@@ -2930,7 +2933,7 @@ $(document).ready(function () {
 				style: parkStyle
 			}).addTo(map);
 
-		} else if (siteType === "refuges") {
+		} else if (siteType === "NWR") {
 			where = "ORGNAME=" + name;
 			refuges = L.esri.featureLayer({
 				useCors: false,
@@ -3580,13 +3583,17 @@ $(document).ready(function () {
 		// Report selections table
 		//Prints park/refuge, event, and buffer distance on left side of report
 		function reportSelectionsTable() {
+			var siteType = $(".select2-selection__choice")[0].title
+			if (siteType === "NPS") {
+				siteType = "NPS Site"
+			}
 			return {
 				table: {
 					widths: ['auto', 'auto'],
 					body: [
 						[{ colSpan: 2, border: [false, false, false, true], text: 'Report Selections: ', style: 'subHeader' }, ''],
 						[{ text: 'Event: ', alignment: 'right' }, selectedEvent],
-						[{ text: 'Site: ', alignment: 'right' }, currentParkOrRefuge],
+						[{ text: siteType + ': ', alignment: 'right' }, currentParkOrRefuge],
 						[{ text: 'Buffer: ', alignment: 'right' }, selectedBuffer]
 					]
 				},
@@ -3624,7 +3631,7 @@ $(document).ready(function () {
 						body: [
 							[{
 								border: [false, false, false, true],
-								text: selectedEvent + ', ' + currentParkOrRefuge + ', ' + selectedBuffer + 'Buffer',
+								text: 'Summary of Peak Water Levels within ' + selectedBuffer + ' km of ' + currentParkOrRefuge + ' during ' + selectedEvent,
 								style: 'header', alignment: 'center'
 							}]
 						]
@@ -3643,7 +3650,7 @@ $(document).ready(function () {
 						body: [
 							[{
 								border: [false, false, false, true],
-								text: 'Report - Printed: ' + todayDate,
+								text: 'Printed: ' + todayDate,
 								style: 'header', alignment: 'center'
 							}]
 						]
@@ -3671,7 +3678,7 @@ $(document).ready(function () {
 			],
 			styles: {
 				header: {
-					fontSize: 15,
+					fontSize: 13,
 					bold: true
 				},
 				tableHeader: {
