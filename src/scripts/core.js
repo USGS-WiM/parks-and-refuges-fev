@@ -1823,7 +1823,7 @@ $(document).ready(function () {
 					{
 						width: 50,
 						alignment: 'center',
-						text: 'Page ' + currentPage.toString()
+						text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'STN Data Dictionary', link: 'https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level', color: '#0000EE' }, ' for more field information.'],
 					}
 				},
 				content: getContent(),
@@ -1858,7 +1858,7 @@ $(document).ready(function () {
 						fontSize: 8
 					},
 					footer: {
-						fontSize: 9
+						fontSize: 8
 					},
 					definitionsTable: {
 						fontSize: 9
@@ -3614,7 +3614,7 @@ $(document).ready(function () {
 				{
 					width: 50,
 					alignment: 'center',
-					text: 'Page ' + currentPage.toString()
+					text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'STN Data Dictionary', link: 'https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level', color: '#0000EE' }, ' for more field information.'],
 				}
 			},
 			content: [
@@ -3696,7 +3696,7 @@ $(document).ready(function () {
 					fontSize: 8
 				},
 				footer: {
-					fontSize: 9
+					fontSize: 8
 				},
 				definitionsTable: {
 					fontSize: 9
