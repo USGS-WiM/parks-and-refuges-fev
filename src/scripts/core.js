@@ -1954,6 +1954,8 @@ $(document).ready(function () {
 		setTimeout(() => {
 			var peaksArray = [];
 			var hwmArray = [];
+			var coastalHWMs = []
+			var riverineHWMs = [];
 			var stArray = [];
 			hydroUrls = [];
 
@@ -1962,6 +1964,11 @@ $(document).ready(function () {
 			});
 			identifiedMarks.forEach(function (p) {
 				hwmArray.push(p.feature.properties);
+				if (p.feature.properties.hwm_environment === "Coastal") {
+					coastalHWMs.push(p.feature.properties);
+				} else {
+					riverineHWMs.push(p.feature.properties);
+				}
 			});
 
 			console.log(peaksArray);
@@ -2089,6 +2096,8 @@ $(document).ready(function () {
 			//These variables will have the heights/elevation for each peak/hwm in the buffered area
 			var peakArrReport = [];
 			var hwmArrReport = [];
+			var hwmArrReportCoastal = [];
+			var hwmArrReportRiverine = [];
 
 			//Getting the heights to populate arrays
 			for (peak in identifiedPeaks) {
@@ -2098,12 +2107,20 @@ $(document).ready(function () {
 			}
 			for (hwm in identifiedMarks) {
 				if (identifiedMarks[hwm].feature.properties.elev_ft != undefined) {
-					hwmArrReport.push(identifiedMarks[hwm].feature.properties.elev_ft);
+					if (identifiedMarks[hwm].feature.properties.hwm_environment === "Coastal") {
+						hwmArrReportCoastal.push(identifiedMarks[hwm].feature.properties.elev_ft);
+					} else {
+						hwmArrReportRiverine.push(identifiedMarks[hwm].feature.properties.elev_ft);
+					}
 				}
 			}
 
+			console.log(hwmArrReportCoastal);
+			console.log(hwmArrReportRiverine);
+
+
 			//Display no data notice in report if there aren't any peaks or hwms
-			if (peakArrReport == 0 && hwmArrReport == 0) {
+			if (peakArrReport == 0 && hwmArrReportCoastal == 0 && hwmArrReportRiverine == 0) {
 				$('#reportSummaryTitle').children().remove();
 				$('#reportSummaryTitle').append("<br><br> Summary Information");
 				$('#reportSummaryNoData').append("No summary data for this site.");
@@ -2111,7 +2128,8 @@ $(document).ready(function () {
 
 			//Sort peak and hwm arrays
 			peakArrReport = peakArrReport.sort(function (a, b) { return a - b });
-			hwmArrReport = hwmArrReport.sort(function (a, b) { return a - b });
+			hwmArrReportCoastal = hwmArrReportCoastal.sort(function (a, b) { return a - b });
+			hwmArrReportRiverine = hwmArrReportRiverine.sort(function (a, b) { return a - b });
 			var sum = []
 			var peakSum = {};
 			var hwmSum = {};
@@ -2140,14 +2158,27 @@ $(document).ready(function () {
 			}
 
 			// removing any undefined values incase there are some
-			hwmArrReport = hwmArrReport.filter(e => e);
+			hwmArrReportCoastal = hwmArrReportCoastal.filter(e => e);
+			hwmArrReportRiverine = hwmArrReportRiverine.filter(e => e);
+
 			//Create hwm row in report summary table
-			getReportSummaryStats(hwmArrReport);
-			if (hwmArrReport.length > 0) {
-				var maxDate = hwmArray.filter(x => x.elev_ft === maxReport);
+			getReportSummaryStats(hwmArrReportCoastal);
+			hwmSum = {};
+			if (hwmArrReportCoastal.length > 0) {
+				var maxDate = coastalHWMs.filter(x => x.elev_ft === maxReport);
                 // setting Max Date
                 maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
-				hwmSum = { "Type": "HWM", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+				hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+				sum.push(hwmSum);
+			}
+
+			getReportSummaryStats(hwmArrReportRiverine);
+			hwmSum = {};
+			if (hwmArrReportRiverine.length > 0) {
+				var maxDate = riverineHWMs.filter(x => x.elev_ft === maxReport);
+                // setting Max Date
+                maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
+				hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(hwmSum);
 			}
 
@@ -2167,6 +2198,10 @@ $(document).ready(function () {
 				meanReport = meanReport.toFixed(3);
 				standReport = standReport.toFixed(3);
 				medianReport = medianReport.toFixed(3);
+				minReport = minReport.toFixed(2);
+                minReport = Number(minReport);
+                maxReport = maxReport.toFixed(2);
+                maxReport = Number(maxReport);
 				confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
 				confIntNinetyLow = confIntNinetyLow.toFixed(3);
 			}
