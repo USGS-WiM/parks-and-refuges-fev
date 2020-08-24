@@ -785,14 +785,14 @@ $(document).ready(function () {
 
 	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 
-	/* if (noAdvisories) {
+	if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
 		div.innerHTML += "No Active Advisories";
 	} else {
 		noaaOverlays = {
 			"NOAA Tropical Cyclone Forecast Track": noaaService
 		};
-	} */
+	}
 
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
