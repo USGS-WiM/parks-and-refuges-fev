@@ -1525,7 +1525,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 eventHWMRiver = allHWMETwoRiver;
             }
 
-            if (formattedPeaks.length > 0) {
                 // getting the record with the max peak
                 var maxDate = eventPeaks.filter(x => x['Peak Stage (ft)'] === maxReg);
                 // setting Max Date
@@ -1533,11 +1532,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
                 document.getElementById("saveRegionalPeakCSV").disabled = false;
-            }
-            if (formattedPeaks.length == 0) {
-                document.getElementById("saveRegionalPeakCSV").disabled = true;
-            }
-
 
             //Create hwm row in regional summary table
             //getSummaryStats(hwmArrayReg);
@@ -1552,7 +1546,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
             }
-  
 
             getSummaryStats(hwmArrRegRiver);
             if (eventHWMRiver.length > 0) {
@@ -1826,6 +1819,10 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     });
 
     $('#btnClearRegFilters').click(function () {
+        clearRegOutput()
+    });
+
+    function clearRegOutput() {
         $('#saveRegionalPeakCSV').attr('disabled', true);
         $('#saveRegionalHWMCSV').attr('disabled', true);
         $('#printRegionalReport').attr('disabled', true);
@@ -1858,8 +1855,14 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         allPeaksEOne = [];
         allHWMEOneCoast = [];
         allHWMEOneRiver = [];
+        allHWMETwo = [];
         allHWMETwoCoast = [];
         allHWMETwoRiver = [];
+        peakSiteSummaries = [];
+        hwmSiteSummaries = [];
+        totalSites = [];
+        siteList = [];
+        eventsPeakRange = []
 
         alreadyRan = false;
 
@@ -1879,9 +1882,26 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         setTimeout(() => {
             var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         }, 500);
+
+        regionalMap.setView([39.833333, -98.583333], 3);
+    }
+
+    //Clear regional report output when modal is closed by clicking the 'Close' button
+    $('#regReportClose').click(function () {
+        clearRegOutput();
     });
 
+    //Clear regional report output when modal is closed by clicking 'X' button
+    $('#regReportCloseX').click(function () {
+        clearRegOutput();
+    });
 
+    if (hwmRegionalCSVData.length == 0) {
+        document.getElementById("saveRegionalHWMCSV").disabled = true;
+    }
+    if (hwmRegionalCSVData.length > 0) {
+        $('#saveRegionalHWMCSV').removeAttr('disabled');
+    }
     //Corresponds with the 'HWM CSV' button on the regional report modal
     $('#saveRegionalHWMCSV').click(function () {
         //if there is a hwm table, download as csv
@@ -1899,6 +1919,18 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             console.log("There are no hwm datapoints.")
         }
     });
+
+    //enable peaks button when there are peaks data
+    if (peaksRegionalCSVData.length > 0) {
+        $('#saveRegionalPeakCSV').removeAttr('disabled');
+    }
+
+    //disable peaks button when there are no peaks data
+    if (peaksRegionalCSVData.length == 0) {
+        document.getElementById("saveRegionalHWMCSV").disabled = true;
+    }
+
+
     //Corresponds with the 'Peak CSV' button on the regional report modal
     $('#saveRegionalPeakCSV').click(function () {
         //if there is a hwm table, download as csv

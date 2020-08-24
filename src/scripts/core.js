@@ -161,7 +161,8 @@ var fev = fev || {
 		{ fieldName: 'Permanent Housing', colName: "Permanent Housing" },
 		{ fieldName: 'County', colName: "County" },
 		{ fieldName: 'State', colName: "State" },
-		{ fieldName: 'Latitude, Longitude(DD)', colName: "Latitude, Longitude (DD)" },
+		{ fieldName: 'Latitude (DD)', colName: "Latitude (DD)" },
+		{ fieldName: 'Longitude (DD)', colName: "Longitude (DD)" },
 		{ fieldName: 'Site Description', colName: "Site Description" },
 		{ fieldName: 'Location Description', colName: "Location Description" },
 		{ fieldName: 'Survey Date', colName: "Survey Date" },
@@ -784,14 +785,14 @@ $(document).ready(function () {
 
 	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
 
-	if (noAdvisories) {
+	/* if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
 		div.innerHTML += "No Active Advisories";
 	} else {
 		noaaOverlays = {
 			"NOAA Tropical Cyclone Forecast Track": noaaService
 		};
-	}
+	} */
 
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
@@ -1441,8 +1442,9 @@ $(document).ready(function () {
 						],
 						[
 							{},
-							{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, data[i]['Latitude (DD)'] + ", " + data[i]['Longitude (DD)'],
-							{ text: 'Site Description', style: 'tableHeader' }, data[i]['Site Description']
+							{ text: 'Latitude (DD)', style: 'tableHeader' }, data[i]['Latitude (DD)'],
+							{ text: 'Longitude (DD)', style: 'tableHeader' }, data[i]['Longitude (DD)']
+							
 						],
 						[
 							{},
@@ -1463,6 +1465,11 @@ $(document).ready(function () {
 							{},
 							{ text: 'Uncertainty', style: 'tableHeader' }, data[i]['Uncertainty'],
 							{ text: 'HWM Uncertainty', style: 'tableHeader' }, data[i]['HWM Uncertainty']
+						],
+						[
+							{},
+							{ text: 'Site Description', style: 'tableHeader' }, data[i]['Site Description'],
+							{ text: '', style: 'tableHeader' }, ''
 						]);
 				}
 			}
@@ -2333,7 +2340,8 @@ $(document).ready(function () {
 					"Permanent Housing": identifiedMarks[i].feature.properties.sitePermHousing,
 					"County": identifiedMarks[i].feature.properties.countyName,
 					"State": identifiedMarks[i].feature.properties.stateName,
-					"Latitude, Longitude(DD)": identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
+					"Latitude (DD)": identifiedMarks[i].feature.properties.latitude,
+					"Longitude (DD)": identifiedMarks[i].feature.properties.longitude,
 					"Site Description": identifiedMarks[i].feature.properties.siteDescription,
 					"Location Description": identifiedMarks[i].feature.properties.hwm_locationdescription,
 					"Survey Date": identifiedMarks[i].feature.properties.survey_date,
@@ -3478,8 +3486,8 @@ $(document).ready(function () {
 					],
 					[
 						{},
-						{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
-						{ text: 'Site Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.siteDescription
+						{ text: 'Latitude (DD)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.latitude,
+						{ text: 'Longitude (DD)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.longitude
 					],
 					[
 						{},
@@ -3500,6 +3508,11 @@ $(document).ready(function () {
 						{},
 						{ text: 'Uncertainty', style: 'tableHeader' }, uncertainty,
 						{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmUncertainty
+					],
+					[
+						{},
+						{ text: 'Site Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.siteDescription,
+						{ text: '', style: 'tableHeader' }, ''
 					]);
 			}
 		}
@@ -3672,7 +3685,7 @@ $(document).ready(function () {
 						body: [
 							[{
 								border: [false, false, false, true],
-								text: selectedEvent + ', ' + currentParkOrRefuge + ', ' + selectedBuffer + 'Buffer',
+								text: selectedEvent + ', ' + currentParkOrRefuge + ', ' + selectedBuffer + ' Buffer',
 								style: 'header', alignment: 'center'
 							}]
 						]
