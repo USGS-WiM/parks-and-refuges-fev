@@ -50,7 +50,11 @@ var tableData = [];
 var hwmTableData = [];
 var sensorTableData = [];
 var allHWMEOne = [];
+var allHWMEOneCoast = [];
+var allHWMEOneRiver = [];
 var allHWMETwo = [];
+var allHWMETwoCoast = [];
+var allHWMETwoRiver = [];
 var allPeaksEOne = [];
 var allPeaksETwo = [];
 var eventsPeakRange = []
@@ -994,7 +998,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         function getHWMs(url, markerIcon, eventName, eventNumber) {
             var parksWHWMStorage = [];
             var allHWMStorage = [];
+            var coastalHWMStorage = [];
+            var riverineHWMStorage = [];
             hwmArrReg = [];
+            hwmArrRegCoast = [];
+            hwmArrRegRiver = [];
             //Get the elevation values for hwm that are inside the buffers
             var createHwmArrayReg = L.geoJson(false, {
                 onEachFeature: function (feature) {
@@ -1006,7 +1014,12 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         //if peak is inside of the buffered polygon, add the corresponding peak value to an array
                         if (isItInsideInitial) {
                             if (feature.properties.elev_ft !== undefined) {
-                                hwmArrReg.push(feature.properties.elev_ft);
+                                if (feature.properties.hwm_environment === "Coastal") {
+                                    hwmArrRegCoast.push(feature.properties.elev_ft);
+                                } else {
+                                    hwmArrRegRiver.push(feature.properties.elev_ft);
+                                }
+                                //hwmArrReg.push(feature.properties.elev_ft);
                             }
                         }
 
@@ -1124,7 +1137,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             });
                         }
 
-                        // looping through the peaks and identifying ones that are within current park poly
+                        // looping through the hwms and identifying ones that are within current park poly
                         for (var i in regionalHWM._layers) {
                             var cords = ([regionalHWM._layers[i]._latlng.lng, regionalHWM._layers[i]._latlng.lat]);
 
@@ -1167,6 +1180,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                         "Waterbody": regionalHWM._layers[i].feature.properties.waterbody
                                     }
                                 });
+                                if (regionalHWM._layers[i].feature.properties.hwm_environment === "Coastal") {
+                                    coastalHWMStorage.push(parksWHWMStorage[count].data);
+                                } else {
+                                    riverineHWMStorage.push(parksWHWMStorage[count].data);
+                                }
                                 allHWMStorage.push(parksWHWMStorage[count].data);
 
                                 count++;
@@ -1175,15 +1193,23 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     }
                     // Filtering out duplicates that fall within 2 different buffers
                     allHWMStorage = allHWMStorage.filter((v, i, a) => a.findIndex(t => (JSON.stringify(t) === JSON.stringify(v))) === i);
+                    coastalHWMStorage = coastalHWMStorage.filter((v, i, a) => a.findIndex(t => (JSON.stringify(t) === JSON.stringify(v))) === i);
+                    riverineHWMStorage = riverineHWMStorage.filter((v, i, a) => a.findIndex(t => (JSON.stringify(t) === JSON.stringify(v))) === i);
+
+
                     // transfer data to the peaks csv data table
                     hwmRegionalCSVData.push(allHWMStorage);
 
                     if (eventNumber == 1) {
                         allHWMEOne = allHWMStorage;
                         parksWithHWMsEOne = parksWHWMStorage;
+                        allHWMEOneCoast = coastalHWMStorage;
+                        allHWMEOneRiver = riverineHWMStorage;
                     } else if (eventNumber == 2) {
                         allHWMETwo = allHWMStorage;
                         parksWithHWMsETwo = parksWHWMStorage;
+                        allHWMETwoCoast = coastalHWMStorage;
+                        allHWMETwoRiver = riverineHWMStorage;
                     }
 
                     hwmsWithinBuffer.addTo(regionalMap);
@@ -1466,7 +1492,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
             //Sort peak and hwm arrays
             peakArrReg = peakArrReg.sort(function (a, b) { return a - b });
-            hwmArrReg = hwmArrReg.sort(function (a, b) { return a - b });
+            //hwmArrReg = hwmArrReg.sort(function (a, b) { return a - b });
+            hwmArrRegCoast = hwmArrRegCoast.sort(function (a, b) { return a - b });
+            hwmArrRegRiver = hwmArrRegRiver.sort(function (a, b) { return a - b });
             var sum = []
             var peakSum = {};
             var hwmSum = {};
@@ -1483,12 +1511,18 @@ function displayRegionalRtGageReport(regionalStreamGages) {
             getSummaryStats(peakArrReg);
             var eventPeaks;
             var eventHWMs;
+            var eventHWMCoast;
+            var eventHWMRiver;
             if (eventNumber == 1) {
                 eventPeaks = allPeaksEOne;
                 eventHWMs = allHWMEOne;
+                eventHWMCoast = allHWMEOneCoast;
+                eventHWMRiver = allHWMEOneRiver;
             } else if (eventNumber == 2) {
                 eventPeaks = allPeaksETwo;
                 eventHWMs = allHWMETwo;
+                eventHWMCoast = allHWMETwoCoast;
+                eventHWMRiver = allHWMETwoRiver;
             }
 
                 // getting the record with the max peak
@@ -1500,13 +1534,38 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 document.getElementById("saveRegionalPeakCSV").disabled = false;
 
             //Create hwm row in regional summary table
-            getSummaryStats(hwmArrReg);
+            //getSummaryStats(hwmArrayReg);
+            getSummaryStats(hwmArrRegCoast);
+            if (eventHWMCoast.length > 0) {
+                hwmSum = {};
                 // getting the record with the max hwm
-                var maxDate = eventHWMs.filter(x => x['Elevation (ft)'] === maxReg);
+                var maxDate = eventHWMCoast.filter(x => x['Elevation (ft)'] === maxReg);
+                var type;
                 // setting Max Date
                 maxDate = maxDate[0]['Flag Date'];
-                hwmSum = { "Type": "HWM", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
+            }
+
+            getSummaryStats(hwmArrRegRiver);
+            if (eventHWMRiver.length > 0) {
+                hwmSum = {};
+                // getting the record with the max hwm
+                var maxDate = eventHWMRiver.filter(x => x['Elevation (ft)'] === maxReg);
+                var type;
+                // setting Max Date
+                maxDate = maxDate[0]['Flag Date'];
+                hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                sum.push(hwmSum);
+            }
+
+
+            if (formattedHWMS.length > 0) {
+                document.getElementById("saveRegionalHWMCSV").disabled = false;
+            }
+            if (formattedHWMS.length == 0) {
+                document.getElementById("saveRegionalHWMCSV").disabled = true;
+            }
 
             function getSiteSummaryValues() {
                 var peakRange = {};
@@ -1597,6 +1656,10 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 //Round Results
                 meanReg = meanReg.toFixed(2);
                 standReg = standReg.toFixed(2);
+                minReg = minReg.toFixed(2);
+                minReg = Number(minReg);
+                maxReg = maxReg.toFixed(2);
+                maxReg = Number(maxReg);
                 confIntNinetyHigh = confIntNinetyHigh.toFixed(2);
                 confIntNinetyLow = confIntNinetyLow.toFixed(2);
             }
@@ -1790,6 +1853,16 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         hwmSiteSummaries = [];
         allHWMEOne = [];
         allPeaksEOne = [];
+        allHWMEOneCoast = [];
+        allHWMEOneRiver = [];
+        allHWMETwo = [];
+        allHWMETwoCoast = [];
+        allHWMETwoRiver = [];
+        peakSiteSummaries = [];
+        hwmSiteSummaries = [];
+        totalSites = [];
+        siteList = [];
+        eventsPeakRange = []
 
         alreadyRan = false;
 
@@ -1809,6 +1882,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         setTimeout(() => {
             var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
         }, 500);
+
+        regionalMap.setView([39.833333, -98.583333], 3);
     }
 
     //Clear regional report output when modal is closed by clicking the 'Close' button

@@ -161,7 +161,8 @@ var fev = fev || {
 		{ fieldName: 'Permanent Housing', colName: "Permanent Housing" },
 		{ fieldName: 'County', colName: "County" },
 		{ fieldName: 'State', colName: "State" },
-		{ fieldName: 'Latitude, Longitude(DD)', colName: "Latitude, Longitude (DD)" },
+		{ fieldName: 'Latitude (DD)', colName: "Latitude (DD)" },
+		{ fieldName: 'Longitude (DD)', colName: "Longitude (DD)" },
 		{ fieldName: 'Site Description', colName: "Site Description" },
 		{ fieldName: 'Location Description', colName: "Location Description" },
 		{ fieldName: 'Survey Date', colName: "Survey Date" },
@@ -1441,8 +1442,9 @@ $(document).ready(function () {
 						],
 						[
 							{},
-							{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, data[i]['Latitude (DD)'] + ", " + data[i]['Longitude (DD)'],
-							{ text: 'Site Description', style: 'tableHeader' }, data[i]['Site Description']
+							{ text: 'Latitude (DD)', style: 'tableHeader' }, data[i]['Latitude (DD)'],
+							{ text: 'Longitude (DD)', style: 'tableHeader' }, data[i]['Longitude (DD)']
+							
 						],
 						[
 							{},
@@ -1463,6 +1465,11 @@ $(document).ready(function () {
 							{},
 							{ text: 'Uncertainty', style: 'tableHeader' }, data[i]['Uncertainty'],
 							{ text: 'HWM Uncertainty', style: 'tableHeader' }, data[i]['HWM Uncertainty']
+						],
+						[
+							{},
+							{ text: 'Site Description', style: 'tableHeader' }, data[i]['Site Description'],
+							{ text: '', style: 'tableHeader' }, ''
 						]);
 				}
 			}
@@ -1957,6 +1964,8 @@ $(document).ready(function () {
 		setTimeout(() => {
 			var peaksArray = [];
 			var hwmArray = [];
+			var coastalHWMs = []
+			var riverineHWMs = [];
 			var stArray = [];
 			hydroUrls = [];
 
@@ -1965,6 +1974,11 @@ $(document).ready(function () {
 			});
 			identifiedMarks.forEach(function (p) {
 				hwmArray.push(p.feature.properties);
+				if (p.feature.properties.hwm_environment === "Coastal") {
+					coastalHWMs.push(p.feature.properties);
+				} else {
+					riverineHWMs.push(p.feature.properties);
+				}
 			});
 
 			console.log(peaksArray);
@@ -2092,6 +2106,8 @@ $(document).ready(function () {
 			//These variables will have the heights/elevation for each peak/hwm in the buffered area
 			var peakArrReport = [];
 			var hwmArrReport = [];
+			var hwmArrReportCoastal = [];
+			var hwmArrReportRiverine = [];
 
 			//Getting the heights to populate arrays
 			for (peak in identifiedPeaks) {
@@ -2101,12 +2117,20 @@ $(document).ready(function () {
 			}
 			for (hwm in identifiedMarks) {
 				if (identifiedMarks[hwm].feature.properties.elev_ft != undefined) {
-					hwmArrReport.push(identifiedMarks[hwm].feature.properties.elev_ft);
+					if (identifiedMarks[hwm].feature.properties.hwm_environment === "Coastal") {
+						hwmArrReportCoastal.push(identifiedMarks[hwm].feature.properties.elev_ft);
+					} else {
+						hwmArrReportRiverine.push(identifiedMarks[hwm].feature.properties.elev_ft);
+					}
 				}
 			}
 
+			console.log(hwmArrReportCoastal);
+			console.log(hwmArrReportRiverine);
+
+
 			//Display no data notice in report if there aren't any peaks or hwms
-			if (peakArrReport == 0 && hwmArrReport == 0) {
+			if (peakArrReport == 0 && hwmArrReportCoastal == 0 && hwmArrReportRiverine == 0) {
 				$('#reportSummaryTitle').children().remove();
 				$('#reportSummaryTitle').append("<br><br> Summary Information");
 				$('#reportSummaryNoData').append("No summary data for this site.");
@@ -2114,7 +2138,8 @@ $(document).ready(function () {
 
 			//Sort peak and hwm arrays
 			peakArrReport = peakArrReport.sort(function (a, b) { return a - b });
-			hwmArrReport = hwmArrReport.sort(function (a, b) { return a - b });
+			hwmArrReportCoastal = hwmArrReportCoastal.sort(function (a, b) { return a - b });
+			hwmArrReportRiverine = hwmArrReportRiverine.sort(function (a, b) { return a - b });
 			var sum = []
 			var peakSum = {};
 			var hwmSum = {};
@@ -2143,14 +2168,27 @@ $(document).ready(function () {
 			}
 
 			// removing any undefined values incase there are some
-			hwmArrReport = hwmArrReport.filter(e => e);
+			hwmArrReportCoastal = hwmArrReportCoastal.filter(e => e);
+			hwmArrReportRiverine = hwmArrReportRiverine.filter(e => e);
+
 			//Create hwm row in report summary table
-			getReportSummaryStats(hwmArrReport);
-			if (hwmArrReport.length > 0) {
-				var maxDate = hwmArray.filter(x => x.elev_ft === maxReport);
+			getReportSummaryStats(hwmArrReportCoastal);
+			hwmSum = {};
+			if (hwmArrReportCoastal.length > 0) {
+				var maxDate = coastalHWMs.filter(x => x.elev_ft === maxReport);
                 // setting Max Date
                 maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
-				hwmSum = { "Type": "HWM", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+				hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+				sum.push(hwmSum);
+			}
+
+			getReportSummaryStats(hwmArrReportRiverine);
+			hwmSum = {};
+			if (hwmArrReportRiverine.length > 0) {
+				var maxDate = riverineHWMs.filter(x => x.elev_ft === maxReport);
+                // setting Max Date
+                maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
+				hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(hwmSum);
 			}
 
@@ -2170,6 +2208,10 @@ $(document).ready(function () {
 				meanReport = meanReport.toFixed(3);
 				standReport = standReport.toFixed(3);
 				medianReport = medianReport.toFixed(3);
+				minReport = minReport.toFixed(2);
+                minReport = Number(minReport);
+                maxReport = maxReport.toFixed(2);
+                maxReport = Number(maxReport);
 				confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
 				confIntNinetyLow = confIntNinetyLow.toFixed(3);
 			}
@@ -2301,7 +2343,8 @@ $(document).ready(function () {
 					"Permanent Housing": identifiedMarks[i].feature.properties.sitePermHousing,
 					"County": identifiedMarks[i].feature.properties.countyName,
 					"State": identifiedMarks[i].feature.properties.stateName,
-					"Latitude, Longitude(DD)": identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
+					"Latitude (DD)": identifiedMarks[i].feature.properties.latitude,
+					"Longitude (DD)": identifiedMarks[i].feature.properties.longitude,
 					"Site Description": identifiedMarks[i].feature.properties.siteDescription,
 					"Location Description": identifiedMarks[i].feature.properties.hwm_locationdescription,
 					"Survey Date": identifiedMarks[i].feature.properties.survey_date,
@@ -3446,8 +3489,8 @@ $(document).ready(function () {
 					],
 					[
 						{},
-						{ text: 'Latitude, Longitude(DD)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.latitude + ", " + identifiedMarks[i].feature.properties.longitude,
-						{ text: 'Site Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.siteDescription
+						{ text: 'Latitude (DD)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.latitude,
+						{ text: 'Longitude (DD)', style: 'tableHeader' }, identifiedMarks[i].feature.properties.longitude
 					],
 					[
 						{},
@@ -3468,6 +3511,11 @@ $(document).ready(function () {
 						{},
 						{ text: 'Uncertainty', style: 'tableHeader' }, uncertainty,
 						{ text: 'HWM Uncertainty', style: 'tableHeader' }, hwmUncertainty
+					],
+					[
+						{},
+						{ text: 'Site Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.siteDescription,
+						{ text: '', style: 'tableHeader' }, ''
 					]);
 			}
 		}
@@ -3644,7 +3692,9 @@ $(document).ready(function () {
 						body: [
 							[{
 								border: [false, false, false, true],
+
 								text: 'Summary of Peak Water Levels within ' + selectedBuffer + ' km of ' + currentParkOrRefuge + ' during ' + selectedEvent,
+
 								style: 'header', alignment: 'center'
 							}]
 						]
