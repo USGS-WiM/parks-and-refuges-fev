@@ -146,7 +146,7 @@ $(document).ready(function () {
 
     $('#btnSubmitSelections').click(function () {
 
-
+        $('#btnSubmitSelections').attr('disabled', true);
         /* $('.progress-bar-fill').delay(1000).queue(function () {
             $(this).css('width', '100%')
         }); */
@@ -192,11 +192,11 @@ $(document).ready(function () {
         var whereValue;
 
         switch ($('#typeSelect_regionalModal').val()[0]) {
-            case 'refuges':
+            case 'NWR':
                 regionURL = 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0';
                 whereValue = "REGNAME=" + selectedRegion;
                 break;
-            case 'parks':
+            case 'NPS':
                 regionURL = 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/nps_regions_rev/FeatureServer/0';
                 whereValue = "reg_name" + selectedRegion;
                 break;
@@ -217,7 +217,7 @@ $(document).ready(function () {
                     }
                 }).addTo(regionalMap);
             regionLayerGroup.addLayer(regionBoundaries);
-        } */if ($('#typeSelect_regionalModal').val()[0] === "refuges") {
+        } */if ($('#typeSelect_regionalModal').val()[0] === "NWR") {
             regionBoundaries = L.esri.featureLayer({
                 useCors: false,
                 url: regionURL,
@@ -230,7 +230,7 @@ $(document).ready(function () {
                 } */
             }).addTo(regionalMap);
             regionLayerGroup.addLayer(regionBoundaries);
-        } else if ($('#typeSelect_regionalModal').val()[0] === "parks") {
+        } else if ($('#typeSelect_regionalModal').val()[0] === "NPS") {
             regionBoundaries = L.esri.featureLayer({
                 useCors: false,
                 url: regionURL,
@@ -257,7 +257,7 @@ $(document).ready(function () {
         // Identify parks/refuges in event in regions
         var allSites;
         var siteRegion;
-        if (selectedLandType[0] === "parks") {
+        if (selectedLandType[0] === "NPS") {
             // Region conversions for site layers 
             switch (selectedRegion[0]) {
                 case 'Alaska':
@@ -292,7 +292,7 @@ $(document).ready(function () {
                     regionParksFC.push(feature)
                 },
             }).addTo(regionalMap);
-        } else if (selectedLandType[0] === "refuges") {
+        } else if (selectedLandType[0] === "NWR") {
             // Region conversions for site layers 
             switch (selectedRegion[0]) {
                 case 'Alaska Region':
@@ -490,11 +490,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         var polysCount;
                         var buffer;
                         var feature;
-                        /* if ($('#typeSelect_regionalModal').val()[0] === "parks") {
+                        /* if ($('#typeSelect_regionalModal').val()[0] === "NPS") {
                             feature = simplifiedSites[p];
                         }  */
                         // Attempting to merge polygons for sites that contain multiple. Encounting error turf error found non-noded intersection between LINESTRING union.
-                        /* else if ($('#typeSelect_regionalModal').val()[0] === "refuges") {
+                        /* else if ($('#typeSelect_regionalModal').val()[0] === "NWR") {
                             var singlePoly = [];
                             if (simplifiedSites[p].geometry.type === "MultiPolygon") {
                                 simplifiedSites[p].geometry.coordinates.forEach(function (coords) {
@@ -913,7 +913,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                     var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
                                     // if true add it to an array containing all the 'true' regionalPeaks
                                     if (isItInside) {
-                                        var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
+                                        var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                                         if (regionalPeak._layers[i].peak_stage != undefined) {
                                             regionalPeak._layers[i].addTo(peaksWithinBuffer);
                                         }
@@ -948,7 +948,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             // if true add it to an array containing all the 'true' regionalPeak
                             if (isItInside) {
                                 //peaksWithinBuffer.push(regionalPeak._layers[i]);
-                                var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
+                                var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                                 if (regionalPeak._layers[i].feature.properties.peak_stage != undefined) {
                                     regionalPeak._layers[i].addTo(peaksWithinBuffer);
                                 }
@@ -1085,7 +1085,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                         if (regionalHWM._layers[i].feature.properties.elev_ft != undefined) {
                                             regionalHWM._layers[i].addTo(hwmsWithinBuffer);
                                         }
-                                        var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
+                                        var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                                         parksWHWMStorage.push({
                                             "site_name": landsitetype,
                                             data: {
@@ -1132,7 +1132,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             // if true add it to an array containing all the 'true' regionalHWM
                             if (isItInside) {
                                 //peaksWithinBuffer.push(regionalHWM._layers[i]);
-                                var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
+                                var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                                 if (regionalHWM._layers[i].feature.properties.elev_ft != undefined) {
                                     regionalHWM._layers[i].addTo(hwmsWithinBuffer);
                                 }
@@ -1283,7 +1283,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                     // if true add it to an array containing all the 'true' regionalHWM
                                     if (isItInside) {
                                         regionalBaro._layers[i].addTo(barosWithinBuffer);
-                                        var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
+                                        var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                                         parksWithBaros.push({
                                             "site_name": landsitetype,
                                             data: {
@@ -1309,7 +1309,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             // if true add it to an array containing all the 'true' regionalBaro
                             if (isItInside) {
                                 //peaksWithinBuffer.push(regionalBaro._layers[i]);
-                                var landsitetype = $('#typeSelect_regionalModal').val()[0] === "parks" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
+                                var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                                 //regionalBaro._layers[i].addTo(barosWithinBuffer);
                                 parksWithBaros.push({
                                     "site_name": landsitetype,

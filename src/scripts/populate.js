@@ -118,8 +118,8 @@ $(document).ready(function () {
         allowClear: false,
         maximumSelectionLength: 1
     });
-    $('.typeSelect').append('<option value="parks">' + 'Parks' + '</option>');
-    $('.typeSelect').append('<option value="refuges">' + 'Refuges' + '</option>');
+    $('.typeSelect').append('<option value="NPS">' + 'NPS' + '</option>');
+    $('.typeSelect').append('<option value="NWR">' + 'NWR' + '</option>');
 
     $('#typeSelect_regionalModal').change(function () {
 
@@ -138,11 +138,11 @@ $(document).ready(function () {
         maximumSelectionLength: 1
     });
 
-    $('.typeSelectFilter').append('<option value="parks">' + 'Parks' + '</option>');
-    $('.typeSelectFilter').append('<option value="refuges">' + 'Refuges' + '</option>');
+    $('.typeSelectFilter').append('<option value="NPS">' + 'NPS' + '</option>');
+    $('.typeSelectFilter').append('<option value="NWR">' + 'NWR' + '</option>');
 
-    $('.typeSelectwelcome').append('<option value="parks">' + 'Parks' + '</option>');
-    $('.typeSelectwelcome').append('<option value="refuges">' + 'Refuges' + '</option>');
+    $('.typeSelectwelcome').append('<option value="NPS">' + 'NPS' + '</option>');
+    $('.typeSelectwelcome').append('<option value="NWR">' + 'NWR' + '</option>');
 
     $('.siteSelectWelcome').select2({
         placeholder: 'Select a site',
@@ -166,7 +166,7 @@ $(document).ready(function () {
         if (($('#typeSelect_filterModal').val()) === null) {
 
         } else {
-            if ($('#typeSelect_filterModal').val()[0] === "parks") {
+            if ($('#typeSelect_filterModal').val()[0] === "NPS") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
@@ -185,7 +185,7 @@ $(document).ready(function () {
                 });
 
 
-            } else if ($('#typeSelect_filterModal').val()[0] === "refuges") {
+            } else if ($('#typeSelect_filterModal').val()[0] === "NWR") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
@@ -215,7 +215,7 @@ $(document).ready(function () {
         if (($('#typeSelect_welcomeModal').val()) === null) {
 
         } else {
-            if ($('#typeSelect_welcomeModal').val()[0] === "parks") {
+            if ($('#typeSelect_welcomeModal').val()[0] === "NPS") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
@@ -234,7 +234,7 @@ $(document).ready(function () {
                 });
 
 
-            } else if ($('#typeSelect_welcomeModal').val()[0] === "refuges") {
+            } else if ($('#typeSelect_welcomeModal').val()[0] === "NWR") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
@@ -282,7 +282,7 @@ $(document).ready(function () {
                         console.log('Error processing the JSON. The error is:' + error);
                     }
                 });              
-            } */ if ($('#typeSelect_regionalModal').val()[0] === "refuges") {
+            } */ if ($('#typeSelect_regionalModal').val()[0] === "NWR") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
@@ -299,7 +299,7 @@ $(document).ready(function () {
                         console.log('Error processing the JSON. The error is:' + error);
                     }
                 });
-            } else if ($('#typeSelect_regionalModal').val()[0] === "parks") {
+            } else if ($('#typeSelect_regionalModal').val()[0] === "NPS") {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
