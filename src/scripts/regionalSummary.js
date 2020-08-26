@@ -536,7 +536,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     }
 
                 }
-                L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
+                // They no longer want the buffers visible on the regional map
+                //L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
                 getEventSpecificData();
             }, 2000);
         }
@@ -1212,7 +1213,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         allHWMETwoRiver = riverineHWMStorage;
                     }
 
-                    hwmsWithinBuffer.addTo(regionalMap);
+                    // They no longer want the HWM visible on the regional map
+                    //hwmsWithinBuffer.addTo(regionalMap);
                 }
             });
         }
