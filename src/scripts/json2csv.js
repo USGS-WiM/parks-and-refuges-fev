@@ -50,6 +50,12 @@
                 if (counter > 0) {
                     result += columnDelimiter;
                 }
+                if (typeof item[key] === 'string'){
+                    item[key] = item[key].replace(/\n/g, '');
+                }
+                if (typeof item[key] === 'string' && item[key].includes('#')){
+                    item[key] = item[key].replace(/#/g, '');
+                }
                 if (item[key] == null) {
                     result += '';
                 } else if (typeof item[key] === 'string' && item[key].includes(',')) {
