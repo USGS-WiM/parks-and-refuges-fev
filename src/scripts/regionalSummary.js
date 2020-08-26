@@ -22,6 +22,7 @@ var hwmsWithinBuffer = L.featureGroup();
 var barosWithinBuffer = L.featureGroup();
 var sensorsWithinBuffer = L.featureGroup();
 var bufferedPolys = [];
+var bufferedPolysLayerGroup = [];
 var unbufferedPolys = [];
 var bufferSize;
 var parksWithPeaksEOne = [];
@@ -536,7 +537,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     }
 
                 }
-                L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
+                //bufferedPolysLayerGroup.addLayer(bufferedPolys);
+                //L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
                 getEventSpecificData();
             }, 2000);
         }
@@ -1212,7 +1214,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         allHWMETwoRiver = riverineHWMStorage;
                     }
 
-                    hwmsWithinBuffer.addTo(regionalMap);
+                    // They no longer want the HWM visible on the regional map
+                    //hwmsWithinBuffer.addTo(regionalMap);
                 }
             });
         }
