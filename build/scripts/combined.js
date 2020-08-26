@@ -3756,11 +3756,6 @@ $(document).ready(function () {
 				}, 3000);
 			}
 
-
-			var hwmCSV = hwmDataTable.table2csv;
-			console.log("hwmDataTable", hwmDataTable);
-			console.log("hwmCSV", hwmCSV);
-
 			setTimeout(() => {
 				// Get legend for print preview
 				html2canvas(document.getElementById('legendDiv'))
