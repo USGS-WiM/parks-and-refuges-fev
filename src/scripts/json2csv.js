@@ -52,7 +52,6 @@
                 }
                 if (typeof item[key] === 'string' && item[key].includes('#')){
                     item[key] = item[key].replace('#', '');
-                    console.log(item[key]);
                 }
                 if (item[key] == null) {
                     result += '';
