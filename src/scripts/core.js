@@ -1251,7 +1251,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-						widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
+						widths: ['auto','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
 					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', 'Max Date', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1263,7 +1263,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto'],
+					widths: ['auto','auto','auto','auto','auto','auto','auto','auto','auto'],
 					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1275,7 +1275,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
+					widths: ['auto','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
 					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total Peaks', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1299,7 +1299,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto', 'auto'],
+					widths: ['auto','auto','auto','auto','auto','auto','auto','auto','auto', 'auto'],
 					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total HWMs', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1729,16 +1729,16 @@ $(document).ready(function () {
 						margin: [0, 0, 0, 15]
 					},
 					//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
-					{ text: 'Summary Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Region-wide Summary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryTable(summaryInfo()),
-					{ text: 'Site Summary Peak Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfo()),
-					{ text: 'Site Summary High Water Mark Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
-					{ text: 'Peak Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + siteType + ' Boundary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
 					peaksTable(getPeaksData()),
-					{ text: 'HWM Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of each ' + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					hwmsTable(eventOneNum),
 				]
 			} else if (selectedEvents.length === 2) {
@@ -1766,7 +1766,7 @@ $(document).ready(function () {
 						table: {
 							widths: ['*'],
 							body: [
-								[{ border: [false, false, false, true], text: 'Regional Report - Printed: ' + todayDate, style: 'header', alignment: 'center' }]
+								[{ border: [false, false, false, true], text: 'Printed: ' + todayDate, style: 'header', alignment: 'center' }]
 							]
 						},
 						margin: [0, 0, 0, 15]
@@ -1789,26 +1789,25 @@ $(document).ready(function () {
 					//summaryEventsPeakTable(),
 					{ text: 'Summary of Peaks measured within a ' + bufferSize + 'km Buffer for ' + eventOne + ' and ' + eventTwo, style: 'subHeader', margin: [150, 0, 0, 5] },
 					summaryEventsTable(summaryPeaksRangeInfo()),
-					{ text: 'Summary Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Region-wide Summary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryTable(summaryInfo()),
-					{ text: 'Summary Information for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Region-wide Summary for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryTable(summaryInfoTwo()),
-					{ text: 'Site Summary Peak Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfo()),
-					{ text: 'Site Summary Peak Information for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteType + ' for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfoTwo()),
-					{ text: 'Site Summary High Water Mark Information for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
-					{ text: 'Site Summary High Water Mark Information for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfoTwo()),
-					{ text: 'Peak Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
-					//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
+					{ text: 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + siteType + ' Boundary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					peaksTable(getPeaksData()),
-					{ text: 'Peak Data for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + siteType + ' Boundary for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					peaksTable(getPeaksDataTwo()),
-					{ text: 'HWM Data for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of each ' + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					hwmsTable(eventOneNum),
-					{ text: 'HWM Data for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of each' + siteType + ' for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					hwmsTable(eventTwoNum)
 				]
 
@@ -2132,7 +2131,7 @@ $(document).ready(function () {
 			//Display no data notice in report if there aren't any peaks or hwms
 			if (peakArrReport == 0 && hwmArrReportCoastal == 0 && hwmArrReportRiverine == 0) {
 				$('#reportSummaryTitle').children().remove();
-				$('#reportSummaryTitle').append("<br><br> Summary Information");
+				$('#reportSummaryTitle').append("<br><br>" + currentParkOrRefuge + " Summary for " + selectedEvent);
 				$('#reportSummaryNoData').append("No summary data for this site.");
 			}
 
@@ -2220,7 +2219,7 @@ $(document).ready(function () {
 			function buildHtmlTable() {
 				//Empty text from previous report, if it was run
 				$("#peakTable").find("p").remove();
-				$("#peakTable").prepend("<p>" + "<b>" + "<br> Peak Summary Site Information" + "</b>" + "</p>")
+				$("#peakTable").prepend("<p>" + "<b>" + "<br>" + 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + currentParkOrRefuge + ' Boundary for ' + selectedEvent + "</b>" + "</p>")
 
 				//Empty peak data table from previous report, if it was run
 				$("#peakDataTable").empty();
@@ -2293,7 +2292,7 @@ $(document).ready(function () {
 			//If the report summary has data, display title and build table
 			if (sum.length > 0) {
 				$('#reportSummaryTitle').children().remove();
-				buildRegionalDataTables('#reportSummaryTitle', "#reportSummaryDataTable", sum, "Summary Information");
+				buildRegionalDataTables('#reportSummaryTitle', "#reportSummaryDataTable", sum, "<br><br>" + currentParkOrRefuge + " Summary for " + selectedEvent);
 			}
 
 			//If report summary does not have data, make sure old table does not display 
@@ -2309,7 +2308,7 @@ $(document).ready(function () {
 				$("#peakTable").find("p").remove();
 				$("#peakDataTable").empty();
 				setTimeout(() => {
-					$("#peakTable").prepend("<p>" + "<b>" + "Peak Summary Site Information" + "</b>" + "</p>");
+					$("#peakTable").prepend("<p>" + "<b>" + "<br>" +'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + currentParkOrRefuge + ' Boundary for ' + selectedEvent + "</b>" + "</p>");
 					$("#peakTable").append("<p>" + "There are no Peaks at this Site." + "</p>");
 				}, 3000);
 			}
@@ -2376,7 +2375,7 @@ $(document).ready(function () {
 			function buildHwmHtmlTable() {
 				//Empty text from previous report, if was run
 				$("#hwmTable").find("p").remove();
-				$("#hwmTable").prepend("<p>" + "<b>" + "<br> High Water Mark Site Information" + "</b>" + "</p>")
+				$("#hwmTable").prepend("<p>" + "<b>" + "<br>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent  + "</b>" + "</p>")
 
 				//Empty hwm data table from previous report, if it was run
 				$("#hwmDataTable").empty();
@@ -2420,7 +2419,7 @@ $(document).ready(function () {
 				$("#hwmTable").find("p").remove();
 				$("#hwmDataTable").empty();
 				setTimeout(() => {
-					$("#hwmTable").prepend("<p>" + "<b>" + "<br> High Water Mark Site Information" + "</b>" + "</p>");
+					$("#hwmTable").prepend("<p>" + "<b>" + "<br>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent + "</b>" + "</p>");
 					$("#hwmTable").append("<p>" + "There are no High Water Marks at this Site." + "</p>");
 				}, 3000);
 			}
@@ -3693,7 +3692,7 @@ $(document).ready(function () {
 							[{
 								border: [false, false, false, true],
 
-								text: 'Summary of Peak Water Levels within ' + selectedBuffer + ' km of ' + currentParkOrRefuge + ' during ' + selectedEvent,
+								text: 'Summary of Peak Water Levels within ' + selectedBuffer + ' of ' + currentParkOrRefuge + ' during ' + selectedEvent,
 
 								style: 'header', alignment: 'center'
 							}]
@@ -3732,11 +3731,11 @@ $(document).ready(function () {
 					layout: 'noBorders',
 					margin: [0, 0, 0, 15]
 				},
-				{ text: 'Summary Information', style: 'subHeader', margin: [0, 0, 0, 15] },
+				{ text: currentParkOrRefuge + ' Summary for ' + selectedEvent, style: 'subHeader', margin: [0, 0, 0, 15] },
 				summaryTable(reportSummaryInfo()),
-				{ text: 'Peak Summary Data', style: 'subHeader', margin: [0, 0, 0, 5] },
+				{ text: 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + currentParkOrRefuge + ' Boundary for ' + selectedEvent, style: 'subHeader', margin: [0, 0, 0, 5] },
 				peakTable(bodyData()),
-				{ text: 'High Water Mark Data', style: 'subHeader', margin: [0, 0, 0, 15] },
+				{ text: 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent, style: 'subHeader', margin: [0, 0, 0, 15] },
 				hwmTable(),
 			],
 			styles: {

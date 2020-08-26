@@ -1576,12 +1576,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     dataArray = item.data.sort(function (a, b) { return a - b });
                     getSummaryStats(dataArray);
                     if (confIntNinetyHigh !== "NaN") {
-                        var medReg = medianReg.toFixed(2);
                         // var mean = meanReg.toFixed(2); -- is string so unnecesary 
                         //var sd = standReg.toFixed(2); -- is string so unnecesary 
                         /* peakRange = {"Site Name": eventName , "Range": minReg + '-' + maxReg, "Event": eventName};
                         eventsPeakRange.push(peakRange); */
-                        peakSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                        peakSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
                         siteList.push({ "Site Name": item.site_name });
                         totalSites.push({ "Site Name": item.site_name, "Range": minReg + ' - ' + maxReg, "Event": eventName });
                     }
@@ -1655,6 +1654,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
                 //Round Results
                 meanReg = meanReg.toFixed(2);
+                medianReg = medianReg.toFixed(2);
+                medianReg = Number(medianReg);
                 standReg = standReg.toFixed(2);
                 minReg = minReg.toFixed(2);
                 minReg = Number(minReg);
@@ -1707,14 +1708,19 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 var tablePeaksID = "#siteSummaryPeakDataTableETwo";
                 var tableHWMsID = "#siteSummaryHWMDataTableETwo";
             }
+
+            var siteText = selectedLandType[0];
+            if (selectedLandType[0] === "NPS") {
+                siteText = "NPS Site"
+            }
             if (sum.length > 0) {
-                buildDataTables(tableSumID, sum, "Summary Information " + eventName);
+                buildDataTables(tableSumID, sum, "Region-wide Summary for " + eventName);
             }
             if (siteSumPeakVals.length > 0) {
-                buildDataTables(tablePeaksID, peakSiteSummaries, "Site Summary Peak Information " + eventName);
+                buildDataTables(tablePeaksID, peakSiteSummaries, 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteText + ' for ' + eventName);
             }
             if (siteSumHWMVals.length > 0) {
-                buildDataTables(tableHWMsID, hwmSiteSummaries, "Site Summary High Water Mark Information " + eventName);
+                buildDataTables(tableHWMsID, hwmSiteSummaries, 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteText + ' Impacted by ' + eventName);
             }
 
             // Displays tables in modal, no longer desired in the regional report. 
