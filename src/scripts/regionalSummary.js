@@ -22,7 +22,6 @@ var hwmsWithinBuffer = L.featureGroup();
 var barosWithinBuffer = L.featureGroup();
 var sensorsWithinBuffer = L.featureGroup();
 var bufferedPolys = [];
-var bufferedPolysLayerGroup = [];
 var unbufferedPolys = [];
 var bufferSize;
 var parksWithPeaksEOne = [];
@@ -537,7 +536,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     }
 
                 }
-                //bufferedPolysLayerGroup.addLayer(bufferedPolys);
+                // They no longer want the buffers visible on the regional map
                 //L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
                 getEventSpecificData();
             }, 2000);
