@@ -1,5 +1,6 @@
 // setting global variables for the regional summary
 var regionalMap;
+var noData = false;
 var alreadyRan = false;
 var layerCountReg = 0;
 var selectedRegion = "";
@@ -119,6 +120,7 @@ var parksURL = "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/servic
 var peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.json?Event=";
 
 $(document).ready(function () {
+    $("#noResultsText").hide();
     $('#btnChooseRegion').click(function () {
 
         // for some reason tableData loading incompletely without timeout
@@ -146,10 +148,7 @@ $(document).ready(function () {
 
     });
 
-
-
     $('#btnSubmitSelections').click(function () {
-
         $('#btnSubmitSelections').attr('disabled', true);
         /* $('.progress-bar-fill').delay(1000).queue(function () {
             $(this).css('width', '100%')
@@ -599,11 +598,13 @@ function displayRegionalRtGageReport(regionalStreamGages) {
  
                 // RDG
                 getRDGs(fev.urls.rdgGeoJSONViewURL + sensorQueryString, regionalrdgMarkerIcon); */
-
+                dataCheck();
                 setTimeout(() => {
-                    regionalMap.fitBounds(peaksWithinBuffer.getBounds());
-                    processData(eventNumber);
-                    regionalMap.zoomIn();
+                    if (peaksWithinBuffer.getLayers().length > 0) {
+                        regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                        processData(eventNumber);
+                        regionalMap.zoomIn();
+                    }
                 }, 2000);
             } else if (selectedEvents.length === 2) {
                 var eventNumber = 1;
@@ -641,9 +642,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 }
 
                 setTimeout(() => {
-                    regionalMap.fitBounds(peaksWithinBuffer.getBounds());
-                    processData(eventNumber);
-                    nextEvent();
+                    if (peaksWithinBuffer.getLayers().length > 0) {
+                        regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                        processData(eventNumber);
+                    }
+                    nextEvent(); 
                 }, 2000);
 
                 function nextEvent() {
@@ -681,10 +684,14 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         });
                     }
 
+                    dataCheck();
                     setTimeout(() => {
-                        regionalMap.fitBounds(peaksWithinBuffer.getBounds());
-                        processData(eventNumber);
-                        regionalMap.zoomIn();
+                        if (peaksWithinBuffer.getLayers().length > 0) {
+                            regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                            processData(eventNumber);
+                            regionalMap.zoomIn();
+                        }
+                        
                     }, 2000);
                 }
 
@@ -1962,7 +1969,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 function clearSelects() {
     $('#evtSelect_regionalModal').val('').trigger('change');
     $('#bufferSelect_regionalModal').val('').trigger('change');
-
+    $("#noResultsText").hide();
     setTimeout(() => {
         $('#typeSelect_regionalModal').val('').trigger('change');
         $('#regionSelect_regionalModal').val('').trigger('change');
@@ -2027,6 +2034,13 @@ function clickPeakLabelsReg() {
         regionalPeak.eachLayer(function (myMarker) {
             myMarker.hideLabel();
         });
+    }
+}
+
+function dataCheck() {
+    if ((allHWMEOne.length === 0) && (allHWMETwo.length === 0) && (allPeaksEOne.length === 0) && (allPeaksETwo.length === 0) ) {
+        noData = true;
+        $("#noResultsText").show();
     }
 }
 

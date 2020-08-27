@@ -1223,6 +1223,14 @@ a.lgi-zoom:hover {
     margin: 15px;
   }
 
+  #noResultsText {
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+
+  
+
 /*MAP LAYERS*/
 #legendElement{
     margin-top: 10px;
