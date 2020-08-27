@@ -121,6 +121,8 @@ var peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks
 
 $(document).ready(function () {
     $("#noResultsText").hide();
+    $(".peaksDisclaimerEventOne").hide();
+    $(".peaksDisclaimerEventTwo").hide();
     $('#btnChooseRegion').click(function () {
 
         // for some reason tableData loading incompletely without timeout
@@ -598,9 +600,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
  
                 // RDG
                 getRDGs(fev.urls.rdgGeoJSONViewURL + sensorQueryString, regionalrdgMarkerIcon); */
-                dataCheck();
+                
                 setTimeout(() => {
+                    dataCheck();
                     if (peaksWithinBuffer.getLayers().length > 0) {
+                        $(".peaksDisclaimerEventOne").show();
                         regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                         processData(eventNumber);
                         regionalMap.zoomIn();
@@ -643,6 +647,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
                 setTimeout(() => {
                     if (peaksWithinBuffer.getLayers().length > 0) {
+                        $(".peaksDisclaimerEventOne").show();
                         regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                         processData(eventNumber);
                     }
@@ -687,6 +692,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                     dataCheck();
                     setTimeout(() => {
                         if (peaksWithinBuffer.getLayers().length > 0) {
+                            $(".peaksDisclaimerEventTwo").show();
                             regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                             processData(eventNumber);
                             regionalMap.zoomIn();
@@ -1838,6 +1844,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     });
 
     function clearRegOutput() {
+        $(".peaksDisclaimerEventOne").hide();
+        $(".peaksDisclaimerEventTwo").hide();
+
         $('#saveRegionalPeakCSV').attr('disabled', true);
         $('#saveRegionalHWMCSV').attr('disabled', true);
         $('#printRegionalReport').attr('disabled', true);
@@ -2041,6 +2050,8 @@ function dataCheck() {
     if ((allHWMEOne.length === 0) && (allHWMETwo.length === 0) && (allPeaksEOne.length === 0) && (allPeaksETwo.length === 0) ) {
         noData = true;
         $("#noResultsText").show();
+        $(".peaksDisclaimerEventTwo").hide();
+        $(".peaksDisclaimerEventTwo").hide();
     }
 }
 

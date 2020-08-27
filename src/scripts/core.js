@@ -498,7 +498,7 @@ $(document).ready(function () {
 	});
 	$('#btnChooseRegion').click(function () {
 		$('#regionalModal').modal('show');
-	})
+	});
 
 	//updateFiltersModal: set search for 'Explore Map' click 
 	submitSearch($('#btnSubmitEvent_filter'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true, true);
@@ -1731,8 +1731,10 @@ $(document).ready(function () {
 					//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
 					{ text: 'Region-wide Summary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryTable(summaryInfo()),
+					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data references height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
 					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfo()),
+					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data references height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
 					{ text: 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
 					{ text: 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + siteType + ' Boundary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
@@ -1791,12 +1793,16 @@ $(document).ready(function () {
 					summaryEventsTable(summaryPeaksRangeInfo()),
 					{ text: 'Region-wide Summary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryTable(summaryInfo()),
+					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data references height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
 					{ text: 'Region-wide Summary for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryTable(summaryInfoTwo()),
+					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data references height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
 					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfo()),
+					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data references height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
 					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteType + ' for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfoTwo()),
+					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data references height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
 					{ text: 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
 					{ text: 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
@@ -2304,12 +2310,14 @@ $(document).ready(function () {
 
 			if (peakTableData.length > 0) {
 				buildHtmlTable();
+				$(".peaksDisclaimer").show();
 			} else {
 				$("#peakTable").find("p").remove();
 				$("#peakDataTable").empty();
 				setTimeout(() => {
 					$("#peakTable").prepend("<p>" + "<b>" + "<br>" +'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + currentParkOrRefuge + ' Boundary for ' + selectedEvent + "</b>" + "</p>");
 					$("#peakTable").append("<p>" + "There are no Peaks at this Site." + "</p>");
+					$(".peaksDisclaimer").hide();
 				}, 3000);
 			}
 
@@ -3730,6 +3738,7 @@ $(document).ready(function () {
 				summaryTable(reportSummaryInfo()),
 				{ text: 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + currentParkOrRefuge + ' Boundary for ' + selectedEvent, style: 'subHeader', margin: [0, 0, 0, 5] },
 				peakTable(bodyData()),
+				{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data references height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
 				{ text: 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent, style: 'subHeader', margin: [0, 0, 0, 15] },
 				hwmTable(),
 			],
@@ -3743,7 +3752,7 @@ $(document).ready(function () {
 					bold: true,
 				},
 				subHeader: {
-					fontSize: 12,
+					fontSize: 11,
 					bold: true
 				},
 				bigger: {
