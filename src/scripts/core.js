@@ -577,7 +577,7 @@ $(document).ready(function () {
 					$('#siteReportLoading').modal('hide');
 					$('#printModal').modal('show');
 					generateSiteReport();
-				}, 13000);
+				}, 20000);
 			}
 		});
 	}
@@ -587,11 +587,13 @@ $(document).ready(function () {
 	});
 
 	$('#printClose').click(function () {
-		location.reload()
+		location.reload();
+		location.href = window.location.origin + window.location.pathname;
 	});
 
 	$('#printCloseTop').click(function () {
-		location.reload()
+		location.reload();
+		location.href = window.location.origin + window.location.pathname;
 	});
 
 	//Corresponds with the 'HWM CSV' button on the report modal
@@ -1654,9 +1656,9 @@ $(document).ready(function () {
 					body: [
 						[{ colSpan: 2, border: [false, false, false, true], text: 'Layer Explanation:', style: 'subHeader' }, ''],
 						[{ image: peakImg }, { text: 'Peak Location', alignment: 'left' }],
-						[{ image: hwmImg }, { text: 'High Water Mark', alignment: 'left' }],
-						[{ image: parkImg }, { text: 'Park Boundary', alignment: 'left' }],
-						[{ image: bufferImg }, { text: 'Buffer Extent', alignment: 'left' }],
+						//[{ image: hwmImg }, { text: 'High Water Mark', alignment: 'left' }],
+						[{ image: parkImg }, { text: landType + ' Boundary', alignment: 'left' }],
+						//[{ image: bufferImg }, { text: 'Buffer Extent', alignment: 'left' }],
 						[{ image: regionImg }, { text: 'Region Boundary', alignment: 'left' }],
 					]
 				},
