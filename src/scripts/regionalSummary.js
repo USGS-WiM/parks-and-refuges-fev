@@ -1684,8 +1684,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 standReg = standReg.toFixed(2);
                 minReg = minReg.toFixed(2);
                 minReg = Number(minReg);
-                /* maxReg = maxReg.toFixed(2);
-                maxReg = Number(maxReg); */
                 confIntNinetyHigh = confIntNinetyHigh.toFixed(2);
                 confIntNinetyLow = confIntNinetyLow.toFixed(2);
             }
