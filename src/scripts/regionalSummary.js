@@ -151,11 +151,18 @@ $(document).ready(function () {
     });
 
     $('#btnSubmitSelections').click(function () {
+        
+        $("#noResultsText").hide();
+
+        // disabling form fields and run button to prevent the user from interrupting queryies
         $('#btnSubmitSelections').attr('disabled', true);
-        /* $('.progress-bar-fill').delay(1000).queue(function () {
-            $(this).css('width', '100%')
-        }); */
-        document.querySelector('.progress-bar-fill').style.width = "100%"
+        $('#typeSelect_regionalModal').attr('disabled', true);
+        $('#regionSelect_regionalModal').attr('disabled', true);
+        $('#evtSelect_regionalModal').attr('disabled', true);
+        $('#bufferSelect_regionalModal').attr('disabled', true);
+
+        // filling progress bar as visual aid to user that report is generating
+        document.querySelector('.progress-bar-fill').style.width = "100%";
 
         // todo: make this set to variable
 
@@ -1843,73 +1850,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
         clearRegOutput()
     });
 
-    function clearRegOutput() {
-        $(".peaksDisclaimerEventOne").hide();
-        $(".peaksDisclaimerEventTwo").hide();
-
-        $('#saveRegionalPeakCSV').attr('disabled', true);
-        $('#saveRegionalHWMCSV').attr('disabled', true);
-        $('#printRegionalReport').attr('disabled', true);
-        // removing all layers from the map regardless of type
-        regionalMap.eachLayer(function (layer) {
-            regionalMap.removeLayer(layer);
-        });
-
-        // resetting the feature groups
-        peaksWithinBuffer = L.featureGroup();
-        peaksWithinBuffer = L.featureGroup();
-        hwmsWithinBuffer = L.featureGroup();
-        regionalPeak = L.layerGroup();
-        regionalHWM = L.layerGroup();
-        regionalPeakMarkerIcon = L.icon({ className: 'regionalpeakMarker', iconUrl: 'images/peak.png', iconAnchor: [12, 16], popupAnchor: [0, 2] });
-        regionalhwmIcon = L.icon({ className: 'regionalhwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
-
-        // resetting the arrays
-        bufferedPolys = [];
-        simplifiedSites = [];
-        regionParksFC = [];
-        tableData = [];
-        hwmTableData = [];
-        sensorTableData = [];
-        hwmRegionalCSVData = [];
-        peaksRegionalCSVData = [];
-        peakSiteSummaries = [];
-        hwmSiteSummaries = [];
-        allHWMEOne = [];
-        allPeaksEOne = [];
-        allHWMEOneCoast = [];
-        allHWMEOneRiver = [];
-        allHWMETwo = [];
-        allHWMETwoCoast = [];
-        allHWMETwoRiver = [];
-        peakSiteSummaries = [];
-        hwmSiteSummaries = [];
-        totalSites = [];
-        siteList = [];
-        eventsPeakRange = []
-
-        alreadyRan = false;
-
-        // clearing tables
-        document.getElementById('summaryDataTableEOne').innerHTML = '';
-        document.getElementById('siteSummaryPeakDataTableEOne').innerHTML = '';
-        document.getElementById('siteSummaryHWMDataTableEOne').innerHTML = '';
-        document.getElementById('summaryDataTableETwo').innerHTML = '';
-        document.getElementById('siteSummaryPeakDataTableETwo').innerHTML = '';
-        document.getElementById('siteSummaryHWMDataTableETwo').innerHTML = '';
-        document.getElementById('eventsSummaryTable').innerHTML = '';
-        document.getElementById('eventsSummaryTitle').innerHTML = '';
-
-        document.querySelector('.progress-bar-fill').style.width = "0%"
-        clearSelects()
-        // adding the basemap back to the map
-        setTimeout(() => {
-            var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
-        }, 500);
-
-        regionalMap.setView([39.833333, -98.583333], 3);
-    }
-
     //Clear regional report output when modal is closed by clicking the 'Close' button
     $('#regReportClose').click(function () {
         clearRegOutput();
@@ -1948,7 +1888,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     if (peaksRegionalCSVData.length > 0) {
         $('#saveRegionalPeakCSV').removeAttr('disabled');
     }
-
+    $('#formContainer').tooltip('show');
     //disable peaks button when there are no peaks data
     if (peaksRegionalCSVData.length == 0) {
         document.getElementById("saveRegionalHWMCSV").disabled = true;
@@ -1975,10 +1915,87 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
 });
 
+function clearRegOutput() {
+    $(".peaksDisclaimerEventOne").hide();
+    $(".peaksDisclaimerEventTwo").hide();
+    $("#noResultsText").hide();
+    $('#formContainer').tooltip('destroy');
+
+    // disabling csv buttons
+    $('#saveRegionalPeakCSV').attr('disabled', true);
+    $('#saveRegionalHWMCSV').attr('disabled', true);
+    $('#printRegionalReport').attr('disabled', true);
+
+    //  enabling form selects
+    $('#typeSelect_regionalModal').attr('disabled', false);
+    $('#evtSelect_regionalModal').attr('disabled', false);
+    $('#regionSelect_regionalModal').attr('disabled', false);
+    $('#bufferSelect_regionalModal').attr('disabled', false);
+    
+    // removing all layers from the map regardless of type
+    regionalMap.eachLayer(function (layer) {
+        regionalMap.removeLayer(layer);
+    });
+
+    // resetting the feature groups
+    peaksWithinBuffer = L.featureGroup();
+    peaksWithinBuffer = L.featureGroup();
+    hwmsWithinBuffer = L.featureGroup();
+    regionalPeak = L.layerGroup();
+    regionalHWM = L.layerGroup();
+    regionalPeakMarkerIcon = L.icon({ className: 'regionalpeakMarker', iconUrl: 'images/peak.png', iconAnchor: [12, 16], popupAnchor: [0, 2] });
+    regionalhwmIcon = L.icon({ className: 'regionalhwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+
+    // resetting the arrays
+    bufferedPolys = [];
+    simplifiedSites = [];
+    regionParksFC = [];
+    tableData = [];
+    hwmTableData = [];
+    sensorTableData = [];
+    hwmRegionalCSVData = [];
+    peaksRegionalCSVData = [];
+    peakSiteSummaries = [];
+    hwmSiteSummaries = [];
+    allHWMEOne = [];
+    allPeaksEOne = [];
+    allHWMEOneCoast = [];
+    allHWMEOneRiver = [];
+    allHWMETwo = [];
+    allHWMETwoCoast = [];
+    allHWMETwoRiver = [];
+    peakSiteSummaries = [];
+    hwmSiteSummaries = [];
+    totalSites = [];
+    siteList = [];
+    eventsPeakRange = []
+
+    alreadyRan = false;
+
+    // clearing tables
+    document.getElementById('summaryDataTableEOne').innerHTML = '';
+    document.getElementById('siteSummaryPeakDataTableEOne').innerHTML = '';
+    document.getElementById('siteSummaryHWMDataTableEOne').innerHTML = '';
+    document.getElementById('summaryDataTableETwo').innerHTML = '';
+    document.getElementById('siteSummaryPeakDataTableETwo').innerHTML = '';
+    document.getElementById('siteSummaryHWMDataTableETwo').innerHTML = '';
+    document.getElementById('eventsSummaryTable').innerHTML = '';
+    document.getElementById('eventsSummaryTitle').innerHTML = '';
+
+    document.querySelector('.progress-bar-fill').style.width = "0%"
+    clearSelects()
+    // adding the basemap back to the map
+    setTimeout(() => {
+        var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
+    }, 500);
+
+    regionalMap.setView([39.833333, -98.583333], 3);
+}
+
 function clearSelects() {
     $('#evtSelect_regionalModal').val('').trigger('change');
     $('#bufferSelect_regionalModal').val('').trigger('change');
-    $("#noResultsText").hide();
+    //$("#noResultsText").hide();
     setTimeout(() => {
         $('#typeSelect_regionalModal').val('').trigger('change');
         $('#regionSelect_regionalModal').val('').trigger('change');
@@ -2049,9 +2066,21 @@ function clickPeakLabelsReg() {
 function dataCheck() {
     if ((allHWMEOne.length === 0) && (allHWMETwo.length === 0) && (allPeaksEOne.length === 0) && (allPeaksETwo.length === 0) ) {
         noData = true;
+        $(".peaksDisclaimerEventTwo").hide();
+        $(".peaksDisclaimerEventTwo").hide();
+
+        $('#typeSelect_regionalModal').attr('disabled', true);
+        $('#typeSelect_regionalModal').attr('disabled', true);
+        $('#regionSelect_regionalModal').attr('disabled', true);
+        $('#bufferSelect_regionalModal').attr('disabled', true);
+
+        // showing tooltip incase users try to change form fields instead of clicking "Clear Selections"
+        $("#formContainer").attr('title', 'Click the "Clear Selections" button to start a new query');
+        $('#formContainer').tooltip('show');
+
+        // showing no results text and scrolling to it
         $("#noResultsText").show();
-        $(".peaksDisclaimerEventTwo").hide();
-        $(".peaksDisclaimerEventTwo").hide();
+        document.getElementById('noResultsText').scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
     }
 }
 
