@@ -1549,6 +1549,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
                 // getting the record with the max peak
                 var maxDate = eventPeaks.filter(x => x['Peak Stage (ft)'] === maxReg);
+                maxReg = maxReg.toFixed(2);
+                maxReg = Number(maxReg);
                 // setting Max Date
                 maxDate = maxDate[0]['Peak Date/Time'];
                 peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
@@ -1562,7 +1564,6 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 hwmSum = {};
                 // getting the record with the max hwm
                 var maxDate = eventHWMCoast.filter(x => x['Elevation (ft)'] === maxReg);
-                var type;
 
                 maxReg = maxReg.toFixed(2);
                 maxReg = Number(maxReg);
@@ -1577,7 +1578,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 hwmSum = {};
                 // getting the record with the max hwm
                 var maxDate = eventHWMRiver.filter(x => x['Elevation (ft)'] === maxReg);
-                var type;
+                maxReg = maxReg.toFixed(2);
+                maxReg = Number(maxReg);
+
                 // setting Max Date
                 maxDate = maxDate[0]['Flag Date'];
                 hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
