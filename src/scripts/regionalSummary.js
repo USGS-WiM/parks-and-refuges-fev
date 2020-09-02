@@ -1563,6 +1563,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 // getting the record with the max hwm
                 var maxDate = eventHWMCoast.filter(x => x['Elevation (ft)'] === maxReg);
                 var type;
+
+                maxReg = maxReg.toFixed(2);
+                maxReg = Number(maxReg);
                 // setting Max Date
                 maxDate = maxDate[0]['Flag Date'];
                 hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
@@ -1681,8 +1684,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 standReg = standReg.toFixed(2);
                 minReg = minReg.toFixed(2);
                 minReg = Number(minReg);
-                maxReg = maxReg.toFixed(2);
-                maxReg = Number(maxReg);
+                /* maxReg = maxReg.toFixed(2);
+                maxReg = Number(maxReg); */
                 confIntNinetyHigh = confIntNinetyHigh.toFixed(2);
                 confIntNinetyLow = confIntNinetyLow.toFixed(2);
             }
