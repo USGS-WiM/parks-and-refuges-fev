@@ -1868,13 +1868,14 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     }
     //Corresponds with the 'HWM CSV' button on the regional report modal
     $('#saveRegionalHWMCSV').click(function () {
+        
         //if there is a hwm table, download as csv
         if (hwmRegionalCSVData.length > 0) {
             // merging the arrays from both event if there are two
             if (hwmRegionalCSVData.length == 2) {
-                hwmRegionalCSVData = hwmRegionalCSVData[0].concat(hwmRegionalCSVData[1]);
+                hwmRegionalCSVDataFormatted = hwmRegionalCSVData[0].concat(hwmRegionalCSVData[1]);
             } else {
-                hwmRegionalCSVData = hwmRegionalCSVData[0];
+                hwmRegionalCSVDataFormatted = hwmRegionalCSVData[0];
             }
             downloadRegionalCSV("hwm");
         }
@@ -1901,9 +1902,9 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
         if (peaksRegionalCSVData.length > 0) {
             if (peaksRegionalCSVData.length == 2) {
-                peaksRegionalCSVData = peaksRegionalCSVData[0].concat(peaksRegionalCSVData[1]);
+                peaksRegionalCSVDataFormatted = peaksRegionalCSVData[0].concat(peaksRegionalCSVData[1]);
             } else {
-                peaksRegionalCSVData = peaksRegionalCSVData[0];
+                peaksRegionalCSVDataFormatted = peaksRegionalCSVData[0];
             }
             downloadRegionalCSV("peaks");
         }
@@ -2014,7 +2015,7 @@ function downloadRegionalCSV(type) {
         case "hwm":
             generateCSV({
                 filename: "HWM.csv",
-                data: hwmRegionalCSVData,
+                data: hwmRegionalCSVDataFormatted,
                 headers: fevRegional.csvRegionalHWMColumns
             });
             break;
@@ -2022,7 +2023,7 @@ function downloadRegionalCSV(type) {
         case "peaks":
             generateCSV({
                 filename: "Peak.csv",
-                data: peaksRegionalCSVData,
+                data: peaksRegionalCSVDataFormatted,
                 headers: fevRegional.csvRegionalPeaksColumns
             });
             break;
