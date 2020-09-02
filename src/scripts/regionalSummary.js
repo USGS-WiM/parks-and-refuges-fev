@@ -76,7 +76,7 @@ var fevRegional = fevRegional || {
         { fieldName: 'Site Name', colName: "Site Name" },
         { fieldName: 'Event', colName: "Event" },
         { fieldName: 'Peak Stage (ft)', colName: "Peak Stage (ft)" },
-        { fieldName: 'Peak Date', colName: "Peak Date" },
+        { fieldName: 'Peak Date/Time', colName: "Peak Date/Time" },
         { fieldName: 'County', colName: "County" },
         { fieldName: 'Latitude (DD)', colName: "Latitude (DD)" },
         { fieldName: 'Longitude (DD)', colName: "Longitude (DD)" },
@@ -88,7 +88,7 @@ var fevRegional = fevRegional || {
         { fieldName: 'Site Name', colName: "Site Name" },
         { fieldName: 'Event', colName: "Event" },
         { fieldName: 'Elevation (ft)', colName: "Elevation" },
-        { fieldName: 'Survey Date', colName: "Survey Date" },
+        { fieldName: 'Survey Date/Time', colName: "Survey Date/Time" },
         { fieldName: 'Bank', colName: "Bank" },
         { fieldName: 'HWM Quality', colName: "HWM Quality" },
         { fieldName: 'HWM Type', colName: "HWM Type" },
@@ -941,7 +941,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                                 "Site Name": landsitetype,
                                                 "Event": eventName,
                                                 "Peak Stage (ft)": regionalPeak._layers[i].peak_stage,
-                                                "Peak Date": moment(regionalPeak._layers[i].peak_date).format("MM/DD/YYYY, h:mm a"),
+                                                "Peak Date/Time": moment(regionalPeak._layers[i].peak_date).format("MM/DD/YYYY, h:mm a"),
                                                 "County": regionalPeak._layers[i].county,
                                                 "Latitude (DD)": regionalPeak._layers[i].latitude_dd,
                                                 "Longitude (DD)": regionalPeak._layers[i].longitude_dd,
@@ -976,7 +976,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                         "Site Name": landsitetype,
                                         "Event": eventName,
                                         "Peak Stage (ft)": regionalPeak._layers[i].feature.properties.peak_stage,
-                                        "Peak Date": moment(regionalPeak._layers[i].feature.properties.peak_date).format("MM/DD/YYYY, h:mm a"),
+                                        "Peak Date/Time": moment(regionalPeak._layers[i].feature.properties.peak_date).format("MM/DD/YYYY, h:mm a"),
                                         "County": regionalPeak._layers[i].feature.properties.county,
                                         "Latitude (DD)": regionalPeak._layers[i].feature.properties.latitude_dd,
                                         "Longitude (DD)": regionalPeak._layers[i].feature.properties.longitude_dd,
@@ -1119,7 +1119,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                                 "Site Name": landsitetype,
                                                 "Event": eventName,
                                                 "Elevation (ft)": regionalHWM._layers[i].feature.properties.elev_ft,
-                                                "Survey Date": regionalHWM._layers[i].feature.properties.survey_date,
+                                                "Survey Date/Time": moment(regionalHWM._layers[i].feature.properties.survey_date).format("MM/DD/YYYY, h:mm a"),
                                                 "Bank": regionalHWM._layers[i].feature.properties.bank,
                                                 "HWM Quality": regionalHWM._layers[i].feature.properties.hwmQualityName,
                                                 "HWM Type": regionalHWM._layers[i].feature.properties.hwmTypeName,
@@ -1133,7 +1133,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                                 "Uncertainty": regionalHWM._layers[i].feature.properties.uncertainty,
                                                 "HWM Uncertainty": regionalHWM._layers[i].feature.properties.hwm_uncertainty,
                                                 "HWM Label": regionalHWM._layers[i].feature.properties.hwm_label,
-                                                "Flag Date": moment(regionalHWM._layers[i].feature.properties.flag_date).format("MM/DD/YYYY, h:mm a"),
+                                                "Flag Date": moment(regionalHWM._layers[i].feature.properties.flag_date).format("MM/DD/YYYY"),
                                                 "Site Description": regionalHWM._layers[i].feature.properties.siteDescription,
                                                 "Site Perm Housing": regionalHWM._layers[i].feature.properties.sitePermHousing,
                                                 "County": regionalHWM._layers[i].feature.properties.county,
@@ -1169,7 +1169,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                         "Site Name": landsitetype,
                                         "Event": eventName,
                                         "Elevation (ft)": regionalHWM._layers[i].feature.properties.elev_ft,
-                                        "Survey Date": regionalHWM._layers[i].feature.properties.survey_date,
+                                        "Survey Date/Time": moment(regionalHWM._layers[i].feature.properties.survey_date).format("MM/DD/YYYY, h:mm a"),
                                         "Bank": regionalHWM._layers[i].feature.properties.bank,
                                         "HWM Quality": regionalHWM._layers[i].feature.properties.hwmQualityName,
                                         "HWM Type": regionalHWM._layers[i].feature.properties.hwmTypeName,
@@ -1183,7 +1183,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                                         "Uncertainty": regionalHWM._layers[i].feature.properties.uncertainty,
                                         "HWM Uncertainty": regionalHWM._layers[i].feature.properties.hwm_uncertainty,
                                         "HWM Label": regionalHWM._layers[i].feature.properties.hwm_label,
-                                        "Flag Date": moment(regionalHWM._layers[i].feature.properties.flag_date).format("MM/DD/YYYY, h:mm a"),
+                                        "Flag Date": moment(regionalHWM._layers[i].feature.properties.flag_date).format("MM/DD/YYYY"),
                                         "Site Description": regionalHWM._layers[i].feature.properties.siteDescription,
                                         "Site Perm Housing": regionalHWM._layers[i].feature.properties.sitePermHousing,
                                         "County": regionalHWM._layers[i].feature.properties.county,
@@ -1448,7 +1448,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         var peakdata = {
                             "Site Name": peakStorage[peak].data['Site Name'],
                             "Peak Stage (ft)": peakStorage[peak].data['Peak Stage (ft)'],
-                            "Peak Date": moment(peakStorage[peak].data['Peak Date']).format("MM/DD/YYYY, h:mm a"),
+                            "Peak Date/Time": moment(peakStorage[peak].data['Peak Date/Time']).format("MM/DD/YYYY, h:mm a"),
                             "County": peakStorage[peak].data['County'],
                             "Height Above Ground (ft)": peakStorage[peak].data['Height Above Ground (ft)'],
                             "Latitude (DD)": peakStorage[peak].data['Latitude (DD)'],
@@ -1483,7 +1483,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         var hwmdata = {
                             "Site Name": hwmStorage[hwm].data['Site Name'],
                             "Elevation (ft)": hwmStorage[hwm].data['Elevation (ft)'],
-                            "Flag Date": moment(hwmStorage[hwm].data['Flag Date']).format("MM/DD/YYYY, h:mm a"),
+                            "Flag Date": moment(hwmStorage[hwm].data['Flag Date']).format("MM/DD/YYYY"),
                             "County": hwmStorage[hwm].data['County'],
                             "Latitude (DD)": hwmStorage[hwm].data['Latitude (DD)'],
                             "Longitude (DD)": hwmStorage[hwm].data['Longitude (DD)'],
@@ -1543,7 +1543,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 // getting the record with the max peak
                 var maxDate = eventPeaks.filter(x => x['Peak Stage (ft)'] === maxReg);
                 // setting Max Date
-                maxDate = maxDate[0]['Peak Date'];
+                maxDate = maxDate[0]['Peak Date/Time'];
                 peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
                 document.getElementById("saveRegionalPeakCSV").disabled = false;

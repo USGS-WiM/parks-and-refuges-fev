@@ -165,7 +165,7 @@ var fev = fev || {
 		{ fieldName: 'Longitude (DD)', colName: "Longitude (DD)" },
 		{ fieldName: 'Site Description', colName: "Site Description" },
 		{ fieldName: 'Location Description', colName: "Location Description" },
-		{ fieldName: 'Survey Date', colName: "Survey Date" },
+		{ fieldName: 'Survey Date/Time', colName: "Survey Date/Time" },
 		{ fieldName: 'Bank', colName: "Bank" },
 		{ fieldName: 'Environment', colName: "Environment" },
 		{ fieldName: 'Flag Date', colName: "Flag Date" },
@@ -179,7 +179,7 @@ var fev = fev || {
 		{ fieldName: 'State', colName: "State" },
 		{ fieldName: 'County', colName: "County" },
 		{ fieldName: 'Peak Stage (ft)', colName: "Peak Stage (ft)" },
-		{ fieldName: 'Peak Date', colName: "Peak Date" },
+		{ fieldName: 'Peak Date', colName: "Peak Date/Time" },
 		{ fieldName: 'Peak Estimated', colName: "Peak Estimated" },
 	],
 
@@ -1358,7 +1358,7 @@ $(document).ready(function () {
 					table: {
 						headerRows: 1,
 						widths: ['*', '*', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
-						body: buildPeaksBody(data, ['Site Name', 'Event', 'Peak Stage (ft)', 'Peak Date', 'County', 'Latitude (DD)', 'Longitude (DD)', 'Site Number', 'Waterbody']),
+						body: buildPeaksBody(data, ['Site Name', 'Event', 'Peak Stage (ft)', 'Peak Date/Time', 'County', 'Latitude (DD)', 'Longitude (DD)', 'Site Number', 'Waterbody']),
 					},
 					layout: 'lightHorizontalLines',
 					style: 'smaller',
@@ -1451,7 +1451,7 @@ $(document).ready(function () {
 						[
 							{},
 							{ text: 'Location Description', style: 'tableHeader' }, data[i]['Location Description'],
-							{ text: 'Survey Date', style: 'tableHeader' }, data[i]['Survey Date']
+							{ text: 'Survey Date/Time', style: 'tableHeader' }, data[i]['Survey Date/Time']
 						],
 						[
 							{},
@@ -2356,10 +2356,10 @@ $(document).ready(function () {
 					"Longitude (DD)": identifiedMarks[i].feature.properties.longitude,
 					"Site Description": identifiedMarks[i].feature.properties.siteDescription,
 					"Location Description": identifiedMarks[i].feature.properties.hwm_locationdescription,
-					"Survey Date": identifiedMarks[i].feature.properties.survey_date,
+					"Survey Date/Time": moment(identifiedMarks[i].feature.properties.survey_date).format("MM/DD/YYYY, h:mm a"),
 					"Bank": identifiedMarks[i].feature.properties.bank,
 					"Environment": identifiedMarks[i].feature.properties.hwm_environment,
-					"Flag Date": identifiedMarks[i].feature.properties.flag_date,
+					"Flag Date": moment(identifiedMarks[i].feature.properties.flag_date).format("MM/DD/YYYY"),
 					"Stillwater": identifiedMarks[i].feature.properties.stillwater,
 					"Uncertainty": identifiedMarks[i].feature.properties.uncertainty,
 					"HWM Uncertainty": identifiedMarks[i].feature.properties.hwm_uncertainty
@@ -3379,7 +3379,7 @@ $(document).ready(function () {
 				"State": identifiedPeaks[i].feature.properties.state,
 				"County": identifiedPeaks[i].feature.properties.county,
 				"Peak Stage (ft)": identifiedPeaks[i].feature.properties.peak_stage,
-				"Peak Date": moment(identifiedPeaks[i].feature.properties.peak_date).format("MM/DD/YYYY, h:mm a"),
+				"Peak Date/Time": moment(identifiedPeaks[i].feature.properties.peak_date).format("MM/DD/YYYY, h:mm a"),
 				"Peak Estimated": peakEstimated
 			});
 		}
@@ -3440,7 +3440,7 @@ $(document).ready(function () {
 				table: {
 					headerRows: 1,
 					widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto', 'auto'],
-					body: buildTableBody(data, ['Site Number', 'Description', 'State', 'County', 'Peak Stage (ft)', 'Peak Date', 'Peak Estimated']),
+					body: buildTableBody(data, ['Site Number', 'Description', 'State', 'County', 'Peak Stage (ft)', 'Peak Date/Time', 'Peak Estimated']),
 				},
 				layout: 'lightHorizontalLines',
 				style: 'smaller',
@@ -3499,7 +3499,7 @@ $(document).ready(function () {
 					[
 						{},
 						{ text: 'Location Description', style: 'tableHeader' }, identifiedMarks[i].feature.properties.hwm_locationdescription,
-						{ text: 'Survey Date', style: 'tableHeader' }, identifiedMarks[i].feature.properties.survey_date
+						{ text: 'Survey Date/Time', style: 'tableHeader' }, moment(identifiedMarks[i].feature.properties.survey_date).format("MM/DD/YYYY, h:mm a")
 					],
 					[
 						{},
@@ -3508,7 +3508,7 @@ $(document).ready(function () {
 					],
 					[
 						{},
-						{ text: 'Flag Date', style: 'tableHeader' }, identifiedMarks[i].feature.properties.flag_date,
+						{ text: 'Flag Date', style: 'tableHeader' }, moment(identifiedMarks[i].feature.properties.flag_date).format("MM/DD/YYYY"),
 						{ text: 'Stillwater', style: 'tableHeader' }, identifiedMarks[i].feature.properties.stillwater
 					],
 					[
