@@ -1553,7 +1553,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 maxReg = Number(maxReg);
                 // setting Max Date
                 maxDate = maxDate[0]['Peak Date/Time'];
-                peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(peakSum);
                 document.getElementById("saveRegionalPeakCSV").disabled = false;
 
@@ -1569,7 +1569,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 maxReg = Number(maxReg);
                 // setting Max Date
                 maxDate = maxDate[0]['Flag Date'];
-                hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
             }
 
@@ -1583,7 +1583,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
                 // setting Max Date
                 maxDate = maxDate[0]['Flag Date'];
-                hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+                hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
                 sum.push(hwmSum);
             }
 
