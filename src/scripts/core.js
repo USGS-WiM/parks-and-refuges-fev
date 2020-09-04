@@ -3336,8 +3336,10 @@ $(document).ready(function () {
 	//displays map scale on map load
 	//map.on( 'load', function() {
 	map.whenReady(function () {
+		var mapZoom = map.getZoom();
 		var mapScale = scaleLookup(map.getZoom());
 		$('#scale')[0].innerHTML = mapScale;
+		$('.zoom-level').text(mapZoom);
 		console.log('Initial Map scale registered as ' + mapScale, map.getZoom());
 
 		var initMapCenter = map.getCenter();
@@ -3350,6 +3352,7 @@ $(document).ready(function () {
 		var mapZoom = map.getZoom();
 		var mapScale = scaleLookup(mapZoom);
 		$('#scale')[0].innerHTML = mapScale;
+		$('.zoom-level').text(mapZoom);
 	});
 
 	//updates lat/lng indicator on mouse move. does not apply on devices w/out mouse. removes 'map center' label

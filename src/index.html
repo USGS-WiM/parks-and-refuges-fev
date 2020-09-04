@@ -920,7 +920,11 @@
 								<!-- Error banner -->
 								<div class="form-error small warn" role="alert">
 									<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
-									<span>Real-time, NPS, and FWS layers only available at zoom level 9 and above. Please zoom in to view.</span>
+									<span>
+										Real-time, NPS, and FWS layers only available at zoom level 9 and above. Please zoom in to view.
+										<br/>
+										<b>You are currently at level <div class="zoom-level"></div></b>
+									</span>
 								</div>
 							</div>
 						
@@ -1175,13 +1179,21 @@
 
 			<!-- Lat Lng Scale -->
 			<div id="latLngScale">
-				<span class="hover-content"> <b>Map scale </b></span>
-				1:<span id="scale"></span> <br>
-				<span class="hover-content"><b>Latitude</b></span>
-				<span id="latitude">y</span> |
-				<span class="hover-content"> <b>Longitude</b></span>
-				<span id="longitude">x</span>
-				<span id="mapCenterLabel"  class="hover-content"> (center)</span>
+				<div>
+					<span class="hover-content"> <b>Map scale </b></span>
+					1:<span id="scale"></span>
+					<i class="fas fa-grip-lines-vertical"></i>
+					<span class="hover-content"> <b>Zoom level </b></span> 
+					<span class="zoom-level"></span>
+				</div>
+				<div>
+					<span class="hover-content"><b>Latitude</b></span>
+					<span id="latitude">y</span>
+					<i class="fas fa-grip-lines-vertical"></i>
+					<span class="hover-content"> <b>Longitude</b></span>
+					<span id="longitude">x</span>
+					<span id="mapCenterLabel"  class="hover-content"> (center)</span>
+				</div>
 			</div>
 
 			<!-- Other Buttons -->

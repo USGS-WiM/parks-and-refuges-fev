@@ -54,6 +54,9 @@ Leaflet Elements
 #latLngScale:hover .hover-content {
     display:inline-block;
 }
+#latLngScale i{
+	margin: 0 4px;
+}
 
 /* Scale */
 .leaflet-control-scale{
