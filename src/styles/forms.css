@@ -21,6 +21,7 @@ label{
 	font-weight: 600;
 	padding: 0 0 4px 0;
 	margin: 0;
+	color: black;
 }
 	/* Small element within label */
 	label small{
@@ -46,6 +47,10 @@ label{
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
+		}
+		/* Nested - a bit of padding left */
+		label.input-container.nested{
+			padding-left: 25px;
 		}
 /* Hint */
 /* Small text, form help info, etc */

@@ -78,6 +78,13 @@ Leaflet Elements
 Legend 
 //////////////////////// 
 */
+
+/* Max legend Height */
+#legendCollapse{
+	max-height: 60vh;
+	overflow: auto;
+}
+/* Legend Wrapper */
 .legendClass {
     position:absolute;
     top: 15px;
@@ -259,22 +266,22 @@ Legend
     border-color: black;
     Border-width: 2px;
 }
-.peakSmall {
-    width: 7px;
-    height:10px;
-    margin-left: 4px;
-    margin-right: 4px;
+.peakSmall,
+.peakMedium,
+.peakLarge{
+	padding-left: 15px !important;
 }
-.peakMedium {
-    width: 11px;
-    height:16px;
-    margin-left: 2px;
-    margin-right: 2px;
+.peakSmall img{
+	padding: 5px 6px;
 }
-.peakLarge {
-    width: 15px;
-    height:22px;
+.peakMedium img{
+	padding: 3px 5px;
 }
+.peakLarge{
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+	margin-bottom: 4px;
+}
+
 .nwis-link {
     font-size: larger;
     font-weight: bold;

@@ -434,8 +434,12 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
                 peaksCheckBox.checked = true;
                 //If there are more than 2 peaks, keep the legend broken into 3 categories
                 if (data.features.length > 2) {
-                    var PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/markers/peak.png' style= 'margin-left:24px'></img>" + "< " + thirdVal + "<br><img class='peakMedium' src='images/markers/peak.png' style= 'margin-left:22px'></img>" + " " + thirdVal + " - " + twoThirdVal + "<br><img class='peakLarge' src='images/markers/peak.png' style= 'margin-left:20px'></img>" + " > " + twoThirdVal + "</div>";
-                }
+					var PeakSummarySymbologyInterior = "<label>Peak Summary (ft)</label>" + 
+														"<div class='legend-item peakSmall'><img src='images/markers/peak.png'/> &nbsp; &lt; &nbsp; " + thirdVal + "</div>" +
+														"<div class='legend-item peakMedium'><img src='images/markers/peak.png'/> " + thirdVal + " - " + twoThirdVal + "</div>" +
+														"<div class='legend-item peakLarge'><img src='images/markers/peak.png'/> &nbsp; &gt; &nbsp;" + twoThirdVal + "</div>";
+
+				}
                 //If there are only 1 or 2 peaks, display the peak marker in the legend just like the other layers (icon on left, label on right)
                 if (data.features.length < 3) {
                     var PeakSummarySymbologyInterior = "<div>" + "<img class='peakMedium' src='images/markers/peak.png'></img>" + "<b>Peak Summary</b>" + "</div>";

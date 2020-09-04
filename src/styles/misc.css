@@ -84,15 +84,6 @@ i{
 		width: auto;
 	}
 
-/* Peak Checkbox */
-#peakCheckbox {
-	position: relative;
-	display: inline-block;
-	width: 0px;
-	height: 0px;
-	margin-right: 0px;
-}
-
 /*
 //////////////////////// 
 Geosearch Styles 
@@ -160,9 +151,11 @@ Accordion Styles
 		width: 100%;
 		font-size: 14px;
 		padding: 2px 0 5px 0;
+		font-weight: 500;
+		color: black;
 	}
 		.accordion .accordion-header:before{
-			content: '\f107';
+			content: '\f32d';
 			font-family: 'Font Awesome 5 Pro';
 			transform: scale(1.1);
 			padding-right: 6px;
@@ -181,7 +174,7 @@ Accordion Styles
 		transition: 0.4s ease;
 	}
 	.accordion.expanded .accordion-header:before{
-		content: '\f106';
+		content: '\f331';
 	}
 	.accordion.expanded .accordion-body{
 		padding: 5px 10px 5px 16px;

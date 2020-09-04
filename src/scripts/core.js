@@ -785,7 +785,7 @@ $(document).ready(function () {
 	var noaaOverlays = {};
 
 
-	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'/>&nbsp;" + layer.Name] = window[layer.ID];
 
 	if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
@@ -1958,10 +1958,13 @@ $(document).ready(function () {
 		var PeakSummarySymbologyInterior;
 		if (lengthPeak > 0) {
 			if (lengthPeak > 2) {
-				PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/markers/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/markers/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/markers/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
+				PeakSummarySymbologyInterior = "<label>Peak Summary (ft)</label>" + 
+												"<div class='legend-item peakSmall'><img src='images/markers/peak.png'/> &nbsp; &lt; &nbsp;" + sThirdVal + "</div>" +
+												"<div class='legend-item peakMedium'><img src='images/markers/peak.png'/> " + sThirdVal + " - " + sTwoThirdVal + "</div>" +
+												"<div class='legend-item peakLarge'><img src='images/markers/peak.png'/>  &nbsp; &gt; &nbsp;" + sTwoThirdVal + "</div>";
 			}
 			if (lengthPeak < 3) {
-				PeakSummarySymbologyInterior = "<div>" + "<img class='peakMedium' src='images/markers/peak.png'></img>" + "<b>Peak Summary</b>" + "</div>";
+				PeakSummarySymbologyInterior = "<div class='legend-item'><img class='peakMedium' src='images/markers/peak.png'/> Peak Summary</div>";
 			}
 		}
 		// adding the peak and hwm icons to the legend
@@ -3840,21 +3843,36 @@ function clickPeakLabels() {
 
 //Create legend symbols for each layer
 //PeakSummarySymbologyInterior is found in displayPeaksGeoJSON()
-var streamGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/nwis.png'></img><b>Real-time Stream Gage</b>";
-var rainGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/rainIcon.png'></img><b>Real-time Rain Gage<b>";
-var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'></img><b>Barometric Pressure Sensor</b>";
-var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'></img><b>Storm Tide Sensor</b>";
-var meteorlogicalSymbologyInterior = "<img class='legendSwatch' src='images/markers/met.png'></img><b>Meteorlogical Sensor</b>";
-var waveHeightSymbologyInterior = "<img class='legendSwatch' src='images/markers/waveheight.png'></img><b>Wave Height Sensor</b>";
-var rdgSymbologyInterior = "<img class='legendSwatch' src='images/markers/rdg.png'></img><b>Rapid Deployment Gage</b>";
-var highWaterSymbologyInterior = "<img class='legendSwatch' src='images/markers/hwm.png'></img><b>High Water Mark</b>";
-var parkBoundsSymbologyInterior = "<img class='square-legend parkBoundsColor'></img><b>Park Boundaries</b>";
-var npsNetworksSymbologyInterior = "<img class='square-legend npsNetColor'></img><b>NPS Networks</b>";
-var parkTractsSymbologyInterior = "<b>Park Tracts</b> <br> <img class='square-legend-interest federalFeeColor'></img> Federal Land (Fee) <br> <img class='square-legend-interest federalLessFeeColor'></img> Federal Land (Less than Fee) <br> <img class='square-legend-interest publicColor'></img> Public <br> <img class='square-legend-interest privateColor'></img> Private <br> <img class='square-legend-interest otherFederalColor'></img> Other Federal Land <br> <img class='square-legend-interest aquisitionColor'></img> Aquisition Deferred <br> <img class='square-legend-interest noInfoColor'></img> Unknown <div>";
-var approvedFWSSymbologyInterior = "<img class='square-legend approvedAquiColor'></img><b>Approved Aquisition Boundaries</b>";
-var interestFWSSymbologyInterior = "<b>Interest Boundaries</b> <br> <img class='square-legend-interest intFee'></img> Fee <br> <img class='square-legend-interest intSecondary'></img> Secondary <br> <img class='square-legend-interest intEasement'></img> Easement <br> <img class='square-legend-interest intLease'></img> Lease <br> <img class='square-legend-interest intAgreement'></img> Agreement <br> <img class='square-legend-interest intPartial'></img> Partial Interest <br> <img class='square-legend-interest intPermit'></img> Permit <br> <img class='square-legend-interest intUnknown'></img> Unknown <div>";
-var doiSymbologyInterior = "<img class='square-legend doiRegionsColor'></img> <b>DOI Regions</b>";
-var noaaCycloneSymbologyInterior = "<img class='legendSwatch' src='images/markers/noaa.png'></img> <b>NOAA Tropical Cyclone Forecast Track</b>";
+var streamGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/nwis.png'/><b>Real-time Stream Gage</b>";
+var rainGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/rainIcon.png'/><b>Real-time Rain Gage<b>";
+var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
+var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
+var meteorlogicalSymbologyInterior = "<img class='legendSwatch' src='images/markers/met.png'/><b>Meteorlogical Sensor</b>";
+var waveHeightSymbologyInterior = "<img class='legendSwatch' src='images/markers/waveheight.png'/><b>Wave Height Sensor</b>";
+var rdgSymbologyInterior = "<img class='legendSwatch' src='images/markers/rdg.png'/><b>Rapid Deployment Gage</b>";
+var highWaterSymbologyInterior = "<img class='legendSwatch' src='images/markers/hwm.png'/><b>High Water Mark</b>";
+var parkBoundsSymbologyInterior = "<img class='square-legend parkBoundsColor'/><b>Park Boundaries</b>";
+var npsNetworksSymbologyInterior = "<img class='square-legend npsNetColor'/><b>NPS Networks</b>";
+var parkTractsSymbologyInterior = "<label>Park Tracts</label>" + 
+									"<div class='legend-item'><img class='square-legend-interest federalFeeColor'/> Federal Land (Fee)</div>" +
+									"<div class='legend-item'><img class='square-legend-interest federalLessFeeColor'/> Federal Land (Less than Fee)</div>" + 
+									"<div class='legend-item'><img class='square-legend-interest publicColor'/> Public</div>" + 
+									"<div class='legend-item'><img class='square-legend-interest privateColor'/> Private</div>" +
+									"<div class='legend-item'><img class='square-legend-interest otherFederalColor'/> Other Federal Land</div>" +
+									"<div class='legend-item'><img class='square-legend-interest aquisitionColor'/> Aquisition Deferred</div>" +
+									"<div class='legend-item'</div><img class='square-legend-interest noInfoColor'/> Unknown <div>";
+var approvedFWSSymbologyInterior = "<img class='square-legend approvedAquiColor'/><b>Approved Aquisition Boundaries</b>";
+var interestFWSSymbologyInterior = "<label>Interest Boundaries</label>"+
+									"<div class='legend-item'><img class='square-legend-interest intFee'/> Fee</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intSecondary'/> Secondary</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intEasement'/> Easement</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intLease'/> Lease</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intAgreement'/> Agreement</div>" + 
+									"<div class='legend-item'><img class='square-legend-interest intPartial'/> Partial Interest</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intPermit'/> Permit</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intUnknown'/> Unknown <div>";
+var doiSymbologyInterior = "<img class='square-legend doiRegionsColor'/> <b>DOI Regions</b>";
+var noaaCycloneSymbologyInterior = "<img class='legendSwatch' src='images/markers/noaa.png'/> <b>NOAA Tropical Cyclone Forecast Track</b>";
 
 //Display peak layer and legend item when peak box is checked
 function clickPeaks() {
