@@ -2598,7 +2598,8 @@ $(document).ready(function () {
 			}, 3000);
 
 			setTimeout(() => {
-				$("#reportLoader").remove();
+				document.getElementById('reportLoader').remove();
+				console.log("REMOVED LOADER")
 			}, 3001);
 
 			setTimeout(() => {

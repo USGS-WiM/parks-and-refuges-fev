@@ -26,3 +26,16 @@ Graphs and data styles
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 700;
 }
+
+
+/* Report Modal Styling */
+.report-map-image{
+	display: flex;
+	justify-content: center;
+	padding-top: 15px;
+}
+#reviewMap canvas{
+	width: 100% !important;
+	height: auto !important;
+	max-width: 600px !important;
+}

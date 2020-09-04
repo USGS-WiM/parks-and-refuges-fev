@@ -38,7 +38,6 @@
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <!-- <link rel="stylesheet" href="bower_components/wim-mapper-styles/css/base.css" /> -->
     <link rel="stylesheet" href="bower_components/bootstrap-sidebar/dist/css/sidebar.css" />
     <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="bower_components/Leaflet.label/dist/leaflet.label.css" />
@@ -57,6 +56,7 @@
     <link rel="stylesheet" href="styles/forms.css">
     <link rel="stylesheet" href="styles/misc.css">
     <link rel="stylesheet" href="styles/map.css">
+    <link rel="stylesheet" href="styles/graphs.css">
     <link rel="stylesheet" href="styles/navbar.css">
     <link rel="stylesheet" href="styles/sidebar.css">
     <!-- endbuild -->
@@ -332,15 +332,18 @@
                 <div class="modal-body">
 					<!-- report info -->
 					<div id="reportInfo"></div>
-					<!-- Map Legend -->
-					<div id="reviewMap">
-						<div class="report-loader">
-							<div class="modal-loader" id="loader"></div>
-							<p class="large" id="loadingMessage">Loading image...</p>
+
+					<!-- Horizontal left-right image and legend -->
+					<div class="report-map-image">
+						<div id="reviewMap">
+							<div class="report-loader" id="reportLoader">
+								<div class="modal-loader"></div>
+								<p class="large">Loading image...</p>
+							</div>
 						</div>
+						<!-- Legend Image -->
+						<div id="legendImage"></div>
 					</div>
-					<!-- Legend Image -->
-					<div id="legendImage"></div>
 
 					<!-- Summary Data -->
 					<div class="accordion large expanded">
@@ -929,10 +932,10 @@
 										<input type="checkbox" id="peaksToggle" onclick="clickPeaks()" />
 										<span>Peak Summary</span>
 									</label>
-									<!-- <label class="switch">
+									<label class="switch">
 										<input type="checkbox" id="peakCheckbox" onclick="clickPeakLabels()" />
 										<span class="slider round"></span>
-									</label> -->
+									</label>
 								</div>
 							</div>
 
