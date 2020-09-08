@@ -151,7 +151,7 @@ $(document).ready(function () {
     });
 
     $('#btnSubmitSelections').click(function () {
-        
+
         $("#noResultsText").hide();
 
         // disabling form fields and run button to prevent the user from interrupting queryies
@@ -334,7 +334,7 @@ $(document).ready(function () {
             }
             allSites = L.esri.featureLayer({
                 //useCors: false,
-                url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1',
+                url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
                 where: "FWSREGION='" + siteRegion + "'",
                 fields: ["*"],
                 style: parkStyle,
@@ -352,7 +352,10 @@ $(document).ready(function () {
                 if (regionParksFC[p].properties.OBJECTID !== 169) {
                     var options = { tolerance: 0.5, highQuality: false, mutate: true };
                     //var flatten = turf.flatten(regionParksFC[p]);
-                    var simplify = turf.simplify(regionParksFC[p], options);
+
+                    var cleanCoords = turf.cleanCoords(regionParksFC[p].geometry);
+                    var feat = { 'type': regionParksFC[p].geometry.type, 'properties': regionParksFC[p].properties, 'coordinates': cleanCoords.coordinates };
+                    var simplify = turf.simplify(feat, options);
                     simplifiedSites.push(simplify);
 
                     if (p === length) {
@@ -607,7 +610,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
  
                 // RDG
                 getRDGs(fev.urls.rdgGeoJSONViewURL + sensorQueryString, regionalrdgMarkerIcon); */
-                
+
                 setTimeout(() => {
                     dataCheck();
                     if (peaksWithinBuffer.getLayers().length > 0) {
@@ -658,7 +661,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                         processData(eventNumber);
                     }
-                    nextEvent(); 
+                    nextEvent();
                 }, 2000);
 
                 function nextEvent() {
@@ -704,7 +707,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             processData(eventNumber);
                             regionalMap.zoomIn();
                         }
-                        
+
                     }, 2000);
                 }
 
@@ -1547,15 +1550,15 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 eventHWMRiver = allHWMETwoRiver;
             }
 
-                // getting the record with the max peak
-                var maxDate = eventPeaks.filter(x => x['Peak Stage (ft)'] === maxReg);
-                maxReg = maxReg.toFixed(2);
-                maxReg = Number(maxReg);
-                // setting Max Date
-                maxDate = maxDate[0]['Peak Date/Time'];
-                peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
-                sum.push(peakSum);
-                document.getElementById("saveRegionalPeakCSV").disabled = false;
+            // getting the record with the max peak
+            var maxDate = eventPeaks.filter(x => x['Peak Stage (ft)'] === maxReg);
+            maxReg = maxReg.toFixed(2);
+            maxReg = Number(maxReg);
+            // setting Max Date
+            maxDate = maxDate[0]['Peak Date/Time'];
+            peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+            sum.push(peakSum);
+            document.getElementById("saveRegionalPeakCSV").disabled = false;
 
             //Create hwm row in regional summary table
             //getSummaryStats(hwmArrayReg);
@@ -1743,7 +1746,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 buildDataTables(tableSumID, sum, "Region-wide Summary for " + eventName);
             }
             if (siteSumPeakVals.length > 0) {
-                buildDataTables(tablePeaksID, peakSiteSummaries, 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteText + ' for ' + eventName);
+                buildDataTables(tablePeaksID, peakSiteSummaries, 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each ' + siteText + ' for ' + eventName);
             }
             if (siteSumHWMVals.length > 0) {
                 buildDataTables(tableHWMsID, hwmSiteSummaries, 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteText + ' Impacted by ' + eventName);
@@ -1872,7 +1875,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     }
     //Corresponds with the 'HWM CSV' button on the regional report modal
     $('#saveRegionalHWMCSV').click(function () {
-        
+
         //if there is a hwm table, download as csv
         if (hwmRegionalCSVData.length > 0) {
             // merging the arrays from both event if there are two
@@ -1936,7 +1939,7 @@ function clearRegOutput() {
     $('#evtSelect_regionalModal').attr('disabled', false);
     $('#regionSelect_regionalModal').attr('disabled', false);
     $('#bufferSelect_regionalModal').attr('disabled', false);
-    
+
     // removing all layers from the map regardless of type
     regionalMap.eachLayer(function (layer) {
         regionalMap.removeLayer(layer);
@@ -2069,7 +2072,7 @@ function clickPeakLabelsReg() {
 }
 
 function dataCheck() {
-    if ((allHWMEOne.length === 0) && (allHWMETwo.length === 0) && (allPeaksEOne.length === 0) && (allPeaksETwo.length === 0) ) {
+    if ((allHWMEOne.length === 0) && (allHWMETwo.length === 0) && (allPeaksEOne.length === 0) && (allPeaksETwo.length === 0)) {
         noData = true;
         $(".peaksDisclaimerEventTwo").hide();
         $(".peaksDisclaimerEventTwo").hide();
@@ -2085,7 +2088,7 @@ function dataCheck() {
 
         // showing no results text and scrolling to it
         $("#noResultsText").show();
-        document.getElementById('noResultsText').scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+        document.getElementById('noResultsText').scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
     }
 }
 
