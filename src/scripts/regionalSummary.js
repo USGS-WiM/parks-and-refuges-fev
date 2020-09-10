@@ -662,6 +662,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 }, 2000);
 
                 function nextEvent() {
+                    //reset peaksWithinBuffer to empty feature group so that it does keep any data from previous event
                     peaksWithinBuffer = L.featureGroup();
                     eventNumber = 2;
                     eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";

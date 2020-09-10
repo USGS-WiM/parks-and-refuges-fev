@@ -2268,11 +2268,9 @@ $(document).ready(function () {
 			function addAllDataColumnHeaders(table, data) {
 				var columnSet = [];
 				var headerTr$ = $('<tr/>');
-				console.log("headerTr$", headerTr$);
 
 				for (var i = 0; i < data.length; i++) {
 					var rowHash = data[i];
-					console.log("rowHash", rowHash);
 					for (var key in rowHash) {
 						if ($.inArray(key, columnSet) == -1) {
 							columnSet.push(key);
@@ -2281,7 +2279,6 @@ $(document).ready(function () {
 					}
 				}
 				$(table).append(headerTr$);
-				console.log("table", table);
 				return columnSet;
 			}
 			function addAllColumnHeaders(peakTableData) {
