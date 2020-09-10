@@ -263,6 +263,7 @@ $.ajax({
 var rdg = L.featureGroup();
 var USGSRainGages = L.featureGroup();
 var USGSrtGages = L.featureGroup();
+
 var noaaService = L.esri.dynamicMapLayer({
 	url: "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
 	opacity: 0.5,
