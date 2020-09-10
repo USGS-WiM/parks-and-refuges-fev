@@ -662,6 +662,7 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 }, 2000);
 
                 function nextEvent() {
+                    peaksWithinBuffer = L.featureGroup();
                     eventNumber = 2;
                     eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
                     eventURL = eventURL + selectedEvents[1] + '.json';
