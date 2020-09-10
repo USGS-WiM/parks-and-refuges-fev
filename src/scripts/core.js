@@ -270,8 +270,10 @@ var noaaService = L.esri.dynamicMapLayer({
 	f: 'image'
 });
 
+
 var noAdvisories = false;
 var test;
+
 
 $.ajax({
 	url: "https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time",
@@ -289,6 +291,7 @@ $.ajax({
 		}
 	}
 });
+
 
 // NPS Tracts 
 var tracts = L.esri.featureLayer({
@@ -1902,6 +1905,14 @@ $(document).ready(function () {
 	function generateSiteReport() {
 		map.fitBounds(bufferPoly.getBounds());
 
+		//Make sure peaks and their labels are on
+		if (document.getElementById('peaksToggle').checked === false) {
+			$('#peaksToggle').click();
+		}
+		if (document.getElementById('peakCheckbox').checked === false) {
+			$('#peakCheckbox').click();
+		}
+
 		// toggling off these layers so they aren't the map print out on the pdf
 		if (document.getElementById('baroToggle').checked) {
 			$('#baroToggle').click();
@@ -1924,12 +1935,34 @@ $(document).ready(function () {
 		if (document.getElementById('stormTideToggle').checked) {
 			$('#stormTideToggle').click();
 		}
+		if (document.getElementById('rainGageToggle').checked) {
+			$('#rainGageToggle').click();
+		}
+		if (document.getElementById('parkBoundsToggle').checked) {
+			$('#parkBoundsToggle').click();
+		}
+		if (document.getElementById('tractToggle').checked) {
+			$('#tractToggle').click();
+		}
+		if (document.getElementById('npsNetToggle').checked) {
+			$('#npsNetToggle').click();
+		}
+		if (document.getElementById('interestFWSToggle').checked) {
+			$('#interestFWSToggle').click();
+		}
+		if (document.getElementById('approvedFWSToggle').checked) {
+			$('#approvedFWSToggle').click();
+		}
+		if (document.getElementById('doiToggle').checked) {
+			$('#doiToggle').click();
+		}
+		if (document.getElementById('streamGageToggle').checked) {
+			$('#streamGageToggle').click();
+		}
 		if (document.getElementById('noaaToggle').checked) {
 			$('#noaaToggle').click();
 		}
-		if (document.getElementById('peakCheckbox').checked === false) {
-			$('#peakCheckbox').click();
-		}
+		
 
 		bufferPeak.addTo(map);
 		//bufferHWM.addTo(map);
