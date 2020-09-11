@@ -205,8 +205,8 @@ $(document).ready(function () {
 
         switch ($('#typeSelect_regionalModal').val()[0]) {
             case 'NWR':
-                regionURL = 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0';
-                whereValue = "REGNAME=" + selectedRegion;
+                regionURL = 'https://services.arcgis.com/4OV0eRKiLAYkbH2J/ArcGIS/rest/services/DOI_Unified_Regions/FeatureServer/0';
+                whereValue = "REG_NAME=" + selectedRegion;
                 break;
             case 'NPS':
                 regionURL = 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/nps_regions_rev/FeatureServer/0';
@@ -233,7 +233,7 @@ $(document).ready(function () {
             regionBoundaries = L.esri.featureLayer({
                 useCors: false,
                 url: regionURL,
-                where: "REGNAME='" + selectedRegion + "'",
+                where: "REG_NAME='" + selectedRegion + "'",
                 style: regionStyle,
                 /* onEachFeature: function (feature, latlng) {
                     regionPoly = feature.geometry;
@@ -307,35 +307,44 @@ $(document).ready(function () {
         } else if (selectedLandType[0] === "NWR") {
             // Region conversions for site layers 
             switch (selectedRegion[0]) {
-                case 'Alaska Region':
-                    siteRegion = "7"
+                case 'Alaska':
+                    siteRegion = "Other"
                     break;
-                case 'Midwest Region':
+                case 'Great Lakes':
                     siteRegion = "3"
                     break;
-                case 'Southeast Region':
+                case 'Mississippi Basin':
                     siteRegion = "4"
                     break;
-                case 'Mountain Prairie Region':
+                case 'Arkansas - Rio Grande - Texas Gulf':
                     siteRegion = "6"
                     break;
-                case 'Northeast Region':
+                case 'Missouri Basin':
                     siteRegion = "5"
                     break;
-                case 'Pacific Region':
+                case 'North Atlantic - Appalachian':
                     siteRegion = "1"
                     break;
-                case 'Pacific Southwest Region':
+                case 'Lower Colorado Basin':
                     siteRegion = "8"
                     break;
-                case 'Southwest Region':
+                case 'South Atlantic - Gulf':
                     siteRegion = "2"
+                    break;
+                case 'Upper Colorado Basin':
+                    siteRegion = "7"
+                    break;
+                case 'Columbia-Pacific Northwest':
+                    siteRegion = "9"
+                    break;
+                case 'California - Great Basin':
+                    siteRegion = "10"
                     break;
             }
             allSites = L.esri.featureLayer({
                 //useCors: false,
-                url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
-                where: "FWSREGION='" + siteRegion + "'",
+                url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/National_Wildlife_Refuge_System_Boundaries/FeatureServer/1',
+                where: "IntReg='" + siteRegion + "'",
                 fields: ["*"],
                 style: parkStyle,
                 onEachFeature: function (feature) {
@@ -349,21 +358,26 @@ $(document).ready(function () {
             var length = regionParksFC.length;
             length = length - 1;
             for (var p = 0; p < regionParksFC.length; p++) {
-                if (regionParksFC[p].properties.OBJECTID !== 169) {
+                /* var options = { tolerance: 0.5, highQuality: false, mutate: true };
+                var simplify = turf.simplify(regionParksFC[p], options);
+                simplifiedSites.push(simplify); */
+                if (regionParksFC[p].properties.OBJECTID !== 329) {
+                if (regionParksFC[p].properties.OBJECTID !== 1136) {
                     var options = { tolerance: 0.5, highQuality: false, mutate: true };
                     //var flatten = turf.flatten(regionParksFC[p]);
 
                     var cleanCoords = turf.cleanCoords(regionParksFC[p].geometry);
                     var feat = { 'type': regionParksFC[p].geometry.type, 'properties': regionParksFC[p].properties, 'coordinates': cleanCoords.coordinates };
                     var simplify = turf.simplify(feat, options);
-                    simplifiedSites.push(simplify);
+                    simplifiedSites.push(feat);
 
                     if (p === length) {
                         getbuffers();
                     }
                 }
+            }
             };
-        }, 5000);
+        }, 10000);
 
 
 
