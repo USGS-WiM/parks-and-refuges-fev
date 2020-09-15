@@ -334,9 +334,9 @@ $(document).ready(function () {
             }
             allSites = L.esri.featureLayer({
                 //useCors: false,
-                url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved/FeatureServer/1',
+                url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1',
                 where: "FWSREGION='" + siteRegion + "'",
-                fields: ["*"],
+                fields: ["ORGNAME", "FWSREGION", "OBJECTID"],
                 style: parkStyle,
                 onEachFeature: function (feature) {
                     regionParksFC.push(feature)
@@ -355,8 +355,12 @@ $(document).ready(function () {
 
                     var cleanCoords = turf.cleanCoords(regionParksFC[p].geometry);
                     var feat = { 'type': regionParksFC[p].geometry.type, 'properties': regionParksFC[p].properties, 'coordinates': cleanCoords.coordinates };
-                    var simplify = turf.simplify(feat, options);
-                    simplifiedSites.push(simplify);
+                    // Use console.log below to identify polys causing failure. Turf will fail immediately after the bad poly
+                    // console.log(feat);
+                    if (feat.properties.OBJECTID !== 456) {
+                        var simplify = turf.simplify(feat, options);
+                        simplifiedSites.push(simplify);
+                    }
 
                     if (p === length) {
                         getbuffers();

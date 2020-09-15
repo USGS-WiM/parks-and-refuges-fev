@@ -91,16 +91,17 @@
                 <div class="modal-header">
                     <!-- X close button - removed to prevent user from avoiding event selection -->
                     <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>-->
-                    <h4 class="modal-title">Flood Events at National Wildlife Refuges and National Park Service Lands Viewer</h4>
+                    <h4 class="modal-title">Flood Events at National Wildlife Refuges and National Park Service Lands
+                        Viewer</h4>
                 </div>
                 <div class="modal-body">
                     <h4>Would you like to run a report for a region or a specific site?</h4>
                     <br>
                     <div style="text-align: center;">
                         <span><button id="btnChooseRegion" class="btn btn-default" type="button" aria-hidden="true"
-                        style="color:white; text-align: center;" class="btn btn-primary">Region</button></span>
+                                style="color:white; text-align: center;" class="btn btn-primary">Region</button></span>
                         <span><button id="btnChooseSite" class="btn btn-default" type="button" aria-hidden="true"
-                        style="color:white; align-self: center;" class="btn btn-primary">Site</button></span>
+                                style="color:white; align-self: center;" class="btn btn-primary">Site</button></span>
                     </div>
                 </div>
             </div><!-- /.modal-content -->
@@ -243,7 +244,7 @@
                 <div id="reportInfo"></div>
                 <div class="modal-body" style="text-align: center; height: 600px; overflow-y: auto; overflow-x: auto;">
 
-                    <div id="reportMapLegend" >
+                    <div id="reportMapLegend">
                         <div id="reviewMap" class="report-inline-block">
                             <div id='loader' class='imageLoader'></div>
                             <p id='loadingMessage'>loading image...</p>
@@ -254,10 +255,10 @@
                     <br>
                     <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
                         <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportSummarySection"
-                            aria-expanded="false" aria-controls="collapseExample"
-                            style="text-align: left"><p
-                                style="font-size: 13pt; text-align: left">Summary Data <i
-                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                            aria-expanded="false" aria-controls="collapseExample" style="text-align: left">
+                            <p style="font-size: 13pt; text-align: left">Summary Data <i
+                                    class="chevron fa fa-chevron-right pull-down" style="color: gray;"></i></b>
+                        </button>
                     </div>
                     <div id="reportSummarySection">
                         <div style='text-align: center; font-weight:bold' id='reportSummaryTitle'></div>
@@ -266,16 +267,20 @@
                         <div class='reportInfo' id="sumTable">
                             <table class="table" id="reportSummaryDataTable">
                             </table>
+                            <p class="peaksDisclaimer" style="font-size: 11px;">**Please note that the summary stats
+                                include the height of all peak water levels calculated within the buffer for each NWR.
+                                All peak data reference height of water level in feet above NAVD88 datum. Inland sites
+                                may be located at a location where the land surface elevation is greater than zero.</p>
                         </div>
                     </div>
                     <br>
                     <br>
                     <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
                         <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportPeakSection"
-                            aria-expanded="false" aria-controls="collapseExample"
-                            style="text-align: left"><p 
-                                style="font-size: 13pt; text-align: left">Peak Data <i
-                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                            aria-expanded="false" aria-controls="collapseExample" style="text-align: left">
+                            <p style="font-size: 13pt; text-align: left">Peak Data <i
+                                    class="chevron fa fa-chevron-right pull-down" style="color: gray;"></i></b>
+                        </button>
                     </div>
                     <div id="reportPeakSection">
 
@@ -288,10 +293,10 @@
                     <br>
                     <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
                         <button class="groupToggle btnReport " data-toggle="collapse" data-target="#reportHWMSection"
-                            aria-expanded="false" aria-controls="collapseExample"
-                            style="text-align: left"><p 
-                                style="font-size: 13pt; text-align: left">HWM Data <i
-                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                            aria-expanded="false" aria-controls="collapseExample" style="text-align: left">
+                            <p style="font-size: 13pt; text-align: left">HWM Data <i
+                                    class="chevron fa fa-chevron-right pull-down" style="color: gray;"></i></b>
+                        </button>
                     </div>
                     <div id="reportHWMSection">
                         <div class='reportInfo' id="hwmTable" style="width: 900px; ">
@@ -301,11 +306,12 @@
                     <br>
                     <br>
                     <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
-                        <button class="groupToggle btnReport btn-dafault" data-toggle="collapse" data-target="#reportRTSection"
-                            aria-expanded="false" aria-controls="collapseExample"
-                            style="text-align: left"><p 
-                                style="font-size: 13pt; text-align: left">Stream Gage Hydrographs <i
-                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                        <button class="groupToggle btnReport btn-dafault" data-toggle="collapse"
+                            data-target="#reportRTSection" aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left">
+                            <p style="font-size: 13pt; text-align: left">Stream Gage Hydrographs <i
+                                    class="chevron fa fa-chevron-right pull-down" style="color: gray;"></i></b>
+                        </button>
                     </div>
                     <div id="reportRTSection">
                         <div id="gageGraphs" style="text-align: center; font-size: medium; font-weight:bold;"></div>
@@ -314,14 +320,15 @@
                     <br>
                     <br>
                     <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
-                        <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportHydrographSection"
-                            aria-expanded="false" aria-controls="collapseExample"
-                            style="text-align: left"><p
-                                style="font-size: 13pt; text-align: left">Storm Tide Hydrographs <i
-                                    class="chevron fa fa-chevron-right pull-down" style= "color: gray;"></i></b></button>
+                        <button class="groupToggle btnReport" data-toggle="collapse"
+                            data-target="#reportHydrographSection" aria-expanded="false" aria-controls="collapseExample"
+                            style="text-align: left">
+                            <p style="font-size: 13pt; text-align: left">Storm Tide Hydrographs <i
+                                    class="chevron fa fa-chevron-right pull-down" style="color: gray;"></i></b>
+                        </button>
                     </div>
                     <div id="reportHydrographSection">
-                        <p style="font-weight: bold;">Storm Tide Hydrographs</p>
+                        <p>Each Site references a relative datum </p>
                         <div id="hydrographs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
                         <div id="graphSite">
                             <div id="stgraphs"></div>
@@ -347,14 +354,15 @@
         </div>
     </div>
     </div>
-<!-- end of site report modal -->
+    <!-- end of site report modal -->
 
     <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true"
         role="dialog">
         <div class="modal-dialog modal-lg" style="width: 1100px;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    <button id="regReportCloseX" type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">x</button>
                     <h4 class="modal-title">Regional Report</h4>
                 </div>
                 <div class="modal-body" style='height: 600px; overflow-x: auto; overflow-y:auto;'>
@@ -362,16 +370,18 @@
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <!--<h4 class="formSectionHead">Event Options</h4>-->
-                            <form class="form-horizontal" role="form" id="regionalForm">
-                                <div class="form-group" id="evtNameForm_regionalModal">
-                                    <label for="typeSelect_regionalModal"
-                                        class="col-sm-2 control-label filterForms">Lands Type: </label>
-                                    <div class="col-sm-10 filterForms">
-                                        <select id="typeSelect_regionalModal" class="typeSelect clear"
-                                            multiple="multiple" style="width: 100%" onchange="formReady()"></select>
+                            <div id="formContainer" data-toggle="tooltip" data-placement="bottom"
+                            title="">
+                                <form class="form-horizontal" role="form" id="regionalForm">
+                                    <div class="form-group" id="evtNameForm_regionalModal">
+                                        <label for="typeSelect_regionalModal"
+                                            class="col-sm-2 control-label filterForms">Lands Type: </label>
+                                        <div class="col-sm-10 filterForms">
+                                            <select id="typeSelect_regionalModal" class="typeSelect clear"
+                                                multiple="multiple" style="width: 100%" onchange="formReady()"></select>
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- <div class="form-group" id="evtNameForm_regionalModal">
+                                    <!-- <div class="form-group" id="evtNameForm_regionalModal">
                                     <label for="regionType_regionalModal"
                                         class="col-sm-2 control-label filterForms">Region Type: </label>
                                     <div class="col-sm-10 filterForms">
@@ -379,36 +389,38 @@
                                             style="width: 100%" onchange="formReady()"></select>
                                     </div>
                                 </div> -->
-                                <div class="form-group" id="evtNameForm_regionalModal">
-                                    <label for="regionSelect_regionalModal"
-                                        class="col-sm-2 control-label filterForms">Region: </label>
-                                    <div class="col-sm-10 filterForms">
-                                        <select id="regionSelect_regionalModal" class="regionSelect clear" multiple
-                                            style="width: 100%" onchange="formReady()"></select>
+                                    <div class="form-group" id="evtNameForm_regionalModal">
+                                        <label for="regionSelect_regionalModal"
+                                            class="col-sm-2 control-label filterForms">Region: </label>
+                                        <div class="col-sm-10 filterForms">
+                                            <select id="regionSelect_regionalModal" class="regionSelect clear" multiple
+                                                style="width: 100%" onchange="formReady()"></select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group" id="evtNameForm_regionalModal">
-                                    <label for="evtSelect_regionalModal"
-                                        class="col-sm-2 control-label filterForms">Event: </label>
-                                    <div class="col-sm-10 filterForms">
-                                        <select id="evtSelect_regionalModal" class="evtSelectRegional clear"
-                                            multiple="multiple" style="width: 100%" onchange="formReady()"></select>
+                                    <div class="form-group" id="evtNameForm_regionalModal">
+                                        <label for="evtSelect_regionalModal"
+                                            class="col-sm-2 control-label filterForms">Event: </label>
+                                        <div class="col-sm-10 filterForms">
+                                            <select id="evtSelect_regionalModal" class="evtSelectRegional clear"
+                                                multiple="multiple" style="width: 100%" onchange="formReady()"></select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group" id="evtNameForm_regionalModal">
-                                    <label for="bufferSelect_regionalModal"
-                                        class="col-sm-2 control-label filterForms">Buffer size: </label>
-                                    <div class="col-sm-10 filterForms">
-                                        <select id="bufferSelect_regionalModal" class="bufferSelect clear" multiple
-                                            style="width: 100%" onchange="formReady()"></select>
+                                    <div class="form-group" id="evtNameForm_regionalModal">
+                                        <label for="bufferSelect_regionalModal"
+                                            class="col-sm-2 control-label filterForms">Buffer size: </label>
+                                        <div class="col-sm-10 filterForms">
+                                            <select id="bufferSelect_regionalModal" class="bufferSelect clear" multiple
+                                                style="width: 100%" onchange="formReady()"></select>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
-                            <div id="regionalMapContainer" style="margin: auto; width: 600px;">
-                                <div id="regionalMap" style="width: 600px; height: 400px;"></div>
+                                </form>
+                            </div>
+                            <div id="regionalMapContainer" style="margin: auto; width: 800px; height: 500px;">
+                                <div id="regionalMap" style="width: 800px; height: 500px;"></div>
                                 <span class="progress-bar-fill" style="width: 0%"></span>
                             </div>
-                            <div style="text-align: left; display: inline-flex; margin-left: 115px"> Peak Labels
+                            <div style="text-align: left; display: inline-flex; margin-left: 115px; padding: 5px"> Peak
+                                Labels
                                 <label class="switch" id="peakSizeCheckReg"
                                     style="display: inline-flex; margin-left: 10px">
                                     <input type="checkbox" id="peakCheckboxReg" onclick="clickPeakLabelsReg()"
@@ -417,6 +429,9 @@
                                 </label>
                             </div>
                             <div id="data">
+                                <div id="noResultsDiv">
+                                    <p id="noResultsText">Data are currently not available. Please try again later.</p>
+                                </div>
                                 <div class='dataSection' id="regionalPeakTable"
                                     style="width: 850px; overflow-x: scroll; display:none;">
                                     <p id="eventsSummaryTitle" style="font-weight: bold;"></p>
@@ -424,12 +439,32 @@
                                     </table>
                                     <table class="table" id="summaryDataTableEOne">
                                     </table>
+                                    <p class="peaksDisclaimerEventOne" style="font-size: 11px;">**Please note that the
+                                        summary stats include the height of all peak water levels calculated within the
+                                        buffer for each NWR. All peak data reference height of water level in feet above
+                                        NAVD88 datum. Inland sites may be located at a location where the land surface
+                                        elevation is greater than zero.</p>
                                     <table class="table" id="summaryDataTableETwo">
                                     </table>
+                                    <p class="peaksDisclaimerEventTwo" style="font-size: 11px;">**Please note that the
+                                        summary stats include the height of all peak water levels calculated within the
+                                        buffer for each NWR. All peak data reference height of water level in feet above
+                                        NAVD88 datum. Inland sites may be located at a location where the land surface
+                                        elevation is greater than zero.</p>
                                     <table class="table" id="siteSummaryPeakDataTableEOne">
                                     </table>
+                                    <p class="peaksDisclaimerEventOne" style="font-size: 11px;">**Please note that the
+                                        summary stats include the height of all peak water levels calculated within the
+                                        buffer for each NWR. All peak data reference height of water level in feet above
+                                        NAVD88 datum. Inland sites may be located at a location where the land surface
+                                        elevation is greater than zero.</p>
                                     <table class="table" id="siteSummaryPeakDataTableETwo">
                                     </table>
+                                    <p class="peaksDisclaimerEventTwo" style="font-size: 11px;">**Please note that the
+                                        summary stats include the height of all peak water levels calculated within the
+                                        buffer for each NWR. All peak data reference height of water level in feet above
+                                        NAVD88 datum. Inland sites may be located at a location where the land surface
+                                        elevation is greater than zero.</p>
                                     <table class="table" id="siteSummaryHWMDataTableEOne">
                                     </table>
                                     <table class="table" id="siteSummaryHWMDataTableETwo">
@@ -452,8 +487,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
-                        style="color:gray;" class="btn btn-default">Close</button>
+                    <button id="regReportClose" class=" btn btn-default close" type="button" data-dismiss="modal"
+                        aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
 
                     <button id="btnClearRegFilters" class="btn btn-default" type="button" aria-hidden="true"
                         style="color:gray;" id="btnClearRegFilters" class="btn btn-primary">Clear Selections</button>
@@ -462,7 +497,7 @@
                         style="color:gray;" class="btn btn-primary" disabled>Run</button>
 
                     <button id="printRegionalReport" class="btn btn-default" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn btn-primary" disabled>Print</button>
+                        style="color:gray;" class="btn btn-primary" disabled>Print Full Report</button>
 
                     <button id="saveRegionalPeakCSV" class="btn btn-default" type="button" aria-hidden="true"
                         style="color:gray;" class="btn btn-primary" disabled>Peak CSV</button>
@@ -822,8 +857,8 @@
                     <button id="btnChangeFilters" class="btn btn-default filtersBtn">
                         <span id="queryButtonText">Query a New Site</span></button>
 
-                        <button id="btnStartOver" class="btn btn-default filtersBtn">
-                            <span id="startOverButtonText">Start Over</span></button>
+                    <button id="btnStartOver" class="btn btn-default filtersBtn">
+                        <span id="startOverButtonText">Start Over</span></button>
                 </div>
 
 
@@ -1088,8 +1123,9 @@
             </div>
             <div id="mapContainer" class="col-md-9 col-lg-10 col-md-offset-3 col-lg-offset-2 no-col-padding keepit100">
                 <div id="mapDiv">
-                    <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert" data-html2canvas-ignore="true"><i
-                            class="fa fa-lg fa-cog fa-spin fa-fw"></i><span>Loading Layers...</span></div>
+                    <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"
+                        data-html2canvas-ignore="true"><i class="fa fa-lg fa-cog fa-spin fa-fw"></i><span>Loading
+                            Layers...</span></div>
                 </div>
                 <div id="latLngScale" class="latLngScale">
                     <span class="hover-content"> <b>Map scale </b></span>
