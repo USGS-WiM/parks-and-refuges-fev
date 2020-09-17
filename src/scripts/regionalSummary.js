@@ -343,7 +343,7 @@ $(document).ready(function () {
             }
             allSites = L.esri.featureLayer({
                 //useCors: false,
-                url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/National_Wildlife_Refuge_System_Boundaries/FeatureServer/1',
+                url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/Refuges/MapServer/2',
                 where: "IntReg='" + siteRegion + "'",
                 fields: ["*"],
                 style: parkStyle,
@@ -361,21 +361,23 @@ $(document).ready(function () {
                 /* var options = { tolerance: 0.5, highQuality: false, mutate: true };
                 var simplify = turf.simplify(regionParksFC[p], options);
                 simplifiedSites.push(simplify); */
-                if (regionParksFC[p].properties.OBJECTID !== 329) {
-                if (regionParksFC[p].properties.OBJECTID !== 1136) {
+                //if (regionParksFC[p].properties.OBJECTID !== 329) {
+                //if (regionParksFC[p].properties.OBJECTID !== 1136) {
                     var options = { tolerance: 0.5, highQuality: false, mutate: true };
                     //var flatten = turf.flatten(regionParksFC[p]);
-
+                    if (regionParksFC[p].properties.FID !== 90) {
                     var cleanCoords = turf.cleanCoords(regionParksFC[p].geometry);
                     var feat = { 'type': regionParksFC[p].geometry.type, 'properties': regionParksFC[p].properties, 'coordinates': cleanCoords.coordinates };
+                    
+                    console.log(feat);
                     var simplify = turf.simplify(feat, options);
-                    simplifiedSites.push(feat);
+                    simplifiedSites.push(simplify);
 
-                    if (p === length) {
-                        getbuffers();
-                    }
+                            if (p === length) {
+                                getbuffers();
+                            }
+                       // }
                 }
-            }
             };
         }, 10000);
 
@@ -679,6 +681,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                 }, 2000);
 
                 function nextEvent() {
+                    //reset peaksWithinBuffer to empty feature group so that it does keep any data from previous event
+                    peaksWithinBuffer = L.featureGroup();
                     eventNumber = 2;
                     eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
                     eventURL = eventURL + selectedEvents[1] + '.json';
@@ -1128,9 +1132,12 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                             var feat;
 
                             buffer.geometry.coordinates.forEach(function (coords) {
+                                var hwmCoords = ([regionalHWM._layers[i]._latlng.lng, regionalHWM._layers[i]._latlng.lat]);
                                 feat = { 'type': 'Polygon', 'coordinates': coords };
                                 if (feat !== undefined) {
-                                    var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
+                                    /* console.log(feat);
+                                    console.log(coords); */
+                                    var isItInside = turf.booleanPointInPolygon(hwmCoords, feat, { ignoreBoundary: true });
                                     // if true add it to an array containing all the 'true' regionalHWM
                                     if (isItInside) {
                                         if (regionalHWM._layers[i].feature.properties.elev_ft != undefined) {
