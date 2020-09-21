@@ -193,15 +193,15 @@ var markerCoords = [];
 var oms;
 var mapImage;
 
-var baroMarkerIcon = L.icon({ className: 'baroMarker', iconUrl: 'images/baro.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
-var metMarkerIcon = L.icon({ className: 'metMarker', iconUrl: 'images/met.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
-var rdgMarkerIcon = L.icon({ className: 'rdgMarker', iconUrl: 'images/rdg.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
-var stormtideMarkerIcon = L.icon({ className: 'stormtideMarker', iconUrl: 'images/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
-var waveheightMarkerIcon = L.icon({ className: 'waveheightMarker', iconUrl: 'images/waveheight.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12, 12] });
-var hwmMarkerIcon = L.icon({ className: 'hwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
-var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
-var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
-var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
+var baroMarkerIcon = L.icon({ className: 'baroMarker', iconUrl: 'images/markers/baro.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var metMarkerIcon = L.icon({ className: 'metMarker', iconUrl: 'images/markers/met.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var rdgMarkerIcon = L.icon({ className: 'rdgMarker', iconUrl: 'images/markers/rdg.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var stormtideMarkerIcon = L.icon({ className: 'stormtideMarker', iconUrl: 'images/markers/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var waveheightMarkerIcon = L.icon({ className: 'waveheightMarker', iconUrl: 'images/markers/waveheight.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12, 12] });
+var hwmMarkerIcon = L.icon({ className: 'hwmMarker', iconUrl: 'images/markers/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
 var baro = L.layerGroup();
@@ -547,9 +547,9 @@ $(document).ready(function () {
 				//if no event selected, warn user with alert
 				// Also accounting for having an event selected but no parkref
 				if ((($(evtSelect_Modal_Primary).val() !== null) && ($(typeSelect).val() !== null) && ($(siteSelect).val() !== null))) {
-					$('.eventSelectAlert').hide();
+					$('#filtersModalError').hide();
 				} else {
-					$('.eventSelectAlert').show();
+					$('#filtersModalError').show();
 				}
 			}
 
@@ -778,8 +778,8 @@ $(document).ready(function () {
 	//define layer 'overlays' (overlay is a leaflet term)
 	//define the real-time overlay and manually add the NWIS RT gages to it
 	var realTimeOverlays = {
-		"<img class='legendSwatch' src='images/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
-		"<img class='legendSwatch' src='images/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
+		"<img class='legendSwatch' src='images/markers/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
+		"<img class='legendSwatch' src='images/markers/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
 	};
 
 
@@ -789,7 +789,7 @@ $(document).ready(function () {
 	var noaaOverlays = {};
 
 
-	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'></img>&nbsp;" + layer.Name] = window[layer.ID];
+	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'/>&nbsp;" + layer.Name] = window[layer.ID];
 
 	if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
@@ -871,7 +871,7 @@ $(document).ready(function () {
 			var radioId = $(this).attr('id');
 			var formToShow = $('#' + radioId + 'Form');
 			formToShow.show();
-			$('.hiddenForm').not(formToShow).hide();
+			$('form.hidden').not(formToShow).hide();
 		});
 	});
 
@@ -1582,7 +1582,7 @@ $(document).ready(function () {
 			var base_image = new Image();
 			canvas.width = 10;
 			canvas.height = 10;
-			base_image.src = './images/peak.png';
+			base_image.src = './images/markers/peak.png';
 			ctx.drawImage(base_image, 0, 0, 10, 10);
 			var dataURL = canvas.toDataURL();
 			peakImg.push(dataURL);
@@ -1596,7 +1596,7 @@ $(document).ready(function () {
 			var base_image = new Image();
 			canvas.width = 10;
 			canvas.height = 10;
-			base_image.src = './images/hwm.png';
+			base_image.src = './images/markers/hwm.png';
 			ctx.drawImage(base_image, 0, 0, 10, 10);
 			var dataURL = canvas.toDataURL();
 			hwmImg.push(dataURL);
@@ -1992,10 +1992,13 @@ $(document).ready(function () {
 		var PeakSummarySymbologyInterior;
 		if (lengthPeak > 0) {
 			if (lengthPeak > 2) {
-				PeakSummarySymbologyInterior = "<div>" + "<b>Peak Summary (ft)</b>" + "<br> <img class='peakSmall' src='images/peak.png' style= 'margin-left:24px'></img>" + "< " + sThirdVal + "<br><img class='peakMedium' src='images/peak.png' style= 'margin-left:22px'></img>" + " " + sThirdVal + " - " + sTwoThirdVal + "<br><img class='peakLarge' src='images/peak.png' style= 'margin-left:20px'></img>" + " > " + sTwoThirdVal + "</div>";
+				PeakSummarySymbologyInterior = "<label>Peak Summary (ft)</label>" + 
+												"<div class='legend-item peakSmall'><img src='images/markers/peak.png'/> &nbsp; &lt; &nbsp;" + sThirdVal + "</div>" +
+												"<div class='legend-item peakMedium'><img src='images/markers/peak.png'/> " + sThirdVal + " - " + sTwoThirdVal + "</div>" +
+												"<div class='legend-item peakLarge'><img src='images/markers/peak.png'/>  &nbsp; &gt; &nbsp;" + sTwoThirdVal + "</div>";
 			}
 			if (lengthPeak < 3) {
-				PeakSummarySymbologyInterior = "<div>" + "<img class='peakMedium' src='images/peak.png'></img>" + "<b>Peak Summary</b>" + "</div>";
+				PeakSummarySymbologyInterior = "<div class='legend-item'><img class='peakMedium' src='images/markers/peak.png'/> Peak Summary</div>";
 			}
 		}
 		// adding the peak and hwm icons to the legend
@@ -2173,8 +2176,9 @@ $(document).ready(function () {
 			//Display no data notice in report if there aren't any peaks or hwms
 			if (peakArrReport == 0 && hwmArrReportCoastal == 0 && hwmArrReportRiverine == 0) {
 				$('#reportSummaryTitle').children().remove();
-				$('#reportSummaryTitle').append("<br><br>" + currentParkOrRefuge + " Summary for " + selectedEvent);
-				$('#reportSummaryNoData').append("No summary data for this site.");
+				$('#reportSummaryTitle').append(currentParkOrRefuge + " Summary for " + selectedEvent);
+				$('#reportSummaryTitle').show();
+				$('#reportSummaryNoData').show();
 			}
 
 			//Sort peak and hwm arrays
@@ -2631,8 +2635,8 @@ $(document).ready(function () {
 			}, 3000);
 
 			setTimeout(() => {
-				document.getElementById('loader').remove();
-				document.getElementById('loadingMessage').remove();
+				document.getElementById('reportLoader').remove();
+				console.log("REMOVED LOADER")
 			}, 3001);
 
 			setTimeout(() => {
@@ -2657,6 +2661,12 @@ $(document).ready(function () {
 		}, 1000);
 
 	};
+
+
+	// Accordion Toggles
+	$(".accordion-header").click(function(){
+		$(this).parent().toggleClass("expanded");
+	});
 
 	/* $('#printModal').bind('load',  function(){
 		reviewMap = L.map('reviewMap').setView([39.833333, -98.583333], 4);
@@ -2969,7 +2979,7 @@ $(document).ready(function () {
 
 		//If using the filter modal, collect input from the filter modal
 		if (runningFilter == true) {
-			$('.eventSelectAlert').hide();
+			$('#filtersModalError').hide();
 			map.fitBounds(usBounds);
 			var siteType = $('#typeSelect_filterModal').val()[0];
 
@@ -3234,7 +3244,7 @@ $(document).ready(function () {
 
 
 	/* legend control */
-	$('#legendButtonNavBar, #legendButtonSidebar').on('click', function () {
+	$('#legendButtonNavBar').on('click', function () {
 		$('#legend').toggle();
 		//return false;
 	});
@@ -3360,8 +3370,10 @@ $(document).ready(function () {
 	//displays map scale on map load
 	//map.on( 'load', function() {
 	map.whenReady(function () {
+		var mapZoom = map.getZoom();
 		var mapScale = scaleLookup(map.getZoom());
 		$('#scale')[0].innerHTML = mapScale;
+		$('.zoom-level').text(mapZoom);
 		console.log('Initial Map scale registered as ' + mapScale, map.getZoom());
 
 		var initMapCenter = map.getCenter();
@@ -3374,7 +3386,7 @@ $(document).ready(function () {
 		var mapZoom = map.getZoom();
 		var mapScale = scaleLookup(mapZoom);
 		$('#scale')[0].innerHTML = mapScale;
-		$('#zoomLevel')[0].innerHTML = mapZoom;
+		$('.zoom-level').text(mapZoom);
 	});
 
 	//updates lat/lng indicator on mouse move. does not apply on devices w/out mouse. removes 'map center' label
@@ -3868,21 +3880,36 @@ function clickPeakLabels() {
 
 //Create legend symbols for each layer
 //PeakSummarySymbologyInterior is found in displayPeaksGeoJSON()
-var streamGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/nwis.png'></img> <b>Real-time Stream Gage</b> </div>";
-var rainGageSymbologyInterior = "<div> <img class='legendSwatch' src='images/rainIcon.png'></img> <b>Real-time Rain Gage<b> </div>";
-var barometricSymbologyInterior = "<div> <img class='legendSwatch' src='images/baro.png'></img> <b>Barometric Pressure Sensor</b> </div>";
-var stormTideSymbologyInterior = "<div> <img class='legendSwatch' src='images/stormtide.png'></img> <b>Storm Tide Sensor</b> </div>";
-var meteorlogicalSymbologyInterior = "<div> <img class='legendSwatch' src='images/met.png'></img> <b>Meteorlogical Sensor</b> </div>";
-var waveHeightSymbologyInterior = "<div> <img class='legendSwatch' src='images/waveheight.png'></img> <b>Wave Height Sensor</b> </div>";
-var rdgSymbologyInterior = "<div> <img class='legendSwatch' src='images/rdg.png'></img> <b>Rapid Deployment Gage</b> </div>";
-var highWaterSymbologyInterior = "<div> <img class='legendSwatch' src='images/hwm.png'></img> <b>High Water Mark</b> </div>";
-var parkBoundsSymbologyInterior = "<div> <img class='squareDiv parkBoundsColor'></img> <b>Park Boundaries</b> </div>";
-var npsNetworksSymbologyInterior = "<div> <img class='squareDiv npsNetColor'></img> <b>NPS Networks</b> </div>";
-var parkTractsSymbologyInterior = "<div> <b>Park Tracts</b> <br> <img class='squareDivInterest federalFeeColor'></img> Federal Land (Fee) <br> <img class='squareDivInterest federalLessFeeColor'></img> Federal Land (Less than Fee) <br> <img class='squareDivInterest publicColor'></img> Public <br> <img class='squareDivInterest privateColor'></img> Private <br> <img class='squareDivInterest otherFederalColor'></img> Other Federal Land <br> <img class='squareDivInterest aquisitionColor'></img> Aquisition Deferred <br> <img class='squareDivInterest noInfoColor'></img> Unknown <div>";
-var approvedFWSSymbologyInterior = "<div> <img class='squareDiv approvedAquiColor'></img> <b>Approved Aquisition Boundaries</b> </div>";
-var interestFWSSymbologyInterior = "<div> <b>Interest Boundaries</b> <br> <img class='squareDivInterest intFee'></img> Fee <br> <img class='squareDivInterest intSecondary'></img> Secondary <br> <img class='squareDivInterest intEasement'></img> Easement <br> <img class='squareDivInterest intLease'></img> Lease <br> <img class='squareDivInterest intAgreement'></img> Agreement <br> <img class='squareDivInterest intPartial'></img> Partial Interest <br> <img class='squareDivInterest intPermit'></img> Permit <br> <img class='squareDivInterest intUnknown'></img> Unknown <div>";
-var doiSymbologyInterior = "<div> <img class='squareDiv doiRegionsColor'></img> <b>DOI Regions</b>";
-var noaaCycloneSymbologyInterior = "<div> <img class='legendSwatch' src='images/noaa.png'></img> <b>NOAA Tropical Cyclone Forecast Track</b> </div>";
+var streamGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/nwis.png'/><b>Real-time Stream Gage</b>";
+var rainGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/rainIcon.png'/><b>Real-time Rain Gage<b>";
+var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
+var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
+var meteorlogicalSymbologyInterior = "<img class='legendSwatch' src='images/markers/met.png'/><b>Meteorlogical Sensor</b>";
+var waveHeightSymbologyInterior = "<img class='legendSwatch' src='images/markers/waveheight.png'/><b>Wave Height Sensor</b>";
+var rdgSymbologyInterior = "<img class='legendSwatch' src='images/markers/rdg.png'/><b>Rapid Deployment Gage</b>";
+var highWaterSymbologyInterior = "<img class='legendSwatch' src='images/markers/hwm.png'/><b>High Water Mark</b>";
+var parkBoundsSymbologyInterior = "<img class='square-legend parkBoundsColor'/><b>Park Boundaries</b>";
+var npsNetworksSymbologyInterior = "<img class='square-legend npsNetColor'/><b>NPS Networks</b>";
+var parkTractsSymbologyInterior = "<label>Park Tracts</label>" + 
+									"<div class='legend-item'><img class='square-legend-interest federalFeeColor'/> Federal Land (Fee)</div>" +
+									"<div class='legend-item'><img class='square-legend-interest federalLessFeeColor'/> Federal Land (Less than Fee)</div>" + 
+									"<div class='legend-item'><img class='square-legend-interest publicColor'/> Public</div>" + 
+									"<div class='legend-item'><img class='square-legend-interest privateColor'/> Private</div>" +
+									"<div class='legend-item'><img class='square-legend-interest otherFederalColor'/> Other Federal Land</div>" +
+									"<div class='legend-item'><img class='square-legend-interest aquisitionColor'/> Aquisition Deferred</div>" +
+									"<div class='legend-item'</div><img class='square-legend-interest noInfoColor'/> Unknown <div>";
+var approvedFWSSymbologyInterior = "<img class='square-legend approvedAquiColor'/><b>Approved Aquisition Boundaries</b>";
+var interestFWSSymbologyInterior = "<label>Interest Boundaries</label>"+
+									"<div class='legend-item'><img class='square-legend-interest intFee'/> Fee</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intSecondary'/> Secondary</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intEasement'/> Easement</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intLease'/> Lease</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intAgreement'/> Agreement</div>" + 
+									"<div class='legend-item'><img class='square-legend-interest intPartial'/> Partial Interest</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intPermit'/> Permit</div>" +
+									"<div class='legend-item'><img class='square-legend-interest intUnknown'/> Unknown <div>";
+var doiSymbologyInterior = "<img class='square-legend doiRegionsColor'/> <b>DOI Regions</b>";
+var noaaCycloneSymbologyInterior = "<img class='legendSwatch' src='images/markers/noaa.png'/> <b>NOAA Tropical Cyclone Forecast Track</b>";
 
 //Display peak layer and legend item when peak box is checked
 function clickPeaks() {

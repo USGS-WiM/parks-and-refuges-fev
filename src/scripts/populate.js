@@ -121,10 +121,6 @@ $(document).ready(function () {
     $('.typeSelect').append('<option value="NPS">' + 'NPS' + '</option>');
     $('.typeSelect').append('<option value="NWR">' + 'NWR' + '</option>');
 
-    $('#typeSelect_regionalModal').change(function () {
-
-    });
-
     // Lands type selector
     $('.typeSelectFilter').select2({
         placeholder: 'Select a type',

@@ -1,0 +1,223 @@
+/* 
+//////////////////////// 
+Misc elements throughout the app 
+
+	1. Misc blocks for random elements - didn't really belong anywhere else
+	2. Geosearch Modal
+	3. Accordion Toggles
+	4. Progress Bar
+	
+//////////////////////// 
+*/
+
+/*
+//////////////////////// 
+Misc Styles 
+//////////////////////// 
+*/
+.far,.fal,.fas,.fab{
+	text-decoration: none !important;
+	text-decoration-color: transparent !important;
+}
+i{
+	text-decoration-color: transparent !important;
+	text-decoration: none !important;
+}
+/* Regional map container in modal */
+#regionalMap{
+	width: 100%;
+	min-width: 100%;
+	max-width: none;
+	height: 50vh;
+}
+
+/* Small Loading element in modals */
+.modal-loader{
+    background-image: url('https://wim.usgs.gov/website-assets/branding/usgsanimated.svg');
+	background-size: 100px auto;
+	background-position: center center;
+	background-repeat: no-repeat;
+	filter: invert(100%);
+	height: 120px;
+	width: 100%;
+	display: block;
+}
+/* Report Loader */
+.report-loader{
+	display: block;
+	text-align: center;
+	width: 100%;
+}
+/*
+/* Report Errors */
+#reportSummaryTitle,
+#reportSummaryNoData{
+	display: none;
+}
+
+/* WIM Credit bottom of about modal */
+#aboutModalWIM{
+	margin: 0;
+	height: 34px;
+	font-weight: 600;
+	font-size: 12px;
+	display: flex;
+	justify-content: flex-start;
+}
+#aboutModalWIMText{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 200px;
+	margin: 0;
+	height: 34px;
+	font-weight: 500;
+	font-size: 12px;
+	line-height: 13px;
+}
+#aboutModalWIM #aboutModalWIMImage{
+	height: 34px;
+	width: auto;
+}
+	#aboutModalWIM #aboutModalWIMImage img{
+		height: 34px;
+		width: auto;
+	}
+
+/*
+//////////////////////// 
+Geosearch Styles 
+//////////////////////// 
+*/
+/* Nav button to open geosearch - blue bg */
+#geosearchNav{
+	background-color: #2286FB !important;
+	padding: 0 10px;
+}
+/* Search element */
+#searchMap{
+	display: block;
+	width: 100%;
+	overflow: hidden;
+}
+.search-api-container{
+	width: 100% !important;
+}
+
+/* Help - search strings */
+.supported-search-strings{
+	display: block;
+	box-sizing: border-box;
+	padding: 15px 0;
+}
+.supported-search-strings label{
+	text-align: center;
+	display: block;
+	margin-top: 25px;
+}
+
+.supported-search-strings ul{
+	list-style-type: none;
+	display: flex;
+	flex-wrap: wrap;
+	padding: 6px 0 0 0;
+	margin: 0;
+	justify-content: space-between;
+}
+.supported-search-strings ul li{
+	margin: 2px 8px;
+	font-family: monospace;
+	font-size: 12px;
+}
+small.credit{
+	display: block;
+	text-align: center;
+	font-size: 11.5px;
+	opacity: 0.75;
+}
+
+/*
+//////////////////////// 
+Accordion Styles 
+//////////////////////// 
+*/
+.accordion{
+	display: block;
+	margin: 5px 0;
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+	.accordion .accordion-header{
+		display: block;
+		width: 100%;
+		font-size: 14px;
+		padding: 2px 0 5px 0;
+		font-weight: 500;
+		color: black;
+	}
+		.accordion .accordion-header:before{
+			content: '\f32d';
+			font-family: 'Font Awesome 5 Pro';
+			transform: scale(1.1);
+			padding-right: 6px;
+			display: inline-block;
+			font-weight: 500;
+		}
+		.accordion .accordion-header:hover{
+			cursor: pointer;
+			text-decoration: underline;
+		}
+	.accordion-body{
+		box-sizing: border-box;
+		padding: 0 0;
+		overflow: hidden;
+		max-height: 0px;
+		transition: 0.4s ease;
+	}
+	.accordion.expanded .accordion-header:before{
+		content: '\f331';
+	}
+	.accordion.expanded .accordion-body{
+		padding: 5px 10px 5px 16px;
+		max-height: 900px;
+		transition: 0.4s ease;
+	}
+/* Large Accorrdion */
+.accordion.large{
+	margin: 10px 0;
+}
+	.accordion.large .accordion-header{
+		font-size: 20px;
+		padding: 5px 0 15px 0;
+		font-weight: 600;
+	}
+		.accordion.large .accordion-header:before{
+			padding-right: 10px;
+		}
+	.accordion-body{
+		padding: 0 10px;
+	}
+	.accordion.large.expanded .accordion-body{
+		padding: 10px 10px;
+	}
+
+/*
+//////////////////////// 
+Progress Bar 
+//////////////////////// 
+*/
+.progress-bar {
+    width: calc(100% - 6px);
+    height: 12px;
+	background: rgba(82, 143, 250, 0.36);
+	box-shadow: none;
+	border: none;
+	display: block !important;
+	width: 100%;
+}
+
+.progress-bar-fill {
+    display: block;
+    height: 12px;
+    background: #1b6cf9;
+    transition: width 18s ease-in-out;
+}

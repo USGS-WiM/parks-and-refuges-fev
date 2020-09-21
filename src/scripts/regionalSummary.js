@@ -39,13 +39,13 @@ var regionalbaroQueried = L.layerGroup();
 var regionalstormtide = L.layerGroup();
 var regionalmet = L.layerGroup();
 var regionalwaveheight = L.layerGroup();
-var regionalPeakMarkerIcon = L.icon({ className: 'regionalpeakMarker', iconUrl: 'images/peak.png', iconAnchor: [12, 16], popupAnchor: [0, 2] });
-var regionalhwmIcon = L.icon({ className: 'regionalhwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
-var regionalbaroMarkerIcon = L.icon({ className: 'regionalbaroMarker', iconUrl: 'images/baro.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
-var regionalmetMarkerIcon = L.icon({ className: 'regionalmetMarker', iconUrl: 'images/met.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
-var regionalrdgMarkerIcon = L.icon({ className: 'regionalrdgMarker', iconUrl: 'images/rdg.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
-var regionalstormtideMarkerIcon = L.icon({ className: 'regionalstormtideMarker', iconUrl: 'images/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
-var regionalwaveheightMarkerIcon = L.icon({ className: 'regionalwaveheightMarker', iconUrl: 'images/waveheight.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12, 12] });
+var regionalPeakMarkerIcon = L.icon({ className: 'regionalpeakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [12, 16], popupAnchor: [0, 2] });
+var regionalhwmIcon = L.icon({ className: 'regionalhwmMarker', iconUrl: 'images/markers/markers/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var regionalbaroMarkerIcon = L.icon({ className: 'regionalbaroMarker', iconUrl: 'images/markers/baro.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var regionalmetMarkerIcon = L.icon({ className: 'regionalmetMarker', iconUrl: 'images/markers/met.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var regionalrdgMarkerIcon = L.icon({ className: 'regionalrdgMarker', iconUrl: 'images/markers/rdg.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var regionalstormtideMarkerIcon = L.icon({ className: 'regionalstormtideMarker', iconUrl: 'images/markers/stormtide.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var regionalwaveheightMarkerIcon = L.icon({ className: 'regionalwaveheightMarker', iconUrl: 'images/markers/waveheight.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [12, 12] });
 var regionParksFC = [];
 var tableData = [];
 var hwmTableData = [];
@@ -860,33 +860,33 @@ function displayRegionalRtGageReport(regionalStreamGages) {
                         if (feature.properties.peak_stage < thirdVal) {
                             var marker =
                                 L.marker(latlng, {
-                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
+                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [7, 10] })
                                 }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                         }
                         if (thirdVal <= feature.properties.peak_stage && feature.properties.peak_stage <= twoThirdVal) {
                             var marker =
                                 L.marker(latlng, {
-                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
                                 }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                         }
                         if (feature.properties.peak_stage > twoThirdVal) {
                             var marker =
                                 L.marker(latlng, {
-                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
+                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [15, 22] })
                                 }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                         }
                         //undefined peak receive a medium sized blue label with a 'No Value' label
                         else {
                             var marker =
                                 L.marker(latlng, {
-                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                                    icon: L.icon({ className: 'peakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
                                 }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                         }
                     }
                     if (sortedPeaks.length < 3) {
                         var marker =
                             L.marker(latlng, {
-                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
+                                icon: L.icon({ className: 'peakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [11, 16] })
                             }).bindLabel("Peak: " + labelText + "<br>Site: " + feature.properties.site_no);
                     }
                     return marker;
@@ -1960,7 +1960,7 @@ function clearRegOutput() {
     hwmsWithinBuffer = L.featureGroup();
     regionalPeak = L.layerGroup();
     regionalHWM = L.layerGroup();
-    regionalPeakMarkerIcon = L.icon({ className: 'regionalpeakMarker', iconUrl: 'images/peak.png', iconAnchor: [12, 16], popupAnchor: [0, 2] });
+    regionalPeakMarkerIcon = L.icon({ className: 'regionalpeakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [12, 16], popupAnchor: [0, 2] });
     regionalhwmIcon = L.icon({ className: 'regionalhwmMarker', iconUrl: 'images/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 
     // resetting the arrays
