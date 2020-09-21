@@ -349,25 +349,21 @@ $(document).ready(function () {
             var length = regionParksFC.length;
             length = length - 1;
             for (var p = 0; p < regionParksFC.length; p++) {
-                if (regionParksFC[p].properties.OBJECTID !== 1) {
-                    if (regionParksFC[p].properties.OBJECTID !== 53) {
-                        if (regionParksFC[p].properties.OBJECTID !== 529) {
-                            var options = { tolerance: 0.5, highQuality: false, mutate: true };
-                            //var flatten = turf.flatten(regionParksFC[p]);
+                if (regionParksFC[p].properties.OBJECTID !== 169) {
+                    var options = { tolerance: 0.5, highQuality: false, mutate: true };
+                    //var flatten = turf.flatten(regionParksFC[p]);
 
-                            var cleanCoords = turf.cleanCoords(regionParksFC[p].geometry);
-                            var feat = { 'type': regionParksFC[p].geometry.type, 'properties': regionParksFC[p].properties, 'coordinates': cleanCoords.coordinates };
-                            // Use console.log below to identify polys causing failure. Turf will fail immediately after the bad poly
-                            //console.log(feat);
-                            if (feat.properties.OBJECTID !== 456) {
-                                var simplify = turf.simplify(feat, options);
-                                simplifiedSites.push(simplify);
-                            }
+                    var cleanCoords = turf.cleanCoords(regionParksFC[p].geometry);
+                    var feat = { 'type': regionParksFC[p].geometry.type, 'properties': regionParksFC[p].properties, 'coordinates': cleanCoords.coordinates };
+                    // Use console.log below to identify polys causing failure. Turf will fail immediately after the bad poly
+                    //console.log(feat);
+                    if (feat.properties.OBJECTID !== 456) {
+                        var simplify = turf.simplify(feat, options);
+                        simplifiedSites.push(simplify);
+                    }
 
-                            if (p === length) {
-                                getbuffers();
-                            }
-                        }
+                    if (p === length) {
+                        getbuffers();
                     }
                 }
             };
