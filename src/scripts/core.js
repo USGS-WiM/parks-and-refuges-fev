@@ -1017,7 +1017,7 @@ $(document).ready(function () {
 	function getRegionalMap() {
 		let mapPane;
 		//mapPane = $('.leaflet-map-pane')[0];
-		mapPane = $('#regionalMapContainer')[0].children[0].children[0];
+		mapPane = $('#regionalMap')[0].children[0];
 		const mapTransform = mapPane.style.transform.split(',');
 		let mapX;
 
@@ -1144,6 +1144,7 @@ $(document).ready(function () {
 		var sumHeaders = [];
 		// Get table values from summary information table
 		function summaryInfo() {
+			sumHeaders = [];
 			summaryRows = [];
 			$('#summaryDataTableEOne th').each(function (index, item) {
 				sumHeaders[index] = $(item).html();
@@ -1158,6 +1159,7 @@ $(document).ready(function () {
 			return summaryRows;
 		};
 		function summaryPeaksRangeInfo() {
+			sumHeaders = [];
 			summaryRows = [];
 			$('#eventsSummaryTable th').each(function (index, item) {
 				sumHeaders[index] = $(item).html();
@@ -1172,6 +1174,7 @@ $(document).ready(function () {
 			return summaryRows;
 		};
 		function summaryInfoTwo() {
+			sumHeaders = [];
 			summaryRows = [];
 			$('#summaryDataTableETwo th').each(function (index, item) {
 				sumHeaders[index] = $(item).html();
@@ -1186,6 +1189,8 @@ $(document).ready(function () {
 			return summaryRows;
 		};
 		function summaryPeakInfo() {
+			peakSummaryRows = [];
+			sumHeaders = [];
 			$('#siteSummaryPeakDataTableEOne th').each(function (index, item) {
 				sumHeaders[index] = $(item).html();
 			});
@@ -1199,6 +1204,7 @@ $(document).ready(function () {
 			return peakSummaryRows;
 		};
 		function summaryPeakInfoTwo() {
+			sumHeaders = [];
 			peakSummaryRows = [];
 			$('#siteSummaryPeakDataTableETwo th').each(function (index, item) {
 				sumHeaders[index] = $(item).html();
@@ -1213,6 +1219,8 @@ $(document).ready(function () {
 			return peakSummaryRows;
 		};
 		function summaryHWMInfo() {
+			hwmSummaryRows = [];
+			sumHeaders = [];
 			$('#siteSummaryHWMDataTableEOne th').each(function (index, item) {
 				sumHeaders[index] = $(item).html();
 			});
@@ -1226,6 +1234,7 @@ $(document).ready(function () {
 			return hwmSummaryRows;
 		};
 		function summaryHWMInfoTwo() {
+			sumHeaders = [];
 			hwmSummaryRows = [];
 			$('#siteSummaryHWMDataTableETwo th').each(function (index, item) {
 				sumHeaders[index] = $(item).html();

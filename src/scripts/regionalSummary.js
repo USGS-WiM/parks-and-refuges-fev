@@ -1985,7 +1985,8 @@ function clearRegOutput() {
     hwmSiteSummaries = [];
     totalSites = [];
     siteList = [];
-    eventsPeakRange = []
+    eventsPeakRange = [];
+    selectedEventsNames = [];
 
     alreadyRan = false;
 
@@ -1998,6 +1999,7 @@ function clearRegOutput() {
     document.getElementById('siteSummaryHWMDataTableETwo').innerHTML = '';
     document.getElementById('eventsSummaryTable').innerHTML = '';
     document.getElementById('eventsSummaryTitle').innerHTML = '';
+    eventName = '';
 
     document.querySelector('.progress-bar-fill').style.width = "0%"
     clearSelects()
