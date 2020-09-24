@@ -513,7 +513,7 @@ $(document).ready(function () {
 
 		submitButton.click(function () {
 			siteSelected = true;
-
+			$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
 			//check if an event has been selected
 			if ((($(evtSelect_Modal_Primary).val() !== null) && ($(typeSelect).val() !== null) && ($(siteSelect).val() !== null))) {
 				//if event selected, hide welcome modal and begin filter process
@@ -538,10 +538,10 @@ $(document).ready(function () {
 				filterMapData(eventID, false);
 
 				if (runningFilter == true) {
-					searchComplete(true);
+					searchComplete(true, exploreMap);
 				}
 				if (runningFilter == false) {
-					searchComplete(false);
+					searchComplete(false, exploreMap);
 				}
 			} else {
 				//if no event selected, warn user with alert
@@ -571,9 +571,10 @@ $(document).ready(function () {
 				queryNWISrtGages(bbox);
 				USGSrtGages.addTo(map);
 			}
+
 			//$('siteReportLoading').modal('show');
 			//Give the map elements time to load before creating site report
-			if (exploreMap == false) {
+			/* if (exploreMap == false) {
 				//show load warning message while waiting for layers to load and report to generate
 				$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
 				setTimeout(() => {
@@ -582,7 +583,7 @@ $(document).ready(function () {
 					$('#printModal').modal('show');
 					generateSiteReport();
 				}, 20000);
-			}
+			} */
 		});
 	}
 
@@ -1266,7 +1267,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-						widths: ['auto','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
+					widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
 					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', 'Max Date/Time', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1278,7 +1279,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['auto','auto','auto','auto','auto','auto','auto','auto','auto'],
+					widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
 					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1290,7 +1291,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['auto','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
+					widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
 					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total Peaks', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1314,7 +1315,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['auto','auto','auto','auto','auto','auto','auto','auto','auto', 'auto'],
+					widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
 					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total HWMs', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -1459,7 +1460,7 @@ $(document).ready(function () {
 							{},
 							{ text: 'Latitude (DD)', style: 'tableHeader' }, data[i]['Latitude (DD)'],
 							{ text: 'Longitude (DD)', style: 'tableHeader' }, data[i]['Longitude (DD)']
-							
+
 						],
 						[
 							{},
@@ -1746,10 +1747,10 @@ $(document).ready(function () {
 					//{ image: pdfRegionalMapUrl, width: 300, height: 200, margin: [0,0,0,15] },
 					{ text: 'Region-wide Summary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryTable(summaryInfo()),
-					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
-					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15] },
+					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each ' + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfo()),
-					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
+					{ text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15] },
 					{ text: 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
 					{ text: 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + siteType + ' Boundary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
@@ -1808,16 +1809,16 @@ $(document).ready(function () {
 					summaryEventsTable(summaryPeaksRangeInfo()),
 					{ text: 'Region-wide Summary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryTable(summaryInfo()),
-					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
+					{ text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15] },
 					{ text: 'Region-wide Summary for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryTable(summaryInfoTwo()),
-					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
-					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15] },
+					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each ' + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfo()),
-					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
-					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each '  + siteType + ' for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15] },
+					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each ' + siteType + ' for ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfoTwo()),
-					{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
+					{ text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15] },
 					{ text: 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
 					{ text: 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventTwo, style: 'subHeader', margin: [0, 0, 0, 5] },
@@ -1971,7 +1972,7 @@ $(document).ready(function () {
 		if (document.getElementById('noaaToggle').checked) {
 			$('#noaaToggle').click();
 		}
-		
+
 
 		bufferPeak.addTo(map);
 		//bufferHWM.addTo(map);
@@ -2001,10 +2002,10 @@ $(document).ready(function () {
 		var PeakSummarySymbologyInterior;
 		if (lengthPeak > 0) {
 			if (lengthPeak > 2) {
-				PeakSummarySymbologyInterior = "<label>Peak Summary (ft)</label>" + 
-												"<div class='legend-item peakSmall'><img src='images/markers/peak.png'/> &nbsp; &lt; &nbsp;" + sThirdVal + "</div>" +
-												"<div class='legend-item peakMedium'><img src='images/markers/peak.png'/> " + sThirdVal + " - " + sTwoThirdVal + "</div>" +
-												"<div class='legend-item peakLarge'><img src='images/markers/peak.png'/>  &nbsp; &gt; &nbsp;" + sTwoThirdVal + "</div>";
+				PeakSummarySymbologyInterior = "<label>Peak Summary (ft)</label>" +
+					"<div class='legend-item peakSmall'><img src='images/markers/peak.png'/> &nbsp; &lt; &nbsp;" + sThirdVal + "</div>" +
+					"<div class='legend-item peakMedium'><img src='images/markers/peak.png'/> " + sThirdVal + " - " + sTwoThirdVal + "</div>" +
+					"<div class='legend-item peakLarge'><img src='images/markers/peak.png'/>  &nbsp; &gt; &nbsp;" + sTwoThirdVal + "</div>";
 			}
 			if (lengthPeak < 3) {
 				PeakSummarySymbologyInterior = "<div class='legend-item'><img class='peakMedium' src='images/markers/peak.png'/> Peak Summary</div>";
@@ -2215,8 +2216,8 @@ $(document).ready(function () {
 			getReportSummaryStats(peakArrReport);
 			if (peakArrReport.length > 0) {
 				var maxDate = peaksArray.filter(x => x.peak_stage === maxReport);
-                // setting Max Date
-                maxDate = moment(maxDate[0].peak_date).format("MM/DD/YYYY, h:mm a");
+				// setting Max Date
+				maxDate = moment(maxDate[0].peak_date).format("MM/DD/YYYY, h:mm a");
 				peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(peakSum);
 			}
@@ -2230,8 +2231,8 @@ $(document).ready(function () {
 			hwmSum = {};
 			if (hwmArrReportCoastal.length > 0) {
 				var maxDate = coastalHWMs.filter(x => x.elev_ft === maxReport);
-                // setting Max Date
-                maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
+				// setting Max Date
+				maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
 				hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(hwmSum);
 			}
@@ -2240,8 +2241,8 @@ $(document).ready(function () {
 			hwmSum = {};
 			if (hwmArrReportRiverine.length > 0) {
 				var maxDate = riverineHWMs.filter(x => x.elev_ft === maxReport);
-                // setting Max Date
-                maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
+				// setting Max Date
+				maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
 				hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 				sum.push(hwmSum);
 			}
@@ -2263,9 +2264,9 @@ $(document).ready(function () {
 				standReport = standReport.toFixed(3);
 				medianReport = medianReport.toFixed(3);
 				minReport = minReport.toFixed(2);
-                minReport = Number(minReport);
-                maxReport = maxReport.toFixed(2);
-                maxReport = Number(maxReport);
+				minReport = Number(minReport);
+				maxReport = maxReport.toFixed(2);
+				maxReport = Number(maxReport);
 				confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
 				confIntNinetyLow = confIntNinetyLow.toFixed(3);
 			}
@@ -2364,7 +2365,7 @@ $(document).ready(function () {
 				$("#peakTable").find("p").remove();
 				$("#peakDataTable").empty();
 				setTimeout(() => {
-					$("#peakTable").prepend("<p>" + "<b>" + "<br>" +'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + currentParkOrRefuge + ' Boundary for ' + selectedEvent + "</b>" + "</p>");
+					$("#peakTable").prepend("<p>" + "<b>" + "<br>" + 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + currentParkOrRefuge + ' Boundary for ' + selectedEvent + "</b>" + "</p>");
 					$("#peakTable").append("<p>" + "There are no Peaks at this Site." + "</p>");
 					$(".peaksDisclaimer").hide();
 				}, 3000);
@@ -2432,7 +2433,7 @@ $(document).ready(function () {
 			function buildHwmHtmlTable() {
 				//Empty text from previous report, if was run
 				$("#hwmTable").find("p").remove();
-				$("#hwmTable").prepend("<p>" + "<b>" + "<br>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent  + "</b>" + "</p>")
+				$("#hwmTable").prepend("<p>" + "<b>" + "<br>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent + "</b>" + "</p>")
 
 				//Empty hwm data table from previous report, if it was run
 				$("#hwmDataTable").empty();
@@ -2673,7 +2674,7 @@ $(document).ready(function () {
 
 
 	// Accordion Toggles
-	$(".accordion-header").click(function(){
+	$(".accordion-header").click(function () {
 		$(this).parent().toggleClass("expanded");
 	});
 
@@ -2962,7 +2963,7 @@ $(document).ready(function () {
 	}
 
 	//$('#btnSubmitEvent_filter').click(function() 
-	function searchComplete(runningFilter) {
+	function searchComplete(runningFilter, exploreMap) {
 		bufferPoly = undefined;
 		parks = undefined;
 		refuges = undefined;
@@ -3039,12 +3040,11 @@ $(document).ready(function () {
 						polyDefined = true;
 					}
 					if (polyDefined === true) {
-						getSiteBuffers();
+						getSiteBuffers(exploreMap);
 					}
 				},
 				style: parkStyle
 			}).addTo(map);
-
 		} else if (siteType === "NWR") {
 			where = "ORGNAME=" + name;
 			refuges = L.esri.featureLayer({
@@ -3063,7 +3063,7 @@ $(document).ready(function () {
 						polyDefined = true;
 					}
 					if (polyDefined === true) {
-						getSiteBuffers();
+						getSiteBuffers(exploreMap);
 					}
 				},
 				style: parkStyle
@@ -3098,9 +3098,8 @@ $(document).ready(function () {
 		}
 
 		// account for a search that is not a park or refuge
-		function getSiteBuffers() {
-
-
+		function getSiteBuffers(em) {
+			var exploreMap = em;
 			setTimeout(() => {
 				var buffered;
 				var polysCount;
@@ -3137,45 +3136,48 @@ $(document).ready(function () {
 					},
 				}).addTo(map);
 
-				// cycling through each peak and seeing if it's inside the buffer
-				for (var i in peak._layers) {
+				getEachDataSection(bufferPoly.getLayers());
 
-					// formatting point for turf
-					var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
+				function getEachDataSection() {
+					// cycling through each peak and seeing if it's inside the buffer
+					for (var i in peak._layers) {
 
-					var isItInside = turf.booleanPointInPolygon(cords, buffer);
+						// formatting point for turf
+						var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
 
-					// if true add it to an array containing all the 'true' peaks
-					if (isItInside) {
-						//only include the peaks that have values that aren't undefined
-						if (peak._layers[i].feature.properties.peak_stage != undefined) {
-							identifiedPeaks.push(peak._layers[i])
-							peak._layers[i].addTo(bufferPeak);
+						var isItInside = turf.booleanPointInPolygon(cords, buffer);
+
+						// if true add it to an array containing all the 'true' peaks
+						if (isItInside) {
+							//only include the peaks that have values that aren't undefined
+							if (peak._layers[i].feature.properties.peak_stage != undefined) {
+								identifiedPeaks.push(peak._layers[i])
+								peak._layers[i].addTo(bufferPeak);
+							}
+						}
+					}
+
+					//cycling through each HWM to see if inside the buffer
+					for (var i in hwm._layers) {
+						var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
+						var isItInside = turf.booleanPointInPolygon(cords, buffer);
+						if (isItInside) {
+							//only include the hwms that have values
+							if (hwm._layers[i].feature.properties.elev_ft != undefined) {
+								identifiedMarks.push(hwm._layers[i])
+								hwm._layers[i].addTo(bufferHWM);
+							}
+						}
+					}
+
+					for (var i in stormtide._layers) {
+						var cords = ([stormtide._layers[i]._latlng.lng, stormtide._layers[i]._latlng.lat]);
+						var isItInside = turf.booleanPointInPolygon(cords, buffer);
+						if (isItInside) {
+							identifiedST.push(stormtide._layers[i])
 						}
 					}
 				}
-
-				//cycling through each HWM to see if inside the buffer
-				for (var i in hwm._layers) {
-					var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
-					var isItInside = turf.booleanPointInPolygon(cords, buffer);
-					if (isItInside) {
-						//only include the hwms that have values
-						if (hwm._layers[i].feature.properties.elev_ft != undefined) {
-							identifiedMarks.push(hwm._layers[i])
-							hwm._layers[i].addTo(bufferHWM);
-						}
-					}
-				}
-
-				for (var i in stormtide._layers) {
-					var cords = ([stormtide._layers[i]._latlng.lng, stormtide._layers[i]._latlng.lat]);
-					var isItInside = turf.booleanPointInPolygon(cords, buffer);
-					if (isItInside) {
-						identifiedST.push(stormtide._layers[i])
-					}
-				}
-
 
 				if (runningFilter == true) {
 					//if the event is changed in the filters modal, the checkbox/legend symbols must be reset
@@ -3225,7 +3227,17 @@ $(document).ready(function () {
 				if (siteSelected == true) {
 					document.getElementById("printNav").disabled = false;
 				}
+
+				if (exploreMap == false) {
+					//show load warning message while waiting for layers to load and report to generate
+					$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
+					//remove loading message, show site report modal
+					$('#siteReportLoading').modal('hide');
+					$('#printModal').modal('show');
+					generateSiteReport();
+				}
 			}, 1000);
+			$('#siteReportLoading').modal('hide');
 			//$(inputModal).modal('hide');
 		}
 	};
@@ -3678,7 +3690,7 @@ $(document).ready(function () {
 			return {
 				table: {
 					headerRows: 1,
-					widths: ['*','auto','auto','auto','auto','auto','auto','auto','auto','auto'],
+					widths: ['*', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
 					body: buildSummaryBody(data, ['Type', 'Total Sites', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', 'Max Date/Time', '90% Conf Low', '90% Conf High']),
 				},
 				layout: 'lightHorizontalLines',
@@ -3795,7 +3807,7 @@ $(document).ready(function () {
 				summaryTable(reportSummaryInfo()),
 				{ text: 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + currentParkOrRefuge + ' Boundary for ' + selectedEvent, style: 'subHeader', margin: [0, 0, 0, 5] },
 				peakTable(bodyData()),
-				{text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15]},
+				{ text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15] },
 				{ text: 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent, style: 'subHeader', margin: [0, 0, 0, 15] },
 				hwmTable(),
 			],
@@ -3899,24 +3911,24 @@ var rdgSymbologyInterior = "<img class='legendSwatch' src='images/markers/rdg.pn
 var highWaterSymbologyInterior = "<img class='legendSwatch' src='images/markers/hwm.png'/><b>High Water Mark</b>";
 var parkBoundsSymbologyInterior = "<img class='square-legend parkBoundsColor'/><b>Park Boundaries</b>";
 var npsNetworksSymbologyInterior = "<img class='square-legend npsNetColor'/><b>NPS Networks</b>";
-var parkTractsSymbologyInterior = "<label>Park Tracts</label>" + 
-									"<div class='legend-item'><img class='square-legend-interest federalFeeColor'/> Federal Land (Fee)</div>" +
-									"<div class='legend-item'><img class='square-legend-interest federalLessFeeColor'/> Federal Land (Less than Fee)</div>" + 
-									"<div class='legend-item'><img class='square-legend-interest publicColor'/> Public</div>" + 
-									"<div class='legend-item'><img class='square-legend-interest privateColor'/> Private</div>" +
-									"<div class='legend-item'><img class='square-legend-interest otherFederalColor'/> Other Federal Land</div>" +
-									"<div class='legend-item'><img class='square-legend-interest aquisitionColor'/> Aquisition Deferred</div>" +
-									"<div class='legend-item'</div><img class='square-legend-interest noInfoColor'/> Unknown <div>";
+var parkTractsSymbologyInterior = "<label>Park Tracts</label>" +
+	"<div class='legend-item'><img class='square-legend-interest federalFeeColor'/> Federal Land (Fee)</div>" +
+	"<div class='legend-item'><img class='square-legend-interest federalLessFeeColor'/> Federal Land (Less than Fee)</div>" +
+	"<div class='legend-item'><img class='square-legend-interest publicColor'/> Public</div>" +
+	"<div class='legend-item'><img class='square-legend-interest privateColor'/> Private</div>" +
+	"<div class='legend-item'><img class='square-legend-interest otherFederalColor'/> Other Federal Land</div>" +
+	"<div class='legend-item'><img class='square-legend-interest aquisitionColor'/> Aquisition Deferred</div>" +
+	"<div class='legend-item'</div><img class='square-legend-interest noInfoColor'/> Unknown <div>";
 var approvedFWSSymbologyInterior = "<img class='square-legend approvedAquiColor'/><b>Approved Aquisition Boundaries</b>";
-var interestFWSSymbologyInterior = "<label>Interest Boundaries</label>"+
-									"<div class='legend-item'><img class='square-legend-interest intFee'/> Fee</div>" +
-									"<div class='legend-item'><img class='square-legend-interest intSecondary'/> Secondary</div>" +
-									"<div class='legend-item'><img class='square-legend-interest intEasement'/> Easement</div>" +
-									"<div class='legend-item'><img class='square-legend-interest intLease'/> Lease</div>" +
-									"<div class='legend-item'><img class='square-legend-interest intAgreement'/> Agreement</div>" + 
-									"<div class='legend-item'><img class='square-legend-interest intPartial'/> Partial Interest</div>" +
-									"<div class='legend-item'><img class='square-legend-interest intPermit'/> Permit</div>" +
-									"<div class='legend-item'><img class='square-legend-interest intUnknown'/> Unknown <div>";
+var interestFWSSymbologyInterior = "<label>Interest Boundaries</label>" +
+	"<div class='legend-item'><img class='square-legend-interest intFee'/> Fee</div>" +
+	"<div class='legend-item'><img class='square-legend-interest intSecondary'/> Secondary</div>" +
+	"<div class='legend-item'><img class='square-legend-interest intEasement'/> Easement</div>" +
+	"<div class='legend-item'><img class='square-legend-interest intLease'/> Lease</div>" +
+	"<div class='legend-item'><img class='square-legend-interest intAgreement'/> Agreement</div>" +
+	"<div class='legend-item'><img class='square-legend-interest intPartial'/> Partial Interest</div>" +
+	"<div class='legend-item'><img class='square-legend-interest intPermit'/> Permit</div>" +
+	"<div class='legend-item'><img class='square-legend-interest intUnknown'/> Unknown <div>";
 var doiSymbologyInterior = "<img class='square-legend doiRegionsColor'/> <b>DOI Regions</b>";
 var noaaCycloneSymbologyInterior = "<img class='legendSwatch' src='images/markers/noaa.png'/> <b>NOAA Tropical Cyclone Forecast Track</b>";
 
