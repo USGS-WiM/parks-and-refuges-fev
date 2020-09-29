@@ -1,0 +1,149 @@
+.custom-table {
+	border-spacing: 0px;
+	border-collapse: collapse;
+	width: 100%;
+	max-width: 100%;
+	margin-bottom: 15px;
+	background-color: transparent;
+	text-align: left;
+	font-size: 14px;
+	line-height: 17px;
+	word-break: break-word;
+}
+
+.custom-table tr {
+	width: 100%;
+}
+
+.custom-table th {
+	font-weight: bold;
+	border: 1px solid rgba(0,0,0,0.1);
+	padding: 6px 6px;
+	box-sizing: border-box;
+	vertical-align: middle;
+	white-space: pre;
+}
+
+.custom-table td {
+	border: 1px solid rgba(0,0,0,0.1);
+	vertical-align: middle;
+	padding: 6px;
+	box-sizing: border-box;
+	white-space: pre;
+}
+
+.custom-table tr th {
+	background-color: rgba(0,0,0,0.04);
+}
+
+.custom-table th.center,
+  .custom-table td.center {
+	text-align: center;
+}
+
+.custom-table th.right,
+  .custom-table td.right {
+	text-align: right;
+}
+
+.custom-table .cell-block {
+	display: block;
+	padding: 4px 0;
+}
+
+.custom-table .cell-citation {
+	display: block;
+}
+
+.custom-table .cell-citation:not(:first-child) {
+	padding-top: 4px;
+}
+
+.custom-table .cell-citation div, .custom-table .cell-citation small {
+	display: block;
+}
+
+.custom-table .cell-citation small {
+	opacity: 0.9;
+	font-size: 13.5px;
+}
+
+.custom-table .cell-buttons {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
+	text-align: center;
+}
+
+.custom-table .cell-buttons button {
+	margin: 4px auto;
+}
+
+.custom-table.table-striped tr {
+	background-color: transparent;
+}
+
+.custom-table.table-striped tr:nth-of-type(2n+1) {
+	background-color: rgba(0,0,0,0.025);
+}
+
+.custom-table.table-condensed {
+	font-size: 13px;
+	line-height: 14px;
+}
+
+.custom-table.table-condensed th {
+	padding: 2px;
+}
+
+.custom-table.table-condensed td {
+	padding: 2px;
+}
+
+.custom-table.table-hover-rows tr:hover {
+	background-color: rgba(0,0,0,0.05);
+	cursor: pointer;
+}
+
+.custom-table.table-hover-rows tr:hover td {
+	border-color: #C0C5CE;
+}
+
+.custom-table.table-scroll {
+	display: flex;
+	flex-direction: column;
+}
+
+.custom-table.table-scroll thead {
+	display: table;
+	width: 100%;
+}
+
+.custom-table.table-scroll tbody {
+	width: 100%;
+	flex-grow: 3;
+	overflow: auto;
+}
+
+.custom-table.table-scroll tbody:after{
+	content: '\00a0';
+	font-size: 0;
+	height: 30px;
+}
+
+.custom-table.table-borderless {
+	font-weight: bold;
+}
+
+.custom-table.table-borderless th {
+	border: none;
+	padding: 6px 0;
+}
+
+.custom-table.table-borderless td {
+	padding: 6px 0;
+	border: none;
+}
+

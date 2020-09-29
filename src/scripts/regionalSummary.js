@@ -162,7 +162,8 @@ $(document).ready(function () {
         $('#bufferSelect_regionalModal').attr('disabled', true);
 
         // filling progress bar as visual aid to user that report is generating
-        document.querySelector('.progress-bar-fill').style.width = "100%";
+		$(".progress-bar").addClass("fill");
+		
 
         // todo: make this set to variable
 
@@ -1863,7 +1864,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     });
 
     $('#btnClearRegFilters').click(function () {
-        clearRegOutput()
+		clearRegOutput();
+		$(".progress-bar").removeClass("fill");
     });
 
     //Clear regional report output when modal is closed by clicking the 'Close' button
@@ -2001,7 +2003,7 @@ function clearRegOutput() {
     document.getElementById('eventsSummaryTitle').innerHTML = '';
     eventName = '';
 
-    document.querySelector('.progress-bar-fill').style.width = "0%"
+	$(".progress-bar").removeClass("fill");
     clearSelects()
     // adding the basemap back to the map
     setTimeout(() => {

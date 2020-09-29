@@ -2040,11 +2040,16 @@ $(document).ready(function () {
 				stArray.push(st.feature.properties);
 			});
 
+
+			$("#stormTideHeader").addClass("no-data");
+
 			let result = peaksArray.map(a => ({ ...stArray.find(p => a.site_no === p.site_no), ...a }));
 			result.forEach(function (st) {
 				var instrumentID = st.instrument_id;
 				var url = "https://stn.wim.usgs.gov/STNServices/Instruments/" + instrumentID + "/Files.json";
 				var data;
+
+
 
 				$.ajax({
 					url: url,
@@ -2053,10 +2058,9 @@ $(document).ready(function () {
 					headers: { 'Accept': '*/*' },
 					success: function (data) {
 						var hydrographURL = '';
-						var containsHydrograph = false;
 						for (var i = 0; i < data.length; i++) {
 							if (data[i].filetype_id === 13) {
-								containsHydrograph = true;
+								$("#stormTideHeader").removeClass("no-data");
 								hydrographURL = "https://stn.wim.usgs.gov/STNServices/Files/" + data[i].file_id + "/Item";
 								$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
 								//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
@@ -2182,12 +2186,12 @@ $(document).ready(function () {
 			console.log(hwmArrReportRiverine);
 
 
-			//Display no data notice in report if there aren't any peaks or hwms
+			//Grey out summary if there aren't any peaks or hwms
 			if (peakArrReport == 0 && hwmArrReportCoastal == 0 && hwmArrReportRiverine == 0) {
-				$('#reportSummaryTitle').children().remove();
-				$('#reportSummaryTitle').append(currentParkOrRefuge + " Summary for " + selectedEvent);
-				$('#reportSummaryTitle').show();
-				$('#reportSummaryNoData').show();
+				$('#summaryDataHeader').addClass("no-data");
+			}else{
+				// Else expand summary by default
+				$("#summaryDataHeader").parent().toggleClass("expanded");
 			}
 
 			//Sort peak and hwm arrays
@@ -2359,14 +2363,13 @@ $(document).ready(function () {
 
 			if (peakTableData.length > 0) {
 				buildHtmlTable();
-				$(".peaksDisclaimer").show();
 			} else {
 				$("#peakTable").find("p").remove();
 				$("#peakDataTable").empty();
+				$("#peakDataHeader").addClass("no-data");
 				setTimeout(() => {
 					$("#peakTable").prepend("<p>" + "<b>" + "<br>" +'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + currentParkOrRefuge + ' Boundary for ' + selectedEvent + "</b>" + "</p>");
 					$("#peakTable").append("<p>" + "There are no Peaks at this Site." + "</p>");
-					$(".peaksDisclaimer").hide();
 				}, 3000);
 			}
 
@@ -2475,9 +2478,9 @@ $(document).ready(function () {
 			} else {
 				$("#hwmTable").find("p").remove();
 				$("#hwmDataTable").empty();
+				$("#hwmDataHeader").addClass("no-data");
 				setTimeout(() => {
 					$("#hwmTable").prepend("<p>" + "<b>" + "<br>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent + "</b>" + "</p>");
-					$("#hwmTable").append("<p>" + "There are no High Water Marks at this Site." + "</p>");
 				}, 3000);
 			}
 
