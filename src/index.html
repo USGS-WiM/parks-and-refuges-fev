@@ -200,7 +200,7 @@
         <div class="modal-wrapper">
             <div class="modal-content">
                 <div class="modal-top">
-                    <b>Filters</b>
+                    <b>Site Query</b>
 				</div>
 				<!-- Body -->
                 <div class="modal-body">
@@ -269,9 +269,9 @@
 				</div>
 				<!-- Footer -->
 				<div class="modal-buttons between">
-					<button type="submit" class="dismissbuttonfilter" data-dismiss="modal">Dismiss</button>
-					<div class="modal-button-spacer"></div>
+					<!-- <button type="submit" class="dismissbuttonfilter" data-dismiss="modal">Dismiss</button> -->
 					<button id="btnSubmitEvent_filter" class="black" aria-hidden="true">Explore Map</button>
+					<div class="modal-button-spacer"></div>
 					<button id="btnActiveSiteReport" class="blue" aria-hidden="true">Generate Report</button>
                 </div>
             </div><!-- /.modal-content -->
@@ -443,7 +443,7 @@
 						<form class="modal-form" role="form" id="regionalForm">
 							<!-- Lands Type -->
 							<div class="form-item small">
-								<label for="typeSelect_regionalModal">Lands Type:</label>
+								<label for="typeSelect_regionalModal">Lands Type</label>
 								<select id="typeSelect_regionalModal" class="typeSelect" multiple="multiple"onchange="formReady()"></select>
 							</div>
 							<!-- Region -->
@@ -453,7 +453,7 @@
 							</div>
 							<!-- Event -->
 							<div class="form-item small">
-								<label for="evtSelect_regionalModal">Event:</label>
+								<label for="evtSelect_regionalModal">Event</label>
 								<select id="evtSelect_regionalModal" class="evtSelectRegional" multiple onchange="formReady()"></select>
 							</div>
 							<!-- Buffer Size -->
@@ -493,7 +493,7 @@
 						<div class="form-error-wrapper" id="noResultsText">
 							<div class="form-error warn" role="alert">
 								<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
-								<span>Data are currently not available. Please try again later</span>
+								<span>Data are currently not available. Please try again later.</span>
 							</div>
 						</div>
 
@@ -892,9 +892,6 @@
                     <button id="printNav" class="blue" disabled>
                         <span id="printButtonText">Print Site Report</span>
                     </button>
-                    <button id="btnChangeFilters" class="blue">
-						<span id="queryButtonText">Query a New Site</span>
-					</button>
 
                     <button id="btnStartOver" class="red">
 						<span id="startOverButtonText">Start Over</span>

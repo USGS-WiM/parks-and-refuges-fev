@@ -2712,11 +2712,6 @@ $(document).ready(function () {
 		//$('#updateFiltersModal').modal('show');
 		$('#updateFiltersModal').modal('show');
 	}
-	$('#btnChangeFilters').click(function () {
-		//update the event select within the filters modal to reflect current event
-		$('#evtSelect_filterModal').val([fev.vars.currentEventID_str]).trigger("change");
-		showFiltersModal();
-	});
 	$('#btnStartOver').click(function () {
 		$('#welcomeModal').modal('show');
 	});

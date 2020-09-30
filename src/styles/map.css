@@ -272,7 +272,6 @@ Legend
 .peakSmall,
 .peakMedium,
 .peakLarge{
-	padding-left: 15px !important;
 }
 .peakSmall img{
 	padding: 5px 6px;
@@ -283,6 +282,9 @@ Legend
 .peakLarge{
 	border-bottom: 1px solid rgba(0,0,0,0.2);
 	margin-bottom: 4px;
+}
+.peakLarge img{
+	padding: 0 3px;
 }
 
 .nwis-link {
@@ -301,4 +303,15 @@ Legend
     /*font-family: 'Merriweather', serif;*/
     font-family: 'Open Sans', sans-serif;
     font-weight: 700;
+}
+
+
+/* Make hwm square a diamond */
+#highWaterSymbology img{
+	padding: 0 3px !important;
+}
+
+.hydroImage{
+	height:auto;
+	width:100%;
 }
