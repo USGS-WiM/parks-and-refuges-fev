@@ -344,9 +344,9 @@ $(document).ready(function () {
             }
             allSites = L.esri.featureLayer({
                 //useCors: false,
-                url: 'https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSApproved_Authoritative/FeatureServer/1',
+                url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/Refuges/MapServer/1',
                 where: "FWSREGION='" + siteRegion + "'",
-                fields: ["ORGNAME", "FWSREGION", "OBJECTID", "IFWS"],
+                fields: ["ORGNAME", "FWSREGION", "FID", "IFWS"],
                 style: parkStyle,
                 onEachFeature: function (feature) {
                     regionParksFC.push(feature)
@@ -575,11 +575,11 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 
             $.getJSON(url, function (data) {
                 if (data.length == 0) {
-                    console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+                    //console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
                     return
                 }
                 if (data.features.length > 0) {
-                    console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+                    //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
                     //check for bad lat/lon values
                     for (var i = data.features.length - 1; i >= 0; i--) {
                         //check that lat/lng are not NaN
@@ -850,7 +850,6 @@ function clearRegOutput() {
 
 function createBuffers() {
     var length = regionParksFC.length;
-    console.log(regionParksFC);
     length = length - 1;
     for (var p = 0; p < regionParksFC.length; p++) {
         if (regionParksFC[p].properties.OBJECTID !== 169) {
@@ -860,7 +859,7 @@ function createBuffers() {
             var cleanCoords = turf.cleanCoords(regionParksFC[p].geometry);
             var feat = { 'type': regionParksFC[p].geometry.type, 'properties': regionParksFC[p].properties, 'coordinates': cleanCoords.coordinates };
             // Use console.log below to identify polys causing failure. Turf will fail immediately after the bad poly
-            //console.log(feat);
+            console.log(feat);
             if (feat.properties.OBJECTID !== 456) {
                 var simplify = turf.simplify(feat, options);
                 simplifiedSites.push(simplify);
@@ -1271,11 +1270,11 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
 
     $.getJSON(url, function (data) {
         if (data.length == 0) {
-            console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+            //console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
             return
         }
         if (data.features.length > 0) {
-            console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+            //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
                 //check that lat/lng are not NaN
@@ -1308,7 +1307,7 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
                 // check incase there are any multipolys and convert them to simple polys
                 if (buffer.geometry.type === "MultiPolygon") {
                     var feat;
-
+                    var cords = ([regionalPeak._layers[i]._latlng.lng, regionalPeak._layers[i]._latlng.lat]);
                     buffer.geometry.coordinates.forEach(function (coords) {
                         feat = { 'type': 'Polygon', 'coordinates': coords };
                         if (feat !== undefined) {
@@ -1448,11 +1447,11 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
 
     $.getJSON(url, function (data) {
         if (data.length == 0) {
-            console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+            //console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
             return
         }
         if (data.features.length > 0) {
-            console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+            //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
                 //check that lat/lng are not NaN
