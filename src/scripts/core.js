@@ -668,6 +668,12 @@ $(document).ready(function () {
 		$('#eventNameDisplay').html(eventName);
 		$('#largeEventNameDisplay').html(eventName);
 		$('#largeSiteNameDisplay').html(currentParkOrRefuge);
+		// Show/hide site label if site name exists
+		if(currentParkOrRefuge == ""){
+			$('#sidebarSiteLabel').addClass("hidden");
+		}else{
+			$('#sidebarSiteLabel').removeClass("hidden");
+		}
 		//TODO: determine why this is not working, though its same code and input as in the btnSubmitEvent function above
 		var eventValue = [eventID.toString()];
 		$('#evtSelect_filterModal').val([eventValue]).trigger("change");
@@ -679,8 +685,8 @@ $(document).ready(function () {
 			//if no end date, only show begin date
 			$('#largeEventDateRangeDisplay').html(moment(eventStartDateStr).format("D MMM YYYY"));
 		} else {
-			//if both start and end date, show beginDate thru endDate
-			$('#largeEventDateRangeDisplay').html(moment(eventStartDateStr).format("D MMM YYYY") + " thru " + moment(eventEndDateStr).format("D MMM YYYY"));
+			//if both start and end date, show beginDate - endDate
+			$('#largeEventDateRangeDisplay').html("From <b>" + moment(eventStartDateStr).format("D MMM YYYY") + "</b> to <b>" + moment(eventEndDateStr).format("D MMM YYYY") + "</b>");
 		}
 	}
 
@@ -2435,7 +2441,7 @@ $(document).ready(function () {
 			function buildHwmHtmlTable() {
 				//Empty text from previous report, if was run
 				$("#hwmTable").find("p").remove();
-				$("#hwmTable").prepend("<p>" + "<b>" + "<br>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent  + "</b>" + "</p>")
+				$("#hwmTable").prepend("<p>" + "<b>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent  + "</b>" + "</p>")
 
 				//Empty hwm data table from previous report, if it was run
 				$("#hwmDataTable").empty();
@@ -2480,7 +2486,7 @@ $(document).ready(function () {
 				$("#hwmDataTable").empty();
 				$("#hwmDataHeader").addClass("no-data");
 				setTimeout(() => {
-					$("#hwmTable").prepend("<p>" + "<b>" + "<br>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent + "</b>" + "</p>");
+					$("#hwmTable").prepend("<p>" + "<b>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent + "</b>" + "</p>");
 				}, 3000);
 			}
 
