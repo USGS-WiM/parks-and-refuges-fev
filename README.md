@@ -1,5 +1,7 @@
 
-![USGS](USGS_ID_black.png) ![WIM](wimlogo.png)
+![USGS](USGS_ID_black.png) 
+
+![WIM](wimlogo.png)
 
 # FEV
 ### Version 2 of the Flood Event Viewer (FEV)
