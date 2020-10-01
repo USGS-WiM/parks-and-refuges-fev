@@ -269,9 +269,14 @@ Legend
     border-color: black;
     Border-width: 2px;
 }
-.peakSmall,
-.peakMedium,
-.peakLarge{
+.peakSmall {
+	padding: 5px 6px;
+}
+.peakMedium {
+	padding: 5px 6px;
+}
+.peakLarge {
+	padding: 5px 6px;
 }
 .peakSmall img{
 	padding: 5px 6px;
