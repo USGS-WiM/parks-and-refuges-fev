@@ -1,5 +1,5 @@
 
-![USGS](USGS_ID_black.png) 
+![USGS](USGS_logo.png) 
 
 ![WIM](wimlogo.png)
 
