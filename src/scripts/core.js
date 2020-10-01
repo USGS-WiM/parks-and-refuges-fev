@@ -2225,8 +2225,8 @@ $(document).ready(function () {
 			getReportSummaryStats(peakArrReport);
 			if (peakArrReport.length > 0) {
 				var maxDate = peaksArray.filter(x => x.peak_stage === maxReport);
-				//maxReport = maxReport.toFixed(2);
-				//maxReport = Number(maxReport);
+				maxReport = maxReport.toFixed(2);
+				maxReport = Number(maxReport);
 				// setting Max Date
 				maxDate = moment(maxDate[0].peak_date).format("MM/DD/YYYY, h:mm a");
 				peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
