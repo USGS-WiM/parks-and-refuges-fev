@@ -2225,6 +2225,8 @@ $(document).ready(function () {
 			getReportSummaryStats(peakArrReport);
 			if (peakArrReport.length > 0) {
 				var maxDate = peaksArray.filter(x => x.peak_stage === maxReport);
+				maxReport = maxReport.toFixed(2);
+                maxReport = Number(maxReport);
                 // setting Max Date
                 maxDate = moment(maxDate[0].peak_date).format("MM/DD/YYYY, h:mm a");
 				peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
@@ -2240,6 +2242,8 @@ $(document).ready(function () {
 			hwmSum = {};
 			if (hwmArrReportCoastal.length > 0) {
 				var maxDate = coastalHWMs.filter(x => x.elev_ft === maxReport);
+				maxReport = maxReport.toFixed(2);
+                maxReport = Number(maxReport);
                 // setting Max Date
                 maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
 				hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
@@ -2250,6 +2254,8 @@ $(document).ready(function () {
 			hwmSum = {};
 			if (hwmArrReportRiverine.length > 0) {
 				var maxDate = riverineHWMs.filter(x => x.elev_ft === maxReport);
+				maxReport = maxReport.toFixed(2);
+                maxReport = Number(maxReport);
                 // setting Max Date
                 maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
 				hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
@@ -2274,8 +2280,6 @@ $(document).ready(function () {
 				medianReport = medianReport.toFixed(3);
 				minReport = minReport.toFixed(2);
                 minReport = Number(minReport);
-                maxReport = maxReport.toFixed(2);
-                maxReport = Number(maxReport);
 				confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
 				confIntNinetyLow = confIntNinetyLow.toFixed(3);
 			}
