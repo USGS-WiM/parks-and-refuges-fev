@@ -6,15 +6,17 @@ var flattenedPoly;
 /* var regionBoundaries;
 var regions = []; */
 var pdfMapUrl;
-	var legendUrl;
+var legendUrl;
 var parks;
 var siteSelected = false;
 var refuges;
+var alreadyLoaded = false;
 var fwsInterest;
 var bufferPoly;
 var searchResults;
 var searchObject;
 var bbox;
+var graphCounter = 0;
 var currentParkOrRefuge = "";
 var identifiedPeaks = [];
 var identifiedMarks = [];
@@ -587,6 +589,8 @@ $(document).ready(function () {
 		printReport();
 	});
 
+
+
 	$('#printClose').click(function () {
 		location.reload();
 		location.href = window.location.origin + window.location.pathname;
@@ -646,7 +650,7 @@ $(document).ready(function () {
 
 	function setEventVars(event_name, event_id, event_status_id, event_start_date, event_end_date) {
 		//set event name in URL, using regex to remove spaces
-		history.pushState(null, null, '#' + (event_name.replace(/\s+/g, '')));
+		//history.pushState(null, null, '#' + (event_name.replace(/\s+/g, '')));
 		//set current event name
 		fev.vars.currentEventName = event_name;
 		selectedEvent = event_name;
@@ -3291,12 +3295,20 @@ function searchComplete(runningFilter, exploreMap) {
 				if (flattenedPoly !== undefined) {
 					polyDefined = true;
 				}
-				if (polyDefined === true) {
-					getSiteBuffers(exploreMap);
-				}
 			},
 			style: parkStyle
 		}).addTo(map);
+
+		// waiting for site layer to be loaded onto the map before continuing
+		parks.on('load', function () {
+			console.log("waiting for layer to load onto the map")
+			if (polyDefined === true) {
+				if (alreadyLoaded == false) {
+					getSiteBuffers(exploreMap);
+				}
+				alreadyLoaded = true;
+			}
+		});
 	} else if (siteType === "NWR") {
 		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
@@ -3313,9 +3325,6 @@ function searchComplete(runningFilter, exploreMap) {
 				flattenedPoly = turf.flatten(polys);
 				if (flattenedPoly !== undefined) {
 					polyDefined = true;
-				}
-				if (polyDefined === true) {
-					getSiteBuffers(exploreMap);
 				}
 			},
 			style: parkStyle
@@ -3347,203 +3356,223 @@ function searchComplete(runningFilter, exploreMap) {
 			
 		}, 1000); */
 		$('#updateFiltersModal').modal('hide');
+
+		// waiting for site layer to be loaded onto the map before continuing
+			refuges.on('load', function () {
+				console.log("waiting for layer to load onto the map")
+				if (polyDefined === true) {
+					if (alreadyLoaded == false) {
+						getSiteBuffers(exploreMap);
+					}
+					alreadyLoaded = true;
+				}
+			});
+		
+		
 	}
 
 	// account for a search that is not a park or refuge
 	function getSiteBuffers(em) {
 		console.log("2 getting buffer");
 		var exploreMap = em;
+		var buffered;
+		var polysCount;
+		buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
+		polysCount = flattenedPoly.features.length;
+		buffer = buffered;
+
+		// if there is more than one poly for a park we merge the buffers made for each park. can only do two at a time
+		if (polysCount >= 1) {
+			buffer = buffered.features[0];
+
+			// cycling through features
+			for (var i = 0; i < buffered.features.length; i++) {
+				// not cycling through if we're on the last one
+				if (i === (polysCount - 1)) {
+
+				} else {
+
+					// getting the index of the next feature to use in the union
+					var nextFeatureIndex = i + 1;
+					var nextFeature = buffered.features[nextFeatureIndex];
+
+					// unifying or merging the buffer
+					buffer = turf.union(buffer, nextFeature);
+				}
+			}
+		}
+
+		// adding the buffer to the map
+		bufferPoly = L.geoJson(buffer, {
+			style: bufferStyle,
+			pointToLayer: function (feature, latlng) {
+				return L.circleMarker(latlng, labelMarkerOptions);
+			},
+		}).addTo(map);
+
+
+		/* bufferPoly.on('load', function () {
+			getEachDataSection(bufferPoly.getLayers());
+		}); */
 		setTimeout(() => {
-			var buffered;
-			var polysCount;
-			buffered = turf.buffer(flattenedPoly, fev.vars.currentBufferSelection, { units: 'kilometers' });
-			polysCount = flattenedPoly.features.length;
-			buffer = buffered;
+			getEachDataSection(bufferPoly.getLayers());
+		}, 5000);
 
-			// if there is more than one poly for a park we merge the buffers made for each park. can only do two at a time
-			if (polysCount >= 1) {
-				buffer = buffered.features[0];
 
-				// cycling through features
-				for (var i = 0; i < buffered.features.length; i++) {
-					// not cycling through if we're on the last one
-					if (i === (polysCount - 1)) {
+		function getEachDataSection() {
+			console.log("3 getting data section");
+			console.log(peak);
+			// cycling through each peak and seeing if it's inside the buffer
+			for (var i in peak._layers) {
+				// formatting point for turf
+				var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
 
-					} else {
+				var isItInside = turf.booleanPointInPolygon(cords, buffer);
 
-						// getting the index of the next feature to use in the union
-						var nextFeatureIndex = i + 1;
-						var nextFeature = buffered.features[nextFeatureIndex];
-
-						// unifying or merging the buffer
-						buffer = turf.union(buffer, nextFeature);
+				// if true add it to an array containing all the 'true' peaks
+				if (isItInside) {
+					//only include the peaks that have values that aren't undefined
+					if (peak._layers[i].feature.properties.peak_stage != undefined) {
+						identifiedPeaks.push(peak._layers[i])
+						peak._layers[i].addTo(bufferPeak);
 					}
 				}
 			}
+			getHWMSInside();
 
-			// adding the buffer to the map
-			bufferPoly = L.geoJson(buffer, {
-				style: bufferStyle,
-				pointToLayer: function (feature, latlng) {
-					return L.circleMarker(latlng, labelMarkerOptions);
-				},
-			}).addTo(map);
-			setTimeout(() => {
-				getEachDataSection(bufferPoly.getLayers());
-			}, 5000);
-
-
-			function getEachDataSection() {
-				console.log("3 getting data section");
-				console.log(peak);
-				// cycling through each peak and seeing if it's inside the buffer
-				for (var i in peak._layers) {
-					// formatting point for turf
-					var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
-
+			// getting hwms in buffer
+			function getHWMSInside() {
+				//cycling through each HWM to see if inside the buffer
+				for (var i in hwm._layers) {
+					var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
 					var isItInside = turf.booleanPointInPolygon(cords, buffer);
-
-					// if true add it to an array containing all the 'true' peaks
 					if (isItInside) {
-						//only include the peaks that have values that aren't undefined
-						if (peak._layers[i].feature.properties.peak_stage != undefined) {
-							identifiedPeaks.push(peak._layers[i])
-							peak._layers[i].addTo(bufferPeak);
+						//only include the hwms that have values
+						if (hwm._layers[i].feature.properties.elev_ft != undefined) {
+							identifiedMarks.push(hwm._layers[i])
+							hwm._layers[i].addTo(bufferHWM);
 						}
 					}
 				}
-				getHWMSInside();
-
-				// getting hwms in buffer
-				function getHWMSInside() {
-					//cycling through each HWM to see if inside the buffer
-					for (var i in hwm._layers) {
-						var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
-						var isItInside = turf.booleanPointInPolygon(cords, buffer);
-						if (isItInside) {
-							//only include the hwms that have values
-							if (hwm._layers[i].feature.properties.elev_ft != undefined) {
-								identifiedMarks.push(hwm._layers[i])
-								hwm._layers[i].addTo(bufferHWM);
-							}
-						}
-					}
-					getST();
-				}
-
-				// getting storm tides in buffer
-				function getST() {
-					for (var i in stormtide._layers) {
-						var cords = ([stormtide._layers[i]._latlng.lng, stormtide._layers[i]._latlng.lat]);
-						var isItInside = turf.booleanPointInPolygon(cords, buffer);
-						if (isItInside) {
-							identifiedST.push(stormtide._layers[i])
-						}
-						/* if (stCnt === stLength) {
-							if (exploreMap == false) {
-								//show load warning message while waiting for layers to load and report to generate
-								$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
-								//remove loading message, show site report modal
-								$('#siteReportLoading').modal('hide');
-								$('#printModal').modal('show');
-
-								generateSiteReport();
-							}
-						} */
-					}
-					readyforReport();
-				}
-
-				function readyforReport() {
-					if (exploreMap == false) {
-						//show load warning message while waiting for layers to load and report to generate
-						$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
-						//remove loading message, show site report modal
-						$('#siteReportLoading').modal('hide');
-						$('#printModal').modal('show');
-
-						generateSiteReport();
-					}
-				}
-				/* if (hwmCnt === hwmLength) {
-					var stLength = stormtide.getLayers().length;
-					var stCnt = 0;
-					for (var i in stormtide._layers) {
-						stCnt++;
-						var cords = ([stormtide._layers[i]._latlng.lng, stormtide._layers[i]._latlng.lat]);
-						var isItInside = turf.booleanPointInPolygon(cords, buffer);
-						if (isItInside) {
-							identifiedST.push(stormtide._layers[i])
-						}
-						if (stCnt === stLength) {
-							if (exploreMap == false) {
-								//show load warning message while waiting for layers to load and report to generate
-								$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
-								//remove loading message, show site report modal
-								$('#siteReportLoading').modal('hide');
-								$('#printModal').modal('show');
-
-								generateSiteReport();
-							}
-						}
-					}
-				} */
-
-
+				getST();
 			}
 
-			/* if (runningFilter == true) {
-				//if the event is changed in the filters modal, the checkbox/legend symbols must be reset
-				var peaksCheckBox = document.getElementById("peaksToggle");
-				peaksCheckBox.checked = false;
-				clickPeaks();
-				peaksCheckBox.checked = true;
-				clickPeaks();
+			// getting storm tides in buffer
+			function getST() {
+				for (var i in stormtide._layers) {
+					var cords = ([stormtide._layers[i]._latlng.lng, stormtide._layers[i]._latlng.lat]);
+					var isItInside = turf.booleanPointInPolygon(cords, buffer);
+					if (isItInside) {
+						identifiedST.push(stormtide._layers[i])
+					}
+					/* if (stCnt === stLength) {
+						if (exploreMap == false) {
+							//show load warning message while waiting for layers to load and report to generate
+							$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
+							//remove loading message, show site report modal
+							$('#siteReportLoading').modal('hide');
+							$('#printModal').modal('show');
 
-				var baroCheckBox = document.getElementById("baroToggle");
-				baroCheckBox.checked = false;
-				clickBaro();
-				baroCheckBox.checked = true;
-				clickBaro();
+							generateSiteReport();
+						}
+					} */
+				}
+				readyforReport();
+			}
 
-				var stormTideCheckBox = document.getElementById("stormTideToggle");
-				stormTideCheckBox.checked = false;
-				clickStormTide();
-				stormTideCheckBox.checked = true;
-				clickStormTide();
+			function readyforReport() {
+				if (exploreMap == false) {
+					//show load warning message while waiting for layers to load and report to generate
+					$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
+					//remove loading message, show site report modal
+					$('#siteReportLoading').modal('hide');
+					$('#printModal').modal('show');
 
-				var metCheckBox = document.getElementById("metToggle");
-				metCheckBox.checked = false;
-				clickMet();
-				metCheckBox.checked = true;
-				clickMet();
+					generateSiteReport();
+				}
+			}
+			/* if (hwmCnt === hwmLength) {
+				var stLength = stormtide.getLayers().length;
+				var stCnt = 0;
+				for (var i in stormtide._layers) {
+					stCnt++;
+					var cords = ([stormtide._layers[i]._latlng.lng, stormtide._layers[i]._latlng.lat]);
+					var isItInside = turf.booleanPointInPolygon(cords, buffer);
+					if (isItInside) {
+						identifiedST.push(stormtide._layers[i])
+					}
+					if (stCnt === stLength) {
+						if (exploreMap == false) {
+							//show load warning message while waiting for layers to load and report to generate
+							$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
+							//remove loading message, show site report modal
+							$('#siteReportLoading').modal('hide');
+							$('#printModal').modal('show');
 
-				var waveHeightCheckBox = document.getElementById("waveHeightToggle");
-				waveHeightCheckBox.checked = false;
-				clickWaveHeight();
-				waveHeightCheckBox.checked = true;
-				clickWaveHeight();
-
-				var HWMCheckBox = document.getElementById("HWMToggle");
-				HWMCheckBox.checked = false;
-				clickHWM();
-				HWMCheckBox.checked = true;
-				clickHWM();
-
-				var rdgCheckBox = document.getElementById("rdgToggle");
-				rdgCheckBox.checked = false;
-				clickRdg();
-				rdgCheckBox.checked = true;
-				clickRdg();
+							generateSiteReport();
+						}
+					}
+				}
 			} */
 
-			map.fitBounds(bufferPoly.getBounds());
-			if (siteSelected == true) {
-				document.getElementById("printNav").disabled = false;
-			}
 
-		}, 1000);
-		$('#siteReportLoading').modal('hide');
+		}
+
+		/* if (runningFilter == true) {
+			//if the event is changed in the filters modal, the checkbox/legend symbols must be reset
+			var peaksCheckBox = document.getElementById("peaksToggle");
+			peaksCheckBox.checked = false;
+			clickPeaks();
+			peaksCheckBox.checked = true;
+			clickPeaks();
+
+			var baroCheckBox = document.getElementById("baroToggle");
+			baroCheckBox.checked = false;
+			clickBaro();
+			baroCheckBox.checked = true;
+			clickBaro();
+
+			var stormTideCheckBox = document.getElementById("stormTideToggle");
+			stormTideCheckBox.checked = false;
+			clickStormTide();
+			stormTideCheckBox.checked = true;
+			clickStormTide();
+
+			var metCheckBox = document.getElementById("metToggle");
+			metCheckBox.checked = false;
+			clickMet();
+			metCheckBox.checked = true;
+			clickMet();
+
+			var waveHeightCheckBox = document.getElementById("waveHeightToggle");
+			waveHeightCheckBox.checked = false;
+			clickWaveHeight();
+			waveHeightCheckBox.checked = true;
+			clickWaveHeight();
+
+			var HWMCheckBox = document.getElementById("HWMToggle");
+			HWMCheckBox.checked = false;
+			clickHWM();
+			HWMCheckBox.checked = true;
+			clickHWM();
+
+			var rdgCheckBox = document.getElementById("rdgToggle");
+			rdgCheckBox.checked = false;
+			clickRdg();
+			rdgCheckBox.checked = true;
+			clickRdg();
+		} */
+
+		map.fitBounds(bufferPoly.getBounds());
+		if (siteSelected == true) {
+			document.getElementById("printNav").disabled = false;
+		}
+		if (exploreMap === true) {
+			$('#siteReportLoading').modal('hide');
+		}
+
+
+
 		//$(inputModal).modal('hide');
 	}
 };
@@ -3667,6 +3696,10 @@ function generateSiteReport() {
 		getStreamGageForReport(true);
 	}
 
+	$('#loadUSGSrt').click(function () {
+		displayRtGageReport(allStreamGages, true);
+	});
+
 	function getStreamGageForReport() {
 
 		var streamgageCheckBox = document.getElementById("streamGageToggle");
@@ -3698,6 +3731,7 @@ function generateSiteReport() {
 				var gageGraphTitle = document.getElementById('gageGraphs');
 				gageGraphTitle.innerHTML = ""
 				gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
+				$('#loadUSGSrt').css('display', 'none');
 				$('#streamGageToggle').click();
 				createDataArrays();
 				//USGSrtGages.clearLayers();
@@ -3719,13 +3753,14 @@ function generateSiteReport() {
 					if (cnt === rtLength) {
 						if (identifiedUSGSrtGage.length > 0) {
 							allStreamGages = identifiedUSGSrtGage;
-							displayRtGageReport(identifiedUSGSrtGage);
+							displayRtGageReport(identifiedUSGSrtGage, false);
 						} else {
 							var gageGraphTitle = document.getElementById('gageGraphs');
 							gageGraphTitle.innerHTML = ""
 							gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
 							$('#streamGageToggle').click();
 							createDataArrays();
+							$('#loadUSGSrt').css('display', 'none');
 							//USGSrtGages.clearLayers();
 							console.log("10 moving to data arrays");
 						}
@@ -3737,13 +3772,14 @@ function generateSiteReport() {
 
 	}
 	//get data and generate graph of real-time gage water level time-series data
-	function displayRtGageReport(streamGagesInBuffer) {
+	function displayRtGageReport(streamGagesInBuffer, loadmore) {
 
 		//Prevent the code before 'getJSON' to loop over before 'getJSON' has also run
 		$.ajaxSetup({
 			async: false
 		});
-
+		console.log(streamGagesInBuffer);
+		console.log(allStreamGages);
 		//This title appears under the map/legend in the regional report
 		//No report or title are shown if there are no stream gages in the buffer
 		//Stream gage layer must be turned on
@@ -3751,25 +3787,22 @@ function generateSiteReport() {
 		//Keeps track of how many graphs were generated (or attempted to generate)
 		//Counter is later added to the end of each graph-related ID so that the elements don't overwrite after each loop
 		//Without this counter, only one graph/no data warning will appear
-		var graphCounter = 0;
-		var fiveGraphs = [];
+
+		var threeGraphs = [];
 		if (streamGagesInBuffer.length >= 3) {
-			fiveGraphs.push(streamGagesInBuffer[0], streamGagesInBuffer[1], streamGagesInBuffer[2]);
+			threeGraphs.push(streamGagesInBuffer[0], streamGagesInBuffer[1], streamGagesInBuffer[2]);
 		} else {
-			fiveGraphs = streamGagesInBuffer;
+			threeGraphs = streamGagesInBuffer;
+			// don't display loading button if there are less than 3
+			$('#loadUSGSrt').css('display', 'none');
 		}
 
-		var length = fiveGraphs.length - 1;
-		for (var streamGage in fiveGraphs) {
+		var length = threeGraphs.length - 1;
+		for (var streamGage in threeGraphs) {
 
 			//Turn the graphCounter into a string so that it can be added onto the name of the ID
 			var graphCounterString = graphCounter.toString();
-			if (streamGage === length.toString()) {
-				console.log(streamGage + " : " + streamGagesInBuffer.length.toString());
-				if (document.getElementById('streamGageToggle').checked) {
-					$('#streamGageToggle').click();
-				}
-			}
+
 			//Create temporary IDs for displaying the hydrograph or no data warning
 			var tempGraphID = 'graphContainerReport';
 			var tempGraphIDhash = '#graphContainerReport';
@@ -3869,15 +3902,16 @@ function generateSiteReport() {
 				}
 			});
 			// at the last one start the next function
-			if (streamGage == length.toString()) {
-				createDataArrays();
-				//USGSrtGages.clearLayers();
-				//removing the graphs that are already loaded from master array
-				allStreamGages.splice(0, 2);
-				console.log("10 moving to data arrays");
+			if (loadmore === false) {
+				if (streamGage == length.toString()) {
+					createDataArrays();
+					//USGSrtGages.clearLayers();
+					//removing the graphs that are already loaded from master array
+					console.log("10 moving to data arrays");
+				}
 			}
-
 		}
+		allStreamGages.splice(0, 2);
 	}
 
 	function createDataArrays() {
@@ -3895,77 +3929,94 @@ function generateSiteReport() {
 		var sitePeakTableData = [];
 		var iPlength = identifiedPeaks.length;
 		var ipCnt = 0;
-		identifiedPeaks.forEach(function (p) {
-			ipCnt++;
-			peaksArray.push(p.feature.properties);
-			if (ipCnt === iPlength) {
-				setupHWMS();
-			}
-		});
 
-		function setupHWMS() {
-			var iHlength = identifiedMarks.length;
-			var iHCnt = 0;
-			identifiedMarks.forEach(function (p) {
-				iHCnt++
-				hwmArray.push(p.feature.properties);
-				if (p.feature.properties.hwm_environment === "Coastal") {
-					coastalHWMs.push(p.feature.properties);
-				} else {
-					riverineHWMs.push(p.feature.properties);
-				}
-				if (iHCnt === iHlength) {
-					getStormTides();
+		if (identifiedPeaks.length > 0) {
+			identifiedPeaks.forEach(function (p) {
+				ipCnt++;
+				peaksArray.push(p.feature.properties);
+				if (ipCnt === iPlength) {
+					setupHWMS();
 				}
 			});
+		} else {
+			setupHWMS();
+		}
+
+
+		function setupHWMS() {
+			if (identifiedMarks.length > 0) {
+				var iHlength = identifiedMarks.length;
+				var iHCnt = 0;
+				identifiedMarks.forEach(function (p) {
+					iHCnt++
+					hwmArray.push(p.feature.properties);
+					if (p.feature.properties.hwm_environment === "Coastal") {
+						coastalHWMs.push(p.feature.properties);
+					} else {
+						riverineHWMs.push(p.feature.properties);
+					}
+					if (iHCnt === iHlength) {
+						getStormTides();
+					}
+				});
+			} else {
+				getStormTides();
+			}
 		}
 
 		function getStormTides() {
-			var stlength = identifiedST.length;
-			var stCnt = 0;
-			identifiedST.forEach(function (st) {
-				stCnt++;
-				stArray.push(st.feature.properties);
-				if (stCnt === stlength) {
-					getStormTideFileImages();
-				}
-			});
+			if (identifiedST.length > 0) {
+				var stlength = identifiedST.length;
+				var stCnt = 0;
+				identifiedST.forEach(function (st) {
+					stCnt++;
+					stArray.push(st.feature.properties);
+					if (stCnt === stlength) {
+						getStormTideFileImages();
+					}
+				});
+			} else {
+				getStormTideFileImages();
+			}
 		}
 
 
 		// stormtide not currently used in report but may be if future development is wanted
 		function getStormTideFileImages() {
-			let result = peaksArray.map(a => ({ ...stArray.find(p => a.site_no === p.site_no), ...a }));
-			result.forEach(function (st, idx) {
-				if (st.instrument_id !== undefined) {
-					var instrumentID = st.instrument_id;
-					var url = "https://stn.wim.usgs.gov/STNServices/Instruments/" + instrumentID + "/Files.json";
-					var data;
+			if (identifiedST.length > 0) {
+				let result = peaksArray.map(a => ({ ...stArray.find(p => a.site_no === p.site_no), ...a }));
+				result.forEach(function (st, idx) {
+					if (st.instrument_id !== undefined) {
+						var instrumentID = st.instrument_id;
+						var url = "https://stn.wim.usgs.gov/STNServices/Instruments/" + instrumentID + "/Files.json";
+						var data;
 
-					$.ajax({
-						url: url,
-						dataType: 'json',
-						data: data,
-						headers: { 'Accept': '*/*' },
-						success: function (data) {
-							var hydrographURL = '';
-							var containsHydrograph = false;
-							for (var i = 0; i < data.length; i++) {
-								if (data[i].filetype_id === 13) {
-									containsHydrograph = true;
-									hydrographURL = "https://stn.wim.usgs.gov/STNServices/Files/" + data[i].file_id + "/Item";
-									$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
-									//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
-									hydroUrls.push(hydrographURL);
+						$.ajax({
+							url: url,
+							dataType: 'json',
+							data: data,
+							headers: { 'Accept': '*/*' },
+							success: function (data) {
+								var hydrographURL = '';
+								var containsHydrograph = false;
+								for (var i = 0; i < data.length; i++) {
+									if (data[i].filetype_id === 13) {
+										containsHydrograph = true;
+										hydrographURL = "https://stn.wim.usgs.gov/STNServices/Files/" + data[i].file_id + "/Item";
+										$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
+										//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
+										hydroUrls.push(hydrographURL);
+									}
 								}
+							},
+							error: function (error) {
+								console.log('Error processing the JSON. The error is:' + error);
 							}
-						},
-						error: function (error) {
-							console.log('Error processing the JSON. The error is:' + error);
-						}
-					});
-				}
-			});
+						});
+					}
+				});
+			}
+
 			setupPeakTable();
 
 			if (currentParkOrRefuge != "") {
@@ -3974,7 +4025,7 @@ function generateSiteReport() {
 			/* if (currentParkOrRefuge == "") {
 				$('#reportInfo').append("<div style='margin-left:15px; text-align: center; font-size: large;'>" + selectedEvent + "<div>");
 			} */
-			
+
 			function setupPeakTable() {
 				// if (sitePeakTableData > 0) {
 				// 	//If peak table data does not clear from buffer, this will clear it now
@@ -4004,7 +4055,7 @@ function generateSiteReport() {
 				peaksCSVData = sitePeakTableData;
 				reportData();
 			}
-			
+
 			function reportData() {
 				//These variables will have the heights/elevation for each peak/hwm in the buffered area
 				var peakArrReport = [];
@@ -4032,7 +4083,7 @@ function generateSiteReport() {
 				}
 
 				//setting up HWM data for table
-				
+
 				var hwmCaptionData = [];
 				sitehwmTableData.length = 0;
 				for (var i in identifiedMarks) {
