@@ -994,7 +994,7 @@ function queryNWISgraphRDG(e) {
                         Highcharts.setOptions({ global: { useUTC: false } });
                         $('#RDGgraphContainer').highcharts({
                             chart: {
-                                type: 'line'
+								type: 'line',
                             },
                             title: {
                                 text: 'RDG water level, NWIS site ' + usgsSiteID,
@@ -1060,7 +1060,8 @@ function displayRtGageReport(streamGagesInBuffer) {
     var gageGraphTitle = document.getElementById('gageGraphs');
     gageGraphTitle.innerHTML = ""
     if (streamGagesInBuffer.length == 0) {
-        gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
+		$("#streamGageHeader").addClass("no-data");
+        // gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
     }
 
     //Keeps track of how many graphs were generated (or attempted to generate)
@@ -1088,7 +1089,6 @@ function displayRtGageReport(streamGagesInBuffer) {
         //Add the new counter to the end of the hydrograph and data warning ID
         var tempID = tempGraphID.concat(graphCounterString);
         var tempIDhash = tempGraphIDhash.concat(graphCounterString);
-        var tempNoDataID = tempGraphNoDataID.concat(graphCounterString);
         var tempNoDataHash = tempGraphNoDataHash.concat(graphCounterString);
 
         //Increase the graphCounter by one for each loop
@@ -1110,15 +1110,21 @@ function displayRtGageReport(streamGagesInBuffer) {
         }
 
         //This is where the hydrograph title and graph or no data warning are added to the Report 
-        $('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + streamGagesInBuffer[streamGage].data.siteName + " (Site" + "&nbsp" + streamGagesInBuffer[streamGage].data.siteCode + ")" + "</br>" + "</div>" + "<div id= " + tempNoDataID + " display:none;'></div>" + "<div id=" + tempID + " style='width:400px; height:250px;display:none;'>" + "</div>");
+		$('#rtgraphs').append(
+			"<div class='report-chart-wrapper' id='" + tempID + "Wrapper'>"
+				+ "<b class='report-chart-title'>"
+					+ streamGagesInBuffer[streamGage].data.siteName + " (Site" + "&nbsp" + streamGagesInBuffer[streamGage].data.siteCode + ")"
+				+ "</b>"
+				+ "<div class='report-chart-body' id=" + tempID + "></div>"
+			+ "</div>");
 
         //Get the data for the hydrograph
         $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + streamGagesInBuffer[streamGage].data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
 
             //If there are no data to create a hydrograph, display the no data warning
             if (data.data == undefined) {
-                $(tempNoDataHash).append("<div style= text-align:left;>" + "No NWIS data available for this time period" + "<div>");
-                $(tempNoDataHash).show();
+				$("#" + tempID + "Wrapper").addClass("full-width");
+				$("#" + tempID).append("No NWIS data available for this time period");
             }
 
             //If there are data, create a hydrograph

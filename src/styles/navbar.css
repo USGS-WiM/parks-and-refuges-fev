@@ -167,7 +167,7 @@ Navbar
 	display: flex;
 	flex-wrap: wrap;
 	padding: 0;
-	justify-content: space-between;
+	justify-content: center;
 }
 .supported-search-strings ul li{
 	margin: 4px 8px;

@@ -58,6 +58,7 @@
     <link rel="stylesheet" href="styles/map.css">
     <link rel="stylesheet" href="styles/graphs.css">
     <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="stylesheet" href="styles/table.css">
     <link rel="stylesheet" href="styles/sidebar.css">
     <!-- endbuild -->
 
@@ -199,7 +200,7 @@
         <div class="modal-wrapper">
             <div class="modal-content">
                 <div class="modal-top">
-                    <b>Filters</b>
+                    <b>Site Query</b>
 				</div>
 				<!-- Body -->
                 <div class="modal-body">
@@ -208,18 +209,18 @@
                     <form class="modal-form" role="form">
 						<!-- Lands Type -->
 						<div class="form-item">
-							<label for="typeSelect_filterModal">Lands Type:</label>
+							<label for="typeSelect_filterModal">Lands Type</label>
 							<select id="typeSelect_filterModal" class="typeSelectFilter" multiple="multiple"></select>
 						</div>
 						<!-- Site -->
 						<div class="form-item ">
-                            <label for="siteSelect_filterModal">Site:</label>
+                            <label for="siteSelect_filterModal">Site</label>
 							<select id="siteSelect_filterModal" class="siteSelect" multiple="multiple"></select>
 						</div>
 						
 						<div class="form-item ">
                             <label for="typeSelect_welcomeModal">
-								Event:
+								Event
 								<small>(sorted by start date)</small>
 							</label>
 							<select id="evtSelect_updateFiltersModal" class="evtSelect_filter form-control select" multiple></select>
@@ -231,7 +232,7 @@
 
 						<div class="form-item ">
                             <label for="typeSelect_welcomeModal">
-								Select a buffer distance:
+								Select a buffer distance
 							</label>
 
 							<!-- Radio row -->
@@ -268,9 +269,9 @@
 				</div>
 				<!-- Footer -->
 				<div class="modal-buttons between">
-					<button type="submit" class="dismissbuttonfilter" data-dismiss="modal">Dismiss</button>
-					<div class="modal-button-spacer"></div>
+					<!-- <button type="submit" class="dismissbuttonfilter" data-dismiss="modal">Dismiss</button> -->
 					<button id="btnSubmitEvent_filter" class="black" aria-hidden="true">Explore Map</button>
+					<div class="modal-button-spacer"></div>
 					<button id="btnActiveSiteReport" class="blue" aria-hidden="true">Generate Report</button>
                 </div>
             </div><!-- /.modal-content -->
@@ -346,17 +347,17 @@
 					</div>
 
 					<!-- Summary Data -->
-					<div class="accordion large expanded">
-						<div class="accordion-header">Summary Data</div>
+					<div class="accordion large">
+						<div class="accordion-header" id="summaryDataHeader">Summary Data</div>
 						<div class="accordion-body">
 							<!-- No data -->
-							<h2 id='reportSummaryNoData' class="center">No summary data for this site</h2>
+							<h3 id='reportSummaryNoData' class="center no-margin">No summary data for this site</h3>
 							<!-- Title -->
 							<h3 id='reportSummaryTitle' class="center"></h3>
 							<!-- Report info -->
 							<div class='reportInfo'>
-								<table class="table" id="reportSummaryDataTable"></table>
-								<div class="hint">
+								<table class="custom-table table-scroll" id="reportSummaryDataTable"></table>
+								<div class="hint" id="summaryStatsDisclaimer">
 									**Please note that the summary stats
 									include the height of all peak water levels calculated within the buffer for each NWR.
 									All peak data reference height of water level in feet above NAVD88 datum. Inland sites
@@ -368,29 +369,29 @@
 
 					<!-- Peak Data -->
 					<div class="accordion large">
-						<div class="accordion-header">Peak Data</div>
+						<div class="accordion-header" id="peakDataHeader">Peak Data</div>
 						<div class="accordion-body">
 							<!-- Report info -->
 							<div class='reportInfo' id="peakTable">
-								<table class="table" id="peakDataTable"></table>
+								<table class="custom-table table-scroll" id="peakDataTable"></table>
 							</div>
 						</div>
 					</div>
 
 					<!-- HWM Data -->
 					<div class="accordion large">
-						<div class="accordion-header">HWM Data</div>
+						<div class="accordion-header" id="hwmDataHeader">HWM Data</div>
 						<div class="accordion-body">
 							<!-- Report info -->
-							<div class='reportInfo' id="hwmTable" style="width: 900px; ">
-								<table class="table" id="hwmDataTable"></table>
+							<div class='reportInfo' id="hwmTable">
+								<table class="custom-table table-scroll" id="hwmDataTable"></table>
 							</div>
 						</div>
 					</div>
 
 					<!-- HWM Data -->
 					<div class="accordion large">
-						<div class="accordion-header">Stream Gage Hydrographs</div>
+						<div class="accordion-header" id="streamGageHeader">Stream Gage Hydrographs</div>
 						<div class="accordion-body">
 							<div id="gageGraphs" style="text-align: center; font-size: medium; font-weight:bold;"></div>
 							<div id="rtgraphs"></div>
@@ -399,7 +400,7 @@
 
 					<!-- Storm Tide Hydrographs -->
 					<div class="accordion large">
-						<div class="accordion-header">Storm Tide Hydrographs</div>
+						<div class="accordion-header" id="stormTideHeader">Storm Tide Hydrographs</div>
 						<div class="accordion-body">
 							<!-- <p><b>Storm Tide Hydrographs</b></p> -->
 							<p>Each Site references a relative datum </p>
@@ -442,7 +443,7 @@
 						<form class="modal-form" role="form" id="regionalForm">
 							<!-- Lands Type -->
 							<div class="form-item small">
-								<label for="typeSelect_regionalModal">Lands Type:</label>
+								<label for="typeSelect_regionalModal">Lands Type</label>
 								<select id="typeSelect_regionalModal" class="typeSelect" multiple="multiple"onchange="formReady()"></select>
 							</div>
 							<!-- Region -->
@@ -452,12 +453,12 @@
 							</div>
 							<!-- Event -->
 							<div class="form-item small">
-								<label for="evtSelect_regionalModal">Event:</label>
+								<label for="evtSelect_regionalModal">Event</label>
 								<select id="evtSelect_regionalModal" class="evtSelectRegional" multiple onchange="formReady()"></select>
 							</div>
 							<!-- Buffer Size -->
 							<div class="form-item small">
-								<label for="bufferSelect_regionalModal">Buffer Size:</label>
+								<label for="bufferSelect_regionalModal">Buffer Size</label>
 								<select id="bufferSelect_regionalModal" class="bufferSelect clear" multiple onchange="formReady()"></select>
 							</div>
 							<!-- <label for="regionType_regionalModal">Region Type:</label>
@@ -468,7 +469,7 @@
 					<div id="regionalMap"></div>
 					<!-- Progress bar -->
 					<div class="progress-bar">
-						<div class="progress-bar-fill" style="width: 0%"></div>
+						<div class="progress-bar-fill"></div>
 					</div>
 
 					<div class="modal-form block">
@@ -492,47 +493,45 @@
 						<div class="form-error-wrapper" id="noResultsText">
 							<div class="form-error warn" role="alert">
 								<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
-								<span>Data are currently not available. Please try again later</span>
+								<span>Data are currently not available. Please try again later.</span>
 							</div>
 						</div>
 
 						<div class='dataSection' id="regionalPeakTable"
-							style="width: 850px; overflow-x: scroll; display:none;">
+							style="display:none;">
 							<p id="eventsSummaryTitle" style="font-weight: bold;"></p>
-							<table class="table" style="table-layout: fixed;" id="eventsSummaryTable">
-							</table>
-							<table class="table" id="summaryDataTableEOne">
-							</table>
+
+							<table class="custom-table table-scroll" id="eventsSummaryTable"></table>
+							<table class="custom-table table-scroll" id="summaryDataTableEOne"></table>
+							<!-- <table class="table" style="table-layout: fixed;" id="eventsSummaryTable"></table> -->
+
+
 							<p class="peaksDisclaimerEventOne" style="font-size: 11px;">**Please note that the
 								summary stats include the height of all peak water levels calculated within the
 								buffer for each NWR. All peak data reference height of water level in feet above
 								NAVD88 datum. Inland sites may be located at a location where the land surface
 								elevation is greater than zero.</p>
-							<table class="table" id="summaryDataTableETwo">
-							</table>
+							<table class="custom-table table-scroll" id="summaryDataTableETwo"></table>
+							</taxble>
 							<p class="peaksDisclaimerEventTwo" style="font-size: 11px;">**Please note that the
 								summary stats include the height of all peak water levels calculated within the
 								buffer for each NWR. All peak data reference height of water level in feet above
 								NAVD88 datum. Inland sites may be located at a location where the land surface
 								elevation is greater than zero.</p>
-							<table class="table" id="siteSummaryPeakDataTableEOne">
-							</table>
+							<table class="custom-table table-scroll" id="siteSummaryPeakDataTableEOne"></table>
 							<p class="peaksDisclaimerEventOne" style="font-size: 11px;">**Please note that the
 								summary stats include the height of all peak water levels calculated within the
 								buffer for each NWR. All peak data reference height of water level in feet above
 								NAVD88 datum. Inland sites may be located at a location where the land surface
 								elevation is greater than zero.</p>
-							<table class="table" id="siteSummaryPeakDataTableETwo">
-							</table>
+							<table class="custom-table table-scroll" id="siteSummaryPeakDataTableETwo"></table>
 							<p class="peaksDisclaimerEventTwo" style="font-size: 11px;">**Please note that the
 								summary stats include the height of all peak water levels calculated within the
 								buffer for each NWR. All peak data reference height of water level in feet above
 								NAVD88 datum. Inland sites may be located at a location where the land surface
 								elevation is greater than zero.</p>
-							<table class="table" id="siteSummaryHWMDataTableEOne">
-							</table>
-							<table class="table" id="siteSummaryHWMDataTableETwo">
-							</table>
+							<table class="custom-table table-scroll" id="siteSummaryHWMDataTableEOne"></table>
+							<table class="custom-table table-scroll" id="siteSummaryHWMDataTableETwo"></table>
 							<!-- <table class="table" id="peakDataTableReg">
 							</table>
 							<table class="table" id="hwmDataTableReg">
@@ -878,7 +877,7 @@
 				
 				<!-- Site info -->
 				<div id="sidebarSiteInfo">
-					<label>Site:</label>
+					<label id="sidebarSiteLabel" class="hidden">Site:</label>
 					<b id="largeSiteNameDisplay"></b>
 
 					<label>Event:</label>
@@ -893,9 +892,6 @@
                     <button id="printNav" class="blue" disabled>
                         <span id="printButtonText">Print Site Report</span>
                     </button>
-                    <button id="btnChangeFilters" class="blue">
-						<span id="queryButtonText">Query a New Site</span>
-					</button>
 
                     <button id="btnStartOver" class="red">
 						<span id="startOverButtonText">Start Over</span>
