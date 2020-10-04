@@ -669,6 +669,12 @@ $(document).ready(function () {
 		$('#eventNameDisplay').html(eventName);
 		$('#largeEventNameDisplay').html(eventName);
 		$('#largeSiteNameDisplay').html(currentParkOrRefuge);
+		// Show/hide site label if site name exists
+		if (currentParkOrRefuge == "") {
+			$('#sidebarSiteLabel').addClass("hidden");
+		} else {
+			$('#sidebarSiteLabel').removeClass("hidden");
+		}
 		//TODO: determine why this is not working, though its same code and input as in the btnSubmitEvent function above
 		var eventValue = [eventID.toString()];
 		$('#evtSelect_filterModal').val([eventValue]).trigger("change");
@@ -680,8 +686,8 @@ $(document).ready(function () {
 			//if no end date, only show begin date
 			$('#largeEventDateRangeDisplay').html(moment(eventStartDateStr).format("D MMM YYYY"));
 		} else {
-			//if both start and end date, show beginDate thru endDate
-			$('#largeEventDateRangeDisplay').html(moment(eventStartDateStr).format("D MMM YYYY") + " thru " + moment(eventEndDateStr).format("D MMM YYYY"));
+			//if both start and end date, show beginDate - endDate
+			$('#largeEventDateRangeDisplay').html("From <b>" + moment(eventStartDateStr).format("D MMM YYYY") + "</b> to <b>" + moment(eventEndDateStr).format("D MMM YYYY") + "</b>");
 		}
 	}
 
@@ -2210,10 +2216,6 @@ $(document).ready(function () {
 	}
 	//end of search api
 
-
-
-
-
 	/* legend control */
 	$('#legendButtonNavBar').on('click', function () {
 		$('#legend').toggle();
@@ -3729,9 +3731,9 @@ function generateSiteReport() {
 			// account for if there are no gages in the bounding box
 			if (USGSrtGages.getLayers().length === 0) {
 				var gageGraphTitle = document.getElementById('gageGraphs');
-				gageGraphTitle.innerHTML = ""
-				gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
-				$('#loadUSGSrt').css('display', 'none');
+				gageGraphTitle.innerHTML = "";
+				$("#streamGageHeader").addClass("no-data");
+				// gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
 				$('#streamGageToggle').click();
 				createDataArrays();
 				//USGSrtGages.clearLayers();
@@ -3756,8 +3758,8 @@ function generateSiteReport() {
 							displayRtGageReport(identifiedUSGSrtGage, false);
 						} else {
 							var gageGraphTitle = document.getElementById('gageGraphs');
-							gageGraphTitle.innerHTML = ""
-							gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
+							gageGraphTitle.innerHTML = "";
+							$("#streamGageHeader").addClass("no-data");
 							$('#streamGageToggle').click();
 							createDataArrays();
 							$('#loadUSGSrt').css('display', 'none');
@@ -3773,12 +3775,31 @@ function generateSiteReport() {
 	}
 	//get data and generate graph of real-time gage water level time-series data
 	function displayRtGageReport(streamGagesInBuffer, loadmore) {
-
 		//Prevent the code before 'getJSON' to loop over before 'getJSON' has also run
 		$.ajaxSetup({
 			async: false
 		});
-		console.log(streamGagesInBuffer);
+		
+		if (loadmore === false) {
+			allStreamGages = streamGagesInBuffer
+			var gageArray = [];
+
+			// removing gage duplicates
+			for (var streamGage in allStreamGages) {
+				gageArray.push(allStreamGages[streamGage].data);
+			}
+			gageArray = gageArray.reduce((unique, o) => {
+				if(!unique.some(obj => obj.siteCode === o.siteCode)) {
+				  unique.push(o);
+				}
+				return unique;
+			},[]);
+
+			allStreamGages = gageArray;
+		}
+		
+		
+		console.log(gageArray);
 		console.log(allStreamGages);
 		//This title appears under the map/legend in the regional report
 		//No report or title are shown if there are no stream gages in the buffer
@@ -3789,10 +3810,10 @@ function generateSiteReport() {
 		//Without this counter, only one graph/no data warning will appear
 
 		var threeGraphs = [];
-		if (streamGagesInBuffer.length >= 3) {
-			threeGraphs.push(streamGagesInBuffer[0], streamGagesInBuffer[1], streamGagesInBuffer[2]);
+		if (allStreamGages.length >= 3) {
+			threeGraphs.push(allStreamGages[0], allStreamGages[1], allStreamGages[2]);
 		} else {
-			threeGraphs = streamGagesInBuffer;
+			threeGraphs = allStreamGages;
 			// don't display loading button if there are less than 3
 			$('#loadUSGSrt').css('display', 'none');
 		}
@@ -3840,70 +3861,77 @@ function generateSiteReport() {
 			}
 
 			//This is where the hydrograph title and graph or no data warning are added to the Report 
-			$('#rtgraphs').append("<div style='text-align: left'>" + "</br>" + streamGagesInBuffer[streamGage].data.siteName + " (Site" + "&nbsp" + streamGagesInBuffer[streamGage].data.siteCode + ")" + "</br>" + "</div>" + "<div id= " + tempNoDataID + " display:none;'></div>" + "<div id=" + tempID + " style='width:400px; height:250px;display:none;'>" + "</div>");
+			$('#rtgraphs').append(
+				"<div class='report-chart-wrapper' id='" + tempID + "Wrapper'>"
+					+ "<b class='report-chart-title'>"
+						+ threeGraphs[streamGage].siteName + " (Site" + "&nbsp" + threeGraphs[streamGage].siteCode + ")"
+					+ "</b>"
+					+ "<div class='report-chart-body' id=" + tempID + "></div>"
+				+ "</div>");
 			console.log("in rt graphing for reports");
 			//Get the data for the hydrograph
-			$.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + streamGagesInBuffer[streamGage].data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
+			$.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + threeGraphs[streamGage].siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
 
-				//If there are no data to create a hydrograph, display the no data warning
-				if (data.data == undefined) {
-					$(tempNoDataHash).append("<div style= text-align:left;>" + "No NWIS data available for this time period" + "<div>");
-					$(tempNoDataHash).show();
-				}
+            //If there are no data to create a hydrograph, display the no data warning
+            if (data.data == undefined) {
+				$("#" + tempID + "Wrapper").addClass("full-width");
+				$("#" + tempID).append("No NWIS data available for this time period");
+            }
 
-				//If there are data, create a hydrograph
-				if (data.data != undefined) {
-					$(tempIDhash).show();
+            //If there are data, create a hydrograph
+            if (data.data != undefined) {
+                $(tempIDhash).show();
 
-					//create chart
-					Highcharts.setOptions({ global: { useUTC: false } });
-					$(tempIDhash).highcharts({
-						chart: {
-							type: 'line'
-						},
-						title: {
-							text: "",
-							align: 'left',
-							style: {
-								color: 'rgba(0,0,0,0.6)',
-								fontSize: 'small',
-								fontWeight: 'bold',
-								fontFamily: 'Open Sans, sans-serif'
-							}
-							//text: null
-						},
-						exporting: {
-							filename: 'FEV_NWIS_Site' + streamGagesInBuffer[streamGage].data.siteCode
-						},
-						credits: {
-							enabled: false
-						},
-						xAxis: {
-							type: "datetime",
-							labels: {
-								formatter: function () {
-									return Highcharts.dateFormat('%d %b %y', this.value);
-								},
-								//rotation: -90,
-								align: 'center'
-							}
-						},
-						yAxis: {
-							title: { text: 'Gage Height, feet' }
-						},
-						series: [{
-							showInLegend: false,
-							data: data.data[0].time_series_data,
-							tooltip: {
-								pointFormat: "Gage height: {point.y} feet"
-							}
-						}]
-					});
-				}
-			});
+                //create chart
+                Highcharts.setOptions({ global: { useUTC: false } });
+                $(tempIDhash).highcharts({
+                    chart: {
+                        type: 'line'
+                    },
+                    title: {
+                        text: "",
+                        align: 'left',
+                        style: {
+                            color: 'rgba(0,0,0,0.6)',
+                            fontSize: 'small',
+                            fontWeight: 'bold',
+                            fontFamily: 'Open Sans, sans-serif'
+                        }
+                        //text: null
+                    },
+                    exporting: {
+                        filename: 'FEV_NWIS_Site' + threeGraphs[streamGage].siteCode
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        type: "datetime",
+                        labels: {
+                            formatter: function () {
+                                return Highcharts.dateFormat('%d %b %y', this.value);
+                            },
+                            //rotation: -90,
+                            align: 'center'
+                        }
+                    },
+                    yAxis: {
+                        title: { text: 'Gage Height, feet' }
+                    },
+                    series: [{
+                        showInLegend: false,
+                        data: data.data[0].time_series_data,
+                        tooltip: {
+                            pointFormat: "Gage height: {point.y} feet"
+                        }
+                    }]
+                });
+            }
+        });
 			// at the last one start the next function
 			if (loadmore === false) {
 				if (streamGage == length.toString()) {
+					allStreamGages.splice(0, 3);
 					createDataArrays();
 					//USGSrtGages.clearLayers();
 					//removing the graphs that are already loaded from master array
@@ -3911,7 +3939,9 @@ function generateSiteReport() {
 				}
 			}
 		}
-		allStreamGages.splice(0, 2);
+		// removing the already displayed graphs so that they don't display again when user clicks 'load more' button
+		allStreamGages.splice(0, 3);
+		console.log('removing displayed graphs')
 	}
 
 	function createDataArrays() {
@@ -3941,7 +3971,6 @@ function generateSiteReport() {
 		} else {
 			setupHWMS();
 		}
-
 
 		function setupHWMS() {
 			if (identifiedMarks.length > 0) {
@@ -3983,6 +4012,7 @@ function generateSiteReport() {
 
 		// stormtide not currently used in report but may be if future development is wanted
 		function getStormTideFileImages() {
+			$("#stormTideHeader").addClass("no-data");
 			if (identifiedST.length > 0) {
 				let result = peaksArray.map(a => ({ ...stArray.find(p => a.site_no === p.site_no), ...a }));
 				result.forEach(function (st, idx) {
@@ -4001,7 +4031,7 @@ function generateSiteReport() {
 								var containsHydrograph = false;
 								for (var i = 0; i < data.length; i++) {
 									if (data[i].filetype_id === 13) {
-										containsHydrograph = true;
+										$("#stormTideHeader").removeClass("no-data");
 										hydrographURL = "https://stn.wim.usgs.gov/STNServices/Files/" + data[i].file_id + "/Item";
 										$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
 										//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
@@ -4232,14 +4262,15 @@ function generateSiteReport() {
 
 				if (sitePeakTableData.length > 0) {
 					buildHtmlTable();
-					$(".peaksDisclaimer").show();
 				} else {
 					$("#peakTable").find("p").remove();
 					$("#peakDataTable").empty();
+					$("#peakDataHeader").addClass("no-data");
 					setTimeout(() => {
+
+						// are we missing thte disclaimer?
 						$("#peakTable").prepend("<p>" + "<b>" + "<br>" + 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + currentParkOrRefuge + ' Boundary for ' + selectedEvent + "</b>" + "</p>");
 						$("#peakTable").append("<p>" + "There are no Peaks at this Site." + "</p>");
-						$(".peaksDisclaimer").hide();
 					}, 3000);
 				}
 
@@ -4377,11 +4408,12 @@ function generateSiteReport() {
 				} else {
 					$("#hwmTable").find("p").remove();
 					$("#hwmDataTable").empty();
+					$("#hwmDataHeader").addClass("no-data");
 					setTimeout(() => {
-						$("#hwmTable").prepend("<p>" + "<b>" + "<br>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent + "</b>" + "</p>");
-						$("#hwmTable").append("<p>" + "There are no High Water Marks at this Site." + "</p>");
+						$("#hwmTable").prepend("<p>" + "<b>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent + "</b>" + "</p>");
 					}, 3000);
 				}
+	
 			}
 
 			// catching the last callback

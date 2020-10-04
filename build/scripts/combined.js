@@ -3633,6 +3633,7 @@ $(document).ready(function () {
 				$('#reportSummaryTitle').children().remove();
 				$('#reportSummaryTitle').append("<br><br>" + currentParkOrRefuge + " Summary for " + selectedEvent);
 				$('#reportSummaryNoData').append("No summary data for this site.");
+				$('#summaryStatsDisclaimer').hide();
 			}
 
 			//Sort peak and hwm arrays

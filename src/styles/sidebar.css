@@ -31,10 +31,15 @@ Sidebar Styles
 		font-weight: 600;
 	}
 	#largeEventDateRangeDisplay{
-		text-align: center;
-		font-size: 13px;
+		font-size: 12px;
 		margin-top: 15px;
+		border-bottom: 1px solid rgba(0,0,0,0.1);
+		padding-bottom: 20px;
+		margin-bottom: 0px;
+	}
+	#largeEventDateRangeDisplay b{
 		font-weight: 600;
+		font-size: 14px;
 	}
 
 	/* Action buttons */

@@ -252,7 +252,7 @@ $(document).ready(function () {
     });
 
     $('.regionSelect').select2({
-        placeholder: 'Select a region type',
+        placeholder: 'Select a Region',
         allowClear: false,
         maximumSelectionLength: 1
     });

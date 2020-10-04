@@ -1003,7 +1003,7 @@ function queryNWISgraphRDG(e) {
                         Highcharts.setOptions({ global: { useUTC: false } });
                         $('#RDGgraphContainer').highcharts({
                             chart: {
-                                type: 'line'
+								type: 'line',
                             },
                             title: {
                                 text: 'RDG water level, NWIS site ' + usgsSiteID,
@@ -1054,6 +1054,140 @@ function queryNWISgraphRDG(e) {
         }
     });
 }
+
+//get data and generate graph of real-time gage water level time-series data
+/* function displayRtGageReport(streamGagesInBuffer) {
+
+    //Prevent the code before 'getJSON' to loop over before 'getJSON' has also run
+    $.ajaxSetup({
+        async: false
+    });
+
+    //This title appears under the map/legend in the regional report
+    //No report or title are shown if there are no stream gages in the buffer
+    //Stream gage layer must be turned on
+    var gageGraphTitle = document.getElementById('gageGraphs');
+    gageGraphTitle.innerHTML = ""
+    if (streamGagesInBuffer.length == 0) {
+		$("#streamGageHeader").addClass("no-data");
+        // gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
+    }
+
+    //Keeps track of how many graphs were generated (or attempted to generate)
+    //Counter is later added to the end of each graph-related ID so that the elements don't overwrite after each loop
+    //Without this counter, only one graph/no data warning will appear
+    var graphCounter = 0;
+
+    for (streamGage in streamGagesInBuffer) {
+
+        //Turn the graphCounter into a string so that it can be added onto the name of the ID
+        var graphCounterString = graphCounter.toString();
+
+        //Create temporary IDs for displaying the hydrograph or no data warning
+        var tempGraphID = 'graphContainerReport';
+        var tempGraphIDhash = '#graphContainerReport';
+        var tempGraphNoDataID = 'noDataMessage';
+        var tempGraphNoDataHash = '#noDataMessage';
+
+        //Keep the IDs sensical by removing the previous counter
+        tempGraphID = tempGraphID.substring(0, 20);
+        tempGraphIDhash = tempGraphIDhash.substring(0, 21);
+        tempGraphNoDataID = tempGraphNoDataID.substring(0, 13);
+        tempGraphNoDataHash = tempGraphNoDataHash.substring(0, 14);
+
+        //Add the new counter to the end of the hydrograph and data warning ID
+        var tempID = tempGraphID.concat(graphCounterString);
+        var tempIDhash = tempGraphIDhash.concat(graphCounterString);
+        var tempNoDataHash = tempGraphNoDataHash.concat(graphCounterString);
+
+        //Increase the graphCounter by one for each loop
+        graphCounter += 1;
+
+        var parameterCodeList = '00065,62619,62620,63160,72279';
+
+        var timeQueryRange = '';
+        //if event has no end date
+        if (fev.vars.currentEventEndDate_str == '') {
+            //use moment.js lib to get current system date string, properly formatted, set currentEventEndDate var to current date
+            fev.vars.currentEventEndDate_str = moment().format('YYYY-MM-DD');
+        }
+        //if no start date and
+        if (fev.vars.currentEventStartDate_str == '' || fev.vars.currentEventEndDate_str == '') {
+            timeQueryRange = '&period=P7D'
+        } else {
+            timeQueryRange = '&startDT=' + fev.vars.currentEventStartDate_str + '&endDT=' + fev.vars.currentEventEndDate_str;
+        }
+
+        //This is where the hydrograph title and graph or no data warning are added to the Report 
+		$('#rtgraphs').append(
+			"<div class='report-chart-wrapper' id='" + tempID + "Wrapper'>"
+				+ "<b class='report-chart-title'>"
+					+ streamGagesInBuffer[streamGage].data.siteName + " (Site" + "&nbsp" + streamGagesInBuffer[streamGage].data.siteCode + ")"
+				+ "</b>"
+				+ "<div class='report-chart-body' id=" + tempID + "></div>"
+			+ "</div>");
+
+        //Get the data for the hydrograph
+        $.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + streamGagesInBuffer[streamGage].data.siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
+
+            //If there are no data to create a hydrograph, display the no data warning
+            if (data.data == undefined) {
+				$("#" + tempID + "Wrapper").addClass("full-width");
+				$("#" + tempID).append("No NWIS data available for this time period");
+            }
+
+            //If there are data, create a hydrograph
+            if (data.data != undefined) {
+                $(tempIDhash).show();
+
+                //create chart
+                Highcharts.setOptions({ global: { useUTC: false } });
+                $(tempIDhash).highcharts({
+                    chart: {
+                        type: 'line'
+                    },
+                    title: {
+                        text: "",
+                        align: 'left',
+                        style: {
+                            color: 'rgba(0,0,0,0.6)',
+                            fontSize: 'small',
+                            fontWeight: 'bold',
+                            fontFamily: 'Open Sans, sans-serif'
+                        }
+                        //text: null
+                    },
+                    exporting: {
+                        filename: 'FEV_NWIS_Site' + streamGagesInBuffer[streamGage].data.siteCode
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        type: "datetime",
+                        labels: {
+                            formatter: function () {
+                                return Highcharts.dateFormat('%d %b %y', this.value);
+                            },
+                            //rotation: -90,
+                            align: 'center'
+                        }
+                    },
+                    yAxis: {
+                        title: { text: 'Gage Height, feet' }
+                    },
+                    series: [{
+                        showInLegend: false,
+                        data: data.data[0].time_series_data,
+                        tooltip: {
+                            pointFormat: "Gage height: {point.y} feet"
+                        }
+                    }]
+                });
+            }
+        });
+    }
+} */
 
 //get data and generate graph of real-time gage water level time-series data
 function queryNWISgraph(e) {

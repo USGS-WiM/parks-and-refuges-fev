@@ -74,6 +74,7 @@ i{
 	font-weight: 500;
 	font-size: 12px;
 	line-height: 13px;
+	padding-left: 6px;
 }
 #aboutModalWIM #aboutModalWIMImage{
 	height: 34px;
@@ -166,20 +167,27 @@ Accordion Styles
 			cursor: pointer;
 			text-decoration: underline;
 		}
+		.accordion .accordion-header.no-data{
+			color: rgba(0,0,30,0.4);
+			pointer-events: none;
+		}
+			.accordion .accordion-header.no-data:before{
+				content: '\f656';
+			}
 	.accordion-body{
 		box-sizing: border-box;
 		padding: 0 0;
 		overflow: hidden;
 		max-height: 0px;
-		transition: 0.4s ease;
+		transition: 0.2s ease;
 	}
 	.accordion.expanded .accordion-header:before{
 		content: '\f331';
 	}
 	.accordion.expanded .accordion-body{
 		padding: 5px 10px 5px 16px;
-		max-height: 900px;
-		transition: 0.4s ease;
+		max-height: none;
+		transition: 0.2s ease;
 	}
 /* Large Accorrdion */
 .accordion.large{
@@ -217,7 +225,17 @@ Progress Bar
 
 .progress-bar-fill {
     display: block;
-    height: 12px;
+	height: 12px;
+	width: 0%;
     background: #1b6cf9;
+    transition: width 0s ease-in-out;
+}
+
+.progress-bar.fill .progress-bar-fill{
+	width: 100%;
     transition: width 18s ease-in-out;
 }
+
+
+
+

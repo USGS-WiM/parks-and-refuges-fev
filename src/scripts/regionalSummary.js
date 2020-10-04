@@ -163,7 +163,8 @@ $(document).ready(function () {
         $('#bufferSelect_regionalModal').attr('disabled', true);
 
         // filling progress bar as visual aid to user that report is generating
-        document.querySelector('.progress-bar-fill').style.width = "100%";
+		$(".progress-bar").addClass("fill");
+		
 
         // todo: make this set to variable
 
@@ -1611,6 +1612,14 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                 allHWMETwoCoast = coastalHWMStorage;
                 allHWMETwoRiver = riverineHWMStorage;
             }
+
+            // DOUBLE CHECK, IS THIS SUPPOSED TO BE HERE
+            $(".progress-bar").removeClass("fill");
+            clearSelects()
+            // adding the basemap back to the map
+            setTimeout(() => {
+                var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
+            }, 500);
 
             // They no longer want the HWM visible on the regional map
             //hwmsWithinBuffer.addTo(regionalMap);
