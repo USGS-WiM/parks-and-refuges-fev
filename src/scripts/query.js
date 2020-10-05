@@ -91,11 +91,11 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
     $.getJSON(url, function (data) {
 
         if (data.length == 0) {
-            console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+            //console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
             return
         }
         if (data.features.length > 0) {
-            console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+            //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
                 //check that lat/lng are not NaN
@@ -228,11 +228,11 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
 
     $.getJSON(url, function (data) {
         if (data.length == 0) {
-            console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+            //console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
             return
         }
         if (data.features.length > 0) {
-            console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+            //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
                 //check that lat/lng are not NaN
@@ -394,7 +394,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
     $.getJSON(url, function (data) {
 
         if (data.length == 0) {
-            console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
+            //console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
             //If there are no peaks, turn off and disable the peak checkbox and the label slider
             var peaksCheckBox = document.getElementById("peaksToggle");
             peaksCheckBox.checked = false;
@@ -407,7 +407,7 @@ function displayPeaksGeoJSON(type, name, url, markerIcon) {
         if (data.features.length > 0) {
             document.getElementById("peakCheckbox").disabled = false;
             document.getElementById("peaksToggle").disabled = false;
-            console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
+            //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
                 //check that lat/lng are not NaN
@@ -473,7 +473,7 @@ function checkLayerCount(layerCount) {
     }
 }
 
-function filterMapData(event, isUrlParam) {
+function filterMapData(event, isUrlParam, runningFilter, exploreMap) {
 
     $('.esconder').hide();
     $('.labelSpan').empty();
@@ -824,7 +824,16 @@ function filterMapData(event, isUrlParam) {
         if (layer.Type == 'sensor') displaySensorGeoJSON(layer.ID, layer.Name, fev.urls[layer.ID + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window[layer.ID + 'MarkerIcon']);
         if (layer.ID == 'hwm') displayHWMGeoJSON(layer.ID, layer.Name, fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
         if (layer.ID == 'peak') displayPeaksGeoJSON(layer.ID, layer.Name, fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
+        if ((fev.layerList.length - 1) === index) {
+            if (runningFilter == true) {
+                searchComplete(true, exploreMap);
+            }
+            if (runningFilter == false) {
+                searchComplete(false, exploreMap);
+            }
+        }
     });
+    
 } //end filterMapData function
 function queryNWISRainGages(bbox) {
     var NWISRainmarkers = {};
@@ -1047,7 +1056,7 @@ function queryNWISgraphRDG(e) {
 }
 
 //get data and generate graph of real-time gage water level time-series data
-function displayRtGageReport(streamGagesInBuffer) {
+/* function displayRtGageReport(streamGagesInBuffer) {
 
     //Prevent the code before 'getJSON' to loop over before 'getJSON' has also run
     $.ajaxSetup({
@@ -1178,7 +1187,7 @@ function displayRtGageReport(streamGagesInBuffer) {
             }
         });
     }
-}
+} */
 
 //get data and generate graph of real-time gage water level time-series data
 function queryNWISgraph(e) {
