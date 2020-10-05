@@ -995,7 +995,7 @@ function getEventSpecificData() {
                 $(".peaksDisclaimerEventOne").show();
                 regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                 processData(eventNumber);
-                regionalMap.zoomIn();
+                //regionalMap.zoomIn();
             }
             if (hwmsWithinBuffer.getLayers().length > 0) {
                 $(".hwmsDisclaimerEventOne").show();
@@ -1091,7 +1091,7 @@ function getEventSpecificData() {
                     $(".peaksDisclaimerEventTwo").show();
                     regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                     processData(eventNumber);
-                    regionalMap.zoomIn();
+                    //regionalMap.zoomIn();
                 }
                 if (hwmsWithinBuffer.getLayers().length > 0) {
                     $(".hwmsDisclaimerEventTwo").show();
