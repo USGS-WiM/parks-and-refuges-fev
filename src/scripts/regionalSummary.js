@@ -167,7 +167,6 @@ $(document).ready(function () {
         // filling progress bar as visual aid to user that report is generating
 		$(".progress-bar").addClass("fill");
 		
-
         // todo: make this set to variable
 
         // setting buffer style
@@ -702,7 +701,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     });
 
     $('#btnClearRegFilters').click(function () {
-        clearRegOutput()
+        clearRegOutput();
+        $(".progress-bar").removeClass("fill");
     });
 
     //Clear regional report output when modal is closed by clicking the 'Close' button
@@ -843,7 +843,7 @@ function clearRegOutput() {
     document.getElementById('eventsSummaryTitle').innerHTML = '';
     eventName = '';
 
-    document.querySelector('.progress-bar-fill').style.width = "0%"
+    $(".progress-bar").removeClass("fill");
     clearSelects()
     // adding the basemap back to the map
     setTimeout(() => {
@@ -1648,6 +1648,7 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
 function clearSelects() {
     
     $(".progress-bar").removeClass("fill");
+
     $('#evtSelect_regionalModal').val('').trigger('change');
     $('#bufferSelect_regionalModal').val('').trigger('change');
     //$("#noResultsText").hide();
