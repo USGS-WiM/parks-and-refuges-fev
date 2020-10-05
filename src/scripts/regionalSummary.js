@@ -346,7 +346,7 @@ $(document).ready(function () {
             }
             allSites = L.esri.featureLayer({
                 //useCors: false,
-                url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/Refuges/MapServer/1',
+                url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0',
                 where: "FWSREGION='" + siteRegion + "'",
                 fields: ["ORGNAME", "FWSREGION", "FID", "IFWS"],
                 style: parkStyle,
@@ -991,14 +991,17 @@ function getEventSpecificData() {
 
         setTimeout(() => {
             dataCheck();
-            if (peaksWithinBuffer.getLayers().length > 0) {
-                $(".peaksDisclaimerEventOne").show();
-                regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+            if ((peaksWithinBuffer.getLayers().length > 0) || (hwmsWithinBuffer.getLayers().length > 0)) {
+                if (peaksWithinBuffer.getLayers().length > 0) {
+                    $(".peaksDisclaimerEventOne").show();
+                    regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                }
+                if (hwmsWithinBuffer.getLayers().length > 0) {
+                    $(".hwmsDisclaimerEventOne").show();
+                    regionalMap.fitBounds(hwmsWithinBuffer.getBounds());
+                }
                 processData(eventNumber);
                 //regionalMap.zoomIn();
-            }
-            if (hwmsWithinBuffer.getLayers().length > 0) {
-                $(".hwmsDisclaimerEventOne").show();
             }
         }, 2000);
     } else if (selectedEvents.length === 2) {
@@ -1715,46 +1718,55 @@ function processData(eventNumber) {
         return result;
     };
 
-    distinctPeaksByPark = filterResults(peakStorage);
-    distincthwmsByPark = filterResults(hwmStorage);
-
     // calculating summary stats
     var siteSumPeakVals = [];
     var siteSumHWMVals = [];
+    var distinctPeaksByPark= [];
+    var distincthwmsByPark = [];
 
-    for (var site in distinctPeaksByPark) {
-        siteSumPeakVals.push({
-            "site_name": distinctPeaksByPark[site].site_name,
-            data: []
-        });
-        formattedPeaks.push({
-            "site_name": distinctPeaksByPark[site].site_name,
-            data: []
-        });
-        for (var peak in peakStorage) {
-            if (peakStorage[peak].site_name === distinctPeaksByPark[site].site_name) {
-                var peakdata = {
-                    "Site Name": peakStorage[peak].data['Site Name'],
-                    "Peak Stage (ft)": peakStorage[peak].data['Peak Stage (ft)'],
-                    "Peak Date/Time": moment(peakStorage[peak].data['Peak Date/Time']).format("MM/DD/YYYY, h:mm a"),
-                    "County": peakStorage[peak].data['County'],
-                    "Height Above Ground (ft)": peakStorage[peak].data['Height Above Ground (ft)'],
-                    "Latitude (DD)": peakStorage[peak].data['Latitude (DD)'],
-                    "Longitude (DD)": peakStorage[peak].data['Longitude (DD)'],
-                    "Site Number": peakStorage[peak].data['Site Number'],
-                    "Waterbody": peakStorage[peak].data['Waterbody']
-                };
+    if (peakStorage.length > 0) {
+        distinctPeaksByPark = filterResults(peakStorage);
+        
 
-                if (peakStorage[peak].data['Peak Stage (ft)'] !== undefined) {
-                    siteSumPeakVals[site].data.push(peakStorage[peak].data['Peak Stage (ft)']);
+        for (var site in distinctPeaksByPark) {
+            siteSumPeakVals.push({
+                "site_name": distinctPeaksByPark[site].site_name,
+                data: []
+            });
+            formattedPeaks.push({
+                "site_name": distinctPeaksByPark[site].site_name,
+                data: []
+            });
+            for (var peak in peakStorage) {
+                if (peakStorage[peak].site_name === distinctPeaksByPark[site].site_name) {
+                    var peakdata = {
+                        "Site Name": peakStorage[peak].data['Site Name'],
+                        "Peak Stage (ft)": peakStorage[peak].data['Peak Stage (ft)'],
+                        "Peak Date/Time": moment(peakStorage[peak].data['Peak Date/Time']).format("MM/DD/YYYY, h:mm a"),
+                        "County": peakStorage[peak].data['County'],
+                        "Height Above Ground (ft)": peakStorage[peak].data['Height Above Ground (ft)'],
+                        "Latitude (DD)": peakStorage[peak].data['Latitude (DD)'],
+                        "Longitude (DD)": peakStorage[peak].data['Longitude (DD)'],
+                        "Site Number": peakStorage[peak].data['Site Number'],
+                        "Waterbody": peakStorage[peak].data['Waterbody']
+                    };
+    
+                    if (peakStorage[peak].data['Peak Stage (ft)'] !== undefined) {
+                        siteSumPeakVals[site].data.push(peakStorage[peak].data['Peak Stage (ft)']);
+                    }
+    
+                    formattedPeaks[site].data.push(peakdata);
                 }
-
-                formattedPeaks[site].data.push(peakdata);
-            }
-            if (peakStorage[peak].site_name !== distinctPeaksByPark[site].site_name) {
-
+                if (peakStorage[peak].site_name !== distinctPeaksByPark[site].site_name) {
+    
+                }
             }
         }
+    }
+    
+    
+    if (hwmStorage.length > 0) {
+        distincthwmsByPark = filterResults(hwmStorage);
     }
     for (var site in distincthwmsByPark) {
         siteSumHWMVals.push({
@@ -1793,11 +1805,6 @@ function processData(eventNumber) {
     // getting the summary statistics for each site 
     getSiteSummaryValues();
 
-    //Sort peak and hwm arrays
-    peakArrReg = peakArrReg.sort(function (a, b) { return a - b });
-    //hwmArrReg = hwmArrReg.sort(function (a, b) { return a - b });
-    hwmArrRegCoast = hwmArrRegCoast.sort(function (a, b) { return a - b });
-    hwmArrRegRiver = hwmArrRegRiver.sort(function (a, b) { return a - b });
     var sum = []
     var peakSum = {};
     var hwmSum = {};
@@ -1810,8 +1817,22 @@ function processData(eventNumber) {
     var confIntNinetyHigh;
     var confIntNinetyLow;
 
-    //Create peak row in regional summary table
-    getSummaryStats(peakArrReg);
+    if (peakArrReg.length > 0) {
+        //Sort peak and hwm arrays
+        peakArrReg = peakArrReg.sort(function (a, b) { return a - b });
+        //Create peak row in regional summary table
+        getSummaryStats(peakArrReg);
+    }
+
+    
+    if (hwmArrRegCoast.length > 0) {
+        hwmArrRegCoast = hwmArrRegCoast.sort(function (a, b) { return a - b });
+    }
+
+    if (hwmArrRegRiver.length > 0) {
+        hwmArrRegRiver = hwmArrRegRiver.sort(function (a, b) { return a - b });
+    }
+    
     var eventPeaks;
     var eventHWMs;
     var eventHWMCoast;
@@ -1829,45 +1850,72 @@ function processData(eventNumber) {
     }
 
     // getting the record with the max peak
-    var maxDate = eventPeaks.filter(x => x['Peak Stage (ft)'] === maxReg);
-    maxReg = maxReg.toFixed(2);
-    maxReg = Number(maxReg);
-    // setting Max Date
-    maxDate = maxDate[0]['Peak Date/Time'];
-    peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
-    sum.push(peakSum);
-    document.getElementById("saveRegionalPeakCSV").disabled = false;
-
+    if (eventPeaks > 0) {
+        var maxDate = eventPeaks.filter(x => x['Peak Stage (ft)'] === maxReg);
+        maxReg = maxReg.toFixed(2);
+        maxReg = Number(maxReg);
+        // setting Max Date
+        maxDate = maxDate[0]['Peak Date/Time'];
+        peakSum = { "Type": "Peak", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+        sum.push(peakSum);
+        document.getElementById("saveRegionalPeakCSV").disabled = false;
+    }
+    
     //Create hwm row in regional summary table
     //getSummaryStats(hwmArrayReg);
-    getSummaryStats(hwmArrRegCoast);
-    if (eventHWMCoast.length > 0) {
-        hwmSum = {};
-        // getting the record with the max hwm
-        var maxDate = eventHWMCoast.filter(x => x['Elevation (ft)'] === maxReg);
+    
+    if ((hwmArrRegCoast.length > 0) || (hwmArrRegRiver.length > 0)) {
+        getSummaryStats(hwmArrRegCoast);
+        if (eventHWMCoast.length > 0) {
+            hwmSum = {};
+            // getting the record with the max hwm
+            var maxDate = eventHWMCoast.filter(x => x['Elevation (ft)'] === maxReg);
 
-        maxReg = maxReg.toFixed(2);
-        maxReg = Number(maxReg);
-        // setting Max Date
-        maxDate = maxDate[0]['Flag Date'];
-        hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
-        sum.push(hwmSum);
+            maxReg = maxReg.toFixed(2);
+            maxReg = Number(maxReg);
+            // setting Max Date
+            maxDate = maxDate[0]['Flag Date'];
+            hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+            sum.push(hwmSum);
+        }
+
+        getSummaryStats(hwmArrRegRiver);
+        if (eventHWMRiver.length > 0) {
+            hwmSum = {};
+            // getting the record with the max hwm
+            var maxDate = eventHWMRiver.filter(x => x['Elevation (ft)'] === maxReg);
+            maxReg = maxReg.toFixed(2);
+            maxReg = Number(maxReg);
+
+            // setting Max Date
+            maxDate = maxDate[0]['Flag Date'];
+            hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
+            sum.push(hwmSum);
+        }
     }
 
-    getSummaryStats(hwmArrRegRiver);
-    if (eventHWMRiver.length > 0) {
-        hwmSum = {};
-        // getting the record with the max hwm
-        var maxDate = eventHWMRiver.filter(x => x['Elevation (ft)'] === maxReg);
-        maxReg = maxReg.toFixed(2);
-        maxReg = Number(maxReg);
+     //Summary stats to populate regional report summary table
+     function getSummaryStats(dataArray) {
+        meanReg = numbers.statistic.mean(dataArray);
+        medianReg = numbers.statistic.median(dataArray);
+        minReg = numbers.basic.min(dataArray);
+        maxReg = numbers.basic.max(dataArray);
+        numReg = dataArray.length;
+        standReg = numbers.statistic.standardDev(dataArray);
+        var confIntTemp = 1.645 * (standReg / Math.sqrt(numReg));
+        confIntNinetyHigh = meanReg + confIntTemp;
+        confIntNinetyLow = meanReg - confIntTemp;
 
-        // setting Max Date
-        maxDate = maxDate[0]['Flag Date'];
-        hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReg, "Max (ft)": maxReg, "Max Date/Time": maxDate, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
-        sum.push(hwmSum);
+        //Round Results
+        meanReg = meanReg.toFixed(2);
+        medianReg = medianReg.toFixed(2);
+        medianReg = Number(medianReg);
+        standReg = standReg.toFixed(2);
+        minReg = minReg.toFixed(2);
+        minReg = Number(minReg);
+        confIntNinetyHigh = confIntNinetyHigh.toFixed(2);
+        confIntNinetyLow = confIntNinetyLow.toFixed(2);
     }
-
 
     if (formattedHWMS.length > 0) {
         document.getElementById("saveRegionalHWMCSV").disabled = false;
@@ -1880,36 +1928,38 @@ function processData(eventNumber) {
         var peakRange = {};
         peakSiteSummaries = [];
         hwmSiteSummaries - [];
-        siteSumPeakVals.forEach(function (item, idx) {
-            var dataArray;
-            dataArray = item.data.sort(function (a, b) { return a - b });
-            getSummaryStats(dataArray);
-            if (confIntNinetyHigh !== "NaN") {
-                // var mean = meanReg.toFixed(2); -- is string so unnecesary 
-                //var sd = standReg.toFixed(2); -- is string so unnecesary 
-                /* peakRange = {"Site Name": eventName , "Range": minReg + '-' + maxReg, "Event": eventName};
-                eventsPeakRange.push(peakRange); */
-                peakSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
-                siteList.push({ "Site Name": item.site_name });
-                totalSites.push({ "Site Name": item.site_name, "Range": minReg + ' - ' + maxReg, "Event": eventName });
-            }
-        });
-        siteSumHWMVals.forEach(function (item, idx) {
-            var dataArray;
-            dataArray = item.data.sort(function (a, b) { return a - b });
-            getSummaryStats(dataArray);
-            if (confIntNinetyHigh !== "NaN") {
-                // var mean = meanReg.toFixed(2); -- is string so unnecesary 
-                //var sd = standReg.toFixed(2); -- is string so unnecesary 
-                var medReg = medianReg.toFixed(2);
-                hwmSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "HWM", "Total HWMs": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
-            }
-        });
+        if (siteSumPeakVals.length > 0) {
+            siteSumPeakVals.forEach(function (item, idx) {
+                var dataArray;
+                dataArray = item.data.sort(function (a, b) { return a - b });
+                getSummaryStats(dataArray);
+                if (confIntNinetyHigh !== "NaN") {
+                    // var mean = meanReg.toFixed(2); -- is string so unnecesary 
+                    //var sd = standReg.toFixed(2); -- is string so unnecesary 
+                    /* peakRange = {"Site Name": eventName , "Range": minReg + '-' + maxReg, "Event": eventName};
+                    eventsPeakRange.push(peakRange); */
+                    peakSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "Peak", "Total Peaks": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medianReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                    siteList.push({ "Site Name": item.site_name });
+                    totalSites.push({ "Site Name": item.site_name, "Range": minReg + ' - ' + maxReg, "Event": eventName });
+                }
+            });
+        }
+        if (siteSumHWMVals.length > 0) {
+            siteSumHWMVals.forEach(function (item, idx) {
+                var dataArray;
+                dataArray = item.data.sort(function (a, b) { return a - b });
+                getSummaryStats(dataArray);
+                if (confIntNinetyHigh !== "NaN") {
+                    // var mean = meanReg.toFixed(2); -- is string so unnecesary 
+                    //var sd = standReg.toFixed(2); -- is string so unnecesary 
+                    var medReg = medianReg.toFixed(2);
+                    hwmSiteSummaries.push({ "Site Name": item.site_name, "Event": eventName, "Type": "HWM", "Total HWMs": numReg, "Max (ft)": maxReg, "Min (ft)": minReg, "Median (ft)": medReg, "Mean (ft)": meanReg, "Standard Dev (ft)": standReg, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh });
+                }
+            });
+        }
     }
 
     function getEventsSiteSummary() {
-        var tableData = [];
-        var buckets = [];
         var eOne = [];
         var eTwo = [];
         var siteList = [];
@@ -1947,29 +1997,6 @@ function processData(eventNumber) {
             });
         });
 
-    }
-
-    //Summary stats to populate regional report summary table
-    function getSummaryStats(dataArray) {
-        meanReg = numbers.statistic.mean(dataArray);
-        medianReg = numbers.statistic.median(dataArray);
-        minReg = numbers.basic.min(dataArray);
-        maxReg = numbers.basic.max(dataArray);
-        numReg = dataArray.length;
-        standReg = numbers.statistic.standardDev(dataArray);
-        var confIntTemp = 1.645 * (standReg / Math.sqrt(numReg));
-        confIntNinetyHigh = meanReg + confIntTemp;
-        confIntNinetyLow = meanReg - confIntTemp;
-
-        //Round Results
-        meanReg = meanReg.toFixed(2);
-        medianReg = medianReg.toFixed(2);
-        medianReg = Number(medianReg);
-        standReg = standReg.toFixed(2);
-        minReg = minReg.toFixed(2);
-        minReg = Number(minReg);
-        confIntNinetyHigh = confIntNinetyHigh.toFixed(2);
-        confIntNinetyLow = confIntNinetyLow.toFixed(2);
     }
 
     // Builds the HTML Table
@@ -2163,6 +2190,8 @@ function clickPeakLabelsReg() {
 function dataCheck() {
     if ((allHWMEOne.length === 0) && (allHWMETwo.length === 0) && (allPeaksEOne.length === 0) && (allPeaksETwo.length === 0)) {
         noData = true;
+        // showing no results text and scrolling to it
+        $("#noResultsText").show();
         $(".peaksDisclaimerEventOne").hide();
         $(".peaksDisclaimerEventTwo").hide();
         $(".hwmsDisclaimerEventOne").hide();
@@ -2176,9 +2205,6 @@ function dataCheck() {
         // showing tooltip incase users try to change form fields instead of clicking "Clear Selections"
         $("#formContainer").attr('title', 'Click the "Clear Selections" button to start a new query');
         $('#formContainer').tooltip('show');
-
-        // showing no results text and scrolling to it
-        $("#noResultsText").show();
         document.getElementById('noResultsText').scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
     }
 }

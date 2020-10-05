@@ -354,7 +354,7 @@ var npsNetworks = L.esri.featureLayer({
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
 	useCors: false,
-	url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/Refuges/MapServer/1",
+	url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0",
 	//opacity: 0.5,
 	//minZoom: 9,
 	style: function (feature) {
@@ -1662,22 +1662,41 @@ $(document).ready(function () {
 		regionToBase64();
 		// Build legend table
 		function legendTable() {
-			return {
-				table: {
-					widths: ['auto', 'auto'],
-					body: [
-						[{ colSpan: 2, border: [false, false, false, true], text: 'Layer Explanation:', style: 'subHeader' }, ''],
-						[{ image: peakImg }, { text: 'Peak Location', alignment: 'left' }],
-						//[{ image: hwmImg }, { text: 'High Water Mark', alignment: 'left' }],
-						[{ image: parkImg }, { text: landType + ' Boundary', alignment: 'left' }],
-						//[{ image: bufferImg }, { text: 'Buffer Extent', alignment: 'left' }],
-						[{ image: regionImg }, { text: 'Region Boundary', alignment: 'left' }],
-					]
-				},
-				layout: {
-					defaultBorder: false,
-				}
-			};
+			if ((allPeaksEOne.length > 0) || (allPeaksETwo.length > 0)) {
+				return {
+					table: {
+						widths: ['auto', 'auto'],
+						body: [
+							[{ colSpan: 2, border: [false, false, false, true], text: 'Layer Explanation:', style: 'subHeader' }, ''],
+							[{ image: peakImg }, { text: 'Peak Location', alignment: 'left' }],
+							//[{ image: hwmImg }, { text: 'High Water Mark', alignment: 'left' }],
+							[{ image: parkImg }, { text: landType + ' Boundary', alignment: 'left' }],
+							//[{ image: bufferImg }, { text: 'Buffer Extent', alignment: 'left' }],
+							[{ image: regionImg }, { text: 'Region Boundary', alignment: 'left' }],
+						]
+					},
+					layout: {
+						defaultBorder: false,
+					}
+				};
+			} else {
+				return {
+					table: {
+						widths: ['auto', 'auto'],
+						body: [
+							[{ colSpan: 2, border: [false, false, false, true], text: 'Layer Explanation:', style: 'subHeader' }, ''],
+							//[{ image: hwmImg }, { text: 'High Water Mark', alignment: 'left' }],
+							[{ image: parkImg }, { text: landType + ' Boundary', alignment: 'left' }],
+							//[{ image: bufferImg }, { text: 'Buffer Extent', alignment: 'left' }],
+							[{ image: regionImg }, { text: 'Region Boundary', alignment: 'left' }],
+						]
+					},
+					layout: {
+						defaultBorder: false,
+					}
+				};
+			}
+			
 		}
 		//// End of Legend build ////
 
@@ -3319,7 +3338,7 @@ function searchComplete(runningFilter, exploreMap) {
 		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
-			url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/Refuges/MapServer/1",
+			url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0",
 			simplifyFactor: 0.5,
 			precision: 4,
 			where: "ORGNAME=" + name,
