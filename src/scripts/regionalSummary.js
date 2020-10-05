@@ -124,6 +124,8 @@ $(document).ready(function () {
     $("#noResultsText").hide();
     $(".peaksDisclaimerEventOne").hide();
     $(".peaksDisclaimerEventTwo").hide();
+    $(".hwmsDisclaimerEventOne").hide();
+    $(".hwmsDisclaimerEventTwo").hide();
     $('#btnChooseRegion').click(function () {
 
         // for some reason tableData loading incompletely without timeout
@@ -165,7 +167,6 @@ $(document).ready(function () {
         // filling progress bar as visual aid to user that report is generating
 		$(".progress-bar").addClass("fill");
 		
-
         // todo: make this set to variable
 
         // setting buffer style
@@ -700,7 +701,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     });
 
     $('#btnClearRegFilters').click(function () {
-        clearRegOutput()
+        clearRegOutput();
+        $(".progress-bar").removeClass("fill");
     });
 
     //Clear regional report output when modal is closed by clicking the 'Close' button
@@ -772,6 +774,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
 function clearRegOutput() {
     $(".peaksDisclaimerEventOne").hide();
     $(".peaksDisclaimerEventTwo").hide();
+    $(".hwmsDisclaimerEventOne").hide();
+    $(".hwmsDisclaimerEventTwo").hide();
     $("#noResultsText").hide();
     $('#formContainer').tooltip('destroy');
 
@@ -839,7 +843,7 @@ function clearRegOutput() {
     document.getElementById('eventsSummaryTitle').innerHTML = '';
     eventName = '';
 
-    document.querySelector('.progress-bar-fill').style.width = "0%"
+    $(".progress-bar").removeClass("fill");
     clearSelects()
     // adding the basemap back to the map
     setTimeout(() => {
@@ -860,7 +864,7 @@ function createBuffers() {
             var cleanCoords = turf.cleanCoords(regionParksFC[p].geometry);
             var feat = { 'type': regionParksFC[p].geometry.type, 'properties': regionParksFC[p].properties, 'coordinates': cleanCoords.coordinates };
             // Use console.log below to identify polys causing failure. Turf will fail immediately after the bad poly
-            console.log(feat);
+            //console.log(feat);
             if (feat.properties.OBJECTID !== 456) {
                 var simplify = turf.simplify(feat, options);
                 simplifiedSites.push(simplify);
@@ -991,7 +995,10 @@ function getEventSpecificData() {
                 $(".peaksDisclaimerEventOne").show();
                 regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                 processData(eventNumber);
-                regionalMap.zoomIn();
+                //regionalMap.zoomIn();
+            }
+            if (hwmsWithinBuffer.getLayers().length > 0) {
+                $(".hwmsDisclaimerEventOne").show();
             }
         }, 2000);
     } else if (selectedEvents.length === 2) {
@@ -1034,6 +1041,9 @@ function getEventSpecificData() {
                 $(".peaksDisclaimerEventOne").show();
                 regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                 processData(eventNumber);
+            }
+            if (hwmsWithinBuffer.getLayers().length > 0) {
+                $(".hwmsDisclaimerEventOne").show();
             }
             nextEvent();
         }, 2000);
@@ -1081,9 +1091,11 @@ function getEventSpecificData() {
                     $(".peaksDisclaimerEventTwo").show();
                     regionalMap.fitBounds(peaksWithinBuffer.getBounds());
                     processData(eventNumber);
-                    regionalMap.zoomIn();
+                    //regionalMap.zoomIn();
                 }
-
+                if (hwmsWithinBuffer.getLayers().length > 0) {
+                    $(".hwmsDisclaimerEventTwo").show();
+                }
             }, 2000);
         }
 
@@ -1622,9 +1634,6 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                 allHWMETwoRiver = riverineHWMStorage;
             }
 
-            // DOUBLE CHECK, IS THIS SUPPOSED TO BE HERE
-            $(".progress-bar").removeClass("fill");
-            clearSelects()
             // adding the basemap back to the map
             setTimeout(() => {
                 var regionBasemap = L.esri.basemapLayer('Topographic').addTo(regionalMap);
@@ -1637,6 +1646,9 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
 }
 
 function clearSelects() {
+    
+    $(".progress-bar").removeClass("fill");
+
     $('#evtSelect_regionalModal').val('').trigger('change');
     $('#bufferSelect_regionalModal').val('').trigger('change');
     //$("#noResultsText").hide();
@@ -2151,8 +2163,10 @@ function clickPeakLabelsReg() {
 function dataCheck() {
     if ((allHWMEOne.length === 0) && (allHWMETwo.length === 0) && (allPeaksEOne.length === 0) && (allPeaksETwo.length === 0)) {
         noData = true;
+        $(".peaksDisclaimerEventOne").hide();
         $(".peaksDisclaimerEventTwo").hide();
-        $(".peaksDisclaimerEventTwo").hide();
+        $(".hwmsDisclaimerEventOne").hide();
+        $(".hwmsDisclaimerEventTwo").hide();
 
         $('#typeSelect_regionalModal').attr('disabled', true);
         $('#typeSelect_regionalModal').attr('disabled', true);
