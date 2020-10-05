@@ -1950,6 +1950,10 @@ $(document).ready(function () {
 		showFiltersModal();
 	});
 	$('#btnStartOver').click(function () {
+		location.reload();
+	});
+	$('#goBackButton').click(function () {
+		$('#updateFiltersModal').modal('hide');
 		$('#welcomeModal').modal('show');
 	});
 
@@ -3451,8 +3455,10 @@ function searchComplete(runningFilter, exploreMap) {
 					if (isItInside) {
 						//only include the hwms that have values
 						if (hwm._layers[i].feature.properties.elev_ft != undefined) {
+							if (hwm._layers[i].feature.properties.hwm_locationdescription != undefined) {
 							identifiedMarks.push(hwm._layers[i])
 							hwm._layers[i].addTo(bufferHWM);
+							}
 						}
 					}
 				}
@@ -3716,61 +3722,95 @@ function generateSiteReport() {
 			USGSrtGages.addTo(map);
 			$('#nwisLoadingAlert').show();
 			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
-			queryNWISrtGages(bbox);
+			queryNWISRTGagesForReport(bbox);
 			console.log("7 getting stream gages");
 			console.log(USGSrtGages);
 			//Add symbol and layer name to legend
 			$('#streamGageSymbology').append(streamGageSymbologyInterior);
 		}
-		//Remove symbol and layer name from legend when box is unchecked
-		/* if (streamgageCheckBox.checked == false) {
-			USGSrtGages.clearLayers(map);
-			$('#streamGageSymbology').children().remove();
-		} */
-		setTimeout(() => {
-			// account for if there are no gages in the bounding box
-			if (USGSrtGages.getLayers().length === 0) {
-				var gageGraphTitle = document.getElementById('gageGraphs');
-				gageGraphTitle.innerHTML = "";
-				$("#streamGageHeader").addClass("no-data");
-				// gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
-				$('#streamGageToggle').click();
-				createDataArrays();
-				//USGSrtGages.clearLayers();
-				console.log("10 moving to data arrays");
-			} else {
-				var rtLength = USGSrtGages.getLayers().length;
-				var cnt = 0;
-				for (var i in USGSrtGages._layers) {
-					cnt++;
-					// formatting point for turf
-					var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
 
-					var isItInside = turf.booleanPointInPolygon(cords, buffer);
-					console.log("9 checking to see if any are in buffer");
-					// if true add it to an array containing all the 'true' peaks
-					if (isItInside) {
-						identifiedUSGSrtGage.push(USGSrtGages._layers[i])
-					}
-					if (cnt === rtLength) {
-						if (identifiedUSGSrtGage.length > 0) {
-							allStreamGages = identifiedUSGSrtGage;
-							displayRtGageReport(identifiedUSGSrtGage, false);
-						} else {
-							var gageGraphTitle = document.getElementById('gageGraphs');
-							gageGraphTitle.innerHTML = "";
-							$("#streamGageHeader").addClass("no-data");
-							$('#streamGageToggle').click();
-							createDataArrays();
-							$('#loadUSGSrt').css('display', 'none');
-							//USGSrtGages.clearLayers();
-							console.log("10 moving to data arrays");
+		function queryNWISRTGagesForReport() {
+			var NWISmarkers = {};
+
+			//NWIS query options from http://waterservices.usgs.gov/rest/IV-Test-Tool.html
+			var parameterCodeList = '00065,62619,62620,63160,72214';
+			var siteTypeList = 'OC,OC-CO,ES,LK,ST,ST-CA,ST-DCH,ST-TS';
+			var siteStatus = 'active';
+			var url = 'https://waterservices.usgs.gov/nwis/site/?format=mapper&bBox=' + bbox + '&parameterCd=' + parameterCodeList + '&siteType=' + siteTypeList + '&siteStatus=' + siteStatus;
+
+			$.ajax({
+				url: url,
+				dataType: "xml",
+				success: function (xml) {
+					$(xml).find('site').each(function () {
+
+						var siteID = $(this).attr('sno');
+						var siteName = $(this).attr('sna');
+						var lat = $(this).attr('lat');
+						var lng = $(this).attr('lng');
+						NWISmarkers[siteID] = L.marker([lat, lng], { icon: nwisMarkerIcon });
+						NWISmarkers[siteID].data = { siteName: siteName, siteCode: siteID };
+						NWISmarkers[siteID].data.parameters = {};
+
+						//add point to featureGroup
+						USGSrtGages.addLayer(NWISmarkers[siteID]);
+
+						$("#nwisLoadingAlert").fadeOut(2000);
+					});
+					setTimeout(() => {
+						identifyGagesWithinBuff();
+					}, 1500);
+				},
+				error: function (xml) {
+					$("#nwisLoadingAlert").fadeOut(2000);
+				}
+			});
+		}
+
+		function identifyGagesWithinBuff() {
+				// account for if there are no gages in the bounding box
+				if (USGSrtGages.getLayers().length === 0) {
+					var gageGraphTitle = document.getElementById('gageGraphs');
+					gageGraphTitle.innerHTML = "";
+					$("#streamGageHeader").addClass("no-data");
+					// gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
+					$('#streamGageToggle').click();
+					createDataArrays();
+					//USGSrtGages.clearLayers();
+					console.log("10 moving to data arrays");
+				} else {
+					var rtLength = USGSrtGages.getLayers().length;
+					var cnt = 0;
+					for (var i in USGSrtGages._layers) {
+						cnt++;
+						// formatting point for turf
+						var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
+	
+						var isItInside = turf.booleanPointInPolygon(cords, buffer);
+						console.log("9 checking to see if any are in buffer");
+						// if true add it to an array containing all the 'true' peaks
+						if (isItInside) {
+							identifiedUSGSrtGage.push(USGSrtGages._layers[i])
 						}
-
+						if (cnt === rtLength) {
+							if (identifiedUSGSrtGage.length > 0) {
+								allStreamGages = identifiedUSGSrtGage;
+								displayRtGageReport(identifiedUSGSrtGage, false);
+							} else {
+								var gageGraphTitle = document.getElementById('gageGraphs');
+								gageGraphTitle.innerHTML = "";
+								$("#streamGageHeader").addClass("no-data");
+								$('#streamGageToggle').click();
+								createDataArrays();
+								$('#loadUSGSrt').css('display', 'none');
+								//USGSrtGages.clearLayers();
+								console.log("10 moving to data arrays");
+							}
+	
+						}
 					}
 				}
-			}
-		}, 2000);
+		}
 
 	}
 	//get data and generate graph of real-time gage water level time-series data
@@ -3946,7 +3986,7 @@ function generateSiteReport() {
 
 	function createDataArrays() {
 		// making sure real time sts aren't in the legend
-		$('#streamGageToggle').click();
+		//$('#streamGageToggle').click();
 		$('#streamGageSymbology').css('display', 'none');
 
 		var peaksArray = [];
@@ -4012,6 +4052,7 @@ function generateSiteReport() {
 
 		// stormtide not currently used in report but may be if future development is wanted
 		function getStormTideFileImages() {
+			USGSrtGages.clearLayers();
 			$("#stormTideHeader").addClass("no-data");
 			if (identifiedST.length > 0) {
 				let result = peaksArray.map(a => ({ ...stArray.find(p => a.site_no === p.site_no), ...a }));
@@ -4160,11 +4201,12 @@ function generateSiteReport() {
 
 				//Display no data notice in report if there aren't any peaks or hwms
 				if (peakArrReport == 0 && hwmArrReportCoastal == 0 && hwmArrReportRiverine == 0) {
-					$('#reportSummaryTitle').children().remove();
-					$('#reportSummaryTitle').append(currentParkOrRefuge + " Summary for " + selectedEvent);
-					$('#reportSummaryTitle').show();
-					$('#reportSummaryNoData').show();
+					$('#summaryDataHeader').addClass("no-data");
+				} else {
+					// Else expand summary by default
+					$("#summaryDataHeader").parent().toggleClass("expanded");
 				}
+	
 
 				//Sort peak and hwm arrays
 				peakArrReport = peakArrReport.sort(function (a, b) { return a - b });
@@ -4190,8 +4232,11 @@ function generateSiteReport() {
 				// Create peak row in report summary table
 				getReportSummaryStats(peakArrReport);
 				if (peakArrReport.length > 0) {
-					var maxDate = peaksArray.filter(x => x.peak_stage === maxReport);
 					// setting Max Date
+					var maxDate = peaksArray.filter(x => x.peak_stage === maxReport);
+
+					maxReport = maxReport.toFixed(2);
+					maxReport = Number(maxReport);
 					maxDate = moment(maxDate[0].peak_date).format("MM/DD/YYYY, h:mm a");
 					peakSum = { "Type": "Peak", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 					sum.push(peakSum);
@@ -4205,8 +4250,11 @@ function generateSiteReport() {
 				getReportSummaryStats(hwmArrReportCoastal);
 				hwmSum = {};
 				if (hwmArrReportCoastal.length > 0) {
-					var maxDate = coastalHWMs.filter(x => x.elev_ft === maxReport);
 					// setting Max Date
+					var maxDate = coastalHWMs.filter(x => x.elev_ft === maxReport);
+					maxReport = maxReport.toFixed(2);
+                	maxReport = Number(maxReport);
+					
 					maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
 					hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 					sum.push(hwmSum);
@@ -4215,8 +4263,12 @@ function generateSiteReport() {
 				getReportSummaryStats(hwmArrReportRiverine);
 				hwmSum = {};
 				if (hwmArrReportRiverine.length > 0) {
-					var maxDate = riverineHWMs.filter(x => x.elev_ft === maxReport);
+					
 					// setting Max Date
+					var maxDate = riverineHWMs.filter(x => x.elev_ft === maxReport);
+					maxReport = maxReport.toFixed(2);
+                	maxReport = Number(maxReport);
+					
 					maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
 					hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 					sum.push(hwmSum);
@@ -4240,8 +4292,8 @@ function generateSiteReport() {
 					medianReport = medianReport.toFixed(3);
 					minReport = minReport.toFixed(2);
 					minReport = Number(minReport);
-					maxReport = maxReport.toFixed(2);
-					maxReport = Number(maxReport);
+					/* maxReport = maxReport.toFixed(2);
+					maxReport = Number(maxReport); */
 					confIntNinetyHigh = confIntNinetyHigh.toFixed(3);
 					confIntNinetyLow = confIntNinetyLow.toFixed(3);
 				}

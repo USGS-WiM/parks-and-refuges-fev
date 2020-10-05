@@ -1499,6 +1499,10 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                                 if (regionalHWM._layers[i].feature.properties.elev_ft != undefined) {
                                     regionalHWM._layers[i].addTo(hwmsWithinBuffer);
                                 }
+                                var locationDescText = "";
+                                if (regionalHWM._layers[i].feature.properties.hwm_locationdescription !== undefined) {
+                                    locationDescText = regionalHWM._layers[i].feature.properties.hwm_locationdescription;
+                                }
                                 var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                                 parksWHWMStorage.push({
                                     "site_name": landsitetype,
@@ -1514,7 +1518,7 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                                         "Vertical Method": regionalHWM._layers[i].feature.properties.verticalMethodName,
                                         "Horizontal Method": regionalHWM._layers[i].feature.properties.horizontalMethodName,
                                         "Horizontal Datum": regionalHWM._layers[i].feature.properties.horizontalDatumName,
-                                        "Location Description": regionalHWM._layers[i].feature.properties.hwm_locationdescription,
+                                        "Location Description": locationDescText,
                                         "Environment": regionalHWM._layers[i].feature.properties.hwm_environment,
                                         "Stillwater": regionalHWM._layers[i].feature.properties.stillwater,
                                         "Uncertainty": regionalHWM._layers[i].feature.properties.uncertainty,
@@ -1550,6 +1554,11 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                         if (regionalHWM._layers[i].feature.properties.elev_ft != undefined) {
                             regionalHWM._layers[i].addTo(hwmsWithinBuffer);
                         }
+                        var locationDescText = "";
+                        if (regionalHWM._layers[i].feature.properties.hwm_locationdescription !== undefined) {
+                            locationDescText = regionalHWM._layers[i].feature.properties.hwm_locationdescription;
+                        }
+                        
                         parksWHWMStorage.push({
                             "site_name": landsitetype,
                             data: {
@@ -1564,7 +1573,7 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                                 "Vertical Method": regionalHWM._layers[i].feature.properties.verticalMethodName,
                                 "Horizontal Method": regionalHWM._layers[i].feature.properties.horizontalMethodName,
                                 "Horizontal Datum": regionalHWM._layers[i].feature.properties.horizontalDatumName,
-                                "Location Description": regionalHWM._layers[i].feature.properties.hwm_locationdescription,
+                                "Location Description": locationDescText,
                                 "Environment": regionalHWM._layers[i].feature.properties.hwm_environment,
                                 "Stillwater": regionalHWM._layers[i].feature.properties.stillwater,
                                 "Uncertainty": regionalHWM._layers[i].feature.properties.uncertainty,
