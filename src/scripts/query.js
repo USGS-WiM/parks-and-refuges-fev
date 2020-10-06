@@ -833,7 +833,6 @@ function filterMapData(event, isUrlParam, runningFilter, exploreMap) {
             }
         }
     });
-    
 } //end filterMapData function
 function queryNWISRainGages(bbox) {
     var NWISRainmarkers = {};
