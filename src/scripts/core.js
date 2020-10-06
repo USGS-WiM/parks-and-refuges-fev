@@ -515,7 +515,6 @@ $(document).ready(function () {
 	submitSearch($('#btnActiveSiteReport'), '#evtSelect_updateFiltersModal', '#updateFiltersModal', '#evtSelect_filterModal', '#typeSelect_filterModal', '#siteSelect_filterModal', true, false);
 
 	function submitSearch(submitButton, evtSelect_Modal_Primary, chooseModal, evtSelect_Modal_Secondary, typeSelect, siteSelect, runningFilter, exploreMap) {
-
 		submitButton.click(function () {
 			siteSelected = true;
 			$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
@@ -1696,7 +1695,7 @@ $(document).ready(function () {
 					}
 				};
 			}
-			
+
 		}
 		//// End of Legend build ////
 
@@ -3383,17 +3382,17 @@ function searchComplete(runningFilter, exploreMap) {
 		$('#updateFiltersModal').modal('hide');
 
 		// waiting for site layer to be loaded onto the map before continuing
-			refuges.on('load', function () {
-				console.log("waiting for layer to load onto the map")
-				if (polyDefined === true) {
-					if (alreadyLoaded == false) {
-						getSiteBuffers(exploreMap);
-					}
-					alreadyLoaded = true;
+		refuges.on('load', function () {
+			console.log("waiting for layer to load onto the map")
+			if (polyDefined === true) {
+				if (alreadyLoaded == false) {
+					getSiteBuffers(exploreMap);
 				}
-			});
-		
-		
+				alreadyLoaded = true;
+			}
+		});
+
+
 	}
 
 	// account for a search that is not a park or refuge
@@ -3441,6 +3440,7 @@ function searchComplete(runningFilter, exploreMap) {
 		}); */
 		setTimeout(() => {
 			getEachDataSection(bufferPoly.getLayers());
+			document.getElementById("printNav").disabled = false;
 		}, 5000);
 
 
@@ -3452,16 +3452,19 @@ function searchComplete(runningFilter, exploreMap) {
 				// formatting point for turf
 				var cords = ([peak._layers[i]._latlng.lng, peak._layers[i]._latlng.lat]);
 
-				var isItInside = turf.booleanPointInPolygon(cords, buffer);
+				if (peak._layers[i] !== undefined) {
+					var isItInside = turf.booleanPointInPolygon(cords, buffer);
 
-				// if true add it to an array containing all the 'true' peaks
-				if (isItInside) {
-					//only include the peaks that have values that aren't undefined
-					if (peak._layers[i].feature.properties.peak_stage != undefined) {
-						identifiedPeaks.push(peak._layers[i])
-						peak._layers[i].addTo(bufferPeak);
+					// if true add it to an array containing all the 'true' peaks
+					if (isItInside) {
+						//only include the peaks that have values that aren't undefined
+						if (peak._layers[i].feature.properties.peak_stage != undefined) {
+							identifiedPeaks.push(peak._layers[i])
+							peak._layers[i].addTo(bufferPeak);
+						}
 					}
 				}
+
 			}
 			getHWMSInside();
 
@@ -3469,17 +3472,20 @@ function searchComplete(runningFilter, exploreMap) {
 			function getHWMSInside() {
 				//cycling through each HWM to see if inside the buffer
 				for (var i in hwm._layers) {
-					var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
-					var isItInside = turf.booleanPointInPolygon(cords, buffer);
-					if (isItInside) {
-						//only include the hwms that have values
-						if (hwm._layers[i].feature.properties.elev_ft != undefined) {
-							if (hwm._layers[i].feature.properties.hwm_locationdescription != undefined) {
-							identifiedMarks.push(hwm._layers[i])
-							hwm._layers[i].addTo(bufferHWM);
+					if (hwm._layers[i] !== undefined) {
+						var cords = ([hwm._layers[i]._latlng.lng, hwm._layers[i]._latlng.lat]);
+						var isItInside = turf.booleanPointInPolygon(cords, buffer);
+						if (isItInside) {
+							//only include the hwms that have values
+							if (hwm._layers[i].feature.properties.elev_ft != undefined) {
+								if (hwm._layers[i].feature.properties.hwm_locationdescription != undefined) {
+									identifiedMarks.push(hwm._layers[i])
+									hwm._layers[i].addTo(bufferHWM);
+								}
 							}
 						}
 					}
+
 				}
 				getST();
 			}
@@ -3592,14 +3598,11 @@ function searchComplete(runningFilter, exploreMap) {
 
 		map.fitBounds(bufferPoly.getBounds());
 		if (siteSelected == true) {
-			document.getElementById("printNav").disabled = false;
+			//document.getElementById("printNav").disabled = false;
 		}
 		if (exploreMap === true) {
 			$('#siteReportLoading').modal('hide');
 		}
-
-
-
 		//$(inputModal).modal('hide');
 	}
 };
@@ -3728,25 +3731,18 @@ function generateSiteReport() {
 	});
 
 	function getStreamGageForReport() {
+		//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+		//queryNWISrtGages(bbox);
+		//When checkbox is checked, add layer to map
+		USGSrtGages.addTo(map);
+		$('#nwisLoadingAlert').show();
+		var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
+		queryNWISRTGagesForReport(bbox);
+		console.log("7 getting stream gages");
+		console.log(USGSrtGages);
+		//Add symbol and layer name to legend
+		$('#streamGageSymbology').append(streamGageSymbologyInterior);
 
-		var streamgageCheckBox = document.getElementById("streamGageToggle");
-		//Prevent user from using toggle when zoom is less than 9
-		if (map.getZoom() < 9) {
-			streamgageCheckBox.checked = false;
-		}
-		if (streamgageCheckBox.checked == true) {
-			//var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
-			//queryNWISrtGages(bbox);
-			//When checkbox is checked, add layer to map
-			USGSrtGages.addTo(map);
-			$('#nwisLoadingAlert').show();
-			var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
-			queryNWISRTGagesForReport(bbox);
-			console.log("7 getting stream gages");
-			console.log(USGSrtGages);
-			//Add symbol and layer name to legend
-			$('#streamGageSymbology').append(streamGageSymbologyInterior);
-		}
 
 		function queryNWISRTGagesForReport() {
 			var NWISmarkers = {};
@@ -3782,13 +3778,7 @@ function generateSiteReport() {
 				},
 				error: function (xml) {
 					$("#nwisLoadingAlert").fadeOut(2000);
-				}
-			});
-		}
-
-		function identifyGagesWithinBuff() {
-				// account for if there are no gages in the bounding box
-				if (USGSrtGages.getLayers().length === 0) {
+					// skip rest of rt graph functions and continue building report
 					var gageGraphTitle = document.getElementById('gageGraphs');
 					gageGraphTitle.innerHTML = "";
 					$("#streamGageHeader").addClass("no-data");
@@ -3797,38 +3787,53 @@ function generateSiteReport() {
 					createDataArrays();
 					//USGSrtGages.clearLayers();
 					console.log("10 moving to data arrays");
-				} else {
-					var rtLength = USGSrtGages.getLayers().length;
-					var cnt = 0;
-					for (var i in USGSrtGages._layers) {
-						cnt++;
-						// formatting point for turf
-						var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
-	
-						var isItInside = turf.booleanPointInPolygon(cords, buffer);
-						console.log("9 checking to see if any are in buffer");
-						// if true add it to an array containing all the 'true' peaks
-						if (isItInside) {
-							identifiedUSGSrtGage.push(USGSrtGages._layers[i])
+				}
+			});
+		}
+
+		function identifyGagesWithinBuff() {
+			// account for if there are no gages in the bounding box
+			if (USGSrtGages.getLayers().length === 0) {
+				var gageGraphTitle = document.getElementById('gageGraphs');
+				gageGraphTitle.innerHTML = "";
+				$("#streamGageHeader").addClass("no-data");
+				// gageGraphTitle.innerHTML = "<div style='font-weight: normal; text-align: center;'> <p >There are no real-time stream gages at this site.</p></div>";
+				$('#streamGageToggle').click();
+				createDataArrays();
+				//USGSrtGages.clearLayers();
+				console.log("10 moving to data arrays");
+			} else {
+				var rtLength = USGSrtGages.getLayers().length;
+				var cnt = 0;
+				for (var i in USGSrtGages._layers) {
+					cnt++;
+					// formatting point for turf
+					var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
+
+					var isItInside = turf.booleanPointInPolygon(cords, buffer);
+					console.log("9 checking to see if any are in buffer");
+					// if true add it to an array containing all the 'true' peaks
+					if (isItInside) {
+						identifiedUSGSrtGage.push(USGSrtGages._layers[i])
+					}
+					if (cnt === rtLength) {
+						if (identifiedUSGSrtGage.length > 0) {
+							allStreamGages = identifiedUSGSrtGage;
+							displayRtGageReport(identifiedUSGSrtGage, false);
+						} else {
+							var gageGraphTitle = document.getElementById('gageGraphs');
+							gageGraphTitle.innerHTML = "";
+							$("#streamGageHeader").addClass("no-data");
+							$('#streamGageToggle').click();
+							createDataArrays();
+							$('#loadUSGSrt').css('display', 'none');
+							//USGSrtGages.clearLayers();
+							console.log("10 moving to data arrays");
 						}
-						if (cnt === rtLength) {
-							if (identifiedUSGSrtGage.length > 0) {
-								allStreamGages = identifiedUSGSrtGage;
-								displayRtGageReport(identifiedUSGSrtGage, false);
-							} else {
-								var gageGraphTitle = document.getElementById('gageGraphs');
-								gageGraphTitle.innerHTML = "";
-								$("#streamGageHeader").addClass("no-data");
-								$('#streamGageToggle').click();
-								createDataArrays();
-								$('#loadUSGSrt').css('display', 'none');
-								//USGSrtGages.clearLayers();
-								console.log("10 moving to data arrays");
-							}
-	
-						}
+
 					}
 				}
+			}
 		}
 
 	}
@@ -3838,7 +3843,7 @@ function generateSiteReport() {
 		$.ajaxSetup({
 			async: false
 		});
-		
+
 		if (loadmore === false) {
 			allStreamGages = streamGagesInBuffer
 			var gageArray = [];
@@ -3848,16 +3853,16 @@ function generateSiteReport() {
 				gageArray.push(allStreamGages[streamGage].data);
 			}
 			gageArray = gageArray.reduce((unique, o) => {
-				if(!unique.some(obj => obj.siteCode === o.siteCode)) {
-				  unique.push(o);
+				if (!unique.some(obj => obj.siteCode === o.siteCode)) {
+					unique.push(o);
 				}
 				return unique;
-			},[]);
+			}, []);
 
 			allStreamGages = gageArray;
 		}
-		
-		
+
+
 		console.log(gageArray);
 		console.log(allStreamGages);
 		//This title appears under the map/legend in the regional report
@@ -3922,71 +3927,71 @@ function generateSiteReport() {
 			//This is where the hydrograph title and graph or no data warning are added to the Report 
 			$('#rtgraphs').append(
 				"<div class='report-chart-wrapper' id='" + tempID + "Wrapper'>"
-					+ "<b class='report-chart-title'>"
-						+ threeGraphs[streamGage].siteName + " (Site" + "&nbsp" + threeGraphs[streamGage].siteCode + ")"
-					+ "</b>"
-					+ "<div class='report-chart-body' id=" + tempID + "></div>"
+				+ "<b class='report-chart-title'>"
+				+ threeGraphs[streamGage].siteName + " (Site" + "&nbsp" + threeGraphs[streamGage].siteCode + ")"
+				+ "</b>"
+				+ "<div class='report-chart-body' id=" + tempID + "></div>"
 				+ "</div>");
 			console.log("in rt graphing for reports");
 			//Get the data for the hydrograph
 			$.getJSON('https://nwis.waterservices.usgs.gov/nwis/iv/?format=nwjson&sites=' + threeGraphs[streamGage].siteCode + '&parameterCd=' + parameterCodeList + timeQueryRange, function (data) {
 
-            //If there are no data to create a hydrograph, display the no data warning
-            if (data.data == undefined) {
-				$("#" + tempID + "Wrapper").addClass("full-width");
-				$("#" + tempID).append("No NWIS data available for this time period");
-            }
+				//If there are no data to create a hydrograph, display the no data warning
+				if (data.data == undefined) {
+					$("#" + tempID + "Wrapper").addClass("full-width");
+					$("#" + tempID).append("No NWIS data available for this time period");
+				}
 
-            //If there are data, create a hydrograph
-            if (data.data != undefined) {
-                $(tempIDhash).show();
+				//If there are data, create a hydrograph
+				if (data.data != undefined) {
+					$(tempIDhash).show();
 
-                //create chart
-                Highcharts.setOptions({ global: { useUTC: false } });
-                $(tempIDhash).highcharts({
-                    chart: {
-                        type: 'line'
-                    },
-                    title: {
-                        text: "",
-                        align: 'left',
-                        style: {
-                            color: 'rgba(0,0,0,0.6)',
-                            fontSize: 'small',
-                            fontWeight: 'bold',
-                            fontFamily: 'Open Sans, sans-serif'
-                        }
-                        //text: null
-                    },
-                    exporting: {
-                        filename: 'FEV_NWIS_Site' + threeGraphs[streamGage].siteCode
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    xAxis: {
-                        type: "datetime",
-                        labels: {
-                            formatter: function () {
-                                return Highcharts.dateFormat('%d %b %y', this.value);
-                            },
-                            //rotation: -90,
-                            align: 'center'
-                        }
-                    },
-                    yAxis: {
-                        title: { text: 'Gage Height, feet' }
-                    },
-                    series: [{
-                        showInLegend: false,
-                        data: data.data[0].time_series_data,
-                        tooltip: {
-                            pointFormat: "Gage height: {point.y} feet"
-                        }
-                    }]
-                });
-            }
-        });
+					//create chart
+					Highcharts.setOptions({ global: { useUTC: false } });
+					$(tempIDhash).highcharts({
+						chart: {
+							type: 'line'
+						},
+						title: {
+							text: "",
+							align: 'left',
+							style: {
+								color: 'rgba(0,0,0,0.6)',
+								fontSize: 'small',
+								fontWeight: 'bold',
+								fontFamily: 'Open Sans, sans-serif'
+							}
+							//text: null
+						},
+						exporting: {
+							filename: 'FEV_NWIS_Site' + threeGraphs[streamGage].siteCode
+						},
+						credits: {
+							enabled: false
+						},
+						xAxis: {
+							type: "datetime",
+							labels: {
+								formatter: function () {
+									return Highcharts.dateFormat('%d %b %y', this.value);
+								},
+								//rotation: -90,
+								align: 'center'
+							}
+						},
+						yAxis: {
+							title: { text: 'Gage Height, feet' }
+						},
+						series: [{
+							showInLegend: false,
+							data: data.data[0].time_series_data,
+							tooltip: {
+								pointFormat: "Gage height: {point.y} feet"
+							}
+						}]
+					});
+				}
+			});
 			// at the last one start the next function
 			if (loadmore === false) {
 				if (streamGage == length.toString()) {
@@ -4225,7 +4230,7 @@ function generateSiteReport() {
 					// Else expand summary by default
 					$("#summaryDataHeader").parent().toggleClass("expanded");
 				}
-	
+
 
 				//Sort peak and hwm arrays
 				peakArrReport = peakArrReport.sort(function (a, b) { return a - b });
@@ -4272,8 +4277,8 @@ function generateSiteReport() {
 					// setting Max Date
 					var maxDate = coastalHWMs.filter(x => x.elev_ft === maxReport);
 					maxReport = maxReport.toFixed(2);
-                	maxReport = Number(maxReport);
-					
+					maxReport = Number(maxReport);
+
 					maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
 					hwmSum = { "Type": "HWM - Coastal", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 					sum.push(hwmSum);
@@ -4282,12 +4287,12 @@ function generateSiteReport() {
 				getReportSummaryStats(hwmArrReportRiverine);
 				hwmSum = {};
 				if (hwmArrReportRiverine.length > 0) {
-					
+
 					// setting Max Date
 					var maxDate = riverineHWMs.filter(x => x.elev_ft === maxReport);
 					maxReport = maxReport.toFixed(2);
-                	maxReport = Number(maxReport);
-					
+					maxReport = Number(maxReport);
+
 					maxDate = moment(maxDate[0].flag_date).format("MM/DD/YYYY, h:mm a");
 					hwmSum = { "Type": "HWM - Riverine", "Total Sites": numReport, "Max (ft)": maxReport, "Max Date/Time": maxDate, "Min (ft)": minReport, "Median (ft)": medianReport, "Mean (ft)": meanReport, "Standard Dev (ft)": standReport, "90% Conf Low": confIntNinetyLow, "90% Conf High": confIntNinetyHigh };
 					sum.push(hwmSum);
@@ -4484,7 +4489,7 @@ function generateSiteReport() {
 						$("#hwmTable").prepend("<p>" + "<b>" + 'High Water Mark data Measured in Feet Above NAVD88 Datum within the ' + bufferSize + ' km buffer of ' + currentParkOrRefuge + ' for ' + selectedEvent + "</b>" + "</p>");
 					}, 3000);
 				}
-	
+
 			}
 
 			// catching the last callback
