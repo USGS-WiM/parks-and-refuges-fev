@@ -328,7 +328,7 @@ var tracts = L.esri.featureLayer({
 // NPS Boundaries 
 var bounds = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2",
+	url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1",
 	//opacity: 0.5,
 	//minZoom: 9,
 	/* style: function (feature) {
@@ -1767,7 +1767,7 @@ $(document).ready(function () {
 					{ text: 'Summary of Calculated Peak Water Levels for each Site within the ' + bufferSize + ' km Buffer for each ' + siteType + ' for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryPeakTable(summaryPeakInfo()),
 					{ text: '**Please note that the summary stats include the height of all peak water levels calculated within the buffer for each NWR. All peak data reference height of water level in feet above NAVD88 datum. Inland sites may be located at a location where the land surface elevation is greater than zero.', style: 'subheader', margin: [0, 0, 0, 15] },
-					{ text: 'Summary of High Water Marks (HWM) measured within' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
+					{ text: 'Summary of High Water Marks (HWM) measured within ' + bufferSize + ' km Buffer of each ' + siteType + ' Impacted by ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					summaryHWMTable(summaryHWMInfo()),
 					{ text: 'Peak Data Measured in Feet Above NAVD88 Calculated for each Monitoring Site within the ' + siteType + ' Boundary for ' + eventOne, style: 'subHeader', margin: [0, 0, 0, 5] },
 					//peaksTable(peaksData(), ['Site Name', 'Event', 'Peak Stage', 'County', 'Latitude (dd)', 'Logitude (dd)', 'Site Number','Waterbody']),
@@ -3306,7 +3306,7 @@ function searchComplete(runningFilter, exploreMap) {
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
-			url: 'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/NPS_Land_Resources_Division_Boundary_and_Tract_Data_Service/FeatureServer/2',
+			url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1',
 			simplifyFactor: 0.5,
 			precision: 4,
 			where: "UNIT_NAME=" + name,
