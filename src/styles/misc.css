@@ -233,8 +233,9 @@ Progress Bar
 
 .progress-bar.fill .progress-bar-fill{
 	width: 100%;
-    transition: width 18s ease-in-out;
+    transition: width 20s ease-in-out;
 }
+
 
 
 

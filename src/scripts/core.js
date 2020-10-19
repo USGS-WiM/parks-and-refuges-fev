@@ -518,6 +518,7 @@ $(document).ready(function () {
 		submitButton.click(function () {
 			siteSelected = true;
 			$('#siteReportLoading').modal('show', { backdrop: 'static', keyboard: false });
+
 			//check if an event has been selected
 			if ((($(evtSelect_Modal_Primary).val() !== null) && ($(typeSelect).val() !== null) && ($(siteSelect).val() !== null))) {
 				//if event selected, hide welcome modal and begin filter process
@@ -3441,6 +3442,7 @@ function searchComplete(runningFilter, exploreMap) {
 		setTimeout(() => {
 			getEachDataSection(bufferPoly.getLayers());
 			document.getElementById("printNav").disabled = false;
+			$("#printButtonLoader").removeClass("fa fa-spinner fa-spin");
 		}, 5000);
 
 
@@ -3602,6 +3604,7 @@ function searchComplete(runningFilter, exploreMap) {
 		}
 		if (exploreMap === true) {
 			$('#siteReportLoading').modal('hide');
+			$("#printButtonLoader").addClass("fa fa-spinner fa-spin");
 		}
 		//$(inputModal).modal('hide');
 	}
@@ -4662,6 +4665,11 @@ function generateSiteReport() {
 						$("#legendElement").show();
 						removeLoader();
 						disableButtons();
+
+						// enabling the download buttons for the site report
+						$('#print').removeAttr('disabled');
+						$('#savePeakCSV').removeAttr('disabled');
+						$('#saveHWMCSV').removeAttr('disabled');
 					}
 					);
 			}

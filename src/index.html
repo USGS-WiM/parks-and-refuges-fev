@@ -415,9 +415,9 @@
 				<div class="modal-buttons between" id="reportFooter">
 					<button id="printClose" data-dismiss="modal" aria-hidden="true">Close</button>
 					<div class="modal-button-spacer"></div>
-					<button class="blue" aria-hidden="true" id="saveHWMCSV">HWM CSV</button>
-					<button class="blue" aria-hidden="true" id="savePeakCSV">Peak CSV</button>
-					<button class="blue" aria-hidden="true" id="print">Print</button>
+					<button class="blue" aria-hidden="true" id="saveHWMCSV" disabled>HWM CSV</button>
+					<button class="blue" aria-hidden="true" id="savePeakCSV" disabled>Peak CSV</button>
+					<button class="blue" aria-hidden="true" id="print" disabled>Print</button>
                 </div>
             </div>
         </div>
@@ -468,7 +468,8 @@
 						</form>
 					</div>
 					<!-- Regional Map -->
-					<div id="regionalMap"></div>
+					<div id="regionalMap">
+					</div>
 					<!-- Progress bar -->
 					<div class="progress-bar">
 						<div class="progress-bar-fill"></div>
@@ -496,6 +497,13 @@
 							<div class="form-error warn" role="alert">
 								<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
 								<span>Data are currently not available. Please try again later.</span>
+							</div>
+						</div>
+
+						<div class="form-error-wrapper" id="errorText">
+							<div class="form-error warn" role="alert">
+								<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+								<span>Error with Request. Please report this issue to lprivette@usgs.gov.</span>
 							</div>
 						</div>
 
@@ -900,7 +908,7 @@
 				<!-- Action Buttons -->
                 <div class="panel-body panel-default wim-sidebar-panel collapse in sidebar-action-buttons">
                     <button id="printNav" class="blue" disabled>
-                        <span id="printButtonText">Print Site Report</span>
+                        <i id='printButtonLoader'></i><span id="printButtonText">  Print Site Report</span>
                     </button>
 
                     <button id="btnStartOver" class="red">
