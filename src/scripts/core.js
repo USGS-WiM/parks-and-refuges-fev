@@ -284,6 +284,7 @@ $.ajax({
 	url: "https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time",
 	async: false,
 	dataType: 'json',
+	timeout: 10000,
 	success: function (data) {
 		if (data[0].label == "No active advisories at this time") {
 			noAdvisories = true;
