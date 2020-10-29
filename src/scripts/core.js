@@ -4082,13 +4082,14 @@ function generateSiteReport() {
 			USGSrtGages.clearLayers();
 			$("#stormTideHeader").addClass("no-data");
 			if (identifiedST.length > 0) {
+				stormTideNames = [];
 				let result = peaksArray.map(a => ({ ...stArray.find(p => a.site_no === p.site_no), ...a }));
 				result.forEach(function (st, idx) {
 					if (st.instrument_id !== undefined) {
 						var instrumentID = st.instrument_id;
 						var url = "https://stn.wim.usgs.gov/STNServices/Instruments/" + instrumentID + "/Files.json";
 						var data;
-
+						
 						$.ajax({
 							url: url,
 							dataType: 'json',
@@ -4097,13 +4098,34 @@ function generateSiteReport() {
 							success: function (data) {
 								var hydrographURL = '';
 								var containsHydrograph = false;
+								var stormTideID = [];
+								var stormIDCount = 0; 
+								var tempStormNames = [];
+								//This loop will find the total number of graphs that will be displayed for the current sensor
 								for (var i = 0; i < data.length; i++) {
-									if (data[i].filetype_id === 13) {
+									if (data[i].filetype_id === 13 && data[i].name != tempStormNames[tempStormNames.length - 1]) {
+										stormIDCount += 1;
+										tempStormNames.push(data[i].name);
+									}
+								}
+
+								for (var i = 0; i < data.length; i++) {
+									if (data[i].filetype_id === 13 && data[i].name != stormTideNames[stormTideNames.length - 1]) {
+										stormTideID.push(data[i].site_id);
 										$("#stormTideHeader").removeClass("no-data");
 										hydrographURL = "https://stn.wim.usgs.gov/STNServices/Files/" + data[i].file_id + "/Item";
-										$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
+										//If only one graph will be displayed for the sensor, leave off "Graph X for ___"
+										if (stormIDCount == 1) {
+											$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
+											//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
+											}
+										//If more than one graph for the sensor, label it "Graph X for ____"
+										if (stormIDCount > 1) {
+										$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + "Graph " + stormTideID.length + " for " + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
 										//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
+										}
 										hydroUrls.push(hydrographURL);
+										stormTideNames.push(data[i].name);
 									}
 								}
 							},
