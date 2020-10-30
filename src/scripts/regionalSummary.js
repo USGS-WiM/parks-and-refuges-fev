@@ -1225,11 +1225,17 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
             return
         }
         if (data.features.length > 0) {
+            console.log("data.features", data.features);
             //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
+                 
+                
+                //feature.properties.peak_stage !== undefined
+                
+                
                 //check that lat/lng are not NaN
-                if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1])) {
+                if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1] || data.features[i].properties.peak_stage !== undefined)) {
                     console.error("Bad latitude or latitude value for point: ", data.features[i]);
                     //remove it from array
                     data.features.splice(i, 1);
@@ -1251,6 +1257,7 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
 
             // function to get only peaks within park buffer
             var count = 0;
+            console.log("regionalPeak", regionalPeak);
             // looping through each park buffer
             for (var p = 0; p < bufferedPolys.length; p++) {
                 var buffer = bufferedPolys[p];
@@ -1265,7 +1272,7 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
                             if (feat !== undefined) {
                                 var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
                                 // if true add it to an array containing all the 'true' regionalPeaks
-                                if (isItInside) {
+                                if (isItInside && regionalPeak._layers[i].peak_stage !== undefined) {
                                     var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                                     if (regionalPeak._layers[i].peak_stage != undefined) {
                                         regionalPeak._layers[i].addTo(peaksWithinBuffer);
@@ -1300,7 +1307,7 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
                     //console.log("cordsFinal", cords);
                     var isItInside = turf.booleanPointInPolygon(cords, buffer, { ignoreBoundary: true });
                     // if true add it to an array containing all the 'true' regionalPeak
-                    if (isItInside) {
+                    if (isItInside && regionalPeak._layers[i].feature.properties.peak_stage != undefined) {
                         //peaksWithinBuffer.push(regionalPeak._layers[i]);
                         var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                         if (regionalPeak._layers[i].feature.properties.peak_stage != undefined) {

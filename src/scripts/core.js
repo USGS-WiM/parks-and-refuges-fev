@@ -1348,6 +1348,7 @@ $(document).ready(function () {
 				data.forEach(function (row) {
 					var dataRow = [];
 					columns.forEach(function (column) {
+						console.log("row[column]", row[column]);
 						dataRow.push(row[column].toString());
 					})
 					body.push(dataRow);
