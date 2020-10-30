@@ -1225,17 +1225,11 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
             return
         }
         if (data.features.length > 0) {
-            console.log("data.features", data.features);
             //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
             //check for bad lat/lon values
             for (var i = data.features.length - 1; i >= 0; i--) {
-                 
-                
-                //feature.properties.peak_stage !== undefined
-                
-                
                 //check that lat/lng are not NaN
-                if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1] || data.features[i].properties.peak_stage !== undefined)) {
+                if (isNaN(data.features[i].geometry.coordinates[0]) || isNaN(data.features[i].geometry.coordinates[1] || data.features[i].properties.peak_stage == undefined)) {
                     console.error("Bad latitude or latitude value for point: ", data.features[i]);
                     //remove it from array
                     data.features.splice(i, 1);
