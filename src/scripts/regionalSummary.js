@@ -1595,7 +1595,6 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                         }
                         if (hwmsWithinBuffer.getLayers().length > 0) {
                             $(".hwmsDisclaimerEventOne").show();
-                            regionalMap.fitBounds(hwmsWithinBuffer.getBounds());
                         }
                         processData(eventNumber, eventName);
                         //regionalMap.zoomIn();
