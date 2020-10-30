@@ -23,7 +23,6 @@ var identifiedMarks = [];
 var allStreamGages = [];
 var identifiedST = [];
 var hydroUrls = [];
-var identifiedUSGSrtGage = [];
 var buffer;
 var selectedEvent;
 var selectedBuffer;
@@ -268,6 +267,8 @@ $.ajax({
 var rdg = L.featureGroup();
 var USGSRainGages = L.featureGroup();
 var USGSrtGages = L.featureGroup();
+var identifiedUSGSrtGage = L.featureGroup();
+var identifiedUSGSrtGageArray = [];
 
 var noaaService = L.esri.dynamicMapLayer({
 	url: "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
@@ -553,7 +554,8 @@ $(document).ready(function () {
 			}
 
 			//reset identified gages
-			identifiedUSGSrtGage = [];
+			identifiedUSGSrtGage = L.featureGroup();
+			identifiedUSGSrtGageArray= [];
 
 			//If the box is checked, re-add the rain or stream gages to the map when running Filters Modal
 			var streamgageCheckBox = document.getElementById("streamGageToggle");
@@ -3684,7 +3686,6 @@ function generateSiteReport() {
 			createPeakLegend();
 		} */
 	});
-	createPeakLegend();
 
 	function createPeakLegend() {
 		var sorted = identifedPeakArray.sort(function (a, b) { return a - b });
@@ -3712,12 +3713,20 @@ function generateSiteReport() {
 		}
 		// adding the peak and hwm icons to the legend
 		$('#PeakSummarySymbology').append(PeakSummarySymbologyInterior);
+
+		// adding gage icon to legend too if there are any
+		if (identifiedUSGSrtGageArray.length > 0) {
+			$('#streamGageSymbology').append(streamGageSymbologyInterior);
+		} else {
+			$('#streamGageSymbology').css('display', 'none');
+		}
 	}
 
 	//$('#highWaterSymbology').append(highWaterSymbologyInterior);
 
 	$('#rtgraphs').children().remove();
-	identifiedUSGSrtGage = [];
+	identifiedUSGSrtGage = L.featureGroup();
+	identifiedUSGSrtGageArray = [];
 	//Stream gages need to be checked on for the hydrographs to appear
 	var streamgageCheckBox = document.getElementById("streamGageToggle");
 	if (streamgageCheckBox.checked == true) {
@@ -3742,10 +3751,8 @@ function generateSiteReport() {
 		$('#nwisLoadingAlert').show();
 		var bbox = map.getBounds().getSouthWest().lng.toFixed(7) + ',' + map.getBounds().getSouthWest().lat.toFixed(7) + ',' + map.getBounds().getNorthEast().lng.toFixed(7) + ',' + map.getBounds().getNorthEast().lat.toFixed(7);
 		queryNWISRTGagesForReport(bbox);
-		console.log("7 getting stream gages");
-		console.log(USGSrtGages);
 		//Add symbol and layer name to legend
-		$('#streamGageSymbology').append(streamGageSymbologyInterior);
+		//$('#streamGageSymbology').append(streamGageSymbologyInterior);
 
 
 		function queryNWISRTGagesForReport() {
@@ -3810,6 +3817,7 @@ function generateSiteReport() {
 				var rtLength = USGSrtGages.getLayers().length;
 				var cnt = 0;
 				for (var i in USGSrtGages._layers) {
+					var gMarkers = {};
 					cnt++;
 					// formatting point for turf
 					var cords = ([USGSrtGages._layers[i]._latlng.lng, USGSrtGages._layers[i]._latlng.lat]);
@@ -3818,12 +3826,30 @@ function generateSiteReport() {
 					console.log("9 checking to see if any are in buffer");
 					// if true add it to an array containing all the 'true' peaks
 					if (isItInside) {
-						identifiedUSGSrtGage.push(USGSrtGages._layers[i])
+
+						// adding to featuregroup of gages inside buffer
+						var siteID = USGSrtGages._layers[i].data.siteCode;
+						var siteName = USGSrtGages._layers[i].data.siteName;
+						var lat = USGSrtGages._layers[i]._latlng.lat;
+						var lng = USGSrtGages._layers[i]._latlng.lng;
+						gMarkers[siteID] = L.marker([lat, lng], { icon: nwisMarkerIcon }).bindLabel("Site Code: " + siteID);
+						gMarkers[siteID].data = { siteName: siteName, siteCode: siteID };
+						gMarkers[siteID].data.parameters = {};
+						// adding object to feature group
+						identifiedUSGSrtGage.addLayer(gMarkers[siteID]);
+						// adding object to normal array
+						identifiedUSGSrtGageArray.push(USGSrtGages._layers[i]);
 					}
 					if (cnt === rtLength) {
-						if (identifiedUSGSrtGage.length > 0) {
-							allStreamGages = identifiedUSGSrtGage;
-							displayRtGageReport(identifiedUSGSrtGage, false);
+						if (identifiedUSGSrtGageArray.length > 0) {
+							// adding feature group to map
+							identifiedUSGSrtGage.addTo(map);
+							identifiedUSGSrtGage.eachLayer(function (myMarker) { myMarker.showLabel(); });
+							
+							allStreamGages = identifiedUSGSrtGageArray;
+
+							// passing array to function to make graphs
+							displayRtGageReport(identifiedUSGSrtGageArray, false);
 						} else {
 							var gageGraphTitle = document.getElementById('gageGraphs');
 							gageGraphTitle.innerHTML = "";
@@ -3866,9 +3892,6 @@ function generateSiteReport() {
 			allStreamGages = gageArray;
 		}
 
-
-		console.log(gageArray);
-		console.log(allStreamGages);
 		//This title appears under the map/legend in the regional report
 		//No report or title are shown if there are no stream gages in the buffer
 		//Stream gage layer must be turned on
@@ -3999,11 +4022,9 @@ function generateSiteReport() {
 			// at the last one start the next function
 			if (loadmore === false) {
 				if (streamGage == length.toString()) {
-					allStreamGages.splice(0, 3);
-					createDataArrays();
-					//USGSrtGages.clearLayers();
 					//removing the graphs that are already loaded from master array
-					console.log("10 moving to data arrays");
+					allStreamGages.splice(0, 3);
+					createDataArrays();		
 				}
 			}
 		}
@@ -4013,9 +4034,9 @@ function generateSiteReport() {
 	}
 
 	function createDataArrays() {
+		createPeakLegend();
 		// making sure real time sts aren't in the legend
 		//$('#streamGageToggle').click();
-		$('#streamGageSymbology').css('display', 'none');
 
 		var peaksArray = [];
 		var hwmArray = [];
@@ -4531,10 +4552,6 @@ function generateSiteReport() {
 			$("#reportFooter").hide();
 
 			var mapPreview = document.getElementById('reviewMap');
-
-			/* mapPreview.innerHTML='Loading Map...'
-			mapPreview.innerHTML='Loading Map...'
-			 */
 
 			// making sure usgsrtgages are cleared from the map
 			USGSrtGages.clearLayers(map);
