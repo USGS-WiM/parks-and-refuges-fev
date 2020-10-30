@@ -1149,7 +1149,7 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
                     typeData = typeof feature.properties.peak_stage;
                     if (typeData == "number") {
                         peakArrReg.push(feature.properties.peak_stage);
-                        peakCount.push(feature.properties.site_no);
+                        peakCount.push(feature.properties.peak_summary_id);
                     }
                 }
 
@@ -1415,10 +1415,10 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                     if (feature.properties.elev_ft !== undefined) {
                         if (feature.properties.hwm_environment === "Coastal") {
                             hwmArrRegCoast.push(feature.properties.elev_ft);
-                            hwmCoastCount.push(feature.properties.site_no);
+                            hwmCoastCount.push(feature.properties.hwm_id);
                         } else {
                             hwmArrRegRiver.push(feature.properties.elev_ft);
-                            hwmRiverCount.push(feature.properties.site_no);
+                            hwmRiverCount.push(feature.properties.hwm_id);
                         }
                         //hwmArrReg.push(feature.properties.elev_ft);
                     }
