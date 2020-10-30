@@ -1324,23 +1324,23 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
                         var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
                         regionalPeak._layers[i].addTo(peaksWithinBuffer);
                         //Set undefined fields to blank boxes so they don't cause errors
-                        if (regionalPeak._layers[i].peak_date == undefined) {
-                            regionalPeak._layers[i].peak_date = "";
+                        if (regionalPeak._layers[i].feature.properties.peak_date == undefined) {
+                            regionalPeak._layers[i].feature.properties.peak_date = "";
                         }
-                        if (regionalPeak._layers[i].county == undefined) {
-                            regionalPeak._layers[i].county = "";
+                        if (regionalPeak._layers[i].feature.properties.county == undefined) {
+                            regionalPeak._layers[i].feature.properties.county = "";
                         }
-                        if (regionalPeak._layers[i].latitude_dd == undefined) {
-                            regionalPeak._layers[i].latitude_dd = "";
+                        if (regionalPeak._layers[i].feature.properties.latitude_dd == undefined) {
+                            regionalPeak._layers[i].feature.properties.latitude_dd = "";
                         }
-                        if (regionalPeak._layers[i].longitude_dd == undefined) {
-                            regionalPeak._layers[i].longitude_dd = "";
+                        if (regionalPeak._layers[i].feature.properties.longitude_dd == undefined) {
+                            regionalPeak._layers[i].feature.properties.longitude_dd = "";
                         }
-                        if (regionalPeak._layers[i].site_no == undefined) {
-                            regionalPeak._layers[i].site_no = "";
+                        if (regionalPeak._layers[i].feature.properties.site_no == undefined) {
+                            regionalPeak._layers[i].feature.properties.site_no = "";
                         }
-                        if (regionalPeak._layers[i].waterbody == undefined) {
-                            regionalPeak._layers[i].waterbody = "";
+                        if (regionalPeak._layers[i].feature.properties.waterbody == undefined) {
+                            regionalPeak._layers[i].feature.properties.waterbody = "";
                         }
                         parksWPeakStorage.push({
                             "site_name": landsitetype,
