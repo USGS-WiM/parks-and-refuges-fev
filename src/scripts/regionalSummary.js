@@ -158,7 +158,7 @@ $(document).ready(function () {
 
         $("#noResultsText").hide();
         $("#errorText").hide();
-        
+
 
         // disabling form fields and run button to prevent the user from interrupting queryies
         $('#btnSubmitSelections').attr('disabled', true);
@@ -317,7 +317,7 @@ $(document).ready(function () {
                 if (alreadyRan == false) {
                     setTimeout(() => {
                         createBuffers();
-                    }, 5000);  
+                    }, 5000);
                 }
                 alreadyRan = true;
             });
@@ -364,7 +364,7 @@ $(document).ready(function () {
                 if (alreadyRan == false) {
                     setTimeout(() => {
                         createBuffers();
-                    }, 5000);    
+                    }, 5000);
                 }
             });
         }
@@ -886,61 +886,61 @@ function createBuffers() {
 function getbuffers() {
     console.log("getting buffers");
     //setTimeout(() => {
-        if (simplifiedSites !== undefined) {
-            var polygons = [];
-            for (var p = 0; p < simplifiedSites.length; p++) {
-                var polysCount;
-                var buffer;
-                var feature;
-                /* if ($('#typeSelect_regionalModal').val()[0] === "NPS") {
-                    feature = simplifiedSites[p];
-                }  */
-                // Attempting to merge polygons for sites that contain multiple. Encounting error turf error found non-noded intersection between LINESTRING union.
-                /* else if ($('#typeSelect_regionalModal').val()[0] === "NWR") {
-                    var singlePoly = [];
-                    if (simplifiedSites[p].geometry.type === "MultiPolygon") {
-                        simplifiedSites[p].geometry.coordinates.forEach(function (coords) {
-                            //var feat = { 'type': 'Polygon', 'properties': {}, 'coordinates': coords };
-                            //singlePoly.push(feat);
-                            var feat = turf.polygon([coords[0]]);
-                            singlePoly.push(feat);
-                        });
-                        polysCount = singlePoly.length;
-                        var buffer = singlePoly[0];
-                        for (var i = 0; i < singlePoly.length; i++) {
-                            // not cycling through if we're on the last one
-                            if (i === (polysCount - 1)) {
-
-                            } else {
-
-                                // getting the index of the next feature to use in the union
-                                var nextFeatureIndex = i + 1;
-                                var nextFeature = singlePoly[nextFeatureIndex];
-
-                                // unifying or merging the buffer
-                                buffer = turf.union(buffer, nextFeature);
-                            }
-                        }
-                        //feature = turf.featureCollection([buffer]);
-                    } else if (simplifiedSites[p].length === 1) {
-                        feature = simplifiedSites[p];
-                    }
-                } */
+    if (simplifiedSites !== undefined) {
+        var polygons = [];
+        for (var p = 0; p < simplifiedSites.length; p++) {
+            var polysCount;
+            var buffer;
+            var feature;
+            /* if ($('#typeSelect_regionalModal').val()[0] === "NPS") {
                 feature = simplifiedSites[p];
-                //var simplified = turf.simplify(feature, options);
-                var buffered = turf.buffer(feature, bufferSize, { units: 'kilometers' });
-                bufferedPolys.push(buffered);
+            }  */
+            // Attempting to merge polygons for sites that contain multiple. Encounting error turf error found non-noded intersection between LINESTRING union.
+            /* else if ($('#typeSelect_regionalModal').val()[0] === "NWR") {
+                var singlePoly = [];
+                if (simplifiedSites[p].geometry.type === "MultiPolygon") {
+                    simplifiedSites[p].geometry.coordinates.forEach(function (coords) {
+                        //var feat = { 'type': 'Polygon', 'properties': {}, 'coordinates': coords };
+                        //singlePoly.push(feat);
+                        var feat = turf.polygon([coords[0]]);
+                        singlePoly.push(feat);
+                    });
+                    polysCount = singlePoly.length;
+                    var buffer = singlePoly[0];
+                    for (var i = 0; i < singlePoly.length; i++) {
+                        // not cycling through if we're on the last one
+                        if (i === (polysCount - 1)) {
 
-            }
+                        } else {
 
-            // timeout helps prevent browser from hanging
-            setTimeout(() => {
-                getEventSpecificData();
-            }, 2000);
-            
+                            // getting the index of the next feature to use in the union
+                            var nextFeatureIndex = i + 1;
+                            var nextFeature = singlePoly[nextFeatureIndex];
+
+                            // unifying or merging the buffer
+                            buffer = turf.union(buffer, nextFeature);
+                        }
+                    }
+                    //feature = turf.featureCollection([buffer]);
+                } else if (simplifiedSites[p].length === 1) {
+                    feature = simplifiedSites[p];
+                }
+            } */
+            feature = simplifiedSites[p];
+            //var simplified = turf.simplify(feature, options);
+            var buffered = turf.buffer(feature, bufferSize, { units: 'kilometers' });
+            bufferedPolys.push(buffered);
+
         }
-        // They no longer want the buffers visible on the regional map
-        //L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
+
+        // timeout helps prevent browser from hanging
+        setTimeout(() => {
+            getEventSpecificData();
+        }, 2000);
+
+    }
+    // They no longer want the buffers visible on the regional map
+    //L.geoJson(bufferedPolys, { style: bufferStyle }).addTo(regionalMap);
     //}, 2000);
 }
 
@@ -1132,7 +1132,7 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
     } else if (eventNumber === 2) {
         queryString = "?Event=" + selectedEvents[1] + "&States=&County=&StartDate=undefined&EndDate=undefined";
     }
-    
+
     var createPeakArrayReg = L.geoJson(false, {
         onEachFeature: function (feature) {
             //find coordinates of each peak 
@@ -1251,6 +1251,7 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
 
             // function to get only peaks within park buffer
             var count = 0;
+            console.log("regionalPeak", regionalPeak);
             // looping through each park buffer
             for (var p = 0; p < bufferedPolys.length; p++) {
                 var buffer = bufferedPolys[p];
@@ -1265,11 +1266,29 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
                             if (feat !== undefined) {
                                 var isItInside = turf.booleanPointInPolygon(cords, feat, { ignoreBoundary: true });
                                 // if true add it to an array containing all the 'true' regionalPeaks
-                                if (isItInside) {
+                                if (isItInside && typeof regionalPeak._layers[i].peak_stage == "number") {
                                     var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
-                                    if (regionalPeak._layers[i].peak_stage != undefined) {
-                                        regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                    regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                                    //Set undefined fields to blank boxes so they don't cause errors
+                                    if (regionalPeak._layers[i].peak_date == undefined) {
+                                        regionalPeak._layers[i].peak_date = "";
                                     }
+                                    if (regionalPeak._layers[i].county == undefined) {
+                                        regionalPeak._layers[i].county = "";
+                                    }
+                                    if (regionalPeak._layers[i].latitude_dd == undefined) {
+                                        regionalPeak._layers[i].latitude_dd = "";
+                                    }
+                                    if (regionalPeak._layers[i].longitude_dd == undefined) {
+                                        regionalPeak._layers[i].longitude_dd = "";
+                                    }
+                                    if (regionalPeak._layers[i].site_no == undefined) {
+                                        regionalPeak._layers[i].site_no = "";
+                                    }
+                                    if (regionalPeak._layers[i].waterbody == undefined) {
+                                        regionalPeak._layers[i].waterbody = "";
+                                    }
+
                                     parksWPeakStorage.push({
                                         "site_name": landsitetype,
                                         data: {
@@ -1300,11 +1319,28 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
                     //console.log("cordsFinal", cords);
                     var isItInside = turf.booleanPointInPolygon(cords, buffer, { ignoreBoundary: true });
                     // if true add it to an array containing all the 'true' regionalPeak
-                    if (isItInside) {
+                    if (isItInside && typeof regionalPeak._layers[i].feature.properties.peak_stage == "number") {
                         //peaksWithinBuffer.push(regionalPeak._layers[i]);
                         var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
-                        if (regionalPeak._layers[i].feature.properties.peak_stage != undefined) {
-                            regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                        regionalPeak._layers[i].addTo(peaksWithinBuffer);
+                        //Set undefined fields to blank boxes so they don't cause errors
+                        if (regionalPeak._layers[i].feature.properties.peak_date == undefined) {
+                            regionalPeak._layers[i].feature.properties.peak_date = "";
+                        }
+                        if (regionalPeak._layers[i].feature.properties.county == undefined) {
+                            regionalPeak._layers[i].feature.properties.county = "";
+                        }
+                        if (regionalPeak._layers[i].feature.properties.latitude_dd == undefined) {
+                            regionalPeak._layers[i].feature.properties.latitude_dd = "";
+                        }
+                        if (regionalPeak._layers[i].feature.properties.longitude_dd == undefined) {
+                            regionalPeak._layers[i].feature.properties.longitude_dd = "";
+                        }
+                        if (regionalPeak._layers[i].feature.properties.site_no == undefined) {
+                            regionalPeak._layers[i].feature.properties.site_no = "";
+                        }
+                        if (regionalPeak._layers[i].feature.properties.waterbody == undefined) {
+                            regionalPeak._layers[i].feature.properties.waterbody = "";
                         }
                         parksWPeakStorage.push({
                             "site_name": landsitetype,
@@ -1340,14 +1376,14 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
 
             peaksWithinBuffer.addTo(regionalMap);
         }
-    }).fail(function() {
-        console.log( "error when getting filtered Peaks" );
+    }).fail(function () {
+        console.log("error when getting filtered Peaks");
 
         // If there's a 500 error with the filtered peaks endpoint then display the no data message
         $("#errorText").show();
-      }).done(function() {
+    }).done(function () {
         getHWMs(fev.urls.hwmFilteredGeoJSONViewURL + queryString, regionalhwmIcon, eventName, eventNumber);
-      });
+    });
 }
 
 function getHWMs(url, markerIcon, eventName, eventNumber) {
@@ -1460,6 +1496,78 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                                         locationDescText = regionalHWM._layers[i].feature.properties.hwm_locationdescription;
                                     }
                                     var landsitetype = $('#typeSelect_regionalModal').val()[0] === "NPS" ? buffer.properties.PARKNAME : buffer.properties.ORGNAME;
+                                    
+                                     //set undefined fields to black boxes in the hwm table so they don't cause errors
+                                     if (regionalHWM._layers[i].feature.properties.survey_date == undefined) {
+                                        regionalHWM._layers[i].feature.properties.survey_date = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.bank == undefined) {
+                                        regionalHWM._layers[i].feature.properties.bank = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.hwmQualityName == undefined) {
+                                        regionalHWM._layers[i].feature.properties.hwmQualityName = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.hwmTypeName == undefined) {
+                                        regionalHWM._layers[i].feature.properties.hwmTypeName = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.verticalDatumName == undefined) {
+                                        regionalHWM._layers[i].feature.properties.verticalDatumName = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.verticalMethodName == undefined) {
+                                        regionalHWM._layers[i].feature.properties.verticalMethodName = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.horizontalMethodName == undefined) {
+                                        regionalHWM._layers[i].feature.properties.horizontalMethodName = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.horizontalDatumName == undefined) {
+                                        regionalHWM._layers[i].feature.properties.horizontalDatumName = "";
+                                    }
+                                    if (locationDescText == undefined) {
+                                        locationDescText = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.hwm_environment == undefined) {
+                                        regionalHWM._layers[i].feature.properties.hwm_environment = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.stillwater == undefined) {
+                                        regionalHWM._layers[i].feature.properties.stillwater = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.uncertainty == undefined) {
+                                        regionalHWM._layers[i].feature.properties.uncertainty = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.hwm_uncertainty == undefined) {
+                                        regionalHWM._layers[i].feature.properties.hwm_uncertainty = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.hwm_label == undefined) {
+                                        regionalHWM._layers[i].feature.properties.hwm_label = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.flag_date == undefined) {
+                                        regionalHWM._layers[i].feature.properties.flag_date = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.siteDescription == undefined) {
+                                        regionalHWM._layers[i].feature.properties.siteDescription = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.sitePermHousing == undefined) {
+                                        regionalHWM._layers[i].feature.properties.sitePermHousing = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.county == undefined) {
+                                        regionalHWM._layers[i].feature.properties.county = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.stateName == undefined) {
+                                        regionalHWM._layers[i].feature.properties.stateName = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.latitude_dd == undefined) {
+                                        regionalHWM._layers[i].feature.properties.latitude_dd = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.longitude_dd == undefined) {
+                                        regionalHWM._layers[i].feature.properties.longitude_dd = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.site_no == undefined) {
+                                        regionalHWM._layers[i].feature.properties.site_no = "";
+                                    }
+                                    if (regionalHWM._layers[i].feature.properties.waterbody == undefined) {
+                                        regionalHWM._layers[i].feature.properties.waterbody = "";
+                                    }
+                                    
                                     parksWHWMStorage.push({
                                         "site_name": landsitetype,
                                         data: {
@@ -1514,6 +1622,77 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                         var locationDescText = "";
                         if (regionalHWM._layers[i].feature.properties.hwm_locationdescription !== undefined) {
                             locationDescText = regionalHWM._layers[i].feature.properties.hwm_locationdescription;
+                        }
+
+                         //set undefined fields to black boxes in the hwm table so they don't cause errors
+                         if (regionalHWM._layers[i].feature.properties.survey_date == undefined) {
+                            regionalHWM._layers[i].feature.properties.survey_date = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.bank == undefined) {
+                            regionalHWM._layers[i].feature.properties.bank = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.hwmQualityName == undefined) {
+                            regionalHWM._layers[i].feature.properties.hwmQualityName = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.hwmTypeName == undefined) {
+                            regionalHWM._layers[i].feature.properties.hwmTypeName = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.verticalDatumName == undefined) {
+                            regionalHWM._layers[i].feature.properties.verticalDatumName = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.verticalMethodName == undefined) {
+                            regionalHWM._layers[i].feature.properties.verticalMethodName = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.horizontalMethodName == undefined) {
+                            regionalHWM._layers[i].feature.properties.horizontalMethodName = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.horizontalDatumName == undefined) {
+                            regionalHWM._layers[i].feature.properties.horizontalDatumName = "";
+                        }
+                        if (locationDescText == undefined) {
+                            locationDescText = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.hwm_environment == undefined) {
+                            regionalHWM._layers[i].feature.properties.hwm_environment = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.stillwater == undefined) {
+                            regionalHWM._layers[i].feature.properties.stillwater = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.uncertainty == undefined) {
+                            regionalHWM._layers[i].feature.properties.uncertainty = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.hwm_uncertainty == undefined) {
+                            regionalHWM._layers[i].feature.properties.hwm_uncertainty = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.hwm_label == undefined) {
+                            regionalHWM._layers[i].feature.properties.hwm_label = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.flag_date == undefined) {
+                            regionalHWM._layers[i].feature.properties.flag_date = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.siteDescription == undefined) {
+                            regionalHWM._layers[i].feature.properties.siteDescription = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.sitePermHousing == undefined) {
+                            regionalHWM._layers[i].feature.properties.sitePermHousing = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.county == undefined) {
+                            regionalHWM._layers[i].feature.properties.county = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.stateName == undefined) {
+                            regionalHWM._layers[i].feature.properties.stateName = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.latitude_dd == undefined) {
+                            regionalHWM._layers[i].feature.properties.latitude_dd = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.longitude_dd == undefined) {
+                            regionalHWM._layers[i].feature.properties.longitude_dd = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.site_no == undefined) {
+                            regionalHWM._layers[i].feature.properties.site_no = "";
+                        }
+                        if (regionalHWM._layers[i].feature.properties.waterbody == undefined) {
+                            regionalHWM._layers[i].feature.properties.waterbody = "";
                         }
 
                         parksWHWMStorage.push({
@@ -1594,8 +1773,8 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                     }
                 }, 2000);
             }
-            
-            
+
+
             if (selectedEvents.length === 2) {
                 if (eventNumber === 1) {
                     setTimeout(() => {
@@ -1609,10 +1788,10 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                         }
 
                         nextEvent();
-                        
+
                     }, 2000);
                 } else if (eventNumber === 2) {
-                   dataCheck();
+                    dataCheck();
                     setTimeout(() => {
                         if (peaksWithinBuffer.getLayers().length > 0) {
                             $(".peaksDisclaimerEventTwo").show();
@@ -1625,8 +1804,8 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                         }
                     }, 2000);
                 }
-                
-        
+
+
                 function nextEvent() {
                     //reset peaksWithinBuffer to empty feature group so that it does keep any data from previous event
                     peaksWithinBuffer = L.featureGroup();
@@ -1635,7 +1814,7 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                     eventURL = eventURL + selectedEvents[1] + '.json';
                     var queryString = "?Event=" + selectedEvents[1] + "&States=&County=&StartDate=undefined&EndDate=undefined";
                     var sensorQueryString = "?Event=" + selectedEvents[1] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
-        
+
                     getEventName(function (output) {
                         eventName = output.event_name;
                         selectedEventsNames.push(eventName);
@@ -1646,7 +1825,7 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                         */
                         getPeaks(fev.urls.peaksFilteredGeoJSONViewURL + queryString, regionalPeakMarkerIcon, eventName, eventNumber);
                     });
-        
+
                     // function for getting the event data
                     function getEventName(handleData) {
                         var data;
@@ -1664,7 +1843,7 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                     }
                 }
             }
-        
+
             // They no longer want the HWM visible on the regional map
             //hwmsWithinBuffer.addTo(regionalMap);
         }
@@ -2139,7 +2318,7 @@ function processData(eventNumber, eventName) {
         getEventsSiteSummary();
     }
     //removeRegLoader();
-    
+
 }
 
 // not currently used in reg report
