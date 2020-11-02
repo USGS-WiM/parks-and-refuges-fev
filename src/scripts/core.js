@@ -555,7 +555,7 @@ $(document).ready(function () {
 
 			//reset identified gages
 			identifiedUSGSrtGage = L.featureGroup();
-			identifiedUSGSrtGageArray= [];
+			identifiedUSGSrtGageArray = [];
 
 			//If the box is checked, re-add the rain or stream gages to the map when running Filters Modal
 			var streamgageCheckBox = document.getElementById("streamGageToggle");
@@ -1313,16 +1313,28 @@ $(document).ready(function () {
 			};
 		};
 		function summaryHWMTable(data, columns) {
-			return {
-				table: {
-					headerRows: 1,
-					widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
-					body: buildSummaryBody(data, ['Site Name', 'Type', 'Total HWMs', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
-				},
-				layout: 'lightHorizontalLines',
-				style: 'smaller',
-				margin: [0, 0, 0, 15]
-			};
+			var body = [];
+			if (data.length === 0) {
+				body.push([
+					{
+						text: 'There is no HWM data based on selections.',
+						margin: [0, 0, 0, 15]
+					}
+				])
+				return body
+			}
+			else {
+				return {
+					table: {
+						headerRows: 1,
+						widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+						body: buildSummaryBody(data, ['Site Name', 'Type', 'Total HWMs', 'Standard Dev (ft)', 'Min (ft)', 'Median (ft)', 'Mean (ft)', 'Max (ft)', '90% Conf Low', '90% Conf High']),
+					},
+					layout: 'lightHorizontalLines',
+					style: 'smaller',
+					margin: [0, 0, 0, 15]
+				};
+			}
 		};
 		//// End of Summary Information table build ////
 
@@ -3845,7 +3857,7 @@ function generateSiteReport() {
 							// adding feature group to map
 							identifiedUSGSrtGage.addTo(map);
 							identifiedUSGSrtGage.eachLayer(function (myMarker) { myMarker.showLabel(); });
-							
+
 							allStreamGages = identifiedUSGSrtGageArray;
 
 							// passing array to function to make graphs
@@ -4024,7 +4036,7 @@ function generateSiteReport() {
 				if (streamGage == length.toString()) {
 					//removing the graphs that are already loaded from master array
 					allStreamGages.splice(0, 3);
-					createDataArrays();		
+					createDataArrays();
 				}
 			}
 		}
@@ -4111,7 +4123,7 @@ function generateSiteReport() {
 						var instrumentID = st.instrument_id;
 						var url = "https://stn.wim.usgs.gov/STNServices/Instruments/" + instrumentID + "/Files.json";
 						var data;
-						
+
 						$.ajax({
 							url: url,
 							dataType: 'json',
@@ -4121,7 +4133,7 @@ function generateSiteReport() {
 								var hydrographURL = '';
 								var containsHydrograph = false;
 								var stormTideID = [];
-								var stormIDCount = 0; 
+								var stormIDCount = 0;
 								var tempStormNames = [];
 								//This loop will find the total number of graphs that will be displayed for the current sensor
 								for (var i = 0; i < data.length; i++) {
@@ -4140,11 +4152,11 @@ function generateSiteReport() {
 										if (stormIDCount == 1) {
 											$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
 											//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
-											}
+										}
 										//If more than one graph for the sensor, label it "Graph X for ____"
 										if (stormIDCount > 1) {
-										$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + "Graph " + stormTideID.length + " for " + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
-										//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
+											$('#stgraphs').append('<div class="siteGraphDisplay"><span>' + "Graph " + stormTideID.length + " for " + st.site_no + '</span> <br>' + '<img style="height: 155px; width: 255px; border:1px solid #e1ebfc;" class="hydroImage' + st.site_no + '" style="cursor: pointer;" title="Click to enlarge" onclick="enlargeHydroImage(event)" src=' + hydrographURL + '\></div>');
+											//hydrographElement = '<br><img title="Click to enlarge" style="cursor: pointer;" data-toggle="tooltip" class="hydroImage" onclick="enlargeImage()" src=' + hydrographURL + '\>'
 										}
 										hydroUrls.push(hydrographURL);
 										stormTideNames.push(data[i].name);
