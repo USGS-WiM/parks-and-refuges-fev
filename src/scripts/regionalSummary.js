@@ -32,6 +32,7 @@ var parksWithHWMsEOne = [];
 var parksWithHWMsETwo = [];
 var executed = false;
 var regionalPeak = L.layerGroup();
+var regionalPeakOne = L.layerGroup();
 var regionalHWM = L.layerGroup();
 var regionalBaro = L.layerGroup();
 var parkHWM = L.layerGroup();
@@ -1251,8 +1252,6 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
             currentMarkerReg.eachLayer(function (layer) {
                 layer.addTo(regionalPeak);
             });
-            //regionalPeak.addTo(regionaltableData);
-            //checkLayerCount(layerCount);
 
             // function to get only peaks within park buffer
             var count = 0;
@@ -1789,7 +1788,8 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                     setTimeout(() => {
                         if (peaksWithinBuffer.getLayers().length > 0) {
                             $(".peaksDisclaimerEventOne").show();
-                            regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                            // storing feature group so can be used to zoom to both events peaks
+                            regionalPeakOne = peaksWithinBuffer;
                             processData(eventNumber, eventName);
                         }
                         if (hwmsWithinBuffer.getLayers().length > 0) {
@@ -1804,9 +1804,9 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
                     setTimeout(() => {
                         if (peaksWithinBuffer.getLayers().length > 0) {
                             $(".peaksDisclaimerEventTwo").show();
-                            regionalMap.fitBounds(peaksWithinBuffer.getBounds());
+                            // ensures both peak layers are included in extent
+                            regionalMap.fitBounds(regionalPeakOne.getBounds().extend(peaksWithinBuffer.getBounds()));
                             processData(eventNumber, eventName);
-                            //regionalMap.zoomIn();
                         }
                         if (hwmsWithinBuffer.getLayers().length > 0) {
                             $(".hwmsDisclaimerEventTwo").show();
