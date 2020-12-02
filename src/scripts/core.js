@@ -2055,9 +2055,9 @@ $(document).ready(function () {
 
 	// setting checked values for Filter Modal buffer radio buttons
 	document.getElementById('tenKmFilter').checked = false;
-	document.getElementById('twentyKmFilter').checked = true;
-	selectedBuffer = "20km";
-	document.getElementById('thirtyKmFilter').checked = false;
+	document.getElementById('twentyKmFilter').checked = false;
+	document.getElementById('thirtyKmFilter').checked = true;
+	selectedBuffer = "30km";
 	document.getElementById('fiftyKmFilter').checked = false;
 	// 10 kilometers
 	$('#tenKmFilter').click(function () {
