@@ -4,23 +4,22 @@
 <head>
     <title>Flood Event Viewer</title>
 
-    <meta charset="UTF-8" name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <link rel="shortcut icon" id="favicon" type="image/ico" href="images/favicon-wim.png" />
+    <link rel="shortcut icon" id="favicon" type="image/ico" href="images/favicon.png" />
 
-    <script src="scripts/vendor.js"></script>
+	<!-- Font Awesome  -->
+	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.12.0/css/all.css" integrity="sha384-ekOryaXPbeCpWQNxMwSWVvQ0+1VrStoPJq54shlYhR8HzQgig1v5fas6YgOqLoKz" crossorigin="anonymous">
+
+
+	<script src="scripts/vendor.js"></script>
 
     <link rel="stylesheet" href="styles/vendor.css">
 
 
-
-    <link rel="stylesheet" href="styles/base.css">
-
     <!-- CSS for the mapping components -->
     <link rel="stylesheet" href="styles/main.css">
 
-    <link rel="shortcut icon" href="/favicon.ico">
 
     <script src="scripts/combined.js"></script>
 
@@ -46,623 +45,619 @@
 
 <body>
 
-    <div id="navbar" class="navbar navbar-static navbar-default navbar-fixed-top navbar-dark">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle toggle-left hidden-md hidden-lg" data-toggle="sidebar"
-                    data-target=".sidebar-left">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="https://www.usgs.gov">
-                    <img alt="USGS logo" height="38px" src="images/USGS_ID_white.png">
-                    <span class='hidden-xs' style='font-size:20px;display:inline-block;'>&nbsp;&nbsp;Flood Events at
-                        National Wildlife Refuges and National Park Service Lands</span>
-                </a>
-            </div>
+	<!-- 
+		Navbar 
+		USGS logo and title on left
+		About and geosearch button on right
+		///////////////////////////////////////
+	-->
 
-            <button id="geosearchNav" type="button" class="btn btn-primary navbar-btn pull-right">
-                <span class="glyphicon glyphicon-search"></span>
-                <span id="geosearchButtonText"> Geosearch</span>
-            </button>
-            <button id="aboutNav" class="btn btn-default navbar-btn pull-right">
-                <i class="fa fa-question-circle"></i><span class="hidden-xs">&nbsp;&nbsp;About</span>
-            </button>
+	<div id="navbar" class="navbar navbar-static navbar-default navbar-fixed-top navbar-dark">
 
-            <!-- legend buttton for navbar. to be removed if we like the in-map legend toggle -->
-            <!--<button id="legendButtonNavBar" type="button" class="btn btn-primary navbar-btn pull-right" style="margin-right: 1em;"><span class="glyphicon glyphicon-list"></span> Legend</button>-->
-            <!-- toggle for a right sidebar (currently not in use) -->
-            <!--<button type="button" class="navbar-toggle toggle-right" data-toggle="sidebar" data-target=".sidebar-right">-->
-            <!--<span class="icon-bar"></span>-->
-            <!--<span class="icon-bar"></span>-->
-            <!--<span class="icon-bar"></span>-->
-            <!--</button>-->
-        </div>
-    </div>
+		<div class="navbar-header">
+			<!-- Mobile menu button -->
+			<button type="button" class="navbar-toggle toggle-left hidden-md hidden-lg" data-toggle="sidebar" data-target=".sidebar-left">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			<!-- Branding - logo and text -->
+			<div class="branding">
+				<!-- Logo -->
+				<div class="branding-logo">
+					<a href="https://usgs.gov" target="_blank">
+						<img alt="USGS logo" src="images/USGS_ID_white.png">
+					</a>
+				</div>
+				<span class='header-longtitle'>
+					<span>Flood Events</span>
+					<small>National Wildlife Refuges & National Park Service Lands</small>
+				</span>
+			</div>
+		</div>
+		
+		<!-- Navigation Buttons -->
+		<div class="nav-buttons">
+			<!-- Faq -->
+			<button id="aboutNav" class="pull-right">
+				<i class="far fa-question-circle"></i>
+				<span>About</span>
+			</button>
+			<!-- Geosearch -->
+			<button id="geosearchNav" type="button">
+				<i class="far fa-search"></i>
+				<span>Find Location</span>
+			</button>
+		</div>
+	</div> <!-- End Navbar -->
 
 
 
 
-    <!-- Welcome modal - only displays when 1)user arrive without event in URL and 2) have not checked "don't show me this again"(preference stored in cookies)-->
-    <div class="modal fade overflow-y-hidden" id="welcomeModal" style="display: none;" aria-hidden="true">
-        <div class="modal-wrapper">
-            <div class="modal-content small">
-                <div class="modal-top">
+	<!-- 
+		Welcome modal - only displays when 
+			1)user arrive without event in URL 
+			and 2) have not checked "don't show me this again" (preference stored in cookies)
+		///////////////////////////////////////
+	-->
+	<div class="modal" id="welcomeModal" aria-hidden="true">
+		<div class="modal-wrapper">
+			<div class="modal-content small">
+				<div class="modal-top long-title">
 					<b>Flood Events at National Wildlife Refuges and National Park Service Lands Viewer</b>
 					<!-- <button type="button" class="close table-close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times"></i></button> -->
 				</div>
-                <div class="modal-body">
-                    <h4>Would you like to run a report for a region or a specific site?</h4>
+				<div class="modal-body">
+					<p class="big center">Would you like to run a report for a region or a specific site?</p>
 				</div>
 				<div class="modal-buttons">
-					<button id="btnChooseRegion" class="btn btn-default" type="button" aria-hidden="true" class="button blue">Region</button>
-					<button id="btnChooseSite" class="btn btn-default" type="button" aria-hidden="true" class="button blue">Site</button>
+					<button id="btnChooseRegion" class="blue" type="button" aria-hidden="true" class="button blue">Region</button>
+					<button id="btnChooseSite" class="blue" type="button" aria-hidden="true" class="button blue">Site</button>
 				</div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-wrapper -->
-    </div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-wrapper -->
+	</div>
 	<!-- end of welcome modal -->
-	
 
-    <!-- start Load warning for site report-->
-    <div class="modal fade overflow-y-hidden" id="siteReportLoading" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" style="text-align: center;">Please wait while site report loads</h4>
+
+
+    <!-- 
+		start Load warning for site report
+		///////////////////////////////////////
+	-->
+	<div class="modal fade" id="siteReportLoading" aria-hidden="true">
+		<div class="modal-wrapper">
+			<div class="modal-content small">
+				<div class="modal-top long-title">
+                    <b>Loading...</b>
                 </div>
-
+                <div class="modal-body">
+                    <p class="center large">Please wait while site report loads...</p>
+					<div class="modal-loader"></div>
+                </div>
             </div>
         </div>
     </div>
     <!-- end Load warning for site report-->
 
-    <!-- start updateFiltersModal -->
-    <div class="modal fade overflow-y-hidden" id="updateFiltersModal" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog">
+    <!-- 
+		start updateFiltersModal 
+		///////////////////////////////////////
+	-->
+    <div class="modal" id="updateFiltersModal" aria-hidden="true">
+        <div class="modal-wrapper">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Filters</h4>
-                </div>
+                <div class="modal-top">
+                    <b>Site Query</b>
+				</div>
+				<!-- Body -->
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form" id="filterForm">
-                        <div class="form-group" id="evtNameForm_filterModal">
-                            <label for="typeSelect_filterModal" class="col-sm-2 control-label filterForms">Lands Type:
-                            </label>
-                            <div class="col-sm-10 filterForms">
-                                <select id="typeSelect_filterModal" class="typeSelectFilter" multiple="multiple"
-                                    style="width: 100%"></select>
-                            </div>
-                        </div>
+					<div class="hint center">Click to select from a list, or begin typing to search.</div>
 
-                        <div class="form-group" id="evtNameForm_filterModal">
-                            <label for="siteSelect_filterModal" class="col-sm-2 control-label filterForms">Site:
-                            </label>
-                            <div class="col-sm-10 filterForms">
-                                <select id="siteSelect_filterModal" class="siteSelect" multiple="multiple"
-                                    style="width: 100%"></select>
-                            </div>
-                        </div>
-                        <span style="font-size: smaller">You may select from list or begin typing event name. Events
-                            sorted
-                            by start
-                            date.</span><br>
-                        <div id="evtNameForm_updateFiltersModal" class="form-group">
-                            <label for="typeSelect_welcomeModal" class="col-sm-2 control-label filterForms">Event:
-                            </label>
-                            <div class="col-sm-10 filterForms">
-                                <select id="evtSelect_updateFiltersModal" class="evtSelect_filter form-control select"
-                                    style="width: 400px" multiple></select>
-                            </div>
-                        </div>
+                    <form class="modal-form" role="form">
+						<!-- Lands Type -->
+						<div class="form-item">
+							<label for="typeSelect_filterModal">Lands Type</label>
+							<select id="typeSelect_filterModal" class="typeSelectFilter" multiple="multiple"></select>
+						</div>
+						<!-- Site -->
+						<div class="form-item ">
+                            <label for="siteSelect_filterModal">Site</label>
+							<select id="siteSelect_filterModal" class="siteSelect" multiple="multiple"></select>
+						</div>
+						
+						<div class="form-item ">
+                            <label for="typeSelect_welcomeModal">
+								Event
+								<small>(sorted by start date)</small>
+							</label>
+							<select id="evtSelect_updateFiltersModal" class="evtSelect_filter form-control select" multiple></select>
+						</div>
                     </form>
 
-                    <div id="evtNameForm_parks" class="input-group form-group">
-                        <div class="form-group" id="bufferOptions" style="display: contents;">
-                            <span>Select a buffer distance: &nbsp;&nbsp;</span>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="tenKmFilter" value="option1"> 10 KM
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="twentyKmFilter" value="option2"> 20 KM
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="thirtyKmFilter" value="option3"> 30 KM
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions" id="fiftyKmFilter" value="option4"> 50 KM
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
-                        aria-hidden="true"></i> Please complete all fields in the form.</div>
-                <div class="modal-footer">
-                    <button type="submit" class="dismissbuttonfilter btn" data-dismiss="modal">Dismiss</button>
-                    <span><button id="btnSubmitEvent_filter" class="btn btn-default" type="button" aria-hidden="true"
-                            class="btn btn-primary">Explore Map</button></span>
-                    <span><button id="btnActiveSiteReport" class="btn btn-default" type="button" aria-hidden="true"
-                            class="btn btn-primary">Generate Report</button></span>
+					<!-- Buffer Distance -->
+                    <div class="modal-form">
+
+						<div class="form-item ">
+                            <label for="typeSelect_welcomeModal">
+								Select a buffer distance
+							</label>
+
+							<!-- Radio row -->
+							<div class="radio-list horizontal">
+								<label class="input-container">
+									<input type="radio" name="inlineRadioOptions" id="tenKmFilter" value="option1">
+									<span>10 KM</span>
+								</label>
+								<label class="input-container">
+									<input type="radio" name="inlineRadioOptions" id="twentyKmFilter" value="option2">
+									<span>20 KM</span>
+								</label>
+								<label class="input-container">
+									<input type="radio" name="inlineRadioOptions" id="thirtyKmFilter" value="option3">
+									<span>30 KM</span>
+								</label>
+								<label class="input-container">
+									<input type="radio" name="inlineRadioOptions" id="fiftyKmFilter" value="option4">
+									<span>50 KM</span>
+								</label>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Error -->
+					<div class="form-error-wrapper" id="filtersModalError">
+						<!-- Error banner -->
+						<div class="form-error" role="alert">
+							<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+							<span>Please complete all fields in the form.</span>
+						</div>
+					</div>
+					
+				</div>
+				<!-- Footer -->
+				<div class="modal-buttons between">
+					<!-- <button type="submit" class="dismissbuttonfilter" data-dismiss="modal">Dismiss</button> -->
+					<button id="goBackButton" class="grey" aria-hidden="true">Go Back</button>
+					<div class="modal-button-spacer"></div>
+					<button id="btnSubmitEvent_filter" class="black" aria-hidden="true">Explore Map</button>
+					<button id="btnActiveSiteReport" class="blue" aria-hidden="true">Generate Report</button>
                 </div>
             </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+        </div><!-- /.modal-wrapper -->
     </div>
     <!-- end updateFiltersModal -->
 
-    <!-- Geosearch Modal - button at top right of navbar, used for a simple location search-->
-    <div class="modal fade overflow-y-hidden" id="geosearchModal" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                    <h4 class="modal-title">Geosearch</h4>
-                </div>
-                <div class="modal-body" style="text-align: center;">
-                    <div class="form-group" align="center">
-                        <div id="search_container">
-                            <div style="margin-left: -120px;" id="searchMap">
-                            </div>
-                        </div>
-                        <div class="search-help" align="center"> </br>
-                            <b>Supported Search Strings:</b> </br>
-                            <code>Geographic Names</code>
-                            <code>Zip Codes</code>
-                            <code>States</code>
-                            <code>Street Address</code>
-                            <br />
-                            <br /> Search provided by
-                            <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search JavaScript
-                                API</a>
-                        </div>
-                    </div>
-                </div>
-                <form id="geosearch-form" class="form-inline">
+	<!-- 
+		Geosearch Modal
+		///////////////////////////////////////
+	-->
+	<div class="modal fade" id="geosearchModal" aria-hidden="true">
+		<div class="modal-wrapper">
+			<div class="modal-content small">
+                <div class="modal-top">
+                    <b>Geosearch</b>
+					<button class="close" type="button" data-dismiss="modal" aria-hidden="false"><i class="far fa-times"></i></button>
+				</div>
+				<!-- Geosearch body -->
+                <div class="modal-body">
+					<!-- Search element -->
+					<div id="searchMap"></div>
 
-                    <button id="btnDismiss" type="submit" class="dismissbutton btn"
-                        data-dismiss="modal">Dismiss</button>
+					<!-- Help info -->
+					<div class="supported-search-strings">
+						<label>Supported Search Strings:</label>
+						<ul>
+							<li>GNIS Locations,</li>
+							<li>Lat/Long (ie. '43.9, -72.1'),</li>
+							<li>States,</li>
+							<li>Street Address,</li>
+							<li>USGS Sites,</li> 
+							<li>Zip Codes</li>
+						</ul>
+					</div>
+					<small class="credit">Search provided by <a href="https://txpub.usgs.gov/dss/search_api/2.0/" target="_blank">USGS Search Javascript API</a></small>
+				</div>
+				<!-- Footer/buttons -->
+                <form class="modal-buttons">
+                    <button id="btnDismiss" type="submit" data-dismiss="modal">Dismiss</button>
                 </form>
             </div>
         </div>
     </div>
     <!-- end Geosearch Modal -->
 
-    <!-- start of site report modal-->
-    <div class="modal fade overflow-y-hidden" id="printModal" style="display: none;" data-backdrop="static"
-        aria-hidden="true">
-        <div class="modal-dialog" style="width: 1100px; overflow-y: initial !important">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button id="printCloseTop" type="button" class="close" data-dismiss="modal"
-                        aria-hidden="true">x</button>
-                    <h4 class="modal-title">Report</h4>
+	<!-- 
+		Site Report Modal
+		///////////////////////////////////////
+	-->    
+	<div class="modal fade" id="printModal" aria-hidden="true" data-backdrop="static" role="dialog">
+		<div class="modal-wrapper">
+			<div class="modal-content large">
+                <div class="modal-top">
+                    <b>Report</b>
+					<button type="button" id="printCloseTop" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times"></i></button>
+				</div>
+				<!-- Modal body -->
+                <div class="modal-body">
+					<!-- report info -->
+					<div id="reportInfo"></div>
+
+					<!-- Horizontal left-right image and legend -->
+					<div class="report-map-image">
+						<div id="reviewMap">
+							<div class="report-loader" id="reportLoader">
+								<div class="modal-loader"></div>
+								<p class="large">Loading image and data...</p>
+							</div>
+						</div>
+						<!-- Legend Image -->
+						<div id="legendImage"></div>
+					</div>
+
+					<!-- Summary Data -->
+					<div class="accordion large">
+						<div class="accordion-header" id="summaryDataHeader">Summary Data</div>
+						<div class="accordion-body">
+							<!-- No data -->
+							<h3 id='reportSummaryNoData' class="center no-margin">No summary data for this site</h3>
+							<!-- Title -->
+							<h3 id='reportSummaryTitle' class="center"></h3>
+							<!-- Report info -->
+							<div class='reportInfo'>
+								<table class="custom-table table-scroll" id="reportSummaryDataTable"></table>
+								<div class="hint" id="summaryStatsDisclaimer">
+									**Please note that the summary stats
+									include the height of all peak water levels calculated within the buffer for each NWR.
+									All peak data reference height of water level in feet above NAVD88 datum. Inland sites
+									may be located at a location where the land surface elevation is greater than zero.
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Peak Data -->
+					<div class="accordion large">
+						<div class="accordion-header" id="peakDataHeader">Peak Data</div>
+						<div class="accordion-body">
+							<!-- Report info -->
+							<div class='reportInfo' id="peakTable">
+								<table class="custom-table table-scroll" id="peakDataTable"></table>
+							</div>
+						</div>
+					</div>
+
+					<!-- HWM Data -->
+					<div class="accordion large">
+						<div class="accordion-header" id="hwmDataHeader">HWM Data</div>
+						<div class="accordion-body">
+							<!-- Report info -->
+							<div class='reportInfo' id="hwmTable">
+								<table class="custom-table table-scroll" id="hwmDataTable"></table>
+							</div>
+						</div>
+					</div>
+
+					<!-- Storm Tide Hydrographs -->
+					<div class="accordion large">
+						<div class="accordion-header" id="stormTideHeader">Storm Tide Hydrographs</div>
+						<div class="accordion-body">
+							<!-- <p><b>Storm Tide Hydrographs</b></p> -->
+							<p>Each Site references a relative datum </p>
+							<div id="hydrographs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
+							<div id="stgraphs"></div>
+						</div>
+					</div>
+
+					<!-- Stream Gage Hydrographs -->
+					<div class="accordion large">
+						<div class="accordion-header" id="streamGageHeader">Stream Gage Hydrographs</div>
+						<div class="accordion-body">
+							<div id="gageGraphs" style="text-align: center; font-size: medium; font-weight:bold;"></div>
+							<div id="rtgraphs"></div>
+							<button class="blue" aria-hidden="true" id="loadUSGSrt">Load More</button>
+						</div>
+					</div>
+
                 </div>
-                <div id="reportInfo"></div>
-                <div class="modal-body" style="text-align: center; height: 600px; overflow-y: auto; overflow-x: auto;">
-
-                    <div id="reportMapLegend">
-                        <div id="reviewMap" class="report-inline-block">
-                            <div id='loader' class='imageLoader'></div>
-                            <p id='loadingMessage'>loading image...</p>
-                        </div>
-                        <div id="legendImage" class="report-inline-block"></div>
-                    </div>
-                    <br>
-                    <br>
-                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
-                        <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportSummarySection"
-                            aria-expanded="false" aria-controls="collapseExample" style="text-align: left">
-                            <p style="font-size: 13pt; text-align: left">Summary Data <i
-                                    class="chevron fa fa-chevron-right pull-down" style="color: gray;"></i></b>
-                        </button>
-                    </div>
-                    <div id="reportSummarySection">
-                        <div style='text-align: center; font-weight:bold' id='reportSummaryTitle'></div>
-                        <br>
-                        <div style='text-align: center;' id='reportSummaryNoData'></div>
-                        <div class='reportInfo' id="sumTable">
-                            <table class="table" id="reportSummaryDataTable">
-                            </table>
-                            <p class="peaksDisclaimer" style="font-size: 11px;">**Please note that the summary stats
-                                include the height of all peak water levels calculated within the buffer for each NWR.
-                                All peak data reference height of water level in feet above NAVD88 datum. Inland sites
-                                may be located at a location where the land surface elevation is greater than zero.</p>
-                        </div>
-                    </div>
-                    <br>
-                    <br>
-                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
-                        <button class="groupToggle btnReport" data-toggle="collapse" data-target="#reportPeakSection"
-                            aria-expanded="false" aria-controls="collapseExample" style="text-align: left">
-                            <p style="font-size: 13pt; text-align: left">Peak Data <i
-                                    class="chevron fa fa-chevron-right pull-down" style="color: gray;"></i></b>
-                        </button>
-                    </div>
-                    <div id="reportPeakSection">
-
-                        <div class='reportInfo' id="peakTable">
-                            <table class="table" id="peakDataTable"></table>
-                        </div>
-                    </div>
-
-                    <br>
-                    <br>
-                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
-                        <button class="groupToggle btnReport " data-toggle="collapse" data-target="#reportHWMSection"
-                            aria-expanded="false" aria-controls="collapseExample" style="text-align: left">
-                            <p style="font-size: 13pt; text-align: left">HWM Data <i
-                                    class="chevron fa fa-chevron-right pull-down" style="color: gray;"></i></b>
-                        </button>
-                    </div>
-                    <div id="reportHWMSection">
-                        <div class='reportInfo' id="hwmTable" style="width: 900px; ">
-                            <table class="table" id="hwmDataTable"></table>
-                        </div>
-                    </div>
-                    <br>
-                    <br>
-                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
-                        <button class="groupToggle btnReport btn-dafault" data-toggle="collapse"
-                            data-target="#reportRTSection" aria-expanded="false" aria-controls="collapseExample"
-                            style="text-align: left">
-                            <p style="font-size: 13pt; text-align: left">Stream Gage Hydrographs <i
-                                    class="chevron fa fa-chevron-right pull-down" style="color: gray;"></i></b>
-                        </button>
-                    </div>
-                    <div id="reportRTSection">
-                        <div id="gageGraphs" style="text-align: center; font-size: medium; font-weight:bold;"></div>
-                        <div id="rtgraphs"></div>
-                    </div>
-                    <br>
-                    <br>
-                    <div class="btn-group-vertical pull-left " style="cursor: pointer;" data-toggle="buttons">
-                        <button class="groupToggle btnReport" data-toggle="collapse"
-                            data-target="#reportHydrographSection" aria-expanded="false" aria-controls="collapseExample"
-                            style="text-align: left">
-                            <p style="font-size: 13pt; text-align: left">Storm Tide Hydrographs <i
-                                    class="chevron fa fa-chevron-right pull-down" style="color: gray;"></i></b>
-                        </button>
-                    </div>
-                    <div id="reportHydrographSection">
-                        <p>Each Site references a relative datum </p>
-                        <div id="hydrographs" style="text-align: left; font-size: medium; font-weight:bold;"></div>
-                        <div id="graphSite">
-                            <div id="stgraphs"></div>
-                        </div>
-                    </div>
-                    <!-- <div id="reviewMapContainer">
-                    <div id="reviewMap">
-                    </div>
-                </div> -->
-                </div>
-                <div class="modal-footer" id="reportFooter">
-                    <button id="printClose" class=" btn btn-default close" type="button" data-dismiss="modal"
-                        aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
-                    <button class=" btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn"
-                        id="saveHWMCSV">HWM CSV</button>
-                    <button class=" btn btn-default" type="button" aria-hidden="true" style="color:gray;" class="btn"
-                        id="savePeakCSV">Peak CSV</button>
-                    <button class="btn btn-default" type="button" style="color:gray;" class="btn btn-primary"
-                        id="print">Print</button>
-
+				<div class="modal-buttons between" id="reportFooter">
+					<button id="printClose" data-dismiss="modal" aria-hidden="true">Close</button>
+					<div class="modal-button-spacer"></div>
+					<button class="blue" aria-hidden="true" id="saveHWMCSV" disabled>HWM CSV</button>
+					<button class="blue" aria-hidden="true" id="savePeakCSV" disabled>Peak CSV</button>
+					<button class="blue" aria-hidden="true" id="print" disabled>Print</button>
                 </div>
             </div>
         </div>
     </div>
     </div>
-    <!-- end of site report modal -->
+	<!-- end of site report modal -->
+	
 
-    <div id="regionalModal" class="modal fade" style="display: none;" data-backdrop="static" aria-hidden="true"
-        role="dialog">
-        <div class="modal-dialog modal-lg" style="width: 1100px;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button id="regReportCloseX" type="button" class="close" data-dismiss="modal"
-                        aria-hidden="true">x</button>
-                    <h4 class="modal-title">Regional Report</h4>
-                </div>
-                <div class="modal-body" style='height: 600px; overflow-x: auto; overflow-y:auto;'>
+	<!-- 
+		Regional Report Modal
+		///////////////////////////////////////
+	-->
+	<div class="modal fade" id="regionalModal" aria-hidden="true" data-backdrop="static" role="dialog">
+		<div class="modal-wrapper">
+			<div class="modal-content large">
+                <div class="modal-top">
+					<b>Regional Report</b>
+					<!-- <button type="button" id="regReportCloseX" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times"></i></button> -->
+				</div>
+				<!-- Body -->
+                <div class="modal-body">
                     <!-- begin filter panels -->
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <!--<h4 class="formSectionHead">Event Options</h4>-->
-                            <div id="formContainer" data-toggle="tooltip" data-placement="bottom"
-                            title="">
-                                <form class="form-horizontal" role="form" id="regionalForm">
-                                    <div class="form-group" id="evtNameForm_regionalModal">
-                                        <label for="typeSelect_regionalModal"
-                                            class="col-sm-2 control-label filterForms">Lands Type: </label>
-                                        <div class="col-sm-10 filterForms">
-                                            <select id="typeSelect_regionalModal" class="typeSelect clear"
-                                                multiple="multiple" style="width: 100%" onchange="formReady()"></select>
-                                        </div>
-                                    </div>
-                                    <!-- <div class="form-group" id="evtNameForm_regionalModal">
-                                    <label for="regionType_regionalModal"
-                                        class="col-sm-2 control-label filterForms">Region Type: </label>
-                                    <div class="col-sm-10 filterForms">
-                                        <select id="regionType_regionalModal" class="regionType clear" multiple
-                                            style="width: 100%" onchange="formReady()"></select>
-                                    </div>
-                                </div> -->
-                                    <div class="form-group" id="evtNameForm_regionalModal">
-                                        <label for="regionSelect_regionalModal"
-                                            class="col-sm-2 control-label filterForms">Region: </label>
-                                        <div class="col-sm-10 filterForms">
-                                            <select id="regionSelect_regionalModal" class="regionSelect clear" multiple
-                                                style="width: 100%" onchange="formReady()"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" id="evtNameForm_regionalModal">
-                                        <label for="evtSelect_regionalModal"
-                                            class="col-sm-2 control-label filterForms">Event: </label>
-                                        <div class="col-sm-10 filterForms">
-                                            <select id="evtSelect_regionalModal" class="evtSelectRegional clear"
-                                                multiple="multiple" style="width: 100%" onchange="formReady()"></select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" id="evtNameForm_regionalModal">
-                                        <label for="bufferSelect_regionalModal"
-                                            class="col-sm-2 control-label filterForms">Buffer size: </label>
-                                        <div class="col-sm-10 filterForms">
-                                            <select id="bufferSelect_regionalModal" class="bufferSelect clear" multiple
-                                                style="width: 100%" onchange="formReady()"></select>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div id="regionalMapContainer" style="margin: auto; width: 800px; height: 500px;">
-                                <div id="regionalMap" style="width: 800px; height: 500px;"></div>
-                                <span class="progress-bar-fill" style="width: 0%"></span>
-                            </div>
-                            <div style="text-align: left; display: inline-flex; margin-left: 115px; padding: 5px"> Peak
-                                Labels
-                                <label class="switch" id="peakSizeCheckReg"
-                                    style="display: inline-flex; margin-left: 10px">
-                                    <input type="checkbox" id="peakCheckboxReg" onclick="clickPeakLabelsReg()"
-                                        disabled />
-                                    <span class="slider round"> </span>
-                                </label>
-                            </div>
-                            <div id="data">
-                                <div id="noResultsDiv">
-                                    <p id="noResultsText">Data are currently not available. Please try again later.</p>
-                                </div>
-                                <div class='dataSection' id="regionalPeakTable"
-                                    style="width: 850px; overflow-x: scroll; display:none;">
-                                    <p id="eventsSummaryTitle" style="font-weight: bold;"></p>
-                                    <table class="table" style="table-layout: fixed;" id="eventsSummaryTable">
-                                    </table>
-                                    <table class="table" id="summaryDataTableEOne">
-                                    </table>
-                                    <p class="peaksDisclaimerEventOne" style="font-size: 11px;">**Please note that the
-                                        summary stats include the height of all peak water levels calculated within the
-                                        buffer for each NWR. All peak data reference height of water level in feet above
-                                        NAVD88 datum. Inland sites may be located at a location where the land surface
-                                        elevation is greater than zero.</p>
-                                    <table class="table" id="summaryDataTableETwo">
-                                    </table>
-                                    <p class="peaksDisclaimerEventTwo" style="font-size: 11px;">**Please note that the
-                                        summary stats include the height of all peak water levels calculated within the
-                                        buffer for each NWR. All peak data reference height of water level in feet above
-                                        NAVD88 datum. Inland sites may be located at a location where the land surface
-                                        elevation is greater than zero.</p>
-                                    <table class="table" id="siteSummaryPeakDataTableEOne">
-                                    </table>
-                                    <p class="peaksDisclaimerEventOne" style="font-size: 11px;">**Please note that the
-                                        summary stats include the height of all peak water levels calculated within the
-                                        buffer for each NWR. All peak data reference height of water level in feet above
-                                        NAVD88 datum. Inland sites may be located at a location where the land surface
-                                        elevation is greater than zero.</p>
-                                    <table class="table" id="siteSummaryPeakDataTableETwo">
-                                    </table>
-                                    <p class="peaksDisclaimerEventTwo" style="font-size: 11px;">**Please note that the
-                                        summary stats include the height of all peak water levels calculated within the
-                                        buffer for each NWR. All peak data reference height of water level in feet above
-                                        NAVD88 datum. Inland sites may be located at a location where the land surface
-                                        elevation is greater than zero.</p>
-                                    <table class="table" id="siteSummaryHWMDataTableEOne">
-                                    </table>
-                                    <table class="table" id="siteSummaryHWMDataTableETwo">
-                                    </table>
-                                    <!-- <table class="table" id="peakDataTableReg">
-                                    </table>
-                                    <table class="table" id="hwmDataTableReg">
-                                    </table> -->
-                                </div>
-                            </div>
-                            <!--
-                            <div id="hydrographTableReg">
-                            </div>
-                        -->
-                        </div>
-                    </div>
-                    <!-- end filter panels -->
-                    <!-- <div class="alert alert-danger typeSelectAlertReg" role="alert"><i class="fa fa-exclamation-triangle"
-                            aria-hidden="true"></i> Please choose a Lands Type to proceed.</div> -->
-                </div>
+					<!--<h4 class="formSectionHead">Event Options</h4>-->
+					<div id="formContainer" data-toggle="tooltip" data-placement="bottom" title="">
+						<form class="modal-form" role="form" id="regionalForm">
+							<!-- Lands Type -->
+							<div class="form-item small">
+								<label for="typeSelect_regionalModal">Lands Type</label>
+								<select id="typeSelect_regionalModal" class="typeSelect" multiple="multiple"onchange="formReady()"></select>
+							</div>
+							<!-- Region -->
+							<div class="form-item small">
+								<label for="regionSelect_regionalModal">Region</label>
+								<select id="regionSelect_regionalModal" class="regionSelect" multiple onchange="formReady()"></select>
+							</div>
+							<!-- Event -->
+							<div class="form-item small">
+								<label for="evtSelect_regionalModal">Event</label>
+								<select id="evtSelect_regionalModal" class="evtSelectRegional" multiple onchange="formReady()"></select>
+							</div>
+							<!-- Buffer Size -->
+							<div class="form-item small">
+								<label for="bufferSelect_regionalModal">Buffer Size</label>
+								<select id="bufferSelect_regionalModal" class="bufferSelect clear" multiple onchange="formReady()"></select>
+							</div>
+							<!-- <label for="regionType_regionalModal">Region Type:</label>
+							<select id="regionType_regionalModal" class="regionType clear" multiple onchange="formReady()"></select> -->
+						</form>
+					</div>
+					<!-- Regional Map -->
+					<div id="regionalMap">
+					</div>
+					<!-- Progress bar -->
+					<div class="progress-bar">
+						<div class="progress-bar-fill"></div>
+					</div>
 
-                <div class="modal-footer">
-                    <button id="regReportClose" class=" btn btn-default close" type="button" data-dismiss="modal"
-                        aria-hidden="true" style="color:gray;" class="btn btn-default">Close</button>
+					<div class="modal-form block">
+						<div class="form-item">
+							<!-- Radio row -->
+							<div class="radio-list">
+								<label class="input-container">
+									<input type="checkbox" id="peakCheckboxReg" onclick="clickPeakLabelsReg()" disabled>
+									<span>Peak Labels</span>
+								</label>
+							</div>
+						</div>
 
-                    <button id="btnClearRegFilters" class="btn btn-default" type="button" aria-hidden="true"
-                        style="color:gray;" id="btnClearRegFilters" class="btn btn-primary">Clear Selections</button>
+					</div>
 
-                    <button id="btnSubmitSelections" class="btn btn-primary btn-lg" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn btn-primary" disabled>Run</button>
 
-                    <button id="printRegionalReport" class="btn btn-default" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn btn-primary" disabled>Print Full Report</button>
+					<!-- Data Wrapper -->
+					<div id="data">
 
-                    <button id="saveRegionalPeakCSV" class="btn btn-default" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn btn-primary" disabled>Peak CSV</button>
+						<!-- Error banner -->
+						<div class="form-error-wrapper" id="noResultsText">
+							<div class="form-error warn" role="alert">
+								<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+								<span>Data are currently not available. Please try again later.</span>
+							</div>
+						</div>
 
-                    <button id="saveRegionalHWMCSV" class="btn btn-default" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn btn-primary" disabled>HWM CSV</button>
+						<div class="form-error-wrapper" id="errorText">
+							<div class="form-error warn" role="alert">
+								<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+								<span>Error with Request. Please report this issue to lprivette@usgs.gov.</span>
+							</div>
+						</div>
 
+						<div class='dataSection' id="regionalPeakTable"
+							style="display:none;">
+							<p id="eventsSummaryTitle" style="font-weight: bold;"></p>
+
+							<table class="custom-table table-scroll" id="eventsSummaryTable"></table>
+							<table class="custom-table table-scroll" id="summaryDataTableEOne"></table>
+							<!-- <table class="table" style="table-layout: fixed;" id="eventsSummaryTable"></table> -->
+
+
+							<p class="peaksDisclaimerEventOne" style="font-size: 11px;">**Please note that the
+								summary stats include the height of all peak water levels calculated within the
+								buffer for each NWR. All peak data reference height of water level in feet above
+								NAVD88 datum. Inland sites may be located at a location where the land surface
+								elevation is greater than zero.</p>
+							<table class="custom-table table-scroll" id="summaryDataTableETwo"></table>
+							</taxble>
+							<p class="peaksDisclaimerEventTwo" style="font-size: 11px;">**Please note that the
+								summary stats include the height of all peak water levels calculated within the
+								buffer for each NWR. All peak data reference height of water level in feet above
+								NAVD88 datum. Inland sites may be located at a location where the land surface
+								elevation is greater than zero.</p>
+							<table class="custom-table table-scroll" id="siteSummaryPeakDataTableEOne"></table>
+							<p class="peaksDisclaimerEventOne" style="font-size: 11px;">**Please note that the
+								summary stats include the height of all peak water levels calculated within the
+								buffer for each NWR. All peak data reference height of water level in feet above
+								NAVD88 datum. Inland sites may be located at a location where the land surface
+								elevation is greater than zero.</p>
+							<table class="custom-table table-scroll" id="siteSummaryPeakDataTableETwo"></table>
+							<p class="peaksDisclaimerEventTwo" style="font-size: 11px;">**Please note that the
+								summary stats include the height of all peak water levels calculated within the
+								buffer for each NWR. All peak data reference height of water level in feet above
+								NAVD88 datum. Inland sites may be located at a location where the land surface
+								elevation is greater than zero.</p>
+							<table class="custom-table table-scroll" id="siteSummaryHWMDataTableEOne"></table>
+							<p class="hwmsDisclaimerEventOne" style="font-size: 11px;">**Please note that HWMs are an estimate of the max height of
+								waterf in feet above NAVD88. All HWM data references height of water level in feet above NAVD88 datum. HWMs are
+								designated as coastal or riverine. Some HWMs, particularly riverine, may be located at a location where the land
+								surface elevation is greater than zero.</p>
+							<table class="custom-table table-scroll" id="siteSummaryHWMDataTableETwo"></table>
+							<p class="hwmsDisclaimerEventTwo" style="font-size: 11px;">**Please note that HWMs are an estimate of the max height of
+								waterf in feet above NAVD88. All HWM data references height of water level in feet above NAVD88 datum. HWMs are
+								designated as coastal or riverine. Some HWMs, particularly riverine, may be located at a location where the land
+								surface elevation is greater than zero.</p>
+							<!-- <table class="table" id="peakDataTableReg">
+							</table>
+							<table class="table" id="hwmDataTableReg">
+							</table> -->
+						</div>
+					</div>
+                </div> <!-- End modal body -->
+				<!-- Footer / Buttons -->
+                <div class="modal-buttons between">
+					<button id="regReportClose" data-dismiss="modal" aria-hidden="true">Go Back</button>
+					<div class="modal-button-spacer"></div>
+					<button class="grey" aria-hidden="true" id="btnClearRegFilters">Clear Selections</button>
+					<button class="green" aria-hidden="true" id="btnSubmitSelections" disabled>Run</button>
+					<button class="blue" aria-hidden="true" id="printRegionalReport" disabled>Print Full Report</button>
+					<button class="blue" aria-hidden="true" id="saveRegionalPeakCSV" disabled>Peak CSV</button>
+					<button class="blue" aria-hidden="true" id="saveRegionalHWMCSV" disabled>HWM CSV</button>
                 </div>
             </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+        </div><!-- /.modal-wrapper -->
     </div>
 
-    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" id="imageModalDialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <button type="button" class="close" data-dismiss="modal"><span
-                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <img id="hImage" src="" class="imagepreview" style="width: 100%;">
+
+
+	<!-- 
+		Image Modal
+		///////////////////////////////////////
+	-->
+	<div class="modal fade" id="imagemodal" aria-hidden="true">
+		<div class="modal-wrapper">
+			<div class="modal-content large">
+				<div class="modal-top">
+					<b>View Image</b>
+					<button class="close" type="button" data-dismiss="modal" aria-hidden="false"><i class="far fa-times"></i></button>
+				</div>
+				<div class="modal-body">
+					<img id="hImage" src="" class="imagepreview" style="width: 100%;">
+				</div>
+				<!-- Footer/close button -->
+				<div class="modal-buttons">
+					<button class="dismissbuttonfilter" data-dismiss="modal">Dismiss</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="aboutModal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog  modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" type="button" data-dismiss="modal" aria-hidden="true"
-                        style="color:gray;">&times;</button>
-                    <h4 class="modal-title">Flood Event Viewer</h4>
-                </div>
-                <div id="aboutModalBody" class="modal-body">
-                    <ul class="nav nav-tabs" id="aboutModalTabs">
-                        <li role="presentation" class="active"><a id="aboutTab" href="#aboutTabPane"
-                                data-toggle="tab"><i class="fa fa-question-circle"></i>&nbsp;About the application</a>
-                        </li>
-                        <li role="presentation"><a id="disclaimerTab" href="#disclaimerTabPane" data-toggle="tab"><i
-                                    class="fa fa-exclamation-circle"></i>&nbsp;Data Limitations</a></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="aboutTabPane"></br>
-                            <p style="color:black; font-size: larger">The USGS Flood Event Viewer (FEV) is the public
-                                data discovery component of the Short-Term Network (STN) database. Data viewable and
-                                downloadable from this page are from the STN database.</p>
+	<!-- 
+		About Modal
+		///////////////////////////////////////
+	-->
+	<div class="modal fade" id="aboutModal" aria-hidden="true">
+		<div class="modal-wrapper">
+			<div class="modal-content">
+				<div class="modal-top">
+					<b>Flood Event Viewer</b>
+					<button class="close" type="button" data-dismiss="modal" aria-hidden="false"><i class="far fa-times"></i></button>
+				</div>
+				<div class="modal-body tabs">
+					<!-- Tabs at top -->
+					<ul class="nav nav-tabs" id="aboutModalTabs">
+						<li role="presentation" class="active"><a id="aboutTab" href="#aboutTabPane" data-toggle="tab"><i class="far fa-question-circle"></i>&nbsp;About the Application</a></li>
+						<li role="presentation"><a id="disclaimerTab" href="#disclaimerTabPane" data-toggle="tab" onclick="ga('send','event','About Modal','click','Disclaimer');"><i class="far fa-check-circle"></i>&nbsp;Data Limitations</a></li>
+					</ul>
+					<!-- Tab content -->
+					<div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="aboutTabPane">
+                            <p>
+								The USGS Flood Event Viewer (FEV) is the public data discovery component of the Short-Term Network (STN) database. Data viewable and downloadable from this page are from the STN database.
+							</p>
 
-                            <p>This application relies on the STN Web Services to retrieve and display STN data.
-                                Application developers and general data seekers are encouraged to use the web services
-                                data API to retrieve STN data. Visit the <span><a
-                                        href="https://stn.wim.usgs.gov/STNServices/Documentation/home"
-                                        target="_blank">STN Web Services Documentation Page <i
-                                            class="fa fa-external-link" aria-hidden="true"></i></a></span> for more
-                                information, including full documentation of available endpoints and examples. See the
-                                <a href="https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level"
-                                    target="_blank">STN Data Dictionary</a> for field names and definitions.</p>
+                            <p>
+								This application relies on the STN Web Services to retrieve and display STN data. Application developers and general data seekers are encouraged to use the web services data API to retrieve STN data. 
+								Visit the <a href="https://stn.wim.usgs.gov/STNServices/Documentation/home" target="_blank">STN Web Services Documentation Page <i class="fa fa-external-link" aria-hidden="true"></i></a>
+								for more information, including full documentation of available endpoints and examples. See the <a href="https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level" target="_blank">STN Data Dictionary</a>
+								for field names and definitions.
+							</p>
 
-                            <p>This application integrates with the <span><a href="https://waterdata.usgs.gov/nwis"
-                                        target="_blank">USGS National Water Information System (NWIS) database <i
-                                            class="fa fa-external-link" aria-hidden="true"></i></a></span> for display
-                                of time-series water data. As a user of FEV you will encounter links to NWIS pages and
-                                data sources, which are maintained separately from STN and FEV.</p>
+                            <p>
+								This application integrates with the <a href="https://waterdata.usgs.gov/nwis" target="_blank">USGS National Water Information System (NWIS) database <i class="fa fa-external-link" aria-hidden="true"></i></a>
+								for display of time-series water data. As a user of FEV you will encounter links to NWIS pages and data sources, which are maintained separately from STN and FEV.
+							</p>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="disclaimerTabPane"></br>
-                            <h3>Data Limitations</h3>
-                            <p>Data are provisional and are subject to revision until thoroughly reviewed and approved.
+                        <div role="tabpanel" class="tab-pane" id="disclaimerTabPane">
+                            <p>
+								Data are provisional and are subject to revision until thoroughly reviewed and approved.
                             </p>
 
-                            <p>Real-time data relayed by satellite or other telemetry are automatically screened to not
-                                display improbable values until they can be verified.</p>
+                            <p>
+								Real-time data relayed by satellite or other telemetry are automatically screened to not display improbable values until they can be verified.
+							</p>
 
-                            <p>Provisional data may be inaccurate due to instrument malfunctions or physical changes at
-                                the measurement site. Subsequent review based on field inspections and measurements may
-                                result in significant revisions to the data.</p>
+                            <p>
+								Provisional data may be inaccurate due to instrument malfunctions or physical changes at the measurement site. Subsequent review based on field inspections and measurements may result in significant revisions to the data.
+							</p>
 
-                            <p>The data are being provided to meet the need for timely best science and are released on
-                                the condition that neither the USGS nor the U.S. Government may be held liable for any
-                                damages resulting from authorized or unauthorized use of the information. Data users are
-                                cautioned to consider carefully the provisional nature of the information before using
-                                it for decisions that concern personal or public safety or the conduct of business that
-                                involves substantial monetary or operational consequences.</p>
+                            <p>
+								The data are being provided to meet the need for timely best science and are released on the condition that neither the USGS nor the U.S. Government may be held liable for any damages resulting from authorized or unauthorized use of the information. Data users are cautioned to consider carefully the provisional nature of the information before using it for decisions that concern personal or public safety or the conduct of business that involves substantial monetary or operational consequences.
+							</p>
 
-                            <p>Information concerning the accuracy and appropriate uses of these data or concerning
-                                other hydrologic data may be obtained from the USGS.</p>
+                            <p>
+								Information concerning the accuracy and appropriate uses of these data or concerning other hydrologic data may be obtained from the USGS.
+							</p>
                         </div>
 
                     </div>
                 </div>
-
-                <div class="modal-footer">
-                    <p style="color:black; margin-left:35px;text-align:left">
-                        For more information about the Flood Event Viewer please contact <a href="https://wim.usgs.gov/"
-                            target="_blank"><img src="images/WIM_Acronym.png" id="wim_logo"></a>
-                    </p>
-                    <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
-                        style="color:gray;" class="btn btn-default">Close</button>
+				<!-- Footer / buttons -->
+                <div class="modal-buttons between">
+                    <div id="aboutModalWIM">
+						<a href="https://wim.usgs.gov/" target="_blank" id="aboutModalWIMImage"><img src="images/favicon.png"></a>
+						<div id="aboutModalWIMText">
+							<span>
+								For more information about the Flood Event Viewer please contact <a href="https://wim.usgs/gov/" target="_blank">WIM</a>
+							</span>
+						</div>
+                    </div>
+					<button type="submit" class="dismissbuttonfilter" data-dismiss="modal">Close</button>
                 </div>
             </div><!-- /.modal-content -->
         </div> <!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-    <!-- begin filters modal ---------------------------------------------------------------------------------- -->
+	<!-- 
+		Filters Modal
+		///////////////////////////////////////
+	-->
+	<div class="modal fade" id="filtersModal" aria-hidden="true">
+		<div class="modal-wrapper">
+			<div class="modal-content">
+				<div class="modal-top">
+					<b>Filters</b>
+					<button class="close" type="button" data-dismiss="modal" aria-hidden="false"><i class="far fa-times"></i></button>
+				</div>
+				<div class="modal-body">
+					<!-- <label for="evtTypeSelect">Event Type</label>
+					<select id="evtTypeSelect" style="width: 100%" multiple class="clearable"></select> -->
+					<div class="form-item">
+						<label for="evtSelect_filterModal">Event:</label>
+						<select id="evtSelect_filterModal" class="evtSelect" multiple></select>
+					</div>
+					<!-- <label>Event Status</label>
+					<label class="input-container">
+						<input type="checkbox"  name="active" id="active">
+						<span>Active</span>
+					</label>
+					<label class="input-container">
+						<input type="checkbox" class="check" name="complete" id="complete">
+						<span>Complete</span>
+					</label> -->
 
-    <div id="filtersModal" class="modal fade" style="display: none;" aria-hidden="true" role="dialog">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                    <h4 class="modal-title">Filters</h4>
-                </div>
-                <div class="modal-body">
-
-                    <!-- begin filter panels -->
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <!--<h4 class="formSectionHead">Event Options</h4>-->
-                            <form class="form-horizontal" role="form" id="eventForm">
-                                <!--<div class="form-group" id="evtTypeForm">-->
-                                <!--<label for="evtTypeSelect" class="col-sm-2 control-label filterForms">Event Type</label>-->
-                                <!--<div class="col-sm-10 filterForms">-->
-                                <!--<select id="evtTypeSelect" style="width: 100%" multiple class="clearable"></select>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <div class="form-group" id="evtNameForm_filterModal">
-                                    <label for="evtSelect_filterModal" class="col-sm-2 control-label filterForms">Event:
-                                    </label>
-                                    <div class="col-sm-10 filterForms">
-                                        <select id="evtSelect_filterModal" class="evtSelect" multiple
-                                            style="width: 100%"></select>
-                                    </div>
-                                </div>
-                                <!--<div class="form-group" id="evtStatusForm">-->
-                                <!--<label for="evtStatusRadios" class="col-sm-2 control-label filterForms">Event Status</label>-->
-                                <!--<div class="col-sm-10 filterForms">-->
-                                <!--<div class="btn-group" data-toggle="buttons" id="evtStatusRadios">-->
-                                <!--<label class="btn btn-default check">-->
-                                <!--<input type="checkbox"  name="active" id="active">Active  <span class="glyphicon glyphicon-ok selected" style="display: none"></span>-->
-                                <!--</label>-->
-                                <!--<label class="btn btn-default check">-->
-                                <!--<input type="checkbox" class="check" name="complete" id="complete">Complete  <span class="glyphicon glyphicon-ok selected" style="display: none"></span>-->
-                                <!--</label>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                            </form>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <!--<h4 class="formSectionHead">Location Options</h4>-->
-                            <form class="form-horizontal" role="form" id="locationForm">
-                                <div class="form-group" id="stateForm">
-                                    <label for="stateSelect" class="col-sm-2 control-label filterForms">State</label>
-                                    <div class="col-sm-10 filterForms">
-                                        <select id="stateSelect" style="width: 100%" multiple="multiple"
-                                            class="clearable"></select>
-                                    </div>
-                                </div>
-                                <div class="form-group" id="countyForm">
-                                    <label for="countySelect" class="col-sm-2 control-label filterForms">County</label>
-                                    <div class="col-sm-10 filterForms">
-                                        <select id="countySelect" style="width: 90%; float:right" multiple
-                                            class="clearable">
-                                            <option value=null>Please select state(s) first </option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+					<div class="form-item">
+						<label for="stateSelect">State:</label>
+						<select id="stateSelect" style="width: 100%" multiple="multiple" class="clearable"></select>
+					</div>
+					<div class="form-item">
+						<label for="countySelect">County:</label>
+						<select id="countySelect" multiple class="clearable">
+							<option value=null>Please select state(s) first </option>
+						</select>
+					</div>
                     </div>
 
                     <div class="panel panel-default">
@@ -670,9 +665,7 @@
                             <!--<h4 class="formSectionHead">Data Type Options</h4>-->
                             <form class="form-horizontal" role="form" id="selectRadDiv">
                                 <div class="form-group" id="dataTypeForm">
-                                    <label for="selectionRadios"
-                                        class="control-label col-sm-2 masterFormLabel filterForms"
-                                        id="dataTypeFormLabel">Data type</label>
+                                    <label for="selectionRadios">Data type</label>
                                     <div class="col-sm-10 filterForms">
                                         <div class="btn-group" data-toggle="buttons" id="selectionRadios">
                                             <label class="btn btn-default dataTypeRadio active" id="sensor">
@@ -691,7 +684,7 @@
                                     </div>
                                 </div>
                             </form>
-                            <form class="form-horizontal hidden" role="form" id="sensorForm">
+                            <form class="form-horizontal hidden" role="form">
                                 <div class="form-group" id="sensorTypeForm">
                                     <label for="sensorTypeSelect" class="col-sm-3 control-label filterForms">Sensor
                                         Type</label>
@@ -815,359 +808,332 @@
                         </div>
                     </div>
                     <!-- end filter panels -->
-                    <div class="alert alert-danger eventSelectAlert" role="alert"><i class="fa fa-exclamation-triangle"
+                    <div class="alert alert-danger form-error-wrapper" role="alert"><i class="fa fa-exclamation-triangle"
                             aria-hidden="true"></i> Please choose an event to proceed.</div>
-                </div>
-                <div class="modal-footer">
+				</div><!-- End modal body -->
+				<!-- footer / buttons -->
+                <div class="modal-buttons">
                     <span>FEV requires an event selection to view data. You cannot clear the event filter, only change
                         it.</span>
-                    <button id="btnClearFilters" class="btn btn-default" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn btn-primary">Clear Filters</button>
-                    <button id="btnSubmitFilters" class="btn btn-primary btn-lg" type="button" aria-hidden="true"
-                        style="color:gray;" class="btn btn-primary">Filter</button>
-                    <button class=" btn btn-default close" type="button" data-dismiss="modal" aria-hidden="true"
-                        style="color:gray;" class="btn btn-default">Close</button>
+                    <button id="btnClearFilters" aria-hidden="true" class="grey">Clear Filters</button>
+                    <button aria-hidden="true" class="blue">Filter</button>
+                    <button data-dismiss="modal" aria-hidden="true">Close</button>
                 </div>
 
             </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+        </div><!-- /.modal-wrapper -->
     </div>
 
-    <!-- end filters modal ---------------------------------------------------------------------------------- -->
 
-    <!-- Begin page content -->
-    <div class="container-fluid keepit100">
-        <div class="row keepit100">
-            <!--<div id="sidebar" class="col-xs-7 col-sm-3 col-md-3 sidebar sidebar-left sidebar-animate sidebar-md-show no-col-padding">-->
-            <div id="sidebar"
-                class="col-xs-11 col-sm-10 col-md-3 col-lg-2 sidebar sidebar-left sidebar-animate sidebar-md-show no-col-padding">
-                <h4 class="site-name"><small>Site:</small><b><span id="largeSiteNameDisplay"></span></b></h4>
-                <h4 class="event-name"><small>Event:</small><b><span id="largeEventNameDisplay"></span></b></h4>
-                <h4 class="event-range"><span id="largeEventDateRangeDisplay"></span></h4>
 
-                <div class="panel-body panel-default wim-sidebar-panel collapse in">
+	<!-- 
+		///////////////////////////////////////
+		///////////////////////////////////////
+		Page Content
+		///////////////////////////////////////
+		///////////////////////////////////////
+	-->
+    <div class="container-fluid full-height">
+        <div class="row full-height">
 
-                    <button id="printNav" type="button" class="btn btn-default filtersBtn" disabled>
-                        <span id="printButtonText">Site Report</span>
+			<!-- 
+				Sidebar
+				///////////////////////////////////////
+			-->
+			<div id="sidebar" class="no-scrollbars col-xs-11 col-sm-10 col-md-3 col-lg-2 sidebar sidebar-left sidebar-animate sidebar-md-show no-col-padding">
+				
+				<!-- Site info -->
+				<div id="sidebarSiteInfo">
+					<label id="sidebarSiteLabel" class="hidden">Site:</label>
+					<b id="largeSiteNameDisplay"></b>
+
+					<label>Event:</label>
+					<b id="largeEventNameDisplay"></b>
+
+					<div id="largeEventDateRangeDisplay"></div>
+				</div>
+
+
+				<!-- Action Buttons -->
+                <div class="panel-body panel-default wim-sidebar-panel collapse in sidebar-action-buttons">
+                    <button id="printNav" class="blue" disabled>
+                        <i id='printButtonLoader'></i><span id="printButtonText">  Print Site Report</span>
                     </button>
-                    <button id="btnChangeFilters" class="btn btn-default filtersBtn">
-                        <span id="queryButtonText">Query a New Site</span></button>
 
-                    <button id="btnStartOver" class="btn btn-default filtersBtn">
-                        <span id="startOverButtonText">Start Over</span></button>
+                    <button id="btnStartOver" class="red">
+						<span id="startOverButtonText">Start Over</span>
+					</button>
                 </div>
 
 
 
+				<!-- 
+					Map Layers
+					///////////////////////////////////////
+				-->
+				<div class="panel panel-default wim-sidebar-panel">
+					<a class="panel-title collapsed" data-toggle="collapse" id="mapLayerHeader" href="#mapLayersPanel" aria-expanded="false" aria-controls="basemapsPanel">
+						Map Layers
+					</a>
+					<div id="mapLayersPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="mapLayerHeader">
+						<div class="panel-body collapse in">
 
-                <div class="panel panel-default wim-sidebar-panel">
-                    <div class="panel panel-default wim-sidebar-panel">
-                        <div class="panel-heading" id="mapLayerHeader">
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" href="#mapLayersPanel" aria-expanded="false">
-                                    Map Layers
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="mapLayersPanel" class="panel-collapse collapse" aria-labelledby="mapLayerHeader">
-                            <div class="panel-body collapse in">
-                                <div id="legendCollapsePanel" class="panel-collapse" role="tabpanel">
-                                    <div id="legendDivPanel" class="panel-body legend-panel-body">
-                                        <!-- <div id="printout"> -->
-                                        <!--Warning message about zoom levels-->
-                                        <div id="rtScaleAlert" class='alert alert-warning rtScaleAlertClass'
-                                            role='alert'>Real-time, NPS, and FWS layers only available at zoom
-                                            level 9 and above. Please zoom in to view.</div>
-                                        <!--Interpreted Layers-->
-                                        <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;"
-                                            data-toggle="buttons">
-                                            <button id="interpertedMapLayer"
-                                                class="btn btn-default groupToggle groupHeading" type="button"
-                                                data-toggle="collapse" data-target="#interpToggleDiv"
-                                                aria-expanded="false" aria-controls="collapseExample"
-                                                style="font-weight: bold;text-align: left"><b class='groupHeading'
-                                                    style="font-size: 10pt; text-align: left">Interpreted Data<i
-                                                        class="chevron fa fa-chevron-right pull-right"></i></b></button>
-                                        </div>
-                                        <div id="interpToggleDiv" style="text-align: left">
-                                            <div style="text-align: left; display: inline-flex">
-                                                <label>
-                                                    <input type="checkbox" id=peaksToggle onclick="clickPeaks()" />
-                                                </label>Peak Summary
-                                                <label class="switch" id="peakSizeCheck"
-                                                    style="display: inline-flex; margin-left: 20px">
-                                                    <input type="checkbox" id="peakCheckbox"
-                                                        onclick="clickPeakLabels()" />
-                                                    <span class="slider round"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <!--Real time layers-->
-                                        <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;"
-                                            data-toggle="buttons">
-                                            <button id="realtimeMapLayer"
-                                                class="btn btn-default groupToggle groupHeading" type="button"
-                                                data-toggle="collapse" data-target="#realTimeToggleDiv"
-                                                aria-expanded="false" aria-controls="collapseExample"
-                                                style="font-weight: bold;text-align: left"><b class='groupHeading'
-                                                    style="font-size: 10pt; text-align: left">Real-Time Data<i
-                                                        class="chevron fa fa-chevron-right pull-right"></i></b></button>
-                                        </div>
-                                        <div id="realTimeToggleDiv" class="collapse" style="text-align: left">
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=streamGageToggle
-                                                        onclick="clickStreamGage()" />
-                                                </label>Real-time Stream Gage
-                                            </div>
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=rainGageToggle
-                                                        onclick="clickRainGage()" />
-                                                </label>Real-time Rain Gage
-                                            </div>
-                                        </div>
-                                        <!--Observed layers-->
-                                        <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;"
-                                            data-toggle="buttons">
-                                            <button id="observedMapLayer" class="btn btn-default groupToggle"
-                                                type="button" data-toggle="collapse" data-target="#observedToggleDiv"
-                                                aria-expanded="false" aria-controls="collapseExample"
-                                                style="font-weight: bold;text-align: left"><b class='groupHeading'
-                                                    style="font-size: 10pt; text-align: left">Observed Data<i
-                                                        class="chevron fa fa-chevron-right pull-right"></i></b></button>
-                                        </div>
-                                        <div id="observedToggleDiv" class="collapse" style="text-align: left">
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=baroToggle onclick="clickBaro()" />
-                                                </label>Barometric Pressure Sensor
-                                            </div>
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=stormTideToggle
-                                                        onclick="clickStormTide()" />
-                                                </label>Storm Tide Sensor
-                                            </div>
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=metToggle onclick="clickMet()" />
-                                                </label>Meteorological Sensor
-                                            </div>
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=waveHeightToggle
-                                                        onclick="clickWaveHeight()" />
-                                                </label>Wave Height Sensor
-                                            </div>
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=HWMToggle onclick="clickHWM()" />
-                                                </label>High Water Mark
-                                            </div>
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=rdgToggle onclick="clickRdg()" />
-                                                </label>Rapid Deployment Gage
-                                            </div>
-                                        </div>
-                                        <!--NPS Layers-->
-                                        <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;"
-                                            data-toggle="buttons">
-                                            <button id="npsMapLayer" class="btn btn-default groupToggle" type="button"
-                                                data-toggle="collapse" data-target="#npsToggleDiv" aria-expanded="false"
-                                                aria-controls="collapseExample"
-                                                style="font-weight: bold;text-align: left"><b class='groupHeading'
-                                                    style="font-size: 10pt; text-align: left">NPS Data<i
-                                                        class="chevron fa fa-chevron-right pull-right"></i></b></button>
-                                        </div>
-                                        <div id="npsToggleDiv" class="collapse" style="text-align: left">
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=tractToggle onclick="clickTracts()" />
-                                                </label>Park Tracts
-                                            </div>
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=parkBoundsToggle
-                                                        onclick="clickBounds()" />
-                                                </label>Park Boundaries
-                                            </div>
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=npsNetToggle
-                                                        onclick="clickNPSNetworks()" />
-                                                </label>NPS Networks
-                                            </div>
-                                        </div>
-                                        <!--FWS Layers-->
-                                        <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;"
-                                            data-toggle="buttons">
-                                            <button id="fwsMapLayer" class="btn btn-default groupToggle" type="button"
-                                                data-toggle="collapse" data-target="#fwsToggleDiv" aria-expanded="false"
-                                                aria-controls="collapseExample"
-                                                style="font-weight: bold;text-align: left"><b class='groupHeading'
-                                                    style="font-size: 10pt; text-align: left">FWS Data<i
-                                                        class="chevron fa fa-chevron-right pull-right"></i></b></button>
-                                        </div>
-                                        <div id="fwsToggleDiv" class="collapse" style="text-align: left">
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=approvedFWSToggle
-                                                        onclick="clickApprovedFWS()" />
-                                                </label>Approved Aquisition Boundaries
-                                            </div>
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=interestFWSToggle
-                                                        onclick="clickInterestFWS()" />
-                                                </label>Interest Boundaries
-                                            </div>
-                                        </div>
-                                        <!--DOI layer-->
-                                        <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;"
-                                            data-toggle="buttons">
-                                            <button id="doiMapLayer" class="btn btn-default groupToggle" type="button"
-                                                data-toggle="collapse" data-target="#doiToggleDiv" aria-expanded="false"
-                                                aria-controls="collapseExample"
-                                                style="font-weight: bold;text-align: left"><b class='groupHeading'
-                                                    style="font-size: 10pt; text-align: left">DOI Data<i
-                                                        class="chevron fa fa-chevron-right pull-right"></i></b></button>
-                                        </div>
-                                        <div id="doiToggleDiv" class="collapse" style="text-align: left">
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=doiToggle onclick="clickDOI()" />
-                                                </label>DOI Regions
-                                            </div>
-                                        </div>
-                                        <!--Supporting layers-->
-                                        <div class="btn-group-vertical lyrTogDiv" style="cursor: pointer;"
-                                            data-toggle="buttons">
-                                            <button id="supportMapLayer" class="btn btn-default groupToggle"
-                                                type="button" data-toggle="collapse" data-target="#noaaToggleDiv"
-                                                aria-expanded="false" aria-controls="collapseExample"
-                                                style="font-weight: bold;text-align: left"><b class='groupHeading'
-                                                    style="font-size: 10pt; text-align: left">Supporting Layers<i
-                                                        class="chevron fa fa-chevron-right pull-right"></i></b></button>
-                                        </div>
-                                        <div id="noaaToggleDiv" class="collapse" style="text-align: left">
-                                            <div style="text-align: left">
-                                                <label>
-                                                    <input type="checkbox" id=noaaToggle onclick="clickNOAA()" />
-                                                </label>NOAA Tropical Cyclone Forecast Track
-                                            </div>
-                                        </div>
-                                        <div id="noTrackAdvisory"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+							<!-- Zoom Alert -->
+							<div class="form-error-wrapper" id="rtScaleAlert">
+								<!-- Error banner -->
+								<div class="form-error small warn" role="alert">
+									<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+									<span>
+										Real-time, NPS, and FWS layers only available at zoom level 9 and above. Please zoom in to view.
+										<br/>
+										<b>You are currently at level <div class="zoom-level"></div></b>
+									</span>
+								</div>
+							</div>
+						
+							<!-- Interpreted Data -->
+							<div class="accordion">
+								<div class="accordion-header">Interpreted Data</div>
+								<div class="accordion-body">
+									<label class="input-container">
+										<input type="checkbox" id="peaksToggle" onclick="clickPeaks()" />
+										<span>Peak Summary</span>
+									</label>
+									<label class="input-container nested">
+										<input type="checkbox" id="peakCheckbox" onclick="clickPeakLabels()" />
+										<span>Toggle Labels</span>
+									</label>
+								</div>
+							</div>
 
-                    </div>
-                    <div class="panel-heading" id="basemapsHeader">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" href="#basemapsPanel" aria-expanded="true"
-                                aria-controls="basemapsPanel">
-                                Basemaps
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="basemapsPanel" class="panel-collapse collapse" role="tabpanel"
-                        aria-labelledby="basemapsHeader">
-                        <div class="panel-body collapse in">
-                            <button id="btnStreets" class="btn btn-default basemapBtn equalize"><img
-                                    class="basemapThumb" alt="" src="images/streets.jpg"><br
-                                    class="basemapThumb">Streets</button>
-                            <button id="btnSatellite" class="btn btn-default basemapBtn equalize"><img
-                                    class="basemapThumb" alt="" src="images/satellite.jpg"><br
-                                    class="basemapThumb">Satellite</button>
-                            <!--<button id="btnHybrid" class="btn btn-default basemapBtn equalize"><img class="basemapThumb" alt="" src="images/imagery_labels.jpg"><br class="basemapThumb">Hybrid</button>-->
-                            <button id="btnTopo" class="btn btn-default basemapBtn equalize"><img class="basemapThumb"
-                                    alt="" src="images/topo.jpg"><br class="basemapThumb">Topo</button>
-                            <button id="btnTerrain" class="btn btn-default basemapBtn equalize"><img
-                                    class="basemapThumb" alt="" src="images/terrain.jpg"><br
-                                    class="basemapThumb">Terrain</button>
-                            <button id="btnGray" class="btn btn-default basemapBtn equalize"><img class="basemapThumb"
-                                    alt="" src="images/gray.jpg"><br class="basemapThumb">Gray</button>
-                            <!--<button id="btnOSM" class="btn btn-default basemapBtn equalize"><img class="basemapThumb" alt="" src="images/osm.jpg"><br class="basemapThumb">OSM</button>-->
-                            <button id="btnNatGeo" class="btn btn-default basemapBtn equalize"><img class="basemapThumb"
-                                    alt="" src="images/natgeo.jpg"><br class="basemapThumb">NatGeo</button>
-                            <!--<button id="btnNatlMap" class="btn btn-default basemapBtn equalize"><img class="basemapThumb" alt="" src="images/national_map.jpg"><br class="basemapThumb">Nat'l Map</button>-->
-                        </div>
+							<!-- Real-Time Data -->
+							<div class="accordion">
+								<div class="accordion-header">Real-Time Data</div>
+								<div class="accordion-body">
+									<label class="input-container">
+										<input type="checkbox" id="streamGageToggle" onclick="clickStreamGage()"/>
+										<span>Real-time Stream Gage</span>
+									</label>
 
-                    </div>
-                </div>
-                <!--<div class="panel panel-default wim-sidebar-panel">-->
-                <!--<div class="panel-heading" id="layersPanelHeader">-->
-                <!--<h4 class="panel-title">-->
-                <!--<a data-toggle="collapse" href="#layersPanel" aria-expanded="false" aria-controls="layersPanel">-->
-                <!--Map Layers-->
-                <!--</a>-->
-                <!--</h4>-->
-                <!--</div>-->
-                <!--<div id="layersPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="layersPanelHeader">-->
-                <!--<div id="toggle" style="padding: 2px 2px;"></div>-->
-                <!--</div>-->
-                <!--</div>-->
+									<label class="input-container">
+										<input type="checkbox" id="rainGageToggle" onclick="clickRainGage()" />
+										<span>Real-time Rain Gage</span>
+									</label>
+								</div>
+							</div>
 
+							<!-- Observed Layers -->
+							<div class="accordion">
+								<div class="accordion-header">Observed Data</div>
+								<div class="accordion-body">
+									<label class="input-container">
+										<input type="checkbox" id="baroToggle" onclick="clickBaro()" />
+										<span>Barometric Pressure Sensor</span>
+									</label>
 
-                <!-- # closing div tag for accordion style panels -->
-                <!--</div>-->
-                <div class="identification pull-right">powered by <a href="https://wim.usgs.gov/"
-                        target="_blank">WiM</a></div>
-            </div>
-            <div id="mapContainer" class="col-md-9 col-lg-10 col-md-offset-3 col-lg-offset-2 no-col-padding keepit100">
+									<label class="input-container">
+										<input type="checkbox" id="stormTideToggle" onclick="clickStormTide()" />
+										<span>Storm Tide Sensor</span>
+									</label>
+
+									<label class="input-container">
+										<input type="checkbox" id="metToggle" onclick="clickMet()" />
+										<span>Meteorological Sensor</span>
+									</label>
+
+									<label class="input-container">
+										<input type="checkbox" id="waveHeightToggle" onclick="clickWaveHeight()" />
+										<span>Wave Height Sensor</span>
+									</label>
+
+									<label class="input-container">
+										<input type="checkbox" id="HWMToggle" onclick="clickHWM()" />
+										<span>High Water Mark</span>
+									</label>
+
+									<label class="input-container">
+										<input type="checkbox" id="rdgToggle" onclick="clickRdg()" />
+										<span>Rapid Deployment Gage</span>
+									</label>
+
+								</div>
+							</div>
+
+							<!-- NPS Layers -->
+							<div class="accordion">
+								<div class="accordion-header">NPS Data</div>
+								<div class="accordion-body">
+									<label class="input-container">
+										<input type="checkbox" id=tractToggle onclick="clickTracts()" />
+										<span>Park Tracts</span>
+									</label>
+									<label class="input-container">
+										<input type="checkbox" id=parkBoundsToggle onclick="clickBounds()" />
+										<span>Park Boundaries</span>
+									</label>
+									<label class="input-container">
+										<input type="checkbox" id=npsNetToggle onclick="clickNPSNetworks()" />
+										<span>NPS Networks</span>
+									</label>
+								</div>
+							</div>
+
+							<!-- FWS Layers -->
+							<div class="accordion">
+								<div class="accordion-header">FWS Data</div>
+								<div class="accordion-body">
+									<label class="input-container">
+										<input type="checkbox" id=approvedFWSToggle onclick="clickApprovedFWS()" />
+										<span>Approved Aquisition Boundaries</span>
+									</label>
+									<label class="input-container">
+										<input type="checkbox" id=interestFWSToggle onclick="clickInterestFWS()" />
+										<span>Interest Boundaries</span>
+									</label>
+								</div>
+							</div>
+
+							<!-- DOI Layers -->
+							<div class="accordion">
+								<div class="accordion-header">DOI Data</div>
+								<div class="accordion-body">
+									<label class="input-container">
+										<input type="checkbox" id=doiToggle onclick="clickDOI()" />
+										<span>DOI Regions</span>
+									</label>
+								</div>
+							</div>
+
+							<!-- Supporting Layers -->
+							<div class="accordion">
+								<div class="accordion-header">Supporting Layers</div>
+								<div class="accordion-body">
+									<label class="input-container">
+										<input type="checkbox" id=noaaToggle onclick="clickNOAA()" />
+										<span>NOAA Tropical Cyclone Forecast Track</span>
+									</label>
+								</div>
+								<div id="noTrackAdvisory"></div>
+							</div>
+
+						</div>
+					</div>
+				</div>	
+
+				<!-- 
+					Basemaps
+					///////////////////////////////////////
+				-->
+				<div class="panel panel-default wim-sidebar-panel">
+					<a class="panel-title collapsed" data-toggle="collapse" id="basemapsHeader" href="#basemapsPanel" aria-expanded="false" aria-controls="basemapsPanel">
+						Basemaps
+					</a>
+					<div id="basemapsPanel" class="panel-collapse collapse" role="tabpanel" aria-labelledby="basemapsHeader">
+						<div class="panel-body collapse in">
+							<button id="btnStreets" class="basemap-button">
+								<img alt="" src="images/basemaps/streets.jpg">
+								<span>Streets</span>
+							</button>
+							<button id="btnSatellite" class="basemap-button" >
+								<img alt="" src="images/basemaps/satellite.jpg">
+								<span>Satellite</span>
+							</button>
+							<button id="btnHybrid" class="basemap-button">
+								<img alt="" src="images/basemaps/imagery_labels.jpg">
+								<span>Hybrid</span>
+							</button>
+							<button id="btnTopo" class="basemap-button">
+								<img alt="" src="images/basemaps/topo.jpg">
+								<span>Topo</span>
+							</button>
+							<button id="btnTerrain" class="basemap-button">
+								<img alt="" src="images/basemaps/terrain.jpg">
+								<span>Terrain</span>
+							</button>
+							<button id="btnGray" class="basemap-button" >
+								<img alt="" src="images/basemaps/gray.jpg">
+								<span>Grery</span>
+							</button>
+							<button id="btnOSM" class="basemap-button">
+								<img alt="" src="images/basemaps/osm.jpg">
+								<span>OSM</span>
+							</button>
+							<button id="btnNatGeo" class="basemap-button">
+								<img alt="" src="images/basemaps/natgeo.jpg">
+								<span>NatGeo</span>
+							</button>
+							<button id="btnNatlMap" class="basemap-button">
+								<img alt="" src="images/basemaps/national_map.jpg">
+								<span>Nat'l Map</span>
+							</button>
+						</div>
+
+					</div>
+				</div>
+			
+				<!-- 
+					Sidebar Footer Links
+					///////////////////////////////////////
+				-->                
+				<div class="footer-links">
+					<div class="identification"><a href="https://wim.usgs.gov/" target="_blank">Powered by WIM <img src="images/favicon.png" style="height: 18px; width: auto; margin-bottom:4px;"/></a></div>
+					<a href="https://usgs.gov" target="_blank">USGS Home</a>
+					<a href="https://answers.usgs.gov" target="_blank">Contact USGS</a>
+					<a href="https://search.usgs.gov" target="_blank">Search USGS</a>
+					<a href="https://www2.usgs.gov/laws/accessibility.html" target="_blank">Accessibility</a>
+					<a href="https://www2.usgs.gov/foia/" target="_blank">FOIA</a>
+					<a href="https://www2.usgs.gov/laws/privacy.html" target="_blank">Privacy</a>
+					<a href="https://www2.usgs.gov/laws/policies_notices.html" target="_blank">Policies & Notices</a>
+				</div>
+
+			</div> <!-- End Sidebar -->
+			
+
+			<!-- 
+				Map container
+				///////////////////////////////////////
+			-->
+
+			<div class="map-wrapper">
+
+				<!-- Map -->
                 <div id="mapDiv">
-                    <div id="nwisLoadingAlert" class="alert nwisAlertClass fade" role="alert"
-                        data-html2canvas-ignore="true"><i class="fa fa-lg fa-cog fa-spin fa-fw"></i><span>Loading
-                            Layers...</span></div>
-                </div>
-                <div id="latLngScale" class="latLngScale">
-                    <span class="hover-content"> <b>Map scale </b></span>
-                    1:<span id="scale"></span> | <span class="hover-content"> <b>Zoom level </b></span> <span
-                        id="zoomLevel"></span><br>
-                    <span class="hover-content"><b>Latitude</b></span>
-                    <span id="latitude">y</span> |
-                    <span class="hover-content"> <b>Longitude</b></span>
-                    <span id="longitude">x</span>
-                    <span id="mapCenterLabel" class="hover-content"> (center)</span>
-                </div>
+				</div>
+				
 
-                <!--Start of Active Layers panel-->
-                <div id="legendElement" class="panel panel-default legendClass">
-                    <div id="legendHeading" class=" legendHeading" role="tab">
+				<!--Legend / Active Layers-->
+				<div id="legendElement" class="panel panel-default legendClass">
+                    <div id="legendHeading" class="legendHeading" role="tab">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" style="text-decoration: none" href="#legendCollapse"
-                                aria-expanded="true" aria-controls="collapseOne">
-                                <span class="glyphicon glyphicon-list"></span>
-                                Active Layers
-                            </a>
+                            <div data-toggle="collapse" id="legendButton"  href="#legendCollapse" aria-expanded="true" aria-controls="collapseOne">
+                                <i class="far fa-list-ul"></i>
+                                <span>Active Layers</span>
+							</div>
                         </h4>
-                    </div>
-                    <div id="legendCollapse" class="panel-collapse " role="tabpanel">
-                        <div id="legendDiv" class="panel-body legend-panel-body">
-                            <!--insert legend elements here -->
-
-                            <div class="mapSymbology">
-                                <div id=PeakSummarySymbology></div>
-                                <div id=streamGageSymbology></div>
-                                <div id=rainGageSymbology></div>
-                                <div id=barometricSymbology></div>
-                                <div id=stormTideSymbology></div>
-                                <div id=meteorlogicalSymbology></div>
-                                <div id=waveHeightSymbology></div>
-                                <div id=highWaterSymbology></div>
-                                <div id=rdgSymbology></div>
-                                <div id=parkTractsSymbology></div>
-                                <div id=parkBoundsSymbology></div>
-                                <div id=npsNetworksSymbology></div>
-                                <div id=approvedFWSSymbology></div>
-                                <div id=interestFWSSymbology></div>
-                                <div id=doiSymbology></div>
-                                <div id=noaaCycloneSymbology></div>
-                            </div>
-
+					</div>
+					
+					<!-- Legend -->
+                    <div id="legendCollapse" class="panel-collapse" role="tabpanel">
+                        <div id="legendDiv">
+							<!--insert legend elements here -->
+							<div class="legend-item-wrapper">
+								<div id="PeakSummarySymbology"></div>
+								<div class="legend-item" id="streamGageSymbology"></div>
+								<div class="legend-item" id="rainGageSymbology"></div>
+								<div class="legend-item" id="barometricSymbology"></div>
+								<div class="legend-item" id="stormTideSymbology"></div>
+								<div class="legend-item" id="meteorlogicalSymbology"></div>
+								<div class="legend-item" id="waveHeightSymbology"></div>
+								<div class="legend-item" id="highWaterSymbology"></div>
+								<div class="legend-item" id="rdgSymbology"></div>
+								<div id="parkTractsSymbology"></div>
+								<div class="legend-item" id="parkBoundsSymbology"></div>
+								<div class="legend-item" id="npsNetworksSymbology"></div>
+								<div class="legend-item" id="approvedFWSSymbology"></div>
+								<div id="interestFWSSymbology"></div>
+								<div class="legend-item" id="doiSymbology"></div>
+								<div class="legend-item" id="noaaCycloneSymbology"></div>
+                       	 	</div>
                         </div>
                     </div>
                 </div>
@@ -1175,14 +1141,31 @@
             <!--End of Active Layers panel-->
 
 
+			<!-- Lat Lng Scale -->
+			<div id="latLngScale">
+				<div>
+					<span class="hover-content"> <b>Map scale </b></span>
+					1:<span id="scale"></span>
+					<i class="fas fa-grip-lines-vertical"></i>
+					<span class="hover-content"> <b>Zoom level </b></span> 
+					<span class="zoom-level"></span>
+				</div>
+				<div>
+					<span class="hover-content"><b>Latitude</b></span>
+					<span id="latitude">y</span>
+					<i class="fas fa-grip-lines-vertical"></i>
+					<span class="hover-content"> <b>Longitude</b></span>
+					<span id="longitude">x</span>
+					<span id="mapCenterLabel"  class="hover-content"> (center)</span>
+				</div>
+			</div>
+
+			<!-- Other Buttons -->
             <div id="homeButton"></div>
             <div id="locateButton"></div>
 
 
-
         </div>
-        <div class="col-xs-7 col-sm-3 col-md-3 sidebar sidebar-right sidebar-animate"></div>
-    </div>
     </div>
 
 </body>
