@@ -774,7 +774,11 @@ $(document).ready(function () {
 
 	//display USGS rt gages by default on map load
 	// USGSrtGages.addTo(map);
-	noaaService.addTo(map);
+	noaaService.metadata(function (err, response) {
+		if (response) {
+			noaaService.addTo(map);
+		}
+	});
 	if (map.hasLayer(noaaService)) {
 		var noaaCheckBox = document.getElementById("noaaToggle");
 		noaaCheckBox.checked = true;
