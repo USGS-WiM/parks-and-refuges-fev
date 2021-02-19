@@ -3465,6 +3465,7 @@ function searchComplete(runningFilter, exploreMap) {
 
 
 		function getEachDataSection() {
+			console.log("3 getting data section");
 			// cycling through each peak and seeing if it's inside the buffer
 			for (var i in peak._layers) {
 				// formatting point for turf
@@ -3680,6 +3681,7 @@ function generateSiteReport() {
 	if (document.getElementById('noaaToggle').checked) {
 		$('#noaaToggle').click();
 	}
+	console.log("5 turned off layers");
 	// displaying labels for print image
 	bufferPeak.eachLayer(function (myMarker) { myMarker.showLabel(); });
 
@@ -3710,9 +3712,9 @@ function generateSiteReport() {
 		var sTwoThirdVal = sorted[sThirdLength * 2 - 1];
 
 		var PeakSummarySymbologyInterior;
+		//if there are hwms but no peaks, show those instead
 		if (lengthPeak == 0) {
 			if (identifiedMarks.length > 0) {
-				//show the hwms instead	
 				var highWaterSymbologyInterior = "<img class='legendSwatch' src='images/markers/hwm.png'/><b>High Water Mark</b>";
 				$('#highWaterSymbology').append(highWaterSymbologyInterior);
 				bufferHWM.addTo(map);
