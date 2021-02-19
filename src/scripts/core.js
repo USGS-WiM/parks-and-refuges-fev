@@ -2061,6 +2061,7 @@ $(document).ready(function () {
 	document.getElementById('twentyKmFilter').checked = false;
 	document.getElementById('thirtyKmFilter').checked = true;
 	selectedBuffer = "30km";
+	fev.vars.currentBufferSelection = 30;
 	document.getElementById('fiftyKmFilter').checked = false;
 	// 10 kilometers
 	$('#tenKmFilter').click(function () {
