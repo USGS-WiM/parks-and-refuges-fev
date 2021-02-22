@@ -3467,7 +3467,6 @@ function searchComplete(runningFilter, exploreMap) {
 
 		function getEachDataSection() {
 			console.log("3 getting data section");
-			console.log(peak);
 			// cycling through each peak and seeing if it's inside the buffer
 			for (var i in peak._layers) {
 				// formatting point for turf
@@ -3485,7 +3484,6 @@ function searchComplete(runningFilter, exploreMap) {
 						}
 					}
 				}
-
 			}
 			getHWMSInside();
 
@@ -3638,7 +3636,6 @@ function generateSiteReport() {
 	$('#peaksToggle').click();
 
 	bufferPeak.addTo(map);
-	//bufferHWM.addTo(map);
 
 	if (document.getElementById('baroToggle').checked) {
 		$('#baroToggle').click();
@@ -3716,6 +3713,14 @@ function generateSiteReport() {
 		var sTwoThirdVal = sorted[sThirdLength * 2 - 1];
 
 		var PeakSummarySymbologyInterior;
+		//if there are hwms but no peaks, show those instead
+		if (lengthPeak == 0) {
+			if (identifiedMarks.length > 0) {
+				var highWaterSymbologyInterior = "<img class='legendSwatch' src='images/markers/hwm.png'/><b>High Water Mark</b>";
+				$('#highWaterSymbology').append(highWaterSymbologyInterior);
+				bufferHWM.addTo(map);
+			}
+		}
 		if (lengthPeak > 0) {
 			if (lengthPeak > 2) {
 				PeakSummarySymbologyInterior = "<label>Peak Summary (ft)</label>" +
@@ -4515,9 +4520,7 @@ function generateSiteReport() {
 						var row$ = $('<tr/>');
 						for (var colIndex = 0; colIndex < columns.length; colIndex++) {
 							var cellValue = sitehwmTableData[i][columns[colIndex]];
-
 							if (cellValue == null) { cellValue = ""; }
-
 							row$.append($('<td/>').html(cellValue));
 						}
 						$("#hwmDataTable").append(row$);
