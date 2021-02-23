@@ -111,8 +111,7 @@ function displayTidesGeoJSON(type, name, url, markerIcon) {
           });
           tides.addTo(map);
           //plot tides gages on map
-          checkLayerCount(layerCount);
-        
+          //checkLayerCount(layerCount);
       },
     });
   }
