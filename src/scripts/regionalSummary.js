@@ -713,6 +713,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     $('#btnClearRegFilters').click(function () {
         clearRegOutput();
         $(".progress-bar").removeClass("fill");
+        var regionalContent = document.getElementById("regionModalContent");
+        regionalContent.classList.remove('large');
     });
 
     //Clear regional report output when modal is closed by clicking the 'Close' button
@@ -1915,6 +1917,8 @@ function processData(eventNumber, eventName) {
     $('#saveRegionalPeakCSV').removeAttr('disabled');
     $('#saveRegionalHWMCSV').removeAttr('disabled');
     $('#printRegionalReport').removeAttr('disabled');
+    var regionalContent = document.getElementById("regionModalContent")
+    regionalContent.classList.add('large')
     var formattedPeaks = [];
     var formattedHWMS = [];
     var formattedSensors = [];

@@ -24,12 +24,12 @@ i{
 	text-decoration: none !important;
 }
 /* Regional map container in modal */
-#regionalMap{
+/* #regionalMap{
 	width: 100%;
 	min-width: 100%;
 	max-width: none;
 	height: 50vh;
-}
+} */
 
 /* Small Loading element in modals */
 .modal-loader{

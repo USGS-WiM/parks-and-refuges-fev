@@ -1010,7 +1010,7 @@ $(document).ready(function () {
 		}, 500); */
 	}
 
-	var pdfRegionalMapUrl;
+	//var pdfRegionalMapUrl;
 
 	$('#printNav').click(function () {
 		map.dragging.disable();
@@ -1130,13 +1130,13 @@ $(document).ready(function () {
 		mapPane.style.top = '';
 
 		var mapEvent;
-		html2canvas(document.getElementById('regionalMap'), options).then(function (canvas) {
+		/* html2canvas(document.getElementById('regionalMap'), options).then(function (canvas) {
 			mapEvent = new Event('map_ready');
 			canvas.style.width = '700px';
 			canvas.style.height = '450px';
 			pdfRegionalMapUrl = canvas.toDataURL('image/png');
 			window.dispatchEvent(mapEvent);
-		});
+		}); */
 	};
 
 	$('#printRegionalReport').click(function () {
@@ -1750,12 +1750,12 @@ $(document).ready(function () {
 						},
 						margin: [0, 0, 0, 15]
 					},
-					{
+					/* {
 						image: pdfRegionalMapUrl,
 						width: 800,
 						height: 500,
 						pageBreak: 'after'
-					},
+					}, */
 					{
 						table: {
 							widths: ['*'],
@@ -1772,7 +1772,7 @@ $(document).ready(function () {
 								[
 									selectionsTable(),
 									//{ image: pdfRegionalMapUrl, width: 300, height: 200 },
-									legendTable()
+									//legendTable()
 								],
 							]
 						},
@@ -1809,12 +1809,12 @@ $(document).ready(function () {
 						},
 						margin: [0, 0, 0, 15]
 					},
-					{
+					/* {
 						image: pdfRegionalMapUrl,
 						width: 800,
 						height: 500,
 						pageBreak: 'after'
-					},
+					}, */
 					{
 						table: {
 							widths: ['*'],
@@ -1831,7 +1831,7 @@ $(document).ready(function () {
 								[
 									selectionsTable(),
 									//{ image: pdfRegionalMapUrl, width: 300, height: 200 },
-									legendTable()
+									//legendTable()
 								],
 							]
 						},
