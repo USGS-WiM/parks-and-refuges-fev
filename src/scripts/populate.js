@@ -527,8 +527,6 @@ $(document).ready(function () {
                 },
                 error: function (error) {
                     console.log('Error retrieving counties. The error is: ' + error);
-                    
-                    console.log('Error retrieving counties. The error is: ' + error[0]);
                 }
             });
         }

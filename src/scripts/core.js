@@ -206,6 +206,7 @@ var hwmMarkerIcon = L.icon({ className: 'hwmMarker', iconUrl: 'images/markers/hw
 var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
+var crmsIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crmsColor6.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
 var baro = L.layerGroup();
@@ -405,28 +406,14 @@ var fwsLegacyRegions = L.esri.featureLayer({
 	}
 });
 
-/*
-var crmsLayer = L.esri.featureLayer();
-crmsLayer = L.esri.featureLayer({
-	url: "https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms_points/MapServer/0"
+var crms = L.esri.featureLayer({
+url: 'https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms_points/MapServer/0',
+	pointToLayer: function (geojson, latlng) {
+		return L.marker(latlng, {
+		icon: crmsIcon
+		});
+	}
 });
-crmsLayer.addTo(map); */
-
-var kicon = L.icon({
-    iconUrl: 'https://esri.github.io/esri-leaflet/img/earthquake-icon.png',
-    iconSize: [27, 31],
-    iconAnchor: [13.5, 17.5],
-    popupAnchor: [0, -11]
-  });
-
-  var trythis = L.esri.featureLayer({
-    url: 'https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms_points/MapServer/0',
-    pointToLayer: function (geojson, latlng) {
-      return L.marker(latlng, {
-        icon: kicon
-      });
-    }
-  });
 
 // Style for DOI layer
 var doiStyle = {
@@ -2923,6 +2910,7 @@ var streamGageSymbologyInterior = "<img class='legendSwatch' src='images/markers
 var rainGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/rainIcon.png'/><b>Real-time Rain Gage<b>";
 var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
 var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
+var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crmsColor6.png'/><b>CRM</b>";
 var meteorlogicalSymbologyInterior = "<img class='legendSwatch' src='images/markers/met.png'/><b>Meteorlogical Sensor</b>";
 var waveHeightSymbologyInterior = "<img class='legendSwatch' src='images/markers/waveheight.png'/><b>Wave Height Sensor</b>";
 var rdgSymbologyInterior = "<img class='legendSwatch' src='images/markers/rdg.png'/><b>Rapid Deployment Gage</b>";
@@ -3257,7 +3245,7 @@ function clickDOI() {
 	if (doiCheckBox.checked == true) {
 		//When checkbox is checked, add layer to map
 		doiRegions.addTo(map);
-		trythis.addTo(map);
+		crms.addTo(map);
 		//Add symbol and layer name to legend
 		$('#doiSymbology').append(doiSymbologyInterior);
 	}
@@ -3265,6 +3253,23 @@ function clickDOI() {
 	if (doiCheckBox.checked == false) {
 		doiRegions.removeFrom(map);
 		$('#doiSymbology').children().remove();
+	}
+}
+
+//Display DOI Region layer and legend item when corresponding box is checked
+function clickCRMS() {
+	var crmsCheckBox = document.getElementById("crmsToggle");
+	if (doiCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
+		doiRegions.addTo(map);
+		crmsCheckBox.addTo(map);
+		//Add symbol and layer name to legend
+		$('#crmsSymbology').append(crmsSymbologyInterior);
+	}
+	//Remove symbol and layer name from legend when box is unchecked
+	if (doiCheckBox.checked == false) {
+		crmsCheckBox.removeFrom(map);
+		$('#crmsSymbology').children().remove();
 	}
 }
 
