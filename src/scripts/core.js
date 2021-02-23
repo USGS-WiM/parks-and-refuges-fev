@@ -149,6 +149,12 @@ var fev = fev || {
 			"Name": "DOI Regions",
 			"Type": "doi",
 			"Category": "doi"
+		},
+		{
+			"ID": "tides",
+			"Name": "NOAA Tides and Currents Stations",
+			"Type": "supporting",
+			"Category": "supporting"
 		}
 	],
 	csvHWMColumns: [
@@ -207,6 +213,7 @@ var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/markers/
 var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
 var crmsIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crmsColor6.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
+var tidesMarkerIcon = L.icon({ className: 'tideMarker', iconUrl: 'images/markers/bluepushpin.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [10, 20] });
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
 var baro = L.layerGroup();
@@ -269,6 +276,7 @@ $.ajax({
 var rdg = L.featureGroup();
 var USGSRainGages = L.featureGroup();
 var USGSrtGages = L.featureGroup();
+var tides = L.layerGroup();
 var identifiedUSGSrtGage = L.featureGroup();
 var identifiedUSGSrtGageArray = [];
 
@@ -804,6 +812,7 @@ $(document).ready(function () {
 	var realTimeOverlays = {
 		"<img class='legendSwatch' src='images/markers/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
 		"<img class='legendSwatch' src='images/markers/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
+		
 	};
 
 
@@ -2908,6 +2917,7 @@ function clickPeakLabels() {
 //PeakSummarySymbologyInterior is found in displayPeaksGeoJSON()
 var streamGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/nwis.png'/><b>Real-time Stream Gage</b>";
 var rainGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/rainIcon.png'/><b>Real-time Rain Gage<b>";
+var tideCurrentSymbologyInterior = "<img class='legendSwatch' style='width: 10px; margin-left: 6px' src='images/markers/bluepushpin.png'/><b style='margin-left: 5px'>NOAA Tides and Currents<b>";
 var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
 var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
 var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crmsColor6.png'/><b>CRM</b>";
@@ -3004,6 +3014,28 @@ function clickStreamGage() {
 	if (streamgageCheckBox.checked == false) {
 		USGSrtGages.clearLayers(map);
 		$('#streamGageSymbology').children().remove();
+	}
+}
+
+//Display NOAA tides and currents layer and legend item when the box is checked
+function clickTideCurrent() {
+	var tideCurrentCheckBox = document.getElementById("tideCurrentToggle");
+	if (tideCurrentCheckBox.checked == true) {
+		//Add symbol and layer name to legend
+		$('#tideCurrentSymbology').append(tideCurrentSymbologyInterior);
+		//When checkbox is checked, add layer to map
+		displayTidesGeoJSON(
+            "tides",
+            "NOAA Tides and Currents",
+            "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json",
+            tidesMarkerIcon
+          );
+		  tides.addTo(map)
+	}
+	//Remove symbol and layer name from legend when box is unchecked
+	if (tideCurrentCheckBox.checked == false) {
+		$('#tideCurrentSymbology').children().remove();
+		tides.clearLayers(map);
 	}
 }
 
@@ -3375,7 +3407,7 @@ function searchComplete(runningFilter, exploreMap) {
 
 		// waiting for site layer to be loaded onto the map before continuing
 		parks.on('load', function () {
-			console.log("waiting for layer to load onto the map")
+			//console.log("waiting for layer to load onto the map")
 			if (polyDefined === true) {
 				if (alreadyLoaded == false) {
 					getSiteBuffers(exploreMap);
@@ -3433,7 +3465,7 @@ function searchComplete(runningFilter, exploreMap) {
 
 		// waiting for site layer to be loaded onto the map before continuing
 		refuges.on('load', function () {
-			console.log("waiting for layer to load onto the map")
+			//console.log("waiting for layer to load onto the map")
 			if (polyDefined === true) {
 				if (alreadyLoaded == false) {
 					getSiteBuffers(exploreMap);
