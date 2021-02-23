@@ -1915,6 +1915,8 @@ function processData(eventNumber, eventName) {
     $('#saveRegionalPeakCSV').removeAttr('disabled');
     $('#saveRegionalHWMCSV').removeAttr('disabled');
     $('#printRegionalReport').removeAttr('disabled');
+    var regionalContent = document.getElementById("regionModalContent")
+    regionalContent.classList.add('large')
     var formattedPeaks = [];
     var formattedHWMS = [];
     var formattedSensors = [];
