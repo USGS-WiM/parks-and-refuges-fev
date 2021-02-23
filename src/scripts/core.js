@@ -800,7 +800,7 @@ $(document).ready(function () {
 	//define the real-time overlay and manually add the NWIS RT gages to it
 	var realTimeOverlays = {
 		"<img class='legendSwatch' src='images/markers/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
-		"<img class='legendSwatch' src='images/markers/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages,
+		"<img class='legendSwatch' src='images/markers/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
 		
 	};
 
