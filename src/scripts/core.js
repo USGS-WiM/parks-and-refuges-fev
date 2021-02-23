@@ -222,6 +222,7 @@ var tracts = L.layerGroup();
 var bounds = L.layerGroup();
 var doiRegions = L.layerGroup();
 var parksLayerGroup = L.featureGroup();
+var crms = L.layerGroup();
 
 var hwmCSVData = [];
 var peaksCSVData = [];
@@ -403,6 +404,29 @@ var fwsLegacyRegions = L.esri.featureLayer({
 		return { color: 'blue', weight: 2, fillOpacity: 0 };
 	}
 });
+
+/*
+var crmsLayer = L.esri.featureLayer();
+crmsLayer = L.esri.featureLayer({
+	url: "https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms_points/MapServer/0"
+});
+crmsLayer.addTo(map); */
+
+var kicon = L.icon({
+    iconUrl: 'https://esri.github.io/esri-leaflet/img/earthquake-icon.png',
+    iconSize: [27, 31],
+    iconAnchor: [13.5, 17.5],
+    popupAnchor: [0, -11]
+  });
+
+  var trythis = L.esri.featureLayer({
+    url: 'https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms_points/MapServer/0',
+    pointToLayer: function (geojson, latlng) {
+      return L.marker(latlng, {
+        icon: kicon
+      });
+    }
+  });
 
 // Style for DOI layer
 var doiStyle = {
@@ -3233,6 +3257,7 @@ function clickDOI() {
 	if (doiCheckBox.checked == true) {
 		//When checkbox is checked, add layer to map
 		doiRegions.addTo(map);
+		trythis.addTo(map);
 		//Add symbol and layer name to legend
 		$('#doiSymbology').append(doiSymbologyInterior);
 	}
