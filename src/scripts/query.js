@@ -20,7 +20,7 @@ var noPeaks = false;
 function displayTidesGeoJSON(type, name, url, markerIcon) {
     //increment layerCount
     layerCount++;
-    noaaTidesCurrents.clearLayers();
+    tides.clearLayers();
   
     //create a geoJSON to populate with coordinates of NOAA tides gages
     var noaaTidesGeoJSON = {
@@ -72,18 +72,6 @@ function displayTidesGeoJSON(type, name, url, markerIcon) {
       headers: { Accept: "*/*" },
       //jsonpCallback: 'MyJSONPCallback', // specify the callback name if you're hard-coding it
       success: function (data) {
-        console.log(data);
-        if (data.stations.length == 0) {
-          console.log("0 " + markerIcon.options.name + " GeoJSON features found");
-          return;
-        }
-        if (data.stations.length > 0) {
-          console.log(
-            data.stations.length +
-              " " +
-              markerIcon.options.name +
-              " GeoJSON features found"
-          );
           //loop through every gage in the geojson
           for (var i = data.stations.length - 1; i >= 0; i--) {
             //retrieve lat/lon coordinates
@@ -119,9 +107,9 @@ function displayTidesGeoJSON(type, name, url, markerIcon) {
           //get the data from the new geoJSON
           currentMarker.addData(noaaTidesGeoJSON);
           currentMarker.eachLayer(function (layer) {
-            layer.addTo(noaaTidesCurrents);
+            layer.addTo(tides);
           });
-          noaaTidesCurrents.addTo(map);
+          tides.addTo(map);
           //plot tides gages on map
           //.addTo(map);
           checkLayerCount(layerCount);
@@ -937,12 +925,6 @@ function filterMapData(event, isUrlParam, runningFilter, exploreMap) {
         if (layer.Type == 'sensor') displaySensorGeoJSON(layer.ID, layer.Name, fev.urls[layer.ID + 'GeoJSONViewURL'] + fev.queryStrings.sensorsQueryString, window[layer.ID + 'MarkerIcon']);
         if (layer.ID == 'hwm') displayHWMGeoJSON(layer.ID, layer.Name, fev.urls.hwmFilteredGeoJSONViewURL + fev.queryStrings.hwmsQueryString, hwmMarkerIcon);
         if (layer.ID == 'peak') displayPeaksGeoJSON(layer.ID, layer.Name, fev.urls.peaksFilteredGeoJSONViewURL + fev.queryStrings.peaksQueryString, peakMarkerIcon);
-        if (layer.ID == 'tides') displayTidesGeoJSON(
-            layer.ID,
-            layer.Name,
-            "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json",
-            tidesMarkerIcon
-          );
         if ((fev.layerList.length - 1) === index) {
             if (runningFilter == true) {
                 searchComplete(true, exploreMap);

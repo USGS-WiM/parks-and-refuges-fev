@@ -212,7 +212,7 @@ var hwmMarkerIcon = L.icon({ className: 'hwmMarker', iconUrl: 'images/markers/hw
 var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
-var tidesMarkerIcon = L.divIcon({ name: "NOAA Tides and Current Stations", className: 'images/markers/hwm.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
+var tidesMarkerIcon = L.icon({ className: 'tideMarker', iconUrl: 'images/markers/tidesBlue.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [16, 16] });
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
 var baro = L.layerGroup();
@@ -274,7 +274,7 @@ $.ajax({
 var rdg = L.featureGroup();
 var USGSRainGages = L.featureGroup();
 var USGSrtGages = L.featureGroup();
-var noaaTidesCurrents = L.featureGroup();
+var tides = L.layerGroup();
 var identifiedUSGSrtGage = L.featureGroup();
 var identifiedUSGSrtGageArray = [];
 
@@ -2906,7 +2906,7 @@ function clickPeakLabels() {
 //PeakSummarySymbologyInterior is found in displayPeaksGeoJSON()
 var streamGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/nwis.png'/><b>Real-time Stream Gage</b>";
 var rainGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/rainIcon.png'/><b>Real-time Rain Gage<b>";
-var tideCurrentSymbologyInterior = "<img class='legendSwatch' src='images/markers/rainIcon.png'/><b>NOAA Tides and Currents<b>";
+var tideCurrentSymbologyInterior = "<img class='legendSwatch' src='images/markers/tidesBlue.png'/><b>NOAA Tides and Currents<b>";
 var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
 var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
 var meteorlogicalSymbologyInterior = "<img class='legendSwatch' src='images/markers/met.png'/><b>Meteorlogical Sensor</b>";
@@ -3018,11 +3018,12 @@ function clickTideCurrent() {
             "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json",
             tidesMarkerIcon
           );
+		  tides.addTo(map)
 	}
 	//Remove symbol and layer name from legend when box is unchecked
 	if (tideCurrentCheckBox.checked == false) {
 		$('#tideCurrentSymbology').children().remove();
-		noaaTidesCurrents.clearLayers(map);
+		tides.clearLayers(map);
 	}
 }
 
