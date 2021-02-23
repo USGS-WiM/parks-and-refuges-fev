@@ -1059,6 +1059,10 @@
 								<div class="accordion-header">Supporting Layers</div>
 								<div class="accordion-body">
 									<label class="input-container">
+										<input type="checkbox" id="tideCurrentToggle" onclick="clickTideCurrent()" />
+										<span>NOAA Tides and Currents</span>
+									</label>
+									<label class="input-container">
 										<input type="checkbox" id=noaaToggle onclick="clickNOAA()" />
 										<span>NOAA Tropical Cyclone Forecast Track</span>
 									</label>
@@ -1170,6 +1174,7 @@
 								<div id="PeakSummarySymbology"></div>
 								<div class="legend-item" id="streamGageSymbology"></div>
 								<div class="legend-item" id="rainGageSymbology"></div>
+								<div class="legend-item" id="tideCurrentSymbology"></div>
 								<div class="legend-item" id="barometricSymbology"></div>
 								<div class="legend-item" id="stormTideSymbology"></div>
 								<div class="legend-item" id="meteorlogicalSymbology"></div>
