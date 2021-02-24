@@ -212,7 +212,7 @@ var hwmMarkerIcon = L.icon({ className: 'hwmMarker', iconUrl: 'images/markers/hw
 var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
-var crmsIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crmsColor6.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [14, 14] });
+var crmsIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crms.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [14, 14] });
 var tidesMarkerIcon = L.icon({ className: 'tideMarker', iconUrl: 'images/markers/bluepushpin.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [10, 20] });
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
@@ -2931,7 +2931,7 @@ var rainGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/r
 var tideCurrentSymbologyInterior = "<img class='legendSwatch' style='width: 10px; margin-left: 6px' src='images/markers/bluepushpin.png'/><b style='margin-left: 5px'>NOAA Tides and Currents<b>";
 var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
 var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
-var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crmsColor6.png'/><b>Coastwide Reference Monitoring System</b>";
+var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crms.png'/><b>Coastwide Reference Monitoring System</b>";
 var meteorlogicalSymbologyInterior = "<img class='legendSwatch' src='images/markers/met.png'/><b>Meteorlogical Sensor</b>";
 var waveHeightSymbologyInterior = "<img class='legendSwatch' src='images/markers/waveheight.png'/><b>Wave Height Sensor</b>";
 var rdgSymbologyInterior = "<img class='legendSwatch' src='images/markers/rdg.png'/><b>Rapid Deployment Gage</b>";
