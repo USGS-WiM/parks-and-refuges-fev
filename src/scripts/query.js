@@ -269,7 +269,6 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
 }
 
 function displayHWMGeoJSON(type, name, url, markerIcon) {
-    //displayCrmsGeoJSON("crms", "crms", "https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms_points/MapServer/0", hwmMarkerIcon);
     //increment layerCount
     layerCount++;
     hwm.clearLayers();
@@ -371,7 +370,6 @@ function displayCrmsGeoJSON(type, name, url, markerIcon) {
     layerCount++;
     crms.clearLayers();
     var currentMarker = L.geoJson(false, {
-
         pointToLayer: function (feature, latlng) {
             console.log("latlng", latlng);
             markerCoords.push(latlng);
@@ -382,8 +380,6 @@ function displayCrmsGeoJSON(type, name, url, markerIcon) {
         },
         onEachFeature: function (feature, latlng) {
             console.log("crms feature", feature);
-
-            
             if (feature.properties.longitude_dd == undefined || feature.properties.latitude_dd == undefined) {
                 console.log("Lat/lng undefined for HWM at site no: " + feature.properties.site_no);
                 return
@@ -396,17 +392,12 @@ function displayCrmsGeoJSON(type, name, url, markerIcon) {
             oms.addMarker(latlng);
             // var popupContent = '';
             var currentEvent = fev.vars.currentEventName; 
-
-            // })[0];
             var popupContent =
                 '<table class="table table-hover table-striped table-condensed wim-table">' +
                 '<caption class="popup-title">' + name + ' | <span style="color:gray">' + currentEvent + '</span></caption>' +
                 '<col style="width:50%"> <col style="width:50%">' +
                 '<tr><td><strong>STN Site No.: </strong></td><td><span id="hwmSiteNo">' + "land info" + '</span></td></tr>' +
                 '<tr><td><strong>HWM Label: </strong></td><td><span id="hwmLabel">' + "soil info" + '</span></td></tr>' + '</table>';
-            // $.each(feature.properties, function( index, value ) {
-            //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
-            // });
             latlng.bindPopup(popupContent);
         }
     });
@@ -442,7 +433,7 @@ function displayCrmsGeoJSON(type, name, url, markerIcon) {
             crms.addTo(map);
             checkLayerCount(layerCount);
         } 
-    });
+    }); 
 } */
 
 function getPeakValues(type, name, url, markerIcon) {
