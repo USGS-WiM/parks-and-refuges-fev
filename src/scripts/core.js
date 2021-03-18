@@ -3355,6 +3355,9 @@ function searchComplete(runningFilter, exploreMap) {
 	var polys = [];
 
 	if (siteType === "NPS") {
+		//Replace single quotes/apostrophes with double quotes so that the query works
+		name = name.replace(/'/g, "''");
+		name = name.substring(1, name.length - 1)
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
@@ -3377,7 +3380,6 @@ function searchComplete(runningFilter, exploreMap) {
 
 		// waiting for site layer to be loaded onto the map before continuing
 		parks.on('load', function () {
-			//console.log("waiting for layer to load onto the map")
 			if (polyDefined === true) {
 				if (alreadyLoaded == false) {
 					getSiteBuffers(exploreMap);
@@ -3386,6 +3388,9 @@ function searchComplete(runningFilter, exploreMap) {
 			}
 		});
 	} else if (siteType === "NWR") {
+		//Replace single quotes/apostrophes with double quotes so that the query works
+		name = name.replace(/'/g, "''");
+		name = name.substring(1, name.length - 1)
 		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
