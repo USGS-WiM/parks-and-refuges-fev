@@ -432,7 +432,7 @@
 	-->
 	<div class="modal fade" id="regionalModal" aria-hidden="true" data-backdrop="static" role="dialog">
 		<div class="modal-wrapper">
-			<div class="modal-content large">
+			<div class="modal-content " id="regionModalContent">
                 <div class="modal-top">
 					<b>Regional Report</b>
 					<!-- <button type="button" id="regReportCloseX" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times"></i></button> -->
@@ -468,7 +468,7 @@
 						</form>
 					</div>
 					<!-- Regional Map -->
-					<div id="regionalMap">
+					<div id="regionalMap" style="display: none;">
 					</div>
 					<!-- Progress bar -->
 					<div class="progress-bar">
@@ -476,7 +476,7 @@
 					</div>
 
 					<div class="modal-form block">
-						<div class="form-item">
+						<div class="form-item" style="display: none;">
 							<!-- Radio row -->
 							<div class="radio-list">
 								<label class="input-container">
@@ -485,12 +485,11 @@
 								</label>
 							</div>
 						</div>
-
 					</div>
 
 
 					<!-- Data Wrapper -->
-					<div id="data">
+					<div id="data" >
 
 						<!-- Error banner -->
 						<div class="form-error-wrapper" id="noResultsText">
@@ -542,12 +541,12 @@
 								elevation is greater than zero.</p>
 							<table class="custom-table table-scroll" id="siteSummaryHWMDataTableEOne"></table>
 							<p class="hwmsDisclaimerEventOne" style="font-size: 11px;">**Please note that HWMs are an estimate of the max height of
-								waterf in feet above NAVD88. All HWM data references height of water level in feet above NAVD88 datum. HWMs are
+								water in feet above NAVD88. All HWM data references height of water level in feet above NAVD88 datum. HWMs are
 								designated as coastal or riverine. Some HWMs, particularly riverine, may be located at a location where the land
 								surface elevation is greater than zero.</p>
 							<table class="custom-table table-scroll" id="siteSummaryHWMDataTableETwo"></table>
 							<p class="hwmsDisclaimerEventTwo" style="font-size: 11px;">**Please note that HWMs are an estimate of the max height of
-								waterf in feet above NAVD88. All HWM data references height of water level in feet above NAVD88 datum. HWMs are
+								water in feet above NAVD88. All HWM data references height of water level in feet above NAVD88 datum. HWMs are
 								designated as coastal or riverine. Some HWMs, particularly riverine, may be located at a location where the land
 								surface elevation is greater than zero.</p>
 							<!-- <table class="table" id="peakDataTableReg">
@@ -1079,6 +1078,18 @@
 								<div class="accordion-header">Supporting Layers</div>
 								<div class="accordion-body">
 									<label class="input-container">
+										<input type="checkbox" id="crmsToggle" onclick="clickCRMS()" />
+										<span>Coastwide Reference Monitoring System</span>
+									</label>
+									<label class="input-container">
+										<input type="checkbox" id="fimanToggle" onclick="clickFIMAN()" />
+										<span>Flood Inundation Mapping and Alert Network</span>
+									</label>
+									<label class="input-container">
+										<input type="checkbox" id="tideCurrentToggle" onclick="clickTideCurrent()" />
+										<span>NOAA Tides and Currents</span>
+									</label>
+									<label class="input-container">
 										<input type="checkbox" id=noaaToggle onclick="clickNOAA()" />
 										<span>NOAA Tropical Cyclone Forecast Track</span>
 									</label>
@@ -1201,7 +1212,10 @@
 								<div class="legend-item" id="npsNetworksSymbology"></div>
 								<div class="legend-item" id="approvedFWSSymbology"></div>
 								<div id="interestFWSSymbology"></div>
-								<div class="legend-item" id="doiSymbology"></div>
+								<div class="legend-item" id="doiSymbology"></div>								
+								<div class="legend-item" id="crmsSymbology"></div>
+								<div class="fimanTitle" id="fimanSymbology"></div>
+								<div class="legend-item" id="tideCurrentSymbology"></div>
 								<div class="legend-item" id="noaaCycloneSymbology"></div>
                        	 	</div>
                         </div>

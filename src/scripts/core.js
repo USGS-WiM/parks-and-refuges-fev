@@ -149,6 +149,12 @@ var fev = fev || {
 			"Name": "DOI Regions",
 			"Type": "doi",
 			"Category": "doi"
+		},
+		{
+			"ID": "tides",
+			"Name": "NOAA Tides and Currents Stations",
+			"Type": "supporting",
+			"Category": "supporting"
 		}
 	],
 	csvHWMColumns: [
@@ -206,6 +212,9 @@ var hwmMarkerIcon = L.icon({ className: 'hwmMarker', iconUrl: 'images/markers/hw
 var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/markers/peak.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
+var crmsIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crms.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [14, 14] });
+var fimanIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crms.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [14, 14] });
+var tidesMarkerIcon = L.icon({ className: 'tideMarker', iconUrl: 'images/markers/bluepushpin.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [10, 20] });
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
 var baro = L.layerGroup();
@@ -267,6 +276,7 @@ $.ajax({
 var rdg = L.featureGroup();
 var USGSRainGages = L.featureGroup();
 var USGSrtGages = L.featureGroup();
+var tides = L.layerGroup();
 var identifiedUSGSrtGage = L.featureGroup();
 var identifiedUSGSrtGageArray = [];
 
@@ -403,6 +413,63 @@ var fwsLegacyRegions = L.esri.featureLayer({
 		return { color: 'blue', weight: 2, fillOpacity: 0 };
 	}
 });
+
+var crms = L.esri.featureLayer({
+url: 'https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms_points/MapServer/0',
+	pointToLayer: function (geojson, latlng) {
+		return L.marker(latlng, {
+		icon: crmsIcon
+		});
+	}, 
+	onEachFeature: function (feature, layer) {
+		var crmsPopup = '<table class="table table-hover table-striped table-condensed wim-table">' +
+		'<caption class="popup-title">' + "Coastwide Reference Monitoring System" + '</caption>' +
+		'<col style="width:50%"> <col style="width:50%">' +
+		'<tr><td><strong>Soil Type: </strong></td><td><span>' + feature.properties.SOIL_TYPE + '</span></td></tr>' +
+		'<tr><td><strong>Vegetation Type: </strong></td><td><span id="hwmLabel">' + feature.properties.VEGTYPE + '</span></td></tr>' +
+		'<tr><td><strong>Parish: </strong></td><td><span>' + feature.properties.PARISH_NAM + '</span></td></tr>' +
+		'</table>';
+		layer.bindPopup(crmsPopup)
+	}
+}); 
+
+var fiman = L.esri.featureLayer({
+	url: 'https://spartagis.ncem.org/arcgis/rest/services/FIMAN/GAGES_ALL/MapServer/0', 
+		 onEachFeature: function (feature, layer) {
+			if (feature.properties.CONDITION_TXT == "Not Reporting") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Not Available") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Normal") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN normalFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Near Flooding") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN nearFloodingFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Minor Flooding") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN minorFloodingFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Moderate Flooding") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN moderateFloodingFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Major Flooding") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN majorFloodingFIMAN' }));
+			}
+			/* var crmsPopup = '<table class="table table-hover table-striped table-condensed wim-table">' +
+			'<caption class="popup-title">' + "Coastwide Reference Monitoring System" + '</caption>' +
+			'<col style="width:50%"> <col style="width:50%">' +
+			'<tr><td><strong>Soil Type: </strong></td><td><span>' + feature.properties.SOIL_TYPE + '</span></td></tr>' +
+			'<tr><td><strong>Vegetation Type: </strong></td><td><span id="hwmLabel">' + feature.properties.VEGTYPE + '</span></td></tr>' +
+			'<tr><td><strong>Parish: </strong></td><td><span>' + feature.properties.PARISH_NAM + '</span></td></tr>' +
+			'</table>';
+			layer.bindPopup(crmsPopup) */
+		} 
+	});
 
 // Style for DOI layer
 var doiStyle = {
@@ -793,6 +860,7 @@ $(document).ready(function () {
 	var realTimeOverlays = {
 		"<img class='legendSwatch' src='images/markers/nwis.png'>&nbsp;Real-time Stream Gage": USGSrtGages,
 		"<img class='legendSwatch' src='images/markers/rainIcon.png'>&nbsp;Real-time Rain Gage": USGSRainGages
+		
 	};
 
 
@@ -1022,7 +1090,7 @@ $(document).ready(function () {
 		}, 500); */
 	}
 
-	var pdfRegionalMapUrl;
+	//var pdfRegionalMapUrl;
 
 	$('#printNav').click(function () {
 		map.dragging.disable();
@@ -1142,13 +1210,13 @@ $(document).ready(function () {
 		mapPane.style.top = '';
 
 		var mapEvent;
-		html2canvas(document.getElementById('regionalMap'), options).then(function (canvas) {
+		/* html2canvas(document.getElementById('regionalMap'), options).then(function (canvas) {
 			mapEvent = new Event('map_ready');
 			canvas.style.width = '700px';
 			canvas.style.height = '450px';
 			pdfRegionalMapUrl = canvas.toDataURL('image/png');
 			window.dispatchEvent(mapEvent);
-		});
+		}); */
 	};
 
 	$('#printRegionalReport').click(function () {
@@ -1762,12 +1830,12 @@ $(document).ready(function () {
 						},
 						margin: [0, 0, 0, 15]
 					},
-					{
+					/* {
 						image: pdfRegionalMapUrl,
 						width: 800,
 						height: 500,
 						pageBreak: 'after'
-					},
+					}, */
 					{
 						table: {
 							widths: ['*'],
@@ -1784,7 +1852,7 @@ $(document).ready(function () {
 								[
 									selectionsTable(),
 									//{ image: pdfRegionalMapUrl, width: 300, height: 200 },
-									legendTable()
+									//legendTable()
 								],
 							]
 						},
@@ -1821,12 +1889,12 @@ $(document).ready(function () {
 						},
 						margin: [0, 0, 0, 15]
 					},
-					{
+					/* {
 						image: pdfRegionalMapUrl,
 						width: 800,
 						height: 500,
 						pageBreak: 'after'
-					},
+					}, */
 					{
 						table: {
 							widths: ['*'],
@@ -1843,7 +1911,7 @@ $(document).ready(function () {
 								[
 									selectionsTable(),
 									//{ image: pdfRegionalMapUrl, width: 300, height: 200 },
-									legendTable()
+									//legendTable()
 								],
 							]
 						},
@@ -2073,6 +2141,7 @@ $(document).ready(function () {
 	document.getElementById('twentyKmFilter').checked = false;
 	document.getElementById('thirtyKmFilter').checked = true;
 	selectedBuffer = "30km";
+	fev.vars.currentBufferSelection = 30;
 	document.getElementById('fiftyKmFilter').checked = false;
 	// 10 kilometers
 	$('#tenKmFilter').click(function () {
@@ -2908,8 +2977,17 @@ function clickPeakLabels() {
 //PeakSummarySymbologyInterior is found in displayPeaksGeoJSON()
 var streamGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/nwis.png'/><b>Real-time Stream Gage</b>";
 var rainGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/rainIcon.png'/><b>Real-time Rain Gage<b>";
+var tideCurrentSymbologyInterior = "<img class='legendSwatch' style='width: 10px; margin-left: 6px' src='images/markers/bluepushpin.png'/><b style='margin-left: 5px'>NOAA Tides and Currents<b>";
 var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
 var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
+var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crms.png'/><b>Coastwide Reference Monitoring System</b>";
+var fimanSymbologyInterior = "<p>Flood Inundation Mapping and Alert Network</p>" +
+"<div class='legend-item'><img class=' fimanLegend notAvailableFIMAN'/> Not Available</div>" +
+"<div class='legend-item'><img class=' fimanLegend normalFIMAN'/> Normal</div>" +
+"<div class='legend-item'><img class=' fimanLegend nearFloodingFIMAN'/> Near Flooding</div>" +
+"<div class='legend-item'><img class=' fimanLegend minorFloodingFIMAN'/> Minor Flooding</div>" +
+"<div class='legend-item'><img class=' fimanLegend moderateFloodingFIMAN'/> Moderate Flooding</div>" +
+"<div class='legend-item'><img class=' fimanLegend majorFloodingFIMAN'/>Major Flooding</div>";
 var meteorlogicalSymbologyInterior = "<img class='legendSwatch' src='images/markers/met.png'/><b>Meteorlogical Sensor</b>";
 var waveHeightSymbologyInterior = "<img class='legendSwatch' src='images/markers/waveheight.png'/><b>Wave Height Sensor</b>";
 var rdgSymbologyInterior = "<img class='legendSwatch' src='images/markers/rdg.png'/><b>Rapid Deployment Gage</b>";
@@ -2923,7 +3001,7 @@ var parkTractsSymbologyInterior = "<label>Park Tracts</label>" +
 	"<div class='legend-item'><img class='square-legend-interest privateColor'/> Private</div>" +
 	"<div class='legend-item'><img class='square-legend-interest otherFederalColor'/> Other Federal Land</div>" +
 	"<div class='legend-item'><img class='square-legend-interest aquisitionColor'/> Aquisition Deferred</div>" +
-	"<div class='legend-item'</div><img class='square-legend-interest noInfoColor'/> Unknown <div>";
+	"<div class='legend-item'><img class='square-legend-interest noInfoColor'/> Unknown </div>";
 var approvedFWSSymbologyInterior = "<img class='square-legend approvedAquiColor'/><b>Approved Aquisition Boundaries</b>";
 var interestFWSSymbologyInterior = "<label>Interest Boundaries</label>" +
 	"<div class='legend-item'><img class='square-legend-interest intFee'/> Fee</div>" +
@@ -2933,7 +3011,7 @@ var interestFWSSymbologyInterior = "<label>Interest Boundaries</label>" +
 	"<div class='legend-item'><img class='square-legend-interest intAgreement'/> Agreement</div>" +
 	"<div class='legend-item'><img class='square-legend-interest intPartial'/> Partial Interest</div>" +
 	"<div class='legend-item'><img class='square-legend-interest intPermit'/> Permit</div>" +
-	"<div class='legend-item'><img class='square-legend-interest intUnknown'/> Unknown <div>";
+	"<div class='legend-item'><img class='square-legend-interest intUnknown'/> Unknown </div>";
 var doiSymbologyInterior = "<img class='square-legend doiRegionsColor'/> <b>DOI Regions</b>";
 var noaaCycloneSymbologyInterior = "<img class='legendSwatch' src='images/markers/noaa.png'/> <b>NOAA Tropical Cyclone Forecast Track</b>";
 
@@ -3003,6 +3081,28 @@ function clickStreamGage() {
 	if (streamgageCheckBox.checked == false) {
 		USGSrtGages.clearLayers(map);
 		$('#streamGageSymbology').children().remove();
+	}
+}
+
+//Display NOAA tides and currents layer and legend item when the box is checked
+function clickTideCurrent() {
+	var tideCurrentCheckBox = document.getElementById("tideCurrentToggle");
+	if (tideCurrentCheckBox.checked == true) {
+		//Add symbol and layer name to legend
+		$('#tideCurrentSymbology').append(tideCurrentSymbologyInterior);
+		//When checkbox is checked, add layer to map
+		displayTidesGeoJSON(
+            "tides",
+            "NOAA Tides and Currents",
+            "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json",
+            tidesMarkerIcon
+          );
+		  tides.addTo(map)
+	}
+	//Remove symbol and layer name from legend when box is unchecked
+	if (tideCurrentCheckBox.checked == false) {
+		$('#tideCurrentSymbology').children().remove();
+		tides.clearLayers(map);
 	}
 }
 
@@ -3254,6 +3354,38 @@ function clickDOI() {
 	}
 }
 
+//Display CRMS layer and legend item when corresponding box is checked
+function clickCRMS() {
+	var crmsCheckBox = document.getElementById("crmsToggle");
+	if (crmsCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
+		crms.addTo(map);
+		//Add symbol and layer name to legend
+		$('#crmsSymbology').append(crmsSymbologyInterior);
+	}
+	//Remove symbol and layer name from legend when box is unchecked
+	if (crmsCheckBox.checked == false) {
+		crms.removeFrom(map);
+		$('#crmsSymbology').children().remove();
+	}
+}
+
+//Display FIMAN layer and legend item when corresponding box is checked
+function clickFIMAN() {
+	var fimanCheckBox = document.getElementById("fimanToggle");
+	if (fimanCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
+		fiman.addTo(map);
+		//Add symbol and layer name to legend
+		$('#fimanSymbology').append(fimanSymbologyInterior);
+	}
+	//Remove symbol and layer name from legend when box is unchecked
+	if (fimanCheckBox.checked == false) {
+		fiman.removeFrom(map);
+		$('#fimanSymbology').children().remove();
+	}
+}
+
 //Display NOAA Tropical Cyclone Forecast Track layer and legend item when corresponding box is checked
 /* function clickNOAA() {
 	var noaaCheckBox = document.getElementById("noaaToggle");
@@ -3334,6 +3466,9 @@ function searchComplete(runningFilter, exploreMap) {
 	var polys = [];
 
 	if (siteType === "NPS") {
+		//Replace single quotes/apostrophes with double quotes so that the query works
+		name = name.replace(/'/g, "''");
+		name = name.substring(1, name.length - 1)
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
@@ -3356,7 +3491,6 @@ function searchComplete(runningFilter, exploreMap) {
 
 		// waiting for site layer to be loaded onto the map before continuing
 		parks.on('load', function () {
-			console.log("waiting for layer to load onto the map")
 			if (polyDefined === true) {
 				if (alreadyLoaded == false) {
 					getSiteBuffers(exploreMap);
@@ -3365,6 +3499,9 @@ function searchComplete(runningFilter, exploreMap) {
 			}
 		});
 	} else if (siteType === "NWR") {
+		//Replace single quotes/apostrophes with double quotes so that the query works
+		name = name.replace(/'/g, "''");
+		name = name.substring(1, name.length - 1)
 		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
@@ -3414,7 +3551,7 @@ function searchComplete(runningFilter, exploreMap) {
 
 		// waiting for site layer to be loaded onto the map before continuing
 		refuges.on('load', function () {
-			console.log("waiting for layer to load onto the map")
+			//console.log("waiting for layer to load onto the map")
 			if (polyDefined === true) {
 				if (alreadyLoaded == false) {
 					getSiteBuffers(exploreMap);
@@ -3482,7 +3619,6 @@ function searchComplete(runningFilter, exploreMap) {
 
 		function getEachDataSection() {
 			console.log("3 getting data section");
-			console.log(peak);
 			// cycling through each peak and seeing if it's inside the buffer
 			for (var i in peak._layers) {
 				// formatting point for turf
@@ -3500,7 +3636,6 @@ function searchComplete(runningFilter, exploreMap) {
 						}
 					}
 				}
-
 			}
 			getHWMSInside();
 
@@ -3653,7 +3788,6 @@ function generateSiteReport() {
 	$('#peaksToggle').click();
 
 	bufferPeak.addTo(map);
-	//bufferHWM.addTo(map);
 
 	if (document.getElementById('baroToggle').checked) {
 		$('#baroToggle').click();
@@ -3731,6 +3865,14 @@ function generateSiteReport() {
 		var sTwoThirdVal = sorted[sThirdLength * 2 - 1];
 
 		var PeakSummarySymbologyInterior;
+		//if there are hwms but no peaks, show those instead
+		if (lengthPeak == 0) {
+			if (identifiedMarks.length > 0) {
+				var highWaterSymbologyInterior = "<img class='legendSwatch' src='images/markers/hwm.png'/><b>High Water Mark</b>";
+				$('#highWaterSymbology').append(highWaterSymbologyInterior);
+				bufferHWM.addTo(map);
+			}
+		}
 		if (lengthPeak > 0) {
 			if (lengthPeak > 2) {
 				PeakSummarySymbologyInterior = "<label>Peak Summary (ft)</label>" +
@@ -4530,9 +4672,7 @@ function generateSiteReport() {
 						var row$ = $('<tr/>');
 						for (var colIndex = 0; colIndex < columns.length; colIndex++) {
 							var cellValue = sitehwmTableData[i][columns[colIndex]];
-
 							if (cellValue == null) { cellValue = ""; }
-
 							row$.append($('<td/>').html(cellValue));
 						}
 						$("#hwmDataTable").append(row$);

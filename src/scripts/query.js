@@ -17,6 +17,105 @@ var peakStart = 0;
 var noaaStart = 0;
 var noPeaks = false;
 
+function displayTidesGeoJSON(type, name, url, markerIcon) {
+    //increment layerCount
+    layerCount++;
+    tides.clearLayers();
+  
+    //create a geoJSON to populate with coordinates of NOAA tides gages
+    var noaaTidesGeoJSON = {
+      features: [
+        { type: "Feature", geometry: { coordinates: [0, 0], type: "Point" } },
+      ],
+    };
+    var currentMarker = L.geoJson(false, {
+      pointToLayer: function (feature, latlng) {
+        markerCoords.push(latlng);
+        var marker = L.marker(latlng, {
+          icon: markerIcon,
+        });
+        return marker;
+      },
+      onEachFeature: function (feature, latlng) {
+        var beginDate = fev.vars.currentEventStartDate_str.replace("-", "");
+        var beginDate = beginDate.replace("-", "");
+        var endDate = fev.vars.currentEventEndDate_str.replace("-", "");
+        var endDate = endDate.replace("-", "");
+        var stationId = feature.properties.id;
+        var gageUrl =
+          "https://tidesandcurrents.noaa.gov/waterlevels.html?id=" +
+          stationId +
+          "&units=standard&bdate=" +
+          beginDate +
+          "&edate=" +
+          endDate +
+          "&timezone=GMT&datum=MLLW&interval=6&action=";
+  
+        // url that would be used if we wanted to make our own graphs
+        //var dataUrl = 'https://tidesandcurrents.noaa.gov/api/datagetter?product=water_level&begin_date=' + beginDate + '&end_date=' + endDate + '&datum=MLLW&station=' + stationId + '&time_zone=GMT&units=english&format=json&application=NOS.COOPS.TAC.WL';
+  
+        var popupContent =
+          '<span><a target="_blank" href=' +
+          gageUrl +
+          ">Graph of Observed Water Levels at site " +
+          stationId +
+          "</a></span>";
+        latlng.bindPopup(popupContent);
+      },
+    });
+  
+    //access the url that contains the tides data
+    $.ajax({
+      url: url,
+      dataType: "json",
+      async: false,
+      headers: { Accept: "*/*" },
+      //jsonpCallback: 'MyJSONPCallback', // specify the callback name if you're hard-coding it
+      success: function (data) {
+          //loop through every gage in the geojson
+          for (var i = data.stations.length - 1; i >= 0; i--) {
+            //retrieve lat/lon coordinates
+            var latitude = data.stations[i].lat;
+            var longitude = data.stations[i].lng;
+            var affiliations = data.stations[i].affiliations;
+            var stationId = data.stations[i].id;
+  
+            //check that there are lat/lng coordinates
+            if (isNaN(latitude) || isNaN(longitude)) {
+              console.error(
+                "latitude or longitude value for point: ",
+                data.stations[i],
+                "is null"
+              );
+            }
+  
+            //if the lat/lng seems good, add the point to the geoJSON
+            else {
+              noaaTidesGeoJSON.features[i] = {
+                type: "Feature",
+                properties: {
+                  affiliations: affiliations,
+                  id: stationId,
+                },
+                geometry: {
+                  coordinates: [longitude, latitude],
+                  type: "Point",
+                },
+              };
+            }
+          }
+          //get the data from the new geoJSON
+          currentMarker.addData(noaaTidesGeoJSON);
+          currentMarker.eachLayer(function (layer) {
+            layer.addTo(tides);
+          });
+          tides.addTo(map);
+          //plot tides gages on map
+          //checkLayerCount(layerCount);
+      },
+    });
+  }
+
 
 
 //ajax retrieval function
