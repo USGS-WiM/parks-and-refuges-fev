@@ -434,13 +434,7 @@ url: 'https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms
 }); 
 
 var fiman = L.esri.featureLayer({
-	url: 'https://spartagis.ncem.org/arcgis/rest/services/FIMAN/GAGES_ALL/MapServer/0',
-		 //pointToLayer: function (geojson, latlng) {
-		//	return L.marker(latlng, {
-			//icon: fimanIcon
-		//	});
-		//},  
-		
+	url: 'https://spartagis.ncem.org/arcgis/rest/services/FIMAN/GAGES_ALL/MapServer/0', 
 		 onEachFeature: function (feature, layer) {
 			if (feature.properties.CONDITION_TXT == "Not Reporting") {
 				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
