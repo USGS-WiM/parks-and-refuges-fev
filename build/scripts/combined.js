@@ -1746,11 +1746,11 @@ var USGSrtGages = L.featureGroup();
 var identifiedUSGSrtGage = L.featureGroup();
 var identifiedUSGSrtGageArray = [];
 
-var noaaService = L.esri.dynamicMapLayer({
+/* var noaaService = L.esri.dynamicMapLayer({
 	url: "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
 	opacity: 0.5,
 	f: 'image'
-});
+}); */
 
 
 var noAdvisories = false;

@@ -270,18 +270,18 @@ var USGSrtGages = L.featureGroup();
 var identifiedUSGSrtGage = L.featureGroup();
 var identifiedUSGSrtGageArray = [];
 
-var noaaService = L.esri.dynamicMapLayer({
+/* var noaaService = L.esri.dynamicMapLayer({
 	url: "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
 	opacity: 0.5,
 	f: 'image'
-});
+}); */
 
 
 var noAdvisories = false;
 var test;
 
 
-var noaaLegend = $.ajax({
+/* var noaaLegend = $.ajax({
 	url: "https://nowcoast.noaa.gov/layerinfo?request=legend&format=json&service=wwa_meteocean_tropicalcyclones_trackintensityfcsts_time",
 	dataType: 'json',
 	timeout: 10000,
@@ -296,7 +296,7 @@ var noaaLegend = $.ajax({
 			console.log("noaa layer added");
 		}
 	}
-});
+}); */
 
 
 // NPS Tracts 
@@ -774,7 +774,7 @@ $(document).ready(function () {
 
 	//display USGS rt gages by default on map load
 	// USGSrtGages.addTo(map);
-	noaaService.metadata(function (err, response) {
+	/* noaaService.metadata(function (err, response) {
 		if (response) {
 			noaaService.addTo(map);
 		}
@@ -786,7 +786,7 @@ $(document).ready(function () {
 			$('#noaaCycloneSymbology').append(noaaCycloneSymbologyInterior);
 			noaaStart = 1;
 		}
-	}
+	} */
 
 	//define layer 'overlays' (overlay is a leaflet term)
 	//define the real-time overlay and manually add the NWIS RT gages to it
@@ -804,14 +804,14 @@ $(document).ready(function () {
 
 	labelOverlays["<img class='legendSwatch' src='images/" + layer.ID + ".png'/>&nbsp;" + layer.Name] = window[layer.ID];
 
-	if (noAdvisories) {
+	/* if (noAdvisories) {
 		var div = document.getElementById('noTrackAdvisory');
 		div.innerHTML += "No Active Advisories";
 	} else {
 		noaaOverlays = {
 			"NOAA Tropical Cyclone Forecast Track": noaaService
 		};
-	}
+	} */
 
 	//overlapping marker spidifier
 	oms = new OverlappingMarkerSpiderfier(map, {
@@ -894,8 +894,6 @@ $(document).ready(function () {
 	});
 
 	function showGeosearchModal() {
-		$('#geosearchModal').modal('show');
-
 		search_api.create("searchMap", {
 
 			// appearance
@@ -997,8 +995,22 @@ $(document).ready(function () {
 		});
 	}
 	$('#geosearchNav').click(function () {
+		var isItUP = true;
+		try {
+			search_api
+		}
+		catch (err) {
+			isItUP = false;
+		}
+		if (isItUP) {
 		showGeosearchModal();
+		} else {
+			showsearchDownModal();
+		}
 
+		function showsearchDownModal() {
+			$('#searchDownModal').modal('show');
+		}
 	});
 
 	function showRegionalModal() {
@@ -3243,7 +3255,7 @@ function clickDOI() {
 }
 
 //Display NOAA Tropical Cyclone Forecast Track layer and legend item when corresponding box is checked
-function clickNOAA() {
+/* function clickNOAA() {
 	var noaaCheckBox = document.getElementById("noaaToggle");
 	if (noaaCheckBox.checked == true) {
 		//When checkbox is checked, add layer to map
@@ -3259,7 +3271,7 @@ function clickNOAA() {
 		$('#noaaCycloneSymbology').children().remove();
 		noaaStart = 3;
 	}
-}
+} */
 
 function searchComplete(runningFilter, exploreMap) {
 	console.log("1 starting search complete");
@@ -3412,6 +3424,10 @@ function searchComplete(runningFilter, exploreMap) {
 		});
 
 
+	}
+
+	function logError() {
+		console.log("you got it");
 	}
 
 	// account for a search that is not a park or refuge
