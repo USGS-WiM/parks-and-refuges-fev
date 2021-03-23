@@ -962,8 +962,6 @@ $(document).ready(function () {
 	});
 
 	function showGeosearchModal() {
-		$('#geosearchModal').modal('show');
-
 		search_api.create("searchMap", {
 
 			// appearance
@@ -1065,8 +1063,22 @@ $(document).ready(function () {
 		});
 	}
 	$('#geosearchNav').click(function () {
+		var isItUP = true;
+		try {
+			search_api
+		}
+		catch (err) {
+			isItUP = false;
+		}
+		if (isItUP) {
 		showGeosearchModal();
+		} else {
+			showsearchDownModal();
+		}
 
+		function showsearchDownModal() {
+			$('#searchDownModal').modal('show');
+		}
 	});
 
 	function showRegionalModal() {
@@ -3550,6 +3562,7 @@ function searchComplete(runningFilter, exploreMap) {
 
 
 	}
+
 
 	// account for a search that is not a park or refuge
 	function getSiteBuffers(em) {
