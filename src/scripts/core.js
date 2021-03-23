@@ -213,6 +213,7 @@ var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/markers/
 var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
 var crmsIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crms.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [14, 14] });
+var fimanIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crms.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [14, 14] });
 var tidesMarkerIcon = L.icon({ className: 'tideMarker', iconUrl: 'images/markers/bluepushpin.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [10, 20] });
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
@@ -421,8 +422,6 @@ url: 'https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms
 		});
 	}, 
 	onEachFeature: function (feature, layer) {
-		console.log("feature", feature);
-		console.log("feature", feature.properties.SOIL_TYPE);
 		var crmsPopup = '<table class="table table-hover table-striped table-condensed wim-table">' +
 		'<caption class="popup-title">' + "Coastwide Reference Monitoring System" + '</caption>' +
 		'<col style="width:50%"> <col style="width:50%">' +
@@ -433,6 +432,44 @@ url: 'https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms
 		layer.bindPopup(crmsPopup)
 	}
 }); 
+
+var fiman = L.esri.featureLayer({
+	url: 'https://spartagis.ncem.org/arcgis/rest/services/FIMAN/GAGES_ALL/MapServer/0', 
+		 onEachFeature: function (feature, layer) {
+			if (feature.properties.CONDITION_TXT == "Not Reporting") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Not Available") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Normal") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN normalFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Near Flooding") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN nearFloodingFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Minor Flooding") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN minorFloodingFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Moderate Flooding") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN moderateFloodingFIMAN' }));
+			}
+			if (feature.properties.CONDITION_TXT == "Major Flooding") {
+				layer.setIcon(L.divIcon({ className: 'defaultFIMAN majorFloodingFIMAN' }));
+			}
+			/* var crmsPopup = '<table class="table table-hover table-striped table-condensed wim-table">' +
+			'<caption class="popup-title">' + "Coastwide Reference Monitoring System" + '</caption>' +
+			'<col style="width:50%"> <col style="width:50%">' +
+			'<tr><td><strong>Soil Type: </strong></td><td><span>' + feature.properties.SOIL_TYPE + '</span></td></tr>' +
+			'<tr><td><strong>Vegetation Type: </strong></td><td><span id="hwmLabel">' + feature.properties.VEGTYPE + '</span></td></tr>' +
+			'<tr><td><strong>Parish: </strong></td><td><span>' + feature.properties.PARISH_NAM + '</span></td></tr>' +
+			'</table>';
+			layer.bindPopup(crmsPopup) */
+		} 
+	});
 
 // Style for DOI layer
 var doiStyle = {
@@ -2932,6 +2969,13 @@ var tideCurrentSymbologyInterior = "<img class='legendSwatch' style='width: 10px
 var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
 var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
 var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crms.png'/><b>Coastwide Reference Monitoring System</b>";
+var fimanSymbologyInterior = "<p>Flood Inundation Mapping and Alert Network</p>" +
+"<div class='legend-item'><img class=' fimanLegend notAvailableFIMAN'/> Not Available</div>" +
+"<div class='legend-item'><img class=' fimanLegend normalFIMAN'/> Normal</div>" +
+"<div class='legend-item'><img class=' fimanLegend nearFloodingFIMAN'/> Near Flooding</div>" +
+"<div class='legend-item'><img class=' fimanLegend minorFloodingFIMAN'/> Minor Flooding</div>" +
+"<div class='legend-item'><img class=' fimanLegend moderateFloodingFIMAN'/> Moderate Flooding</div>" +
+"<div class='legend-item'><img class=' fimanLegend majorFloodingFIMAN'/>Major Flooding</div>";
 var meteorlogicalSymbologyInterior = "<img class='legendSwatch' src='images/markers/met.png'/><b>Meteorlogical Sensor</b>";
 var waveHeightSymbologyInterior = "<img class='legendSwatch' src='images/markers/waveheight.png'/><b>Wave Height Sensor</b>";
 var rdgSymbologyInterior = "<img class='legendSwatch' src='images/markers/rdg.png'/><b>Rapid Deployment Gage</b>";
@@ -2945,7 +2989,7 @@ var parkTractsSymbologyInterior = "<label>Park Tracts</label>" +
 	"<div class='legend-item'><img class='square-legend-interest privateColor'/> Private</div>" +
 	"<div class='legend-item'><img class='square-legend-interest otherFederalColor'/> Other Federal Land</div>" +
 	"<div class='legend-item'><img class='square-legend-interest aquisitionColor'/> Aquisition Deferred</div>" +
-	"<div class='legend-item'</div><img class='square-legend-interest noInfoColor'/> Unknown <div>";
+	"<div class='legend-item'><img class='square-legend-interest noInfoColor'/> Unknown </div>";
 var approvedFWSSymbologyInterior = "<img class='square-legend approvedAquiColor'/><b>Approved Aquisition Boundaries</b>";
 var interestFWSSymbologyInterior = "<label>Interest Boundaries</label>" +
 	"<div class='legend-item'><img class='square-legend-interest intFee'/> Fee</div>" +
@@ -2955,7 +2999,7 @@ var interestFWSSymbologyInterior = "<label>Interest Boundaries</label>" +
 	"<div class='legend-item'><img class='square-legend-interest intAgreement'/> Agreement</div>" +
 	"<div class='legend-item'><img class='square-legend-interest intPartial'/> Partial Interest</div>" +
 	"<div class='legend-item'><img class='square-legend-interest intPermit'/> Permit</div>" +
-	"<div class='legend-item'><img class='square-legend-interest intUnknown'/> Unknown <div>";
+	"<div class='legend-item'><img class='square-legend-interest intUnknown'/> Unknown </div>";
 var doiSymbologyInterior = "<img class='square-legend doiRegionsColor'/> <b>DOI Regions</b>";
 var noaaCycloneSymbologyInterior = "<img class='legendSwatch' src='images/markers/noaa.png'/> <b>NOAA Tropical Cyclone Forecast Track</b>";
 
@@ -3298,7 +3342,7 @@ function clickDOI() {
 	}
 }
 
-//Display DOI Region layer and legend item when corresponding box is checked
+//Display CRMS layer and legend item when corresponding box is checked
 function clickCRMS() {
 	var crmsCheckBox = document.getElementById("crmsToggle");
 	if (crmsCheckBox.checked == true) {
@@ -3311,6 +3355,22 @@ function clickCRMS() {
 	if (crmsCheckBox.checked == false) {
 		crms.removeFrom(map);
 		$('#crmsSymbology').children().remove();
+	}
+}
+
+//Display FIMAN layer and legend item when corresponding box is checked
+function clickFIMAN() {
+	var fimanCheckBox = document.getElementById("fimanToggle");
+	if (fimanCheckBox.checked == true) {
+		//When checkbox is checked, add layer to map
+		fiman.addTo(map);
+		//Add symbol and layer name to legend
+		$('#fimanSymbology').append(fimanSymbologyInterior);
+	}
+	//Remove symbol and layer name from legend when box is unchecked
+	if (fimanCheckBox.checked == false) {
+		fiman.removeFrom(map);
+		$('#fimanSymbology').children().remove();
 	}
 }
 
