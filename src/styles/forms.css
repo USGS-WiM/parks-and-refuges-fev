@@ -1,0 +1,270 @@
+/* 
+//////////////////////// 
+Forms & Text elements
+
+	1. Labels and text elements
+	2. Form layout styles
+	3. Button classes
+	4. Input element styling
+	5. Form errors
+	
+//////////////////////// 
+*/
+
+/*
+//////////////////////// 
+Labels & Text 
+//////////////////////// 
+*/
+label{
+	font-size: 15px;
+	font-weight: 600;
+	padding: 0 0 4px 0;
+	margin: 0;
+	color: black;
+}
+	/* Small element within label */
+	label small{
+		font-size: 12px;
+		font-weight: 500;
+	}
+	/* Input container label - holds text horizontal with input, use with checkbox and radio */
+	label.input-container{
+		display: flex;
+		justify-content: flex-start;
+		padding: 3px 0;
+		font-weight: 500;
+	}
+		label.input-container input{
+			width: 24px;
+			transform: scale(1.2) translateY(-1.5px);
+		}
+		label.input-container span{
+			flex-grow: 3;
+			width: 100%;
+			font-size: 14px;
+			line-height: 14px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+		/* Nested - a bit of padding left */
+		label.input-container.nested{
+			padding-left: 25px;
+		}
+/* Hint */
+/* Small text, form help info, etc */
+.hint{
+	display: block;
+	font-size: 12px;
+	line-height: 14px;
+	margin: 0 0 10px 0;
+}
+
+/*
+//////////////////////// 
+Form Layout 
+//////////////////////// 
+*/
+.modal-form,
+.custom-form{
+	display: flex;
+	flex-wrap: wrap;
+}
+
+/* Individual form items */
+.form-item{
+	display: flex;
+	flex-direction: column;
+	flex-grow: 3;
+	margin: 0 5px 15px 5px;
+	min-width: 300px;
+}
+	/* Small form items */
+	.form-item.small{
+		max-width: 25%;
+		min-width: 100px;
+	}
+	@media (max-width: 580px) {
+		.modal-form .form-item.small,
+		.custom-form .form-item.small{
+			max-width: 100%;
+			min-width: 46%;
+		}
+	}
+
+/*
+//////////////////////// 
+Buttons 
+//////////////////////// 
+*/
+button{
+	display: block;
+	height: 34px;
+	background-color: white;
+	border: 1px solid rgba(0,0,0,0.4);
+	font-size: 15px;
+	font-weight: 600;
+	margin: 0 5px;
+	padding: 0 15px;
+	border-radius: 3px;
+	transition: 0.15s;
+}
+button:hover{
+	background-color: white;
+	border: 1px solid rgba(0,0,0,0.5);
+	transition: 0.15s;
+	text-decoration: underline;
+}
+
+button.blue{
+	background-color: #2078E2;
+	color: white;
+}
+button.blue:hover{
+	color: white;
+}
+button.green{
+	background-color: #21c834;
+	color: white;
+}
+/* button.green:hover{
+	color: white;
+} */
+button.red{
+	background-color: #F33F4A;
+	color: white;
+}
+button.black{
+	background-color: #1c304A;
+	color: white;
+}
+button.grey{
+	background-color: #d9dde4;
+	color: black;
+	border-color: rgba(0,0,0,0.4);
+}
+button.red:hover{
+	color: white;
+}
+button:disabled{
+	background-color: rgba(0,0,0,0.05);
+	border: 1px solid rgba(0,0,0,0.2);
+	transition: 0.15s;
+	color: rgba(0,0,0,0.4);
+}
+	button:disabled:hover{
+		cursor: default;
+		background-color: rgba(0,0,0,0.05);
+		color: rgba(0,0,0,0.4);
+		text-decoration: none;
+	}
+/*
+//////////////////////// 
+Input Elements 
+//////////////////////// 
+*/
+.select2{
+	width: 100%;
+	min-width: 100%;
+}
+select, 
+textarea,
+input{
+	width: 100%;
+}
+input[type=checkbox],
+input[type=radio]{
+	width: auto;
+}
+/* Disabled */
+input[type=checkbox]:disabled,
+input[type=radio]:disabled{
+	opacity: 0.5;
+}
+input[type=checkbox]:disabled:hover,
+input[type=radio]:disabled:hover{
+	cursor: not-allowed;
+}
+input[type=checkbox]:disabled + span,
+input[type=radio]:disabled + span{
+	opacity: 0.5;
+}
+
+/* Radio (or checkbox) list */
+.radio-list{
+	display: flex;
+	flex-direction: column;
+}
+	.radio-list.horizontal{
+		flex-direction: row;
+		width: fit-content;
+	}
+		.radio-list.horizontal label{
+			margin-right: 10px;
+		}
+
+
+/*
+//////////////////////// 
+Form Errors 
+//////////////////////// 
+*/
+.form-error{
+	display: flex;
+	box-sizing: border-box;
+	padding: 12px;
+	border-radius: 3px;
+	background-color: rgb(255, 104, 88, 0.3);
+	border: 1px solid rgb(255, 104, 88, 0.9);
+}
+.form-error i,
+.form-error span{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	color: #EF1515;
+}
+.form-error i{
+	width: 40px;
+	font-size: 26px;
+}
+.form-error span{
+	color: #E42523;
+	font-weight: 600;
+	font-size: 16px;
+}
+/* Small or sidebar form error */
+.form-error.small,
+#sidebar .form-error{
+	padding: 6px;
+}
+.form-error.small i,
+#sidebar .form-error i{
+	width: 50px;
+	font-size: 18px;
+}
+.form-error.small span,
+#sidebar .form-error span{
+	font-size: 12px;
+	padding-left: 6px;
+	font-weight: 500;
+}
+
+/* Colors */
+.form-error.warn{
+	background-color: rgb(255, 255, 88, 0.3);
+	border: 1px solid rgb(255, 255, 88, 0.9);
+}
+.form-error.warn i,
+.form-error.warn span{
+	color: black;
+}
+.form-error span{
+	color: black;
+}
+
+/* Hide by default */
+.form-error-wrapper{
+	display: none;
+}

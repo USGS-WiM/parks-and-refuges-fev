@@ -1,0 +1,322 @@
+/* 
+//////////////////////// 
+Map view styles
+
+	1. Map view
+	2. Leaflet Elements
+	3. Legend Stuff
+		3.1 - colors and stuff for each icon
+
+//////////////////////// 
+*/
+
+
+/*
+//////////////////////// 
+Map View 
+//////////////////////// 
+*/
+#mapDiv {
+    min-height: 100%;
+    max-height: 100%;
+}
+
+/*
+//////////////////////// 
+Leaflet Elements 
+//////////////////////// 
+*/
+#latLngScale {
+    position:relative;
+	padding:4px;
+	bottom: 60px;
+	left: 15px;
+	width: fit-content;
+	margin: 0;
+    z-index:1;
+	color: black;
+	background-color: white;
+	box-shadow: 0px 8px 22px -12px rgba(30,30,60,0.25);
+	border-radius: 3px;
+	border: 1px solid rgba(0,0,0,0.6);
+	left: 286px;
+}
+@media (max-width: 992px) {
+	#latLngScale{
+		left: 6px;
+	}
+}
+
+#latLngScale .hover-content {
+	display:none;
+	font-weight: 500;
+}
+#latLngScale:hover .hover-content {
+    display:inline-block;
+}
+#latLngScale i{
+	margin: 0 4px;
+}
+
+/* Scale */
+.leaflet-control-scale{
+	left: 3px;
+	position: relative;
+	bottom: 64px;
+}
+
+/* Zoom */
+.leaflet-control-zoom{
+	box-shadow: none;
+	border: 1px solid rgba(0,0,0,0.6);
+}
+
+/* Other Stuff */
+.esri-leaflet-logo {
+    display:none !important;
+}
+
+/*
+//////////////////////// 
+Legend 
+//////////////////////// 
+*/
+
+/* Max legend Height */
+#legendCollapse{
+	max-height: 60vh;
+	overflow: auto;
+}
+/* Legend Wrapper */
+.legendClass {
+    position:absolute;
+    top: 15px;
+	right:15px;
+	top: 10px !important;
+    z-index:3;
+    color: black;
+    background-color: rgb(255,255,255);
+    background-color: rgba(255,255,255,0.89);
+	border-radius: 3px;
+	max-width: 240px;
+	border-color: rgba(0,0,0,0.6);
+	box-shadow: 0px 7px 15px -2px rgba(30,30,60,0.1)	!important;
+}
+#legendHeading{
+	border-radius: 3px;
+	background-color: transparent;
+}
+/* Clickable button */
+#legendButton{
+	font-size: 14px;
+	display: flex;
+	padding: 10px 15px;
+	justify-content: center;
+}
+	#legendButton i{
+		height: 100%;
+		padding-top: 1px;
+		font-weight: 900;
+		transform: scale(1.15);
+		margin-right: 12px;
+	}
+	#legendButton:hover{
+		cursor: pointer;
+	}
+	#legendButton:hover span{
+		text-decoration: underline;
+	}
+/* Center title */
+.legendClass .panel-title{
+	text-align: center;
+}
+.legendClass .panel-title i{
+	font-family: 'Font Awesome 5 Pro';
+}
+
+/* Actual legend items */
+.legend-item-wrapper{
+	display: block;
+	padding: 0 12px 10px 12px;
+	box-sizing: border-box;
+}
+	.legend-item-wrapper .legend-item{
+		padding: 0 0;
+		display: flex;
+	}
+		.legend-item-wrapper .legend-item img{
+			width: 20px;
+			height: 20px;
+			margin-bottom: 5px;
+		}
+		.legend-item-wrapper .legend-item b{
+			margin-bottom: 5px;
+			font-size: 13px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			font-weight: 500;
+			line-height: 13px;
+			box-sizing: border-box;
+			padding-left: 8px;
+		}
+
+
+/* Legend item colors and shapes */
+
+.square-legend {
+    float: left;
+    width: 14px;
+    height: 14px;
+    margin: 2px;
+    border: .1px solid rgba(255, 255, 255, 0);
+}
+.square-legend-interest {
+    float: left;
+    width: 14px;
+    height: 14px;
+    margin-right: 3px;
+    margin-top: 3px;
+    margin-left: 20px;
+    border: .1px solid rgba(255, 255, 255, 0);
+}
+
+.parkTractsColor{
+    background: #0000cc;
+    opacity: 0.65;
+    border-color: #0000cc;
+    Border-width: .1px;
+}
+.parkBoundsColor{
+    background: #bee8ff;
+    border-color: #bee8ff;
+    Border-width: .1px;
+}
+.npsNetColor{
+    border-color: orange;
+    Border-width: 2px;
+}
+.approvedAquiColor{
+    background: brown;
+    border-color: brown;
+    opacity: 0.65;
+    Border-width: .1px
+}
+.interestBoundsColor{
+    background: #bee8ff;
+    border-color: #000;
+    Border-width: .1px;
+}
+.doiRegionsColor{
+    border-color: #209D64;
+    Border-width: 2px;
+}
+.noaaCycloneColor{
+    background: #ffffff;
+    border-color: #000;
+    Border-width: .1px;
+}
+.federalFeeColor{
+    background: green;
+}
+.federalLessFeeColor{
+    background: yellow;
+}
+.publicColor{
+    background: orange;
+}
+.privateColor{
+    background: blue;
+}
+.otherFederalColor{
+    background:purple;
+}
+.aquisitionColor{
+    background: pink;   
+}
+.noInfoColor{
+    background: black;
+}
+.intFee {
+    border-color: green;
+    Border-width: 2px;
+}
+.intSecondary {
+    border-color: purple;
+    Border-width: 2px; 
+}
+.intEasement {
+    border-color:orange;
+    Border-width: 2px;
+}
+.intLease {
+    border-color: yellow;
+    Border-width: 2px;
+}
+.intAgreement {
+    border-color:beige;
+    Border-width: 2px;
+}
+.intPartial {
+    border-color: blue;
+    Border-width: 2px;
+}
+.intPermit {
+    border-color: red;
+    Border-width: 2px;
+}
+.intUnknown {
+    border-color: black;
+    Border-width: 2px;
+}
+.peakSmall {
+	padding: 5px 6px;
+}
+.peakMedium {
+	padding: 5px 6px;
+}
+.peakLarge {
+	padding: 5px 6px;
+}
+.peakSmall img{
+	padding: 5px 6px;
+}
+.peakMedium img{
+	padding: 3px 5px;
+}
+.peakLarge{
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+	margin-bottom: 4px;
+}
+.peakLarge img{
+	padding: 0 3px;
+}
+
+.nwis-link {
+    font-size: larger;
+    font-weight: bold;
+    text-align: left;
+    /*font-family: 'Merriweather', serif;*/
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rdg-nwis-info{
+    font-weight: bold;
+    text-align: left;
+    /*font-family: 'Merriweather', serif;*/
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+}
+
+
+/* Make hwm square a diamond */
+#highWaterSymbology img{
+	padding: 0 3px !important;
+}
+
+.hydroImage{
+	height:auto;
+	width:100%;
+}

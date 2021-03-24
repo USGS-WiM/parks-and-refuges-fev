@@ -1,5 +1,7 @@
 
-![USGS](USGS_ID_black.png) ![WIM](wimlogo.png)
+![USGS](USGS_logo.png) 
+
+![WIM](wimlogo.png)
 
 # FEV
 ### Version 2 of the Flood Event Viewer (FEV)
@@ -54,6 +56,8 @@ A graph and link will also not appear if there is an invalid response from NWIS 
 
 run `npm install` AND `bower install` to get dependencies after first cloning
 
+run `bower install pdfmake` AND `bower install Leaflet.label`
+
 `gulp watch` to run in browser with watch for debugging
 
 `gulp` to build project
@@ -82,8 +86,13 @@ To push tags to remote origin: `git push origin --tags`
 
 ## Authors
 
-* **[Blake Draper](https://github.com/BlakeDraper)**  - *Lead Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
-Mapping](https://wim.usgs.gov/)
+* **[Lauren Privette](https://github.com/lprivette)**  - *Lead Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+
+* **[Kathy Dooley](https://github.com/09Kathy)**  - *Junior Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+
+* **[Lorraine Metz](https://github.com/ltmetz)**  - *Junior Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+
+* **[Blake Draper](https://github.com/BlakeDraper)**  - *Senior Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
 
 See also the list of [contributors](../../graphs/contributors) who participated in this project.
 

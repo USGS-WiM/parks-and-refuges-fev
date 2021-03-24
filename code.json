@@ -3,7 +3,7 @@
     "name": "parks-and-refuges-FEV",
     "organization": "U.S. Geological Survey",
     "description": "Displays flood events from the short-term network (STN) database",
-    "version": "v0.0.1",
+    "version": "v1.0.0",
     "status": "Development",
     "permissions": {
       "usageType": "openSource",
@@ -25,8 +25,8 @@
 
     "tags": [
       "flood event",
-      "flood event viewer",
-      "fev",
+      "doi flood event viewer",
+      "doi fev",
       "stn",
       "nps",
       "fws"
@@ -42,7 +42,7 @@
     },
 
     "date": {
-      "metadataLastUpdated": "2020-02-21"
+      "metadataLastUpdated": "2021-03-24"
     }
   }
 ]

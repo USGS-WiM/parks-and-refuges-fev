@@ -1,6 +1,6 @@
 {
   "name": "flood-event-viewer",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "DOI Flood Event Viewer",
   "repository": {
     "type": "git",
@@ -24,8 +24,17 @@
     "wiredep": "^1.4.4"
   },
   "dependencies": {
+    "@turf/boolean-point-in-polygon": "^6.0.1",
+    "@turf/flatten": "^5.1.5",
+    "@turf/helpers": "^6.1.4",
+    "@turf/polygon-to-line": "^6.0.3",
+    "@turf/union": "^6.0.3",
     "bootstrap-datepicker": "^1.6.4",
-    "moment": "^2.14.1",
-    "pdfmake": "^0.1.65"
+    "bower": "^1.8.12",
+    "html2canvas": "^1.0.0-rc.5",
+    "moment": "^2.24.0",
+    "pdfmake": "^0.1.65",
+    "turf-buffer": "^3.0.12",
+    "turf-flatten": "^1.0.0"
   }
 }
