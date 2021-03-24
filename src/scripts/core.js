@@ -2980,8 +2980,8 @@ var rainGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/r
 var tideCurrentSymbologyInterior = "<img class='legendSwatch' style='width: 10px; margin-left: 6px' src='images/markers/bluepushpin.png'/><b style='margin-left: 5px'>NOAA Tides and Currents<b>";
 var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
 var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
-var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crms.png'/><b>Coastwide Reference Monitoring System</b>";
-var fimanSymbologyInterior = "<p>Flood Inundation Mapping and Alert Network</p>" +
+var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crms.png'/><b>Coastwide Reference Monitoring System (LA Only)</b>";
+var fimanSymbologyInterior = "<p>Flood Inundation Mapping and Alert Network (NC Only)</p>" +
 "<div class='legend-item'><img class=' fimanLegend notAvailableFIMAN'/> Not Available</div>" +
 "<div class='legend-item'><img class=' fimanLegend normalFIMAN'/> Normal</div>" +
 "<div class='legend-item'><img class=' fimanLegend nearFloodingFIMAN'/> Near Flooding</div>" +
