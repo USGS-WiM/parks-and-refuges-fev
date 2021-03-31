@@ -460,14 +460,9 @@ var fiman = L.esri.featureLayer({
 			if (feature.properties.CONDITION_TXT == "Major Flooding") {
 				layer.setIcon(L.divIcon({ className: 'defaultFIMAN majorFloodingFIMAN' }));
 			}
-			/* var crmsPopup = '<table class="table table-hover table-striped table-condensed wim-table">' +
-			'<caption class="popup-title">' + "Coastwide Reference Monitoring System" + '</caption>' +
-			'<col style="width:50%"> <col style="width:50%">' +
-			'<tr><td><strong>Soil Type: </strong></td><td><span>' + feature.properties.SOIL_TYPE + '</span></td></tr>' +
-			'<tr><td><strong>Vegetation Type: </strong></td><td><span id="hwmLabel">' + feature.properties.VEGTYPE + '</span></td></tr>' +
-			'<tr><td><strong>Parish: </strong></td><td><span>' + feature.properties.PARISH_NAM + '</span></td></tr>' +
-			'</table>';
-			layer.bindPopup(crmsPopup) */
+			var fimanPopup = '<span><a target="_blank" href="https://fiman.nc.gov/">' + "Data from https://fiman.nc.gov/" +
+        "</a></span>";
+			layer.bindPopup(fimanPopup)
 		} 
 	});
 
@@ -4858,7 +4853,8 @@ function generateSiteReport() {
 				$("#legendElement").hide();
 
 				var mapEvent;
-				html2canvas(document.getElementById('mapDiv'), options)
+				setTimeout(() => {
+					html2canvas(document.getElementById('mapDiv'), options)
 					.then(function (canvas) {
 						$("#reviewMap").find("canvas").remove()
 						mapEvent = new Event('map_ready');
@@ -4880,6 +4876,8 @@ function generateSiteReport() {
 						$('#saveHWMCSV').removeAttr('disabled');
 					}
 					);
+				}, 500);
+				
 			}
 			// Get legend for print preview
 			function captureLegendImg() {
