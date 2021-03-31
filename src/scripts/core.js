@@ -213,7 +213,6 @@ var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/markers/
 var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
 var crmsIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crms.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [14, 14] });
-var fimanIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crms.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [14, 14] });
 var tidesMarkerIcon = L.icon({ className: 'tideMarker', iconUrl: 'images/markers/bluepushpin.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [10, 20] });
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
@@ -436,38 +435,10 @@ url: 'https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms
 var fiman = L.esri.featureLayer({
 	url: 'https://spartagis.ncem.org/arcgis/rest/services/FIMAN/GAGES_ALL/MapServer/0', 
 		 onEachFeature: function (feature, layer) {
-			if (feature.properties.CONDITION_TXT == "Not Reporting") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Not Available") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Normal") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN normalFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Near Flooding") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN nearFloodingFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Minor Flooding") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN minorFloodingFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Moderate Flooding") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN moderateFloodingFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Major Flooding") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN majorFloodingFIMAN' }));
-			}
-			/* var crmsPopup = '<table class="table table-hover table-striped table-condensed wim-table">' +
-			'<caption class="popup-title">' + "Coastwide Reference Monitoring System" + '</caption>' +
-			'<col style="width:50%"> <col style="width:50%">' +
-			'<tr><td><strong>Soil Type: </strong></td><td><span>' + feature.properties.SOIL_TYPE + '</span></td></tr>' +
-			'<tr><td><strong>Vegetation Type: </strong></td><td><span id="hwmLabel">' + feature.properties.VEGTYPE + '</span></td></tr>' +
-			'<tr><td><strong>Parish: </strong></td><td><span>' + feature.properties.PARISH_NAM + '</span></td></tr>' +
-			'</table>';
-			layer.bindPopup(crmsPopup) */
+			layer.setIcon(L.divIcon({ className: 'defaultFIMAN ' }));
+			var fimanPopup = '<span><a target="_blank" href="https://fiman.nc.gov/">' + "Data from https://fiman.nc.gov/" +
+        "</a></span>";
+			layer.bindPopup(fimanPopup)
 		} 
 	});
 
@@ -2981,13 +2952,7 @@ var tideCurrentSymbologyInterior = "<img class='legendSwatch' style='width: 10px
 var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
 var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
 var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crms.png'/><b>Coastwide Reference Monitoring System (LA Only)</b>";
-var fimanSymbologyInterior = "<p>Flood Inundation Mapping and Alert Network (NC Only)</p>" +
-"<div class='legend-item'><img class=' fimanLegend notAvailableFIMAN'/> Not Available</div>" +
-"<div class='legend-item'><img class=' fimanLegend normalFIMAN'/> Normal</div>" +
-"<div class='legend-item'><img class=' fimanLegend nearFloodingFIMAN'/> Near Flooding</div>" +
-"<div class='legend-item'><img class=' fimanLegend minorFloodingFIMAN'/> Minor Flooding</div>" +
-"<div class='legend-item'><img class=' fimanLegend moderateFloodingFIMAN'/> Moderate Flooding</div>" +
-"<div class='legend-item'><img class=' fimanLegend majorFloodingFIMAN'/>Major Flooding</div>";
+var fimanSymbologyInterior = "<img class='legendSwatch' src='images/markers/fimanCircle.png'/><b>Flood Inundation Mapping and Alert Network (NC Only)</b>"; 
 var meteorlogicalSymbologyInterior = "<img class='legendSwatch' src='images/markers/met.png'/><b>Meteorlogical Sensor</b>";
 var waveHeightSymbologyInterior = "<img class='legendSwatch' src='images/markers/waveheight.png'/><b>Wave Height Sensor</b>";
 var rdgSymbologyInterior = "<img class='legendSwatch' src='images/markers/rdg.png'/><b>Rapid Deployment Gage</b>";
@@ -4858,7 +4823,8 @@ function generateSiteReport() {
 				$("#legendElement").hide();
 
 				var mapEvent;
-				html2canvas(document.getElementById('mapDiv'), options)
+				setTimeout(() => {
+					html2canvas(document.getElementById('mapDiv'), options)
 					.then(function (canvas) {
 						$("#reviewMap").find("canvas").remove()
 						mapEvent = new Event('map_ready');
@@ -4880,6 +4846,8 @@ function generateSiteReport() {
 						$('#saveHWMCSV').removeAttr('disabled');
 					}
 					);
+				}, 500);
+				
 			}
 			// Get legend for print preview
 			function captureLegendImg() {
