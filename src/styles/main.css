@@ -66,48 +66,7 @@ p.big{
     overflow: hidden;
     position: absolute;
     margin-top: 6px;
-}
-.fimanLegend {
-	float: left;
-    margin-top: 3px;
-    margin-left: 20px;
-	margin-bottom: 3px;
-	margin-right: 5px;
-	border: 1px solid black;
-    height: 6px;
-    border-radius: 50%;
-    width: 6px;
-}
-.fimanLabel {
-	margin-left: 45px;
-}
-.fimanTitle {
-	font-size: 13px;
-	display: -webkit-flex;
-	display: flex;
-	-webkit-flex-direction: column;
-	flex-direction: column;
-	font-weight: 500;
-	line-height: 13px;
-	margin-bottom: 3px;
-}
-.notAvailableFIMAN {
-    background-color: black;
-}
-.normalFIMAN {
-    background-color: greenyellow;
-}
-.nearFloodingFIMAN {
-    background-color: yellow;
-}
-.minorFloodingFIMAN {
-    background-color: orange;
-}
-.moderateFloodingFIMAN {
-    background-color: red;
-}
-.majorFloodingFIMAN {
-    background-color: rgb(197, 7, 197);
+    background-color: black
 }
 
 
