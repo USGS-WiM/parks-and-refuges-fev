@@ -4853,7 +4853,8 @@ function generateSiteReport() {
 				$("#legendElement").hide();
 
 				var mapEvent;
-				html2canvas(document.getElementById('mapDiv'), options)
+				setTimeout(() => {
+					html2canvas(document.getElementById('mapDiv'), options)
 					.then(function (canvas) {
 						$("#reviewMap").find("canvas").remove()
 						mapEvent = new Event('map_ready');
@@ -4875,6 +4876,8 @@ function generateSiteReport() {
 						$('#saveHWMCSV').removeAttr('disabled');
 					}
 					);
+				}, 500);
+				
 			}
 			// Get legend for print preview
 			function captureLegendImg() {
