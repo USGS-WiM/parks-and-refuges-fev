@@ -1,6 +1,6 @@
 {
   "name": "flood-event-viewer",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "DOI Flood Event Viewer",
   "repository": {
     "type": "git",
