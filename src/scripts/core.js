@@ -254,23 +254,6 @@ var usBounds = [
 	//f:'image'
 }); */
 
-$.ajax({
-	url: "https://gis.fws.gov/arcgis/rest/services/FWS_Refuge_Boundaries/MapServer/2",
-	async: false,
-	dataType: 'json',
-	success: function (data) {
-		if (data[0].label == "No active advisories at this time") {
-			noAdvisories = true;
-			test = data;
-			console.log(noAdvisories);
-		} else {
-			//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
-			//noaaService = noaaTrack;
-			console.log("noaa layer added");
-		}
-	}
-});
-
 //rdg and USGSrtGages layers must be featureGroup type to support mouse event listeners
 var rdg = L.featureGroup();
 var USGSRainGages = L.featureGroup();
@@ -376,7 +359,7 @@ var appr = L.esri.featureLayer({
 // FWS Approved Interest Boundaries 
 var int = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1",
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/0",
 	//opacity: 0.5,
 	//minZoom: 9,
 	style: function (feature) {
@@ -2063,7 +2046,7 @@ $(document).ready(function () {
 		}
 	}
 
-	$('.basemapBtn').on('click', function () {
+	$('.basemap-button').on('click', function () {
 		var baseMap = this.id.replace('btn', '');
 
 		// https://github.com/Esri/esri-leaflet/issues/504 submitted issue that esri-leaflet basemaps dont match esri jsapi
