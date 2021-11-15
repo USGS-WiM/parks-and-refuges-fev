@@ -1,7 +1,5 @@
 var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 //var stnServicesURL = 'https://stntest.wim.usgs.gov/STNServices2'; //test URL
-var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
-var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
 /* var regionBoundaries;
 var regions = []; */
@@ -1924,7 +1922,7 @@ $(document).ready(function () {
 					{
 						width: 50,
 						alignment: 'center',
-						text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'STN Data Dictionary', link: 'https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level', color: '#0000EE' }, ' for more field information.'],
+						text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'HWM Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredHWMs.csv', color: '#0000EE' }, ' or ', { text: 'Peak Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredPeaks.csv', color: '#0000EE' }, ' for more field information.'],
 					}
 				},
 				content: getContent(),
@@ -2781,7 +2779,7 @@ $(document).ready(function () {
 				{
 					width: 50,
 					alignment: 'center',
-					text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'STN Data Dictionary', link: 'https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level', color: '#0000EE' }, ' for more field information.'],
+					text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'HWM Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredHWMs.csv', color: '#0000EE' }, ' or ', { text: 'Peak Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredPeaks.csv', color: '#0000EE' }, ' for more field information.']
 				}
 			},
 			content: [
