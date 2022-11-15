@@ -175,7 +175,6 @@ function displaySensorGeoJSON(type, name, url, markerIcon) {
                         '<tr><td><strong>County: </strong></td><td><span id="county">' + feature.properties.county + '</span></td></tr>' +
                         '<tr><td><strong>State: </strong></td><td><span id="state">' + feature.properties.state + '</span></td></tr>' +
                         '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">' + feature.properties.latitude_dd.toFixed(4) + ', ' + feature.properties.longitude_dd.toFixed(4) + '</span></td></tr>' +
-                        '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + feature.properties.site_id + '&Sensor=' + feature.properties.instrument_id + '\>Sensor data page</a></b></span></td></tr>' +
                         '<tr><td colspan="2"><strong>Hydrograph: </strong>' + hydroPopupText
                     '</table>';
                     latlng.bindPopup(popupContent);
@@ -316,7 +315,6 @@ function displayHWMGeoJSON(type, name, url, markerIcon) {
                 '<tr><td><strong>State: </strong></td><td><span id="hwmState">' + feature.properties.stateName + '</span></td></tr>' +
                 '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">' + feature.properties.latitude_dd.toFixed(4) + ', ' + feature.properties.longitude_dd.toFixed(4) + '</span></td></tr>' +
                 '<tr><td><strong>Description: </strong></td><td><span id="hwmDescription">' + feature.properties.hwm_locationdescription + '</span></td></tr>' +
-                '<tr><td><strong>Full data link: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + hwmPageURLRoot + feature.properties.site_id + '&HWM=' + feature.properties.hwm_id + '\>HWM data page</a></b></span></td></tr>' +
                 '</table>';
             // $.each(feature.properties, function( index, value ) {
             //     if (value && value != 'undefined') popupContent += '<b>' + index + '</b>:&nbsp;&nbsp;' + value + '</br>';
@@ -1042,7 +1040,6 @@ function queryNWISgraphRDG(e) {
         '<tr><td><strong>County: </strong></td><td><span id="county">' + e.layer.feature.properties.county + '</span></td></tr>' +
         '<tr><td><strong>State: </strong></td><td><span id="state">' + e.layer.feature.properties.state + '</span></td></tr>' +
         '<tr><td><strong>Latitude, Longitude (DD): </strong></td><td><span class="latLng">' + e.layer.feature.properties.latitude_dd.toFixed(4) + ', ' + e.layer.feature.properties.longitude_dd.toFixed(4) + '</span></td></tr>' +
-        '<tr><td><strong>STN data page: </strong></td><td><span id="sensorDataLink"><b><a target="blank" href=' + sensorPageURLRoot + e.layer.feature.properties.site_id + '&Sensor=' + e.layer.feature.properties.instrument_id + '\>Sensor data page</a></b></span></td></tr>' +
         '</table>' +
         '<div id="RDGgraphContainer" style="width:100%; height:250px;display:none;"></div>' +
         '<div id="RDGdataLink" style="width:100%;display:none;"><b><span class="rdg-nwis-info" style="color:red;"> - Provisional Data Subject to Revision -</span><br><span class="rdg-nwis-info">Additional parameters available at NWISWeb</span><br><a class="nwis-link" id="rdgNWISLink" target="_blank" href="https://usgs.gov"></a></b></div>' +
@@ -1575,8 +1572,6 @@ function addCommas(nStr) {
 }
 var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 //var stnServicesURL = 'https://stntest.wim.usgs.gov/STNServices2'; //test URL
-var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
-var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
 /* var regionBoundaries;
 var regions = []; */
@@ -1788,7 +1783,6 @@ var peakMarkerIcon = L.icon({ className: 'peakMarker', iconUrl: 'images/markers/
 var nwisMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/nwis.png', iconAnchor: [7, 10], popupAnchor: [0, 2] });
 var nwisRainMarkerIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/rainIcon.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [30, 30] });
 var crmsIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crms.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [14, 14] });
-var fimanIcon = L.icon({ className: 'nwisMarker', iconUrl: 'images/markers/crms.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [14, 14] });
 var tidesMarkerIcon = L.icon({ className: 'tideMarker', iconUrl: 'images/markers/bluepushpin.png', iconAnchor: [7, 10], popupAnchor: [0, 2], iconSize: [10, 20] });
 
 //sensor subgroup layerGroups for sensor marker cluster group(layerGroup has no support for mouse event listeners)
@@ -1829,23 +1823,6 @@ var usBounds = [
 	//opacity: 0.5,
 	//f:'image'
 }); */
-
-$.ajax({
-	url: "https://gis.fws.gov/arcgis/rest/services/FWS_Refuge_Boundaries/MapServer/2",
-	async: false,
-	dataType: 'json',
-	success: function (data) {
-		if (data[0].label == "No active advisories at this time") {
-			noAdvisories = true;
-			test = data;
-			console.log(noAdvisories);
-		} else {
-			//interpretedOverlays["NOAA Tropical Cyclone Forecast Track"] = "noaaService";
-			//noaaService = noaaTrack;
-			console.log("noaa layer added");
-		}
-	}
-});
 
 //rdg and USGSrtGages layers must be featureGroup type to support mouse event listeners
 var rdg = L.featureGroup();
@@ -1914,7 +1891,7 @@ var tracts = L.esri.featureLayer({
 // NPS Boundaries 
 var bounds = L.esri.featureLayer({
 	useCors: false,
-	url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1",
+	url: "https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/1",
 	//opacity: 0.5,
 	//minZoom: 9,
 	/* style: function (feature) {
@@ -1940,7 +1917,7 @@ var npsNetworks = L.esri.featureLayer({
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
 	useCors: false,
-	url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0",
+	url: "https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/0",
 	//opacity: 0.5,
 	//minZoom: 9,
 	style: function (feature) {
@@ -1952,7 +1929,7 @@ var appr = L.esri.featureLayer({
 // FWS Approved Interest Boundaries 
 var int = L.esri.featureLayer({
 	useCors: false,
-	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/1",
+	url: "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/0",
 	//opacity: 0.5,
 	//minZoom: 9,
 	style: function (feature) {
@@ -2011,38 +1988,10 @@ url: 'https://cimsgeo3.coastal.louisiana.gov/arcgis/rest/services/prot_rest/crms
 var fiman = L.esri.featureLayer({
 	url: 'https://spartagis.ncem.org/arcgis/rest/services/FIMAN/GAGES_ALL/MapServer/0', 
 		 onEachFeature: function (feature, layer) {
-			if (feature.properties.CONDITION_TXT == "Not Reporting") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Not Available") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN notAvailableFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Normal") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN normalFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Near Flooding") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN nearFloodingFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Minor Flooding") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN minorFloodingFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Moderate Flooding") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN moderateFloodingFIMAN' }));
-			}
-			if (feature.properties.CONDITION_TXT == "Major Flooding") {
-				layer.setIcon(L.divIcon({ className: 'defaultFIMAN majorFloodingFIMAN' }));
-			}
-			/* var crmsPopup = '<table class="table table-hover table-striped table-condensed wim-table">' +
-			'<caption class="popup-title">' + "Coastwide Reference Monitoring System" + '</caption>' +
-			'<col style="width:50%"> <col style="width:50%">' +
-			'<tr><td><strong>Soil Type: </strong></td><td><span>' + feature.properties.SOIL_TYPE + '</span></td></tr>' +
-			'<tr><td><strong>Vegetation Type: </strong></td><td><span id="hwmLabel">' + feature.properties.VEGTYPE + '</span></td></tr>' +
-			'<tr><td><strong>Parish: </strong></td><td><span>' + feature.properties.PARISH_NAM + '</span></td></tr>' +
-			'</table>';
-			layer.bindPopup(crmsPopup) */
+			layer.setIcon(L.divIcon({ className: 'defaultFIMAN ' }));
+			var fimanPopup = '<span><a target="_blank" href="https://fiman.nc.gov/">' + "Data from https://fiman.nc.gov/" +
+        "</a></span>";
+			layer.bindPopup(fimanPopup)
 		} 
 	});
 
@@ -3545,7 +3494,7 @@ $(document).ready(function () {
 					{
 						width: 50,
 						alignment: 'center',
-						text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'STN Data Dictionary', link: 'https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level', color: '#0000EE' }, ' for more field information.'],
+						text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'HWM Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredHWMs.csv', color: '#0000EE' }, ' or ', { text: 'Peak Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredPeaks.csv', color: '#0000EE' }, ' for more field information.'],
 					}
 				},
 				content: getContent(),
@@ -3667,7 +3616,7 @@ $(document).ready(function () {
 		}
 	}
 
-	$('.basemapBtn').on('click', function () {
+	$('.basemap-button').on('click', function () {
 		var baseMap = this.id.replace('btn', '');
 
 		// https://github.com/Esri/esri-leaflet/issues/504 submitted issue that esri-leaflet basemaps dont match esri jsapi
@@ -4402,7 +4351,7 @@ $(document).ready(function () {
 				{
 					width: 50,
 					alignment: 'center',
-					text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'STN Data Dictionary', link: 'https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level', color: '#0000EE' }, ' for more field information.'],
+					text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'HWM Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredHWMs.csv', color: '#0000EE' }, ' or ', { text: 'Peak Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredPeaks.csv', color: '#0000EE' }, ' for more field information.']
 				}
 			},
 			content: [
@@ -4555,14 +4504,8 @@ var rainGageSymbologyInterior = "<img class='legendSwatch' src='images/markers/r
 var tideCurrentSymbologyInterior = "<img class='legendSwatch' style='width: 10px; margin-left: 6px' src='images/markers/bluepushpin.png'/><b style='margin-left: 5px'>NOAA Tides and Currents<b>";
 var barometricSymbologyInterior = "<img class='legendSwatch' src='images/markers/baro.png'/><b>Barometric Pressure Sensor</b>";
 var stormTideSymbologyInterior = "<img class='legendSwatch' src='images/markers/stormtide.png'/><b>Storm Tide Sensor</b>";
-var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crms.png'/><b>Coastwide Reference Monitoring System</b>";
-var fimanSymbologyInterior = "<p>Flood Inundation Mapping and Alert Network</p>" +
-"<div class='legend-item'><img class=' fimanLegend notAvailableFIMAN'/> Not Available</div>" +
-"<div class='legend-item'><img class=' fimanLegend normalFIMAN'/> Normal</div>" +
-"<div class='legend-item'><img class=' fimanLegend nearFloodingFIMAN'/> Near Flooding</div>" +
-"<div class='legend-item'><img class=' fimanLegend minorFloodingFIMAN'/> Minor Flooding</div>" +
-"<div class='legend-item'><img class=' fimanLegend moderateFloodingFIMAN'/> Moderate Flooding</div>" +
-"<div class='legend-item'><img class=' fimanLegend majorFloodingFIMAN'/>Major Flooding</div>";
+var crmsSymbologyInterior = "<img class='legendSwatch' src='images/markers/crms.png'/><b>Coastwide Reference Monitoring System (LA Only)</b>";
+var fimanSymbologyInterior = "<img class='legendSwatch' src='images/markers/fimanCircle.png'/><b>Flood Inundation Mapping and Alert Network (NC Only)</b>"; 
 var meteorlogicalSymbologyInterior = "<img class='legendSwatch' src='images/markers/met.png'/><b>Meteorlogical Sensor</b>";
 var waveHeightSymbologyInterior = "<img class='legendSwatch' src='images/markers/waveheight.png'/><b>Wave Height Sensor</b>";
 var rdgSymbologyInterior = "<img class='legendSwatch' src='images/markers/rdg.png'/><b>Rapid Deployment Gage</b>";
@@ -5047,7 +4990,7 @@ function searchComplete(runningFilter, exploreMap) {
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
-			url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1',
+			url: 'https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/1',
 			simplifyFactor: 0.5,
 			precision: 4,
 			where: "UNIT_NAME=" + name,
@@ -5080,7 +5023,7 @@ function searchComplete(runningFilter, exploreMap) {
 		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
-			url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0",
+			url: "https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/0",
 			simplifyFactor: 0.5,
 			precision: 4,
 			where: "ORGNAME=" + name,
@@ -6433,7 +6376,8 @@ function generateSiteReport() {
 				$("#legendElement").hide();
 
 				var mapEvent;
-				html2canvas(document.getElementById('mapDiv'), options)
+				setTimeout(() => {
+					html2canvas(document.getElementById('mapDiv'), options)
 					.then(function (canvas) {
 						$("#reviewMap").find("canvas").remove()
 						mapEvent = new Event('map_ready');
@@ -6455,6 +6399,8 @@ function generateSiteReport() {
 						$('#saveHWMCSV').removeAttr('disabled');
 					}
 					);
+				}, 500);
+				
 			}
 			// Get legend for print preview
 			function captureLegendImg() {
@@ -6690,7 +6636,7 @@ $(document).ready(function () {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
-                    url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=UNIT_NAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    url: 'https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=UNIT_NAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
                     headers: { 'Accept': '*/*' },
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
@@ -6709,7 +6655,7 @@ $(document).ready(function () {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
-                    url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=ORGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    url: 'https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=ORGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
                     headers: { 'Accept': '*/*' },
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
@@ -6739,7 +6685,7 @@ $(document).ready(function () {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
-                    url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=UNIT_NAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    url: 'https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=UNIT_NAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
                     headers: { 'Accept': '*/*' },
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
@@ -6758,7 +6704,7 @@ $(document).ready(function () {
                 $.ajax({
                     dataType: 'json',
                     type: 'GET',
-                    url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=ORGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
+                    url: 'https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=ORGNAME&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson',
                     headers: { 'Accept': '*/*' },
                     success: function (data) {
                         for (var i = 0; i < data.features.length; i++) {
@@ -7369,7 +7315,7 @@ var fevRegional = fevRegional || {
 
 // URLS
 var eventURL = "https://stn.wim.usgs.gov/STNServices/Events/";
-var parksURL = "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
+var parksURL = "https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/1/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
 var peaksURL = "https://stn.wim.usgs.gov/STNServices/PeakSummaries/FilteredPeaks.json?Event=";
 
 $(document).ready(function () {
@@ -7554,7 +7500,7 @@ $(document).ready(function () {
             }
             allSites = L.esri.featureLayer({
                 //useCors: false,
-                url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1',
+                url: 'https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/1',
                 where: "REGION='" + siteRegion + "'",
                 fields: ["*"],
                 style: parkStyle,
@@ -7603,7 +7549,7 @@ $(document).ready(function () {
             }
             allSites = L.esri.featureLayer({
                 //useCors: false,
-                url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0',
+                url: 'https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/0',
                 where: "FWSREGION='" + siteRegion + "'",
                 fields: ["ORGNAME", "FWSREGION", "FID", "IFWS"],
                 style: parkStyle,
