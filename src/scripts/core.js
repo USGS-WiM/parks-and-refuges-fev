@@ -319,7 +319,7 @@ var tracts = L.esri.featureLayer({
 // NPS Boundaries 
 var bounds = L.esri.featureLayer({
 	useCors: false,
-	url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1",
+	url: "https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/1",
 	//opacity: 0.5,
 	//minZoom: 9,
 	/* style: function (feature) {
@@ -345,7 +345,7 @@ var npsNetworks = L.esri.featureLayer({
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
 	useCors: false,
-	url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0",
+	url: "https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/0",
 	//opacity: 0.5,
 	//minZoom: 9,
 	style: function (feature) {
@@ -3418,7 +3418,7 @@ function searchComplete(runningFilter, exploreMap) {
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
-			url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1',
+			url: 'https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/1',
 			simplifyFactor: 0.5,
 			precision: 4,
 			where: "UNIT_NAME=" + name,
@@ -3451,7 +3451,7 @@ function searchComplete(runningFilter, exploreMap) {
 		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
-			url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0",
+			url: "https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/0",
 			simplifyFactor: 0.5,
 			precision: 4,
 			where: "ORGNAME=" + name,
