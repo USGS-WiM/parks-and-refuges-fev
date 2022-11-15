@@ -1,7 +1,5 @@
 var stnServicesURL = 'https://stn.wim.usgs.gov/STNServices';
 //var stnServicesURL = 'https://stntest.wim.usgs.gov/STNServices2'; //test URL
-var sensorPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/SensorPage?Site=";
-var hwmPageURLRoot = "https://stn.wim.usgs.gov/STNPublicInfo/#/HWMPage?Site=";
 var flattenedPoly;
 /* var regionBoundaries;
 var regions = []; */
@@ -321,7 +319,7 @@ var tracts = L.esri.featureLayer({
 // NPS Boundaries 
 var bounds = L.esri.featureLayer({
 	useCors: false,
-	url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1",
+	url: "https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/1",
 	//opacity: 0.5,
 	//minZoom: 9,
 	/* style: function (feature) {
@@ -347,7 +345,7 @@ var npsNetworks = L.esri.featureLayer({
 // FWS Approved Acquisition Boundaries 
 var appr = L.esri.featureLayer({
 	useCors: false,
-	url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0",
+	url: "https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/0",
 	//opacity: 0.5,
 	//minZoom: 9,
 	style: function (feature) {
@@ -1924,7 +1922,7 @@ $(document).ready(function () {
 					{
 						width: 50,
 						alignment: 'center',
-						text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'STN Data Dictionary', link: 'https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level', color: '#0000EE' }, ' for more field information.'],
+						text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'HWM Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredHWMs.csv', color: '#0000EE' }, ' or ', { text: 'Peak Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredPeaks.csv', color: '#0000EE' }, ' for more field information.'],
 					}
 				},
 				content: getContent(),
@@ -2781,7 +2779,7 @@ $(document).ready(function () {
 				{
 					width: 50,
 					alignment: 'center',
-					text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'STN Data Dictionary', link: 'https://my.usgs.gov/confluence/display/WSN/STN+Data+Dictionary+-+Top+Level', color: '#0000EE' }, ' for more field information.'],
+					text: ['Page ' + currentPage.toString() + ' | Consult the ', { text: 'HWM Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredHWMs.csv', color: '#0000EE' }, ' or ', { text: 'Peak Data Dictionary', link: 'https://stn.wim.usgs.gov/STNWeb/datadictionary/FilteredPeaks.csv', color: '#0000EE' }, ' for more field information.']
 				}
 			},
 			content: [
@@ -3420,7 +3418,7 @@ function searchComplete(runningFilter, exploreMap) {
 		where = "UNIT_NAME=" + name;
 		parks = L.esri.featureLayer({
 			useCors: false,
-			url: 'https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/1',
+			url: 'https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/1',
 			simplifyFactor: 0.5,
 			precision: 4,
 			where: "UNIT_NAME=" + name,
@@ -3453,7 +3451,7 @@ function searchComplete(runningFilter, exploreMap) {
 		where = "ORGNAME=" + name;
 		refuges = L.esri.featureLayer({
 			useCors: false,
-			url: "https://gis.wim.usgs.gov/arcgis/rest/services/DOIFEV/DOI_FEV/MapServer/0",
+			url: "https://gis1.wim.usgs.gov/server/rest/services/DOIFEV/DOI_FEV/MapServer/0",
 			simplifyFactor: 0.5,
 			precision: 4,
 			where: "ORGNAME=" + name,
