@@ -7907,6 +7907,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     $('#btnClearRegFilters').click(function () {
         clearRegOutput();
         $(".progress-bar").removeClass("fill");
+        $("#noPeaksRegion").hide();
+        $("#noHWMSRegion").hide();
         var regionalContent = document.getElementById("regionModalContent");
         regionalContent.classList.remove('large');
     });
@@ -8154,6 +8156,7 @@ function getEventSpecificData() {
         var sensorQueryString = "?Event=" + selectedEvents[0] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
 
         getEventName(function (output) {
+            console.log('in getEventName')
             eventName = output.event_name;
             selectedEventsNames.push(eventName);
             /*
@@ -8316,6 +8319,7 @@ function getEventSpecificData() {
 
 // creating markers for peaks
 function getPeaks(url, markerIcon, eventName, eventNumber) {
+    console.log('in getPeaks')
     //Create variables for scaling peak label sizes
     var parksWPeakStorage = [];
     var allPeaksStorage = [];
@@ -8424,7 +8428,8 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
     $.getJSON(url, function (data) {
         if (data.length == 0) {
             //console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
-            return
+            $("#noPeaksRegion").show();
+            return;
         }
         if (data.features.length > 0) {
             //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
@@ -8645,7 +8650,8 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
     $.getJSON(url, function (data) {
         if (data.length == 0) {
             //console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
-            return
+            $("#noHWMSRegion").show();
+            return;
         }
         if (data.features.length > 0) {
             //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
