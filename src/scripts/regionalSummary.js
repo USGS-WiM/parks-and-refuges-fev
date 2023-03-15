@@ -962,7 +962,6 @@ function getEventSpecificData() {
         var sensorQueryString = "?Event=" + selectedEvents[0] + "&States=&County=&SensorType=&CurrentStatus=&CollectionCondition=&DeploymentType=";
 
         getEventName(function (output) {
-            console.log('in getEventName')
             eventName = output.event_name;
             selectedEventsNames.push(eventName);
             /*
@@ -1125,7 +1124,6 @@ function getEventSpecificData() {
 
 // creating markers for peaks
 function getPeaks(url, markerIcon, eventName, eventNumber) {
-    console.log('in getPeaks')
     //Create variables for scaling peak label sizes
     var parksWPeakStorage = [];
     var allPeaksStorage = [];
