@@ -713,6 +713,8 @@ function displayRegionalRtGageReport(regionalStreamGages) {
     $('#btnClearRegFilters').click(function () {
         clearRegOutput();
         $(".progress-bar").removeClass("fill");
+        $("#noPeaksRegion").hide();
+        $("#noHWMSRegion").hide();
         var regionalContent = document.getElementById("regionModalContent");
         regionalContent.classList.remove('large');
     });
@@ -1230,7 +1232,8 @@ function getPeaks(url, markerIcon, eventName, eventNumber) {
     $.getJSON(url, function (data) {
         if (data.length == 0) {
             //console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
-            return
+            $("#noPeaksRegion").show();
+            return;
         }
         if (data.features.length > 0) {
             //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
@@ -1451,7 +1454,8 @@ function getHWMs(url, markerIcon, eventName, eventNumber) {
     $.getJSON(url, function (data) {
         if (data.length == 0) {
             //console.log('0 ' + markerIcon.options.className + ' GeoJSON features found');
-            return
+            $("#noHWMSRegion").show();
+            return;
         }
         if (data.features.length > 0) {
             //console.log(data.features.length + ' ' + markerIcon.options.className + ' GeoJSON features found');
