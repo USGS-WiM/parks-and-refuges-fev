@@ -3,7 +3,7 @@
     "name": "parks-and-refuges-FEV",
     "organization": "U.S. Geological Survey",
     "description": "Displays flood events from the short-term network (STN) database",
-    "version": "v1.0.4",
+    "version": "v1.0.5",
     "status": "Development",
     "permissions": {
       "usageType": "openSource",
